@@ -127,7 +127,7 @@ test("Android package includes native speech bridge", () => {
 
 test("academy includes numbers 1-20, English alphabet and beginner coding", () => { const academy=read("academy.js"); assert.match(academy,/length:20/); assert.match(academy,/ABCDEFGHIJKLMNOPQRSTUVWXYZ/); assert.match(academy,/مغامرة البرمجة/); assert.match(read("scripts/prepare-web.js"),/academy.js/); assert.match(read("sw.js"),/academy.js/); });
 test("Arabic letter school covers the complete alphabet",()=>{const lesson=read("lessons.js");assert.match(lesson,/letter:"ي"/);assert.match(lesson,/letter:"ث"/);assert.match(lesson,/ar-EG/);});
-test("animal quiz choices include a picture and readable label",()=>{assert.match(read("app.js"),/animal-picture/);assert.match(read("app.js"),/animal-label/);});
+test("animal quiz choices include a picture and readable label",()=>{assert.match(read("app.js"),/choice-picture/);assert.match(read("app.js"),/choice-label/);assert.match(read("app.js"),/choicePictures/);});
 test("Egyptian Arabic voice locale is preferred",()=>{assert.match(read("voice.js"),/ar-EG/);assert.doesNotMatch(read("voice.js"),/ar-SA/);});
 
 test("coding adventure has ordered movement, repeat and debugging levels", () => {
@@ -149,4 +149,13 @@ test("academy JavaScript parses without syntax errors", () => {
 test("parent dashboard includes coding progress", () => {
   assert.match(read("app.js"), /مغامرة البرمجة/);
   assert.match(read("app.js"), /coding\.completed/);
+});
+
+test("Arabic number and animal answer options show a picture or numeral with a word label", () => {
+  const app = read("app.js");
+  assert.match(app, /"أسد":"🦁"/);
+  assert.match(app, /"فيل":"🐘"/);
+  assert.match(app, /"سبعة"/);
+  assert.match(app, /visual-answer/);
+  assert.match(app, /dataset\.answer=item\.text/);
 });
