@@ -9,13 +9,13 @@
  const rand=a=>a[Math.floor(Math.random()*a.length)];
  const sample=(answer,max)=>{const set=new Set([answer]);while(set.size<4){let n=answer+Math.floor(Math.random()*7)-3;if(n<0||n>max)n=Math.floor(Math.random()*(max+1));set.add(n)}return [...set].sort(()=>Math.random()-.5)};
  const countPic=n=>Array.from({length:n},(_,i)=>icons[i%icons.length]).join(" ");
- function questions(n){const prev=Math.max(0,n-1),next=Math.min(20,n+1);const addA=Math.max(1,Math.floor(n/2)),addB=Math.max(1,Math.min(5,n-addA));const subA=n+Math.min(2,20-n),subB=subA-n;return [
+ function questions(n){const prev=Math.max(1,n-1),next=Math.min(20,n+1),afterBase=n===20?19:n,beforeBase=n===20?20:n+1;const addA=Math.max(1,Math.floor(n/2)),addB=Math.max(1,Math.min(5,n-addA));const subA=Math.max(2,n),subB=Math.min(2,subA-1);return [
  {q:"عدّ الصور: كام واحدة؟",pic:countPic(n),a:sample(n,20),correct:n,ex:"عدّ كل صورة واحدة واحدة. المجموع "+digits(n)+"."},
- {q:"إيه الرقم اللي بعد "+digits(n)+"؟",pic:"➡️ 🔢",a:sample(next,20),correct:next,ex:"بعد "+names[n-1]+" بييجي "+names[next-1]+"."},
- {q:"إيه الرقم اللي قبل "+digits(n)+"؟",pic:"⬅️ 🔢",a:sample(prev,20),correct:prev,ex:"قبل "+names[n-1]+" بييجي "+(names[prev-1]||"صفر")+". "},
+ {q:"إيه الرقم اللي بعد "+digits(afterBase)+"؟",pic:"➡️ 🔢",a:sample(n===20?20:next,20),correct:n===20?20:next,ex:"بعد "+names[n-1]+" بييجي "+names[next-1]+"."},
+ {q:"إيه الرقم اللي قبل "+digits(beforeBase)+"؟",pic:"⬅️ 🔢",a:sample(n===20?19:n,20),correct:n===20?19:n,ex:"قبل "+names[n-1]+" بييجي "+(names[prev-1]||"صفر")+". "},
  {q:"معانا "+digits(addA)+" تفاحات وزودنا "+digits(addB)+"، بقوا كام؟",pic:"🍎 ➕ 🍎",a:sample(addA+addB,20),correct:addA+addB,ex:digits(addA)+" + "+digits(addB)+" = "+digits(addA+addB)+". عدّهم مع بعض."},
  {q:"كان معانا "+digits(subA)+" نجوم واختفى "+digits(subB)+"، فاضل كام؟",pic:"⭐ ➖ ⭐",a:sample(subA-subB,20),correct:subA-subB,ex:digits(subA)+" - "+digits(subB)+" = "+digits(subA-subB)+". شيل اتنين وعدّ الباقي."},
- {q:"اختار العدد الأكبر: "+digits(n)+" ولا "+digits(prev),pic:"🐘 🐭",a:sample(Math.max(n,prev),20),correct:Math.max(n,prev),ex:"العدد الأكبر هو "+digits(Math.max(n,prev))+"."}
+ {q:"اختار العدد الأكبر: "+digits(n===20?19:n)+" ولا "+digits(n===20?20:next),pic:"🐘 🐭",a:sample(n===20?20:next,20),correct:n===20?20:next,ex:"العدد الأكبر هو "+digits(Math.max(n,prev))+"."}
  ].sort(()=>Math.random()-.5).slice(0,4)}
  function open(){level=1;score=0;stage="learn";document.getElementById("gameList").classList.add("hidden");document.getElementById("quiz").classList.add("hidden");document.getElementById("result").classList.add("hidden");document.getElementById("parentPanel").classList.add("hidden");panel.classList.remove("hidden");renderLearn()}
  function back(){panel.classList.add("hidden");document.getElementById("gameList").classList.remove("hidden")}
