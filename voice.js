@@ -1,36 +1,54 @@
 (() => {
   const speak = (text, lang = "ar-EG") => {
     const synth=window.speechSynthesis;
-    if (!synth || !window.SpeechSynthesisUtterance) {
-      const status=document.getElementById("speechResult");
-      if(status)status.textContent="الصوت غير متاح على هذا الجهاز. جرّب فتح التطبيق من Chrome وتأكد من تفعيل تحويل النص إلى كلام.";
-      return;
+    const status=document.getElementById("speechResult")||document.getElementById("lessonStatus");
+    if(!synth||!window.SpeechSynthesisUtterance){
+      if(status)status.textContent="ميزة الصوت غير مدعومة في نسخة المتصفح الحالية. افتح التطبيق بمتصفح Chrome وحدّث خدمات تحويل النص إلى كلام.";
+      return false;
     }
     synth.cancel();
-    let started=false;
+    let started=false, finished=false;
     const launch=()=>{
       if(started)return;
       started=true;
-      const utterance=new SpeechSynthesisUtterance(text);
-      utterance.lang=lang;utterance.rate=lang.startsWith("ar")?0.72:0.8;utterance.pitch=1;utterance.volume=1;
-      const voices=synth.getVoices();
+      const utterance=new SpeechSynthesisUtterance(String(text||""));
+      utterance.lang=lang;
+      utterance.rate=lang.toLowerCase().startsWith("ar")?0.78:0.84;
+      utterance.pitch=1;
+      utterance.volume=1;
+      const voices=synth.getVoices()||[];
       const prefix=lang.slice(0,2).toLowerCase();
-      const match=voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith(prefix));
-      if(match)utterance.voice=match;
-      utterance.onerror=()=>{
-        const status=document.getElementById("speechResult");
-        if(status)status.textContent="الصوت لم يعمل. تأكد من رفع صوت الوسائط وتفعيل محرك تحويل النص إلى كلام في الهاتف.";
+      const selected=voices.find(v=>v.lang&&v.lang.toLowerCase()===lang.toLowerCase())||
+        voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith(prefix));
+      if(selected)utterance.voice=selected;
+      utterance.onstart=()=>{finished=true;if(status)status.textContent="🔊 اسمع كويس يا بطل";};
+      utterance.onend=()=>{finished=true;};
+      utterance.onerror=(event)=>{
+        finished=true;
+        if(status)status.textContent="الصوت لم يشتغل. فعّل محرك تحويل النص إلى كلام من إعدادات أندرويد وارفع صوت الوسائط.";
       };
-      try{synth.resume();synth.speak(utterance)}catch(error){
-        const status=document.getElementById("speechResult");
-        if(status)status.textContent="تعذر تشغيل الصوت على هذا الجهاز.";
+      try{
+        synth.resume();
+        synth.speak(utterance);
+        // بعض إصدارات WebView تحتاج استدعاء resume بعد وضع الجملة في الطابور.
+        setTimeout(()=>{if(synth.paused)synth.resume();},250);
+        setTimeout(()=>{
+          if(!finished && synth.speaking===false && status)
+            status.textContent="لم يبدأ الصوت. تأكد من تثبيت وتفعيل Speech Services by Google في الهاتف.";
+        },1800);
+      }catch(error){
+        if(status)status.textContent="تعذر تشغيل الصوت. راجع إعدادات تحويل النص إلى كلام في الهاتف.";
+        return false;
       }
+      return true;
     };
     if(synth.getVoices().length)launch();
     else{
-      synth.addEventListener("voiceschanged",launch,{once:true});
-      setTimeout(launch,900);
+      const onVoices=()=>{synth.removeEventListener("voiceschanged",onVoices);launch();};
+      synth.addEventListener("voiceschanged",onVoices);
+      setTimeout(launch,1200);
     }
+    return true;
   };
   window.MatthewVoice = { speak };
   const observer = new MutationObserver(() => {
