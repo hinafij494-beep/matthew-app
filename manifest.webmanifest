@@ -7,7 +7,14 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f8f7fc",
-  "theme_color": "#5b3cc4",
-  "icons": [{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+  "background_color": "#fffaf3",
+  "theme_color": "#267b80",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
