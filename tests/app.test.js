@@ -59,7 +59,7 @@ test("app includes offline cache and install manifest", () => {
   const html = read("index.html");
   const sw = read("sw.js");
   const manifest = JSON.parse(read("manifest.webmanifest"));
-  assert.match(html, /serviceWorker\.register/);
+  assert.match(read("app.js"), /serviceWorker\\.register/);
   for (const file of ["./", "./index.html", "./styles.css", "./app.js"]) {
     assert.ok(sw.includes(file), `offline cache missing ${file}`);
   }
