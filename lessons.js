@@ -64,9 +64,9 @@
   }
   function renderMarks(){
     const m=marks[markIndex];
-    $("lessonBody").innerHTML=`<div class="lesson-title">الحركات الأربع</div><div class="mark-tabs">${marks.map((x,i)=>`<button class="${i===markIndex?"active":""}" data-mark="${i}">${x.name}</button>`).join("")}</div><div class="mark-card"><span>${m.emoji}</span><div class="mark-symbol">ب${m.mark}</div><h2>${m.name}</h2><p>${m.hint}</p><strong>مثال: ${m.sample}</strong></div><p>اختار كل حركة واسمعها بصوت واضح</p>`;
+    $("lessonBody").innerHTML=`<div class="lesson-title">الحركات الأربع</div><div class="mark-tabs">${marks.map((x,i)=>`<button class="${i===markIndex?"active":""}" data-mark="${i}">${x.name}</button>`).join("")}</div><div class="mark-card"><span>${m.emoji}</span><div class="mark-symbol">${sample}</div><h2>${m.name}</h2><p>${soundHint}: ${sample}</p><strong>مثال: ${sample}</strong></div><p>اختار كل حركة واسمعها بصوت واضح</p>`;
     panel.querySelectorAll("[data-mark]").forEach(b=>b.onclick=()=>{markIndex=Number(b.dataset.mark);renderMarks()});
-    $("lessonListen").onclick=()=>say(m.hint+"، "+m.sample);
+    $("lessonListen").onclick=()=>say(soundHint+"، "+sample);
   }
   function renderQuizIntro(){
     $("lessonBody").innerHTML='<div class="lesson-title">جاهز يا بطل؟ 🏆</div><div class="big-letter">⭐</div><h2>اختبار الحركات والحروف</h2><p>هنسألك أسئلة مختلفة عن صوت الحرف وشكله والفتحة والضمة والكسرة والسكون.</p><p>كل مرة هتلاقي أسئلة بترتيب مختلف!</p>';
