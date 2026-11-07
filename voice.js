@@ -1,5 +1,5 @@
 (() => {
-  const speak = (text, lang) => {
+  const speak = (text, lang = "ar-EG") => {
     const synth=window.speechSynthesis;
     if (!synth || !window.SpeechSynthesisUtterance) {
       const status=document.getElementById("speechResult");
@@ -32,6 +32,7 @@
       setTimeout(launch,900);
     }
   };
+  window.MatthewVoice = { speak };
   const observer = new MutationObserver(() => {
     const area = document.querySelector(".question-area");
     if (!area || area.querySelector(".speak-question")) return;
