@@ -14,17 +14,17 @@
   const $ = id => document.getElementById(id);
   let letterIndex=0, step=0, markIndex=0, quiz=[], quizIndex=0, score=0;
   const say = text => {
-    if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) {
-      $("lessonStatus").textContent="الصوت غير مدعوم في هذا المتصفح.";
-      return;
-    }
-    window.speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text); u.lang="ar-SA"; u.rate=.72; u.pitch=1;
-    const voices=window.speechSynthesis.getVoices();
-    const v=voices.find(x=>x.lang && x.lang.toLowerCase().startsWith("ar"));
-    if(v)u.voice=v;
-    u.onerror=()=>{$("lessonStatus").textContent="تعذر تشغيل الصوت. تأكد من صوت اللغة العربية في الهاتف."};
-    window.speechSynthesis.speak(u);
+    const synth=window.speechSynthesis;
+    if(!synth||!window.SpeechSynthesisUtterance){$("lessonStatus").textContent="الصوت غير متاح. افتح التطبيق من Chrome وتأكد من تفعيل تحويل النص إلى كلام.";return;}
+    synth.cancel();let started=false;
+    const launch=()=>{
+      if(started)return;started=true;
+      const u=new SpeechSynthesisUtterance(text);u.lang="ar-SA";u.rate=.72;u.pitch=1;u.volume=1;
+      const v=synth.getVoices().find(x=>x.lang&&x.lang.toLowerCase().startsWith("ar"));if(v)u.voice=v;
+      u.onerror=()=>{$("lessonStatus").textContent="الصوت لم يعمل. تأكد من رفع صوت الوسائط وتفعيل محرك تحويل النص إلى كلام في الهاتف."};
+      try{synth.resume();synth.speak(u)}catch(e){$("lessonStatus").textContent="تعذر تشغيل الصوت على هذا الجهاز."}
+    };
+    if(synth.getVoices().length)launch();else{synth.addEventListener("voiceschanged",launch,{once:true});setTimeout(launch,900);}
   };
   const card=document.createElement("button");
   card.className="game-card pink"; card.type="button"; card.dataset.lessonEntry="true";
