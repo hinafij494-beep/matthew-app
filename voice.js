@@ -1,14 +1,36 @@
 (() => {
   const speak = (text, lang) => {
-    if (!("speechSynthesis" in window)) { alert("خاصية الصوت مش مدعومة في المتصفح ده."); return; }
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang;
-    utterance.rate = 0.82;
-    const voices = window.speechSynthesis.getVoices();
-    const match = voices.find(v => v.lang.toLowerCase().startsWith(lang.slice(0,2)));
-    if (match) utterance.voice = match;
-    window.speechSynthesis.speak(utterance);
+    const synth=window.speechSynthesis;
+    if (!synth || !window.SpeechSynthesisUtterance) {
+      const status=document.getElementById("speechResult");
+      if(status)status.textContent="الصوت غير متاح على هذا الجهاز. جرّب فتح التطبيق من Chrome وتأكد من تفعيل تحويل النص إلى كلام.";
+      return;
+    }
+    synth.cancel();
+    let started=false;
+    const launch=()=>{
+      if(started)return;
+      started=true;
+      const utterance=new SpeechSynthesisUtterance(text);
+      utterance.lang=lang;utterance.rate=lang.startsWith("ar")?0.72:0.8;utterance.pitch=1;utterance.volume=1;
+      const voices=synth.getVoices();
+      const prefix=lang.slice(0,2).toLowerCase();
+      const match=voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith(prefix));
+      if(match)utterance.voice=match;
+      utterance.onerror=()=>{
+        const status=document.getElementById("speechResult");
+        if(status)status.textContent="الصوت لم يعمل. تأكد من رفع صوت الوسائط وتفعيل محرك تحويل النص إلى كلام في الهاتف.";
+      };
+      try{synth.resume();synth.speak(utterance)}catch(error){
+        const status=document.getElementById("speechResult");
+        if(status)status.textContent="تعذر تشغيل الصوت على هذا الجهاز.";
+      }
+    };
+    if(synth.getVoices().length)launch();
+    else{
+      synth.addEventListener("voiceschanged",launch,{once:true});
+      setTimeout(launch,900);
+    }
   };
   const observer = new MutationObserver(() => {
     const area = document.querySelector(".question-area");
