@@ -23,8 +23,8 @@ test("quiz bank has at least 30 questions across four subjects", () => {
   const context = {};
   vm.runInNewContext(source.slice(start, end) + "\nglobalThis.bank = bank;", context);
   const categories = Object.values(context.bank);
-  assert.equal(categories.length, 4);
-  assert.ok(categories.flat().length >= 30);
+  assert.equal(categories.length, 5);
+  assert.ok(categories.flat().length >= 40);\n  assert.ok(context.bank.math.length >= 8, "English Math has its own question bank");
 });
 
 test("every question has four choices and a valid correct answer", () => {
@@ -93,4 +93,24 @@ test("voice module supports Arabic and English speech practice", () => {
   assert.match(voice, /SpeechSynthesisUtterance/);
   assert.match(voice, /SpeechRecognition/);
   assert.match(voice, /تحدي النطق/);
+});
+
+test("Arabic numeracy and English Math use distinct numeral systems", () => {
+  const source = read("app.js");
+  const start = source.indexOf("const bank=");
+  const end = source.indexOf("\\nconst names=", start);
+  const context = {};
+  vm.runInNewContext(source.slice(start, end) + "\\nglobalThis.bank = bank;", context);
+  for (const q of context.bank.numbers) {
+    assert.ok(q.a.every(value => /^[٠-٩]+$/.test(value)), "Arabic numeracy choices must be Arabic numerals");
+  }
+  for (const q of context.bank.math) {
+    assert.ok(q.q === q.q && /^[A-Za-z0-9 ?+.,'-]+$/.test(q.q), "Math prompts should be in English");
+    assert.ok(q.a.every(value => /^[0-9]+$/.test(value)), "Math choices must use English digits");
+  }
+});
+test("parent progress dashboard and per-skill tracking are present", () => {
+  assert.match(read("index.html"), /parentPanel/);
+  assert.match(read("app.js"), /matthewLearningStats/);
+  assert.match(read("app.js"), /attempts>=5/);
 });
