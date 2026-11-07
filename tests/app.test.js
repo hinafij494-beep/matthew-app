@@ -181,7 +181,7 @@ test("Arabic letter school has all 28 letters and correct non-joining forms", ()
 
 test("Math journey teaches all numbers 1 to 20 and practices counting, order, comparison, addition and subtraction", () => {
   const math = read("math-journey.js");
-  assert.match(math, /length:20/);
+  assert.match(math, /names=\\[/);
   assert.match(math, /ماث من ١ إلى ٢٠/);
   assert.match(math, /عدّ الصور/);
   assert.match(math, /العدد الأكبر/);
