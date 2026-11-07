@@ -82,7 +82,7 @@ test("progress is saved locally and randomization is used", () => {
 
 test("all app assets referenced by the page exist", () => {
   const html = read("index.html");
-  for (const asset of ["manifest.webmanifest", "icon.svg", "styles.css", "app.js"]) {
+  for (const asset of ["manifest.webmanifest", "icon.svg", "styles.css", "app.js", "native-tts.js"]) {
     assert.ok(fs.existsSync(path.join(root, asset)), `missing ${asset}`);
     assert.ok(html.includes(asset), `page does not reference ${asset}`);
   }
@@ -114,4 +114,12 @@ test("parent progress dashboard and per-skill tracking are present", () => {
   assert.match(read("index.html"), /parentPanel/);
   assert.match(read("app.js"), /matthewLearningStats/);
   assert.match(read("app.js"), /attempts>=5/);
+});
+
+test("Android package includes native speech bridge", () => {
+  const pkg = JSON.parse(read("package.json"));
+  assert.equal(pkg.dependencies["@capacitor-community/text-to-speech"], "6.0.0");
+  assert.match(read("index.html"), /native-tts\.js/);
+  assert.match(read("voice.js"), /MatthewNativeTTS/);
+  assert.match(read("scripts/prepare-web.js"), /esbuild/);
 });
