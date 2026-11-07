@@ -117,6 +117,7 @@
     const q=quiz[quizIndex];$("lessonStep").textContent=(quizIndex+1).toLocaleString("ar-EG")+" / "+quiz.length.toLocaleString("ar-EG");
     $("lessonProgress").style.width=(quizIndex/quiz.length*100)+"%";
     $("lessonBody").innerHTML=`<div class="lesson-title">اختبار الملك ماثيو 👑</div><h2>${q.q}</h2><div class="lesson-answers">${q.a.map((a,i)=>`<button data-answer="${i}">${a}</button>`).join("")}</div>`;
+    const questionSpeak=document.createElement("button");questionSpeak.type="button";questionSpeak.className="voice-button question-speak";questionSpeak.textContent="🔊 اسمع السؤال";questionSpeak.onclick=()=>say(q.q+" اختار الإجابة الصحيحة","ar-EG");const questionHeading=panel.querySelector("#lessonBody .lesson-title");if(questionHeading)questionHeading.after(questionSpeak);
     panel.querySelectorAll("[data-answer]").forEach(b=>b.onclick=()=>{if(panel.dataset.done==="1")return;panel.dataset.done="1";const ok=Number(b.dataset.answer)===q.c;if(ok)score++;panel.querySelectorAll("[data-answer]").forEach(x=>{x.disabled=true;if(Number(x.dataset.answer)===q.c)x.classList.add("correct")});if(!ok)b.classList.add("wrong");$("lessonStatus").textContent=ok?"برافو يا بطل! إجابة صحيحة ⭐":"محاولة جميلة! ركز في الحركة وجرب السؤال التالي";$("lessonNext").textContent=quizIndex===quiz.length-1?"النتيجة 🏆":"السؤال التالي ←"});
     panel.dataset.done="0";$("lessonNext").textContent="اختار الإجابة";
   }
