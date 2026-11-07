@@ -178,3 +178,23 @@ test("Arabic letter school has all 28 letters and correct non-joining forms", ()
   assert.match(lesson, /الكسرة/);
   assert.match(lesson, /السكون/);
 });
+
+test("Math journey teaches all numbers 1 to 20 and practices counting, order, comparison, addition and subtraction", () => {
+  const math = read("math-journey.js");
+  assert.match(math, /length:20/);
+  assert.match(math, /ماث من ١ إلى ٢٠/);
+  assert.match(math, /عدّ الصور/);
+  assert.match(math, /العدد الأكبر/);
+  assert.match(math, /\+ \+|➕/);
+  assert.match(math, /➖/);
+  assert.match(math, /ar-EG/);
+  assert.match(read("scripts/prepare-web.js"), /math-journey\.js/);
+  assert.match(read("sw.js"), /math-journey\.js/);
+  assert.match(read("index.html"), /math-journey\.js/);
+});
+test("Math journey has 20 spoken Egyptian Arabic number names", () => {
+  const math=read("math-journey.js");
+  assert.match(math, /"واحد","اتنين","تلاتة"/);
+  assert.match(math, /"حداشر","اتناشر","تلتاشر"/);
+  assert.match(math, /"تسعتاشر","عشرين"/);
+});
