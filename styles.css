@@ -20,3 +20,13 @@ body{background:radial-gradient(circle at 8% 12%,#fff0d9 0,transparent 24%),radi
 .academy-visual{font-size:76px;background:linear-gradient(135deg,#fff4d9,#e8f8f4);border-radius:22px;padding:20px;margin:12px 0}
 .academy-word{font-size:30px;font-weight:900;color:#267b80}.academy-hint{color:#68768a;line-height:1.8}
 .academy-nav{display:grid;grid-template-columns:1fr 1fr;gap:9px}.code-track{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:15px 0}.code-step{background:#e8f5ff;border:2px solid #cde8f4;border-radius:14px;padding:12px;font-size:24px;min-width:54px}.code-step.selected{background:#dff5e5;border-color:#54b78a}.robot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;max-width:300px;margin:15px auto}.robot-cell{aspect-ratio:1;background:#f0f5f8;border-radius:12px;display:grid;place-items:center;font-size:25px}.robot-cell.goal{background:#fff1d7}.academy-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+
+/* Illustrated answer cards: picture/number first, clear Arabic word underneath */
+.answer.visual-answer{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:126px;padding:10px 6px;background:#fff8e9;border:2px solid #f0e3cb;border-radius:20px}
+.answer.visual-answer .choice-picture{display:block;font-size:clamp(35px,9vw,48px);line-height:1.25;font-weight:900;color:#285f75}
+.answer.visual-answer .choice-label{display:block;font-size:16px;line-height:1.35;font-weight:900;color:#26384c}
+.answer.visual-answer:disabled{opacity:1}
+.answer.visual-answer.correct{background:#e6f8ed;border-color:#32b779}
+.answer.visual-answer.wrong{background:#fff0f0;border-color:#ef7777}
+.answer.text-answer{min-height:64px}
+@media(max-width:360px){.answer.visual-answer{min-height:112px}.answer.visual-answer .choice-picture{font-size:36px}.answer.visual-answer .choice-label{font-size:14px}}
