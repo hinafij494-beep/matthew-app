@@ -7,13 +7,13 @@
  let level=1,round=[],qIndex=0,score=0;
  const sample=(answer)=>{const set=new Set([answer]);while(set.size<4){let n=answer+Math.floor(Math.random()*7)-3;if(n<1||n>20)n=Math.floor(Math.random()*20)+1;set.add(n)}return [...set].sort(()=>Math.random()-.5)};
  const countPic=n=>Array.from({length:n},(_,i)=>icons[i%icons.length]).join(" ");
- function questions(n){const prev=Math.max(0,n-1),next=Math.min(20,n+1),addA=Math.max(1,Math.floor(n/2)),addB=Math.max(1,Math.min(5,n-addA)),subA=n+Math.min(2,20-n),subB=subA-n;return [
+ function questions(n){const prev=Math.max(1,n-1),next=Math.min(20,n+1),afterBase=n===20?19:n,beforeBase=n===20?20:n+1,addA=Math.max(1,Math.floor(n/2)),addB=Math.max(1,Math.min(5,n-addA)),subA=Math.max(2,n),subB=Math.min(2,subA-1);return [
  {q:"Count the pictures. How many are there?",pic:countPic(n),a:sample(n),correct:n,ex:"Count each picture once. There are "+n+"."},
- {q:"What number comes after "+n+"?",pic:"➡️ 🔢",a:sample(next),correct:next,ex:"After "+names[n-1]+" comes "+names[next-1]+"."},
- {q:"What number comes before "+n+"?",pic:"⬅️ 🔢",a:sample(prev),correct:prev,ex:"Before "+names[n-1]+" comes "+(names[prev-1]||"zero")+". "},
+ {q:"What number comes after "+afterBase+"?",pic:"➡️ 🔢",a:sample(n===20?20:next),correct:n===20?20:next,ex:"After "+names[n-1]+" comes "+names[next-1]+"."},
+ {q:"What number comes before "+beforeBase+"?",pic:"⬅️ 🔢",a:sample(n===20?19:n),correct:n===20?19:n,ex:"Before "+names[n-1]+" comes "+(names[prev-1]||"zero")+". "},
  {q:"You have "+addA+" apples and get "+addB+" more. How many now?",pic:"🍎 ➕ 🍎",a:sample(addA+addB),correct:addA+addB,ex:addA+" + "+addB+" = "+(addA+addB)+". Count them together."},
  {q:"You have "+subA+" stars. "+subB+" disappear. How many are left?",pic:"⭐ ➖ ⭐",a:sample(subA-subB),correct:subA-subB,ex:subA+" - "+subB+" = "+(subA-subB)+"."},
- {q:"Which number is bigger: "+n+" or "+prev+"?",pic:"🐘 🐭",a:sample(Math.max(n,prev)),correct:Math.max(n,prev),ex:Math.max(n,prev)+" is the bigger number."}
+ {q:"Which number is bigger: "+(n===20?19:n)+" or "+(n===20?20:next)+"?",pic:"🐘 🐭",a:sample(n===20?20:next),correct:n===20?20:next,ex:Math.max(n,prev)+" is the bigger number."}
  ].sort(()=>Math.random()-.5).slice(0,4)}
  function say(t){if(window.MatthewVoice?.speak)window.MatthewVoice.speak(t,"en-US");else if("speechSynthesis"in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.78;speechSynthesis.speak(u)}}
  function header(){return '<div class="quiz-top"><button id="englishMathBack" class="back" type="button">Back ←</button><strong>King Matthew Math</strong><span>'+level+' / 20</span></div><div class="progress"><div style="width:'+level*5+'%"></div></div>'}
