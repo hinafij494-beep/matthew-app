@@ -7,6 +7,7 @@ on:
       - "index.html"
       - "styles.css"
       - "app.js"
+      - "academy.js"
       - "voice.js"
       - "lessons.js"
       - "sw.js"
@@ -34,7 +35,7 @@ jobs:
       - name: Prepare web assets
         run: |
           mkdir -p www
-          cp index.html styles.css app.js voice.js lessons.js sw.js icon.svg manifest.webmanifest www/
+          cp index.html styles.css app.js academy.js voice.js lessons.js sw.js icon.svg manifest.webmanifest www/
       - name: Install Capacitor
         run: npm install --no-save @capacitor/core @capacitor/android @capacitor/cli sharp
       - name: Generate Android project
