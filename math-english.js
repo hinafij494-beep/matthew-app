@@ -2,7 +2,7 @@
  const digits=n=>String(n);
  const names=["one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen","twenty"];
  const icons=["🍎","⭐","🧸","🚗","⚽","🐠","🌼","🦋","🍓","🎈","🐥","🍉","🚀","🐢","🦁","🐘","🍌","🦄","🌈","🎁"];
- const panel=document.createElement("section");panel.id="englishMathJourney";panel.className="academy-panel hidden";document.querySelector("main").insertBefore(panel,document.querySelector("footer"));
+ const panel=document.createElement("section");panel.id="englishMathJourney";panel.lang="en";panel.dir="ltr";panel.className="academy-panel hidden";document.querySelector("main").insertBefore(panel,document.querySelector("footer"));
  const card=document.createElement("button");card.type="button";card.className="game-card blue";card.innerHTML='<span class="game-icon">➕</span><strong>Math in English: 1–20</strong><small>Learn numbers, count, add and subtract in English</small><span class="play">Start Math ←</span>';document.getElementById("gameList").append(card);
  let level=1,round=[],qIndex=0,score=0;
  const sample=(answer)=>{const set=new Set([answer]);while(set.size<4){let n=answer+Math.floor(Math.random()*7)-3;if(n<1||n>20)n=Math.floor(Math.random()*20)+1;set.add(n)}return [...set].sort(()=>Math.random()-.5)};
