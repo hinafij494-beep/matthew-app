@@ -19,7 +19,8 @@
       const voices=synth.getVoices()||[];
       const prefix=lang.slice(0,2).toLowerCase();
       const selected=voices.find(v=>v.lang&&v.lang.toLowerCase()===lang.toLowerCase())||
-        voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith(prefix));
+        voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith(prefix))||
+        (prefix==="ar"?voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith("ar")):null);
       if(selected)utterance.voice=selected;
       utterance.onstart=()=>{finished=true;if(status)status.textContent="🔊 اسمع كويس يا بطل";};
       utterance.onend=()=>{finished=true;};
