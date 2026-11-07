@@ -89,7 +89,7 @@ test("all app assets referenced by the page exist", () => {
 });
 test("voice module supports Arabic and English speech practice", () => {
   const voice = read("voice.js");
-  assert.match(voice, /ar-SA/);
+  assert.match(voice, /ar-EG/);
   assert.match(voice, /en-US/);
   assert.match(voice, /SpeechSynthesisUtterance/);
   assert.match(voice, /SpeechRecognition/);
