@@ -10,12 +10,12 @@ test("main page includes Arabic layout and all five game modes", () => {
   const html = read("index.html");
   assert.match(html, /lang="ar"/);
   assert.match(html, /dir="rtl"/);
-  for (const id of ["numbers", "letters", "colors", "world", "mixed"]) {
+  for (const id of ["numbers", "math", "letters", "colors", "world", "mixed"]) {
     assert.ok(html.includes(id), `missing game mode: ${id}`);
   }
 });
 
-test("quiz bank has at least 30 questions across four subjects", () => {
+test("quiz bank has at least 40 questions across five subjects", () => {
   const source = read("app.js");
   const start = source.indexOf("const bank=");
   const end = source.indexOf("\nconst names=", start);
