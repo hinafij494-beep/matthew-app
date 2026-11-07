@@ -123,3 +123,9 @@ test("Android package includes native speech bridge", () => {
   assert.match(read("voice.js"), /MatthewNativeTTS/);
   assert.match(read("scripts/prepare-web.js"), /esbuild/);
 });
+
+
+test("academy includes numbers 1-20, English alphabet and beginner coding", () => { const academy=read("academy.js"); assert.match(academy,/length:20/); assert.match(academy,/ABCDEFGHIJKLMNOPQRSTUVWXYZ/); assert.match(academy,/مغامرة البرمجة/); assert.match(read("scripts/prepare-web.js"),/academy.js/); assert.match(read("sw.js"),/academy.js/); });
+test("Arabic letter school covers the complete alphabet",()=>{const lesson=read("lessons.js");assert.match(lesson,/letter:"ي"/);assert.match(lesson,/letter:"ث"/);assert.match(lesson,/ar-EG/);});
+test("animal quiz choices include a picture and readable label",()=>{assert.match(read("app.js"),/animal-picture/);assert.match(read("app.js"),/animal-label/);});
+test("Egyptian Arabic voice locale is preferred",()=>{assert.match(read("voice.js"),/ar-EG/);assert.doesNotMatch(read("voice.js"),/ar-SA/);});
