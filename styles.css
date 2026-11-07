@@ -33,3 +33,6 @@ body{background:radial-gradient(circle at 8% 12%,#fff0d9 0,transparent 24%),radi
 
 /* Coding board coordinates run left-to-right so arrows match robot movement. */
 .coding-board{direction:ltr;grid-auto-flow:row}.coding-board .robot-cell{direction:ltr}.code-track{direction:ltr}.direction-key{font-weight:900;color:#267b80;background:#eef9f5;padding:10px;border-radius:14px}
+
+/* Keep the robot's x-axis and command arrows consistent in an RTL app. */
+.coding-board{direction:ltr!important}.academy-controls{direction:ltr}.academy-controls button{direction:rtl}.code-track{direction:ltr;justify-content:flex-start;flex-wrap:wrap}.direction-key{direction:rtl;text-align:center}
