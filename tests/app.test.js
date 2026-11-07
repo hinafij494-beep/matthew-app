@@ -198,3 +198,21 @@ test("Math journey has 20 spoken Egyptian Arabic number names", () => {
   assert.match(math, /"حداشر","اتناشر","تلتاشر"/);
   assert.match(math, /"تسعتاشر","عشرين"/);
 });
+
+test("Arabic and English math journeys are separate complete 1-to-20 courses", () => {
+  const ar=read("math-journey.js");
+  const en=read("math-english.js");
+  assert.match(ar,/الحساب بالعربي: الأرقام ١–٢٠/);
+  assert.match(ar,/واحد","اتنين","تلاتة/);
+  assert.match(ar,/ar-EG/);
+  assert.match(en,/Math in English: 1–20/);
+  assert.match(en,/"one","two","three","four"/);
+  assert.match(en,/en-US/);
+  assert.match(en,/Count the pictures/);
+  assert.match(en,/Which number is bigger/);
+  assert.match(en,/add/);
+  assert.match(en,/subtract|disappear/);
+  assert.match(read("index.html"),/math-english\.js/);
+  assert.match(read("sw.js"),/math-english\.js/);
+  assert.match(read("scripts/prepare-web.js"),/math-english\.js/);
+});
