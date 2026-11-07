@@ -90,12 +90,14 @@
     panel.dataset.done="0";$("lessonNext").textContent="اختار الإجابة";
   }
   function finishQuiz(){
+    panel.dataset.finished="1";
     $("lessonBody").innerHTML=`<div class="lesson-title">برافو يا ملك ماثيو! 👑</div><div class="big-letter">🏆</div><h2>${score.toLocaleString("ar-EG")} من ${quiz.length.toLocaleString("ar-EG")}</h2><p>${score>=8?"ممتاز! أنت بطل الحروف والحركات ⭐":"شاطر! نعيد الدرس ونجرب تاني 💜"}</p><button id="retryLesson" class="primary">اختبار جديد بأسئلة مختلفة</button>`;
     $("retryLesson").onclick=()=>{step=3;makeQuiz()};
     $("lessonNext").textContent="العودة للدروس";
     $("lessonProgress").style.width="100%";
   }
   $("lessonNext").onclick=()=>{
+    if(panel.dataset.finished==="1"){panel.dataset.finished="0";quiz=[];step=0;render();return}
     if(step<3){step++;render();return}
     if(!quiz.length){makeQuiz();return}
     if(quizIndex<quiz.length-1){quizIndex++;showQuiz()}else finishQuiz();
