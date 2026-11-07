@@ -40,9 +40,9 @@
     button.type = "button";
     button.textContent = "🔊 اسمع السؤال";
     button.addEventListener("click", () => {
-      const question = document.getElementById("questionText")?.textContent || "";
-      const answers = [...document.querySelectorAll(".answer")].map(x => x.textContent).join(". ");
-      speak(question + ". " + answers, "ar-SA");
+      // اقرأ نص السؤال فقط؛ لا تصف الصورة ولا تسرد الاختيارات تلقائياً.
+      const question = document.getElementById("questionText")?.textContent?.trim() || "";
+      if (question) speak(question, "ar-EG");
     });
     area.insertBefore(button, area.querySelector(".question-emoji"));
   });
