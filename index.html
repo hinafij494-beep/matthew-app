@@ -4,10 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#5b3cc4">
-  <meta name="description" content="تطبيق الملك ماثيو للتعلم والمرح والاختبارات">
+  <meta name="description" content="تطبيق الملك ماثيو للتعلم والمرح">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="./icon.svg">
   <link rel="stylesheet" href="./styles.css">
   <title>الملك ماثيو 👑</title>
 </head>
@@ -19,15 +18,16 @@
   <main>
     <section class="hero">
       <div class="hero-copy"><span class="eyebrow">أهلاً يا بطل!</span><h1>مستعد لمغامرة جديدة؟</h1><p>اتعلم، العب، واجمع النجوم في مملكتك!</p><div class="stats"><span>⭐ <b id="totalStars">0</b> نجمة</span><span>🏆 <b id="bestScore">0</b> أفضل نتيجة</span></div></div>
-      <div class="king-art" role="img" aria-label="رسمة طفل أمير مبتسم"><span>👦🏻</span><i>👑</i></div>
+      <div class="king-art" role="img" aria-label="أيقونة الملك ماثيو"><span>👦🏻</span><i>👑</i></div>
     </section>
-    <section class="section-head"><div><span class="eyebrow">اختار مغامرتك</span><h2>ماذا نلعب اليوم؟</h2></div></section>
+    <section class="section-head"><div><span class="eyebrow">اختار مغامرتك</span><h2>ماذا نلعب اليوم؟</h2></div><button id="parentBtn" class="parent-entry" type="button">👨‍👩‍👦 لوحة ولي الأمر</button></section>
     <section class="games" id="gameList">
-      <button class="game-card purple" data-category="numbers"><span class="game-icon">🔢</span><strong>عالم الأرقام</strong><small>عدّ وتعلّم الحساب</small><span class="play">يلا نلعب ←</span></button>
-      <button class="game-card orange" data-category="letters"><span class="game-icon">🔤</span><strong>حروف وكلمات</strong><small>اكتشف الحروف</small><span class="play">يلا نلعب ←</span></button>
-      <button class="game-card green" data-category="colors"><span class="game-icon">🎨</span><strong>الألوان والأشكال</strong><small>شوف واختار الصح</small><span class="play">يلا نلعب ←</span></button>
-      <button class="game-card blue" data-category="world"><span class="game-icon">🌍</span><strong>معلومات ممتعة</strong><small>حيوانات وأشياء حولنا</small><span class="play">يلا نلعب ←</span></button>
-      <button class="game-card pink" data-category="mixed"><span class="game-icon">🎲</span><strong>اختبار المفاجآت</strong><small>أسئلة مختلفة كل مرة</small><span class="play">فاجئني ←</span></button>
+      <button class="game-card purple" data-category="numbers"><span class="game-icon">🔢</span><strong>الحساب بالعربي</strong><small>عدّ وتعلّم بالأرقام العربية ١ ٢ ٣</small><span class="play">ابدأ التعلم ←</span></button>
+      <button class="game-card blue" data-category="math"><span class="game-icon">➕</span><strong>Math in English</strong><small>Numbers, counting and simple math</small><span class="play">Let's learn ←</span></button>
+      <button class="game-card orange" data-category="letters"><span class="game-icon">🔤</span><strong>حروف وكلمات</strong><small>اكتشف الحروف</small><span class="play">ابدأ التعلم ←</span></button>
+      <button class="game-card green" data-category="colors"><span class="game-icon">🎨</span><strong>الألوان والأشكال</strong><small>شوف واختار الصح</small><span class="play">ابدأ التعلم ←</span></button>
+      <button class="game-card blue" data-category="world"><span class="game-icon">🌍</span><strong>معلومات ممتعة</strong><small>حيوانات وأشياء حولنا</small><span class="play">ابدأ التعلم ←</span></button>
+      <button class="game-card pink" data-category="mixed"><span class="game-icon">🎲</span><strong>اختبار المفاجآت</strong><small>أسئلة متنوعة من كل المواد</small><span class="play">فاجئني ←</span></button>
     </section>
     <section id="quiz" class="quiz-panel hidden" aria-live="polite">
       <div class="quiz-top"><button id="backBtn" class="back" type="button">→ رجوع</button><span id="categoryName"></span><span id="questionCount"></span></div>
@@ -38,7 +38,11 @@
     <section id="result" class="result-panel hidden">
       <div class="result-crown">🏆</div><h2>أحسنت يا ملك!</h2><p id="resultText"></p><div class="result-stars" id="resultStars"></div><button id="againBtn" class="primary" type="button">العب مرة تانية</button><button id="homeBtn" class="secondary" type="button">العودة للمملكة</button>
     </section>
-    <footer>صُنع بحب للملك ماثيو 💜 <span>يعمل بدون إنترنت بعد أول فتح</span></footer>
+    <section id="parentPanel" class="quiz-panel hidden">
+      <div class="quiz-top"><button id="parentBack" class="back" type="button">→ رجوع</button><strong>لوحة متابعة ولي الأمر</strong><span>📊</span></div>
+      <div id="parentSummary" class="parent-summary"></div>
+    </section>
+    <footer>صُنع بحب للملك ماثيو 💜 <span>يعمل دون إنترنت بعد التثبيت الأولي</span></footer>
   </main>
   <script src="./app.js" defer></script>
   <script src="./voice.js" defer></script>
