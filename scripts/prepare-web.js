@@ -8,5 +8,10 @@ fs.mkdirSync(out, { recursive: true });
 for (const file of files) fs.copyFileSync(path.join(root, file), path.join(out, file));
 console.log("Prepared offline web assets in www/");
 
-const { execFileSync } = require("node:child_process");
-execFileSync(process.execPath, [require.resolve("esbuild/bin/esbuild"), path.join(root, "native-tts.js"), "--bundle", "--format=iife", "--outfile=" + path.join(out, "native-tts.js")], { stdio: "inherit" });
+const esbuild = require("esbuild");
+esbuild.buildSync({
+  entryPoints: [path.join(root, "native-tts.js")],
+  bundle: true,
+  format: "iife",
+  outfile: path.join(out, "native-tts.js")
+});
