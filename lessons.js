@@ -19,7 +19,7 @@
     synth.cancel();let started=false;
     const launch=()=>{
       if(started)return;started=true;
-      const u=new SpeechSynthesisUtterance(text);u.lang="ar-SA";u.rate=.72;u.pitch=1;u.volume=1;
+      const u=new SpeechSynthesisUtterance(text);u.lang="ar-EG";u.rate=.72;u.pitch=1;u.volume=1;
       const v=synth.getVoices().find(x=>x.lang&&x.lang.toLowerCase().startsWith("ar"));if(v)u.voice=v;
       u.onerror=()=>{$("lessonStatus").textContent="الصوت لم يعمل. تأكد من رفع صوت الوسائط وتفعيل محرك تحويل النص إلى كلام في الهاتف."};
       try{synth.resume();synth.speak(u)}catch(e){$("lessonStatus").textContent="تعذر تشغيل الصوت على هذا الجهاز."}
