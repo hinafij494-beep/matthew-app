@@ -2,3 +2,35 @@
 .voice-button{display:block;width:100%;border:2px solid #ded5ff;background:#f1edff;color:#5035b2;border-radius:16px;padding:12px;margin:8px 0;font:800 14px inherit;cursor:pointer}.voice-button:disabled{opacity:.6}.language-switch{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.pronounce-card{text-align:center;padding:22px 12px;background:#faf8ff;border-radius:22px}.pronounce-card h2{font-size:32px;margin:8px}.pronounce-card p{color:#77718b}.pronounce-card .primary,.pronounce-card .secondary{max-width:420px;margin:9px auto}.voice-note{font-size:11px;color:#817b97;text-align:center;line-height:1.8}.answer{font-family:inherit}.primary,.secondary,.back,.install,.game-card{font-family:inherit}
 
 .lesson-body{text-align:center;padding:12px 2px}.lesson-title{font-size:22px;font-weight:900;color:#5035b2;margin:8px}.big-letter{font-size:88px;line-height:1.35;color:#5b3cc4;background:#f3efff;border-radius:24px;margin:12px auto;max-width:260px}.lesson-example{font-size:20px}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:20px 0}.form-grid>div{background:#f2efff;border-radius:16px;padding:12px 4px}.form-grid b{display:block;font-size:11px;color:#77718b}.form-grid strong{display:block;font-size:38px;color:#5035b2;margin-top:8px}.word-examples{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.word-examples>div{background:#fff4e8;border-radius:15px;padding:12px 3px}.word-examples span{display:block;font-size:30px}.word-examples b{font-size:15px}.mark-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:15px 0}.mark-tabs button,.lesson-answers button{border:2px solid #e8e2f7;background:#f8f6ff;color:#3c315c;border-radius:14px;padding:12px;font:700 14px inherit}.mark-tabs button.active{background:#5b3cc4;color:white;border-color:#5b3cc4}.mark-card{padding:18px;background:#f5f1ff;border-radius:22px}.mark-card>span{font-size:30px}.mark-symbol{font-size:66px;color:#5b3cc4;font-weight:900}.mark-card h2{margin:5px}.lesson-actions{display:grid;gap:8px}.lesson-pager{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lesson-answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}.lesson-answers button{font-size:20px;min-height:58px}.lesson-answers button.correct{background:#e5f8ef;border-color:#30b978}.lesson-answers button.wrong{background:#fff0f0;border-color:#f07878}.lesson-answers button:disabled{opacity:1}
+
+
+/* Learning and math journeys */
+.academy-panel{background:#fff;border-radius:26px;padding:18px;margin-top:20px;box-shadow:0 8px 28px #30205b0d}
+.academy-visual{font-size:52px;text-align:center;margin:12px}
+.math-number{font-size:62px;font-weight:900;color:#5b3cc4;text-align:center;line-height:1.25}
+.academy-panel h2{text-align:center;color:#30264d}
+.academy-hint,.math-tip,.math-stage{text-align:center;line-height:1.9;color:#6e6880}
+.math-count-pictures{text-align:center;font-size:28px;line-height:1.8;background:#faf8ff;border-radius:18px;padding:12px;margin:14px 0;overflow-wrap:anywhere}
+.math-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}
+.math-choices button{border:2px solid #e8e2f7;background:#f8f6ff;border-radius:16px;padding:12px;min-height:66px;font:inherit;color:#393052}
+.math-choices button b,.math-choices button small{display:block}
+.math-choices button b{font-size:24px}
+.math-choices button small{font-size:11px;color:#77718b}
+.math-choices button.correct{border-color:#30b978;background:#e5f8ef}
+.math-choices button.wrong{border-color:#f07878;background:#fff0f0}
+.math-choices button:disabled{opacity:1}
+.math-stage{font-weight:900;color:#5b3cc4}
+.basic-focus{text-align:center;padding:18px;background:#f8f6ff;border-radius:22px;margin:12px 0}
+.basic-emoji{font-size:42px}
+.basic-value{font-size:76px;line-height:1.3;font-weight:900;color:#5b3cc4}
+.basic-focus h2{margin:4px 0}
+.basic-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
+.basic-tile{border:1px solid #e8e2f7;background:#faf9ff;border-radius:14px;padding:8px 3px;min-width:0;font:inherit;color:#393052}
+.basic-tile span,.basic-tile b,.basic-tile small{display:block}
+.basic-tile span{font-size:20px}
+.basic-tile b{font-size:20px;color:#5b3cc4}
+.basic-tile small{font-size:10px;overflow-wrap:anywhere}
+.basic-tile.active{border:2px solid #5b3cc4;background:#f0ebff}
+.basic-nav{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.basic-nav button:disabled{opacity:.45}
+@media(max-width:520px){.basic-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.form-grid strong{font-size:30px}}
