@@ -64,7 +64,11 @@
   }
   function renderMarks(){
     const m=marks[markIndex];
-    $("lessonBody").innerHTML=`<div class="lesson-title">الحركات الأربع</div><div class="mark-tabs">${marks.map((x,i)=>`<button class="${i===markIndex?"active":""}" data-mark="${i}">${x.name}</button>`).join("")}</div><div class="mark-card"><span>${m.emoji}</span><div class="mark-symbol">${sample}</div><h2>${m.name}</h2><p>${soundHint}: ${sample}</p><strong>مثال: ${sample}</strong></div><p>اختار كل حركة واسمعها بصوت واضح</p>`;
+    const l=lessons[letterIndex];
+    const samples=l.letter==="أ"?["أَ","أُ","إِ","أْ"]:marks.map(x=>l.letter+x.mark);
+    const sample=samples[markIndex];
+    const soundHint=markIndex===0?"نفتح الفم قليلاً":markIndex===1?"نضم الشفتين":markIndex===2?"نكسر الصوت":"نسكن الحرف بلا حركة";
+    $("lessonBody").innerHTML=`<div class="lesson-title">الحركات الأربع على حرف ${l.letter}</div><div class="mark-tabs">${marks.map((x,i)=>`<button class="${i===markIndex?"active":""}" data-mark="${i}">${x.name}</button>`).join("")}</div><div class="mark-card"><span>${m.emoji}</span><div class="mark-symbol">${sample}</div><h2>${m.name}</h2><p>${soundHint}: ${sample}</p><strong>مثال: ${sample}</strong></div><p>اختار كل حركة واسمعها بصوت واضح</p>`;
     panel.querySelectorAll("[data-mark]").forEach(b=>b.onclick=()=>{markIndex=Number(b.dataset.mark);renderMarks()});
     $("lessonListen").onclick=()=>say(soundHint+"، "+sample);
   }
