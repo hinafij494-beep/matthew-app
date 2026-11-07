@@ -129,3 +129,17 @@ test("academy includes numbers 1-20, English alphabet and beginner coding", () =
 test("Arabic letter school covers the complete alphabet",()=>{const lesson=read("lessons.js");assert.match(lesson,/letter:"ي"/);assert.match(lesson,/letter:"ث"/);assert.match(lesson,/ar-EG/);});
 test("animal quiz choices include a picture and readable label",()=>{assert.match(read("app.js"),/animal-picture/);assert.match(read("app.js"),/animal-label/);});
 test("Egyptian Arabic voice locale is preferred",()=>{assert.match(read("voice.js"),/ar-EG/);assert.doesNotMatch(read("voice.js"),/ar-SA/);});
+
+test("coding adventure has ordered movement, repeat and debugging levels", () => {
+  const academy = read("academy.js");
+  assert.match(academy, /const coding=/);
+  assert.match(academy, /repeat:"right","right","right"/);
+  assert.match(academy, /صحّح الغلطة/);
+  assert.match(academy, /localStorage\.setItem\("matthewCoding"/);
+  assert.match(academy, /ar-EG/);
+});
+test("academy JavaScript parses without syntax errors", () => {
+  const { spawnSync } = require("node:child_process");
+  const result = spawnSync(process.execPath, ["--check", path.join(root, "academy.js")], { encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});
