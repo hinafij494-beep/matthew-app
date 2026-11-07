@@ -29,7 +29,7 @@
     const synth = window.speechSynthesis;
     if (!synth || !window.SpeechSynthesisUtterance) {
       const status = document.getElementById("speechResult") || document.getElementById("lessonStatus");
-      if (status) status.textContent = "الصوت غير متاح. يلزم تثبيت محرك وأصوات تحويل النص إلى كلام على الجهاز.";
+      if (status) status.textContent = "الصوت مش متاح دلوقتي. محتاجين نثبت صوت العربي على الموبايل.";
       return;
     }
     synth.cancel();
@@ -50,7 +50,7 @@
       if (match) utterance.voice = match;
       utterance.onerror = () => {
         const status = document.getElementById("speechResult") || document.getElementById("lessonStatus");
-        if (status) status.textContent = "الصوت لم يعمل. تأكد من تثبيت صوت اللغة في إعدادات تحويل النص إلى كلام.";
+        if (status) status.textContent = "الصوت مش شغال دلوقتي. اتأكد إن صوت العربي المصري متثبت على الموبايل.";
       };
       try { synth.resume(); synth.speak(utterance); }
       catch (error) {
@@ -71,12 +71,12 @@
     const button = document.createElement("button");
     button.className = "voice-button speak-question";
     button.type = "button";
-    button.textContent = "🔊 اسمع السؤال";
+    button.textContent = "🔊 اسمع السؤال بالمصري";
     button.addEventListener("click", () => {
       const questionEl = document.getElementById("questionText");
       const question = questionEl?.textContent || "";
       const answers = [...document.querySelectorAll(".answer")].map(x => x.textContent).join(". ");
-      const lang = questionEl?.lang === "en" ? "en-US" : "ar-SA";
+      const lang = questionEl?.lang === "en" ? "en-US" : "ar-EG";
       speak(question + ". " + answers, lang);
     });
     area.insertBefore(button, area.querySelector(".question-emoji"));
@@ -105,7 +105,7 @@
       panel.querySelector("#voiceBack").onclick=()=>{panel.classList.add("hidden");document.getElementById("gameList").classList.remove("hidden")};
       panel.querySelector("#arabicMode").onclick=()=>setLang("ar");
       panel.querySelector("#englishMode").onclick=()=>setLang("en");
-      panel.querySelector("#listenWord").onclick=()=>item&&speak(item.word,lang==="ar"?"ar-SA":"en-US");
+      panel.querySelector("#listenWord").onclick=()=>item&&speak(item.word,lang==="ar"?"ar-EG":"en-US");
       panel.querySelector("#nextWord").onclick=next;
       panel.querySelector("#recordWord").onclick=record;
     }
@@ -117,7 +117,7 @@
     const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
     if(!SR){document.getElementById("speechResult").textContent="المتصفح لا يدعم تسجيل النطق. استخدم زر اسمع النطق للتدريب.";return}
     if(recognition)try{recognition.abort()}catch(e){}
-    recognition=new SR();recognition.lang=lang==="ar"?"ar-SA":"en-US";recognition.interimResults=false;recognition.maxAlternatives=3;
+    recognition=new SR();recognition.lang=lang==="ar"?"ar-EG":"en-US";recognition.interimResults=false;recognition.maxAlternatives=3;
     const btn=document.getElementById("recordWord");btn.disabled=true;btn.textContent="🎙️ سامعك...";
     recognition.onresult=e=>{const heard=e.results[0][0].transcript.trim();const clean=x=>x.toLocaleLowerCase().replace(/[ًٌٍَُِّْـ.,!?؟]/g,"").trim();const ok=e.results[0].some(v=>clean(v.transcript)===clean(item.word));attempts++;if(ok)score++;document.getElementById("speechResult").textContent=(ok?"👏 ممتاز! نطق جميل. ":"محاولة حلوة! ")+"سمعت: "+heard+" — الكلمة المطلوبة: "+item.word;document.getElementById("voiceScore").textContent=score+" / "+attempts};
     recognition.onerror=e=>{document.getElementById("speechResult").textContent=e.error==="not-allowed"?"اسمح للمتصفح باستخدام الميكروفون من إعدادات الموقع.":"مش قادر أسمع بوضوح. جرّب مرة تانية.";};
