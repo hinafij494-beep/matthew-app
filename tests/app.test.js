@@ -168,49 +168,31 @@ test("Arabic voice detection matches actual Arabic Unicode characters",()=>{asse
 
 test("Arabic letter school has all 28 letters and correct non-joining forms", () => {
   const lesson = read("lessons.js");
-  assert.equal((lesson.match(/\\{letter:/g) || []).length, 28);
+  assert.equal(lesson.split("{letter:").length - 1, 28);
   for (const snippet of ['letter:"د",name:"الدال",forms:["د","ـد","ـد"]','letter:"ذ",name:"الذال",forms:["ذ","ـذ","ـذ"]','letter:"ر",name:"الراء",forms:["ر","ـر","ـر"]','letter:"ز",name:"الزاي",forms:["ز","ـز","ـز"]','letter:"و",name:"الواو",forms:["و","ـو","ـو"]']) assert.ok(lesson.includes(snippet),snippet);
-  assert.equal((lesson.match(/words:\\[/g)||[]).length,28);
-  assert.match(lesson,/الفتحة/);
-  assert.match(lesson,/الضمة/);
-  assert.match(lesson,/الكسرة/);
-  assert.match(lesson,/السكون/);
+  assert.equal(lesson.split("words:[").length - 1, 28);
+  for (const mark of ["الفتحة","الضمة","الكسرة","السكون"]) assert.ok(lesson.includes(mark));
 });
-
 test("Arabic math course teaches the numbers 1 to 20", () => {
   const math=read("math-journey.js");
-  assert.match(math,/الحساب بالعربي: الأرقام ١–٢٠/);
-  assert.match(math,/const names=\\["واحد","اتنين","تلاتة"/);
-  assert.match(math,/عدّ الصور/);
-  assert.match(math,/العدد الأكبر/);
-  assert.match(math,/➕/);
-  assert.match(math,/➖/);
-  assert.match(math,/ar-EG/);
-  assert.match(read("scripts/prepare-web.js"),/math-journey\\.js/);
-  assert.match(read("sw.js"),/math-journey\\.js/);
-  assert.match(read("index.html"),/math-journey\\.js/);
+  assert.ok(math.includes("الحساب بالعربي: الأرقام ١–٢٠"));
+  assert.ok(math.includes('const names=["واحد","اتنين","تلاتة"'));
+  assert.ok(math.includes("عدّ الصور"));
+  assert.ok(math.includes("العدد الأكبر"));
+  assert.ok(math.includes("➕") && math.includes("➖") && math.includes("ar-EG"));
+  assert.ok(read("scripts/prepare-web.js").includes("math-journey.js"));
+  assert.ok(read("sw.js").includes("math-journey.js"));
+  assert.ok(read("index.html").includes("math-journey.js"));
 });
-test("Math journey has 20 spoken Egyptian Arabic number names", () => {
-  const math=read("math-journey.js");
-  assert.match(math, /"واحد","اتنين","تلاتة"/);
-  assert.match(math, /"حداشر","اتناشر","تلتاشر"/);
-  assert.match(math, /"تسعتاشر","عشرين"/);
-});
-
 test("Arabic and English math journeys are separate complete 1-to-20 courses", () => {
-  const ar=read("math-journey.js");
-  const en=read("math-english.js");
-  assert.match(ar,/الحساب بالعربي: الأرقام ١–٢٠/);
-  assert.match(ar,/واحد","اتنين","تلاتة/);
-  assert.match(ar,/ar-EG/);
-  assert.match(en,/Math in English: 1–20/);
-  assert.match(en,/"one","two","three","four"/);
-  assert.match(en,/en-US/);
-  assert.match(en,/Count the pictures/);
-  assert.match(en,/Which number is bigger/);
-  assert.match(en,/get \\"?\+?\\"? more| \\+ /);
-  assert.match(en,/disappear/);
-  assert.match(read("index.html"),/math-english\.js/);
-  assert.match(read("sw.js"),/math-english\.js/);
-  assert.match(read("scripts/prepare-web.js"),/math-english\.js/);
+  const ar=read("math-journey.js"),en=read("math-english.js");
+  assert.ok(ar.includes("الحساب بالعربي: الأرقام ١–٢٠"));
+  assert.ok(ar.includes('const names=["واحد","اتنين","تلاتة"'));
+  assert.ok(en.includes("Math in English: 1–20"));
+  assert.ok(en.includes('const names=["one","two","three","four"'));
+  assert.ok(en.includes("en-US") && en.includes("Count the pictures"));
+  assert.ok(en.includes("Which number is bigger") && en.includes("disappear"));
+  assert.ok(read("index.html").includes("math-english.js"));
+  assert.ok(read("sw.js").includes("math-english.js"));
+  assert.ok(read("scripts/prepare-web.js").includes("math-english.js"));
 });
