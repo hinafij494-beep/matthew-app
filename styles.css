@@ -34,3 +34,5 @@
 .basic-nav{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .basic-nav button:disabled{opacity:.45}
 @media(max-width:520px){.basic-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.form-grid strong{font-size:30px}}
+
+.answer{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}.answer-picture{font-size:30px;line-height:1.2;display:inline-flex;align-items:center;justify-content:center;min-width:34px}.answer-label{font-size:16px;font-weight:900}
