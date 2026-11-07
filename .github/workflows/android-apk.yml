@@ -40,8 +40,8 @@ jobs:
           mkdir -p www
           cp index.html styles.css app.js voice.js lessons.js learning.js math-journey.js math-english.js sw.js icon.svg manifest.webmanifest www/
       - name: Install Capacitor
-        run: npm install --no-save @capacitor/core @capacitor/android @capacitor/cli sharp
-      - name: Generate Android project
+        run: npm install --no-save @capacitor/core @capacitor/android @capacitor/cli @capacitor-community/text-to-speech esbuild sharp
+      - name: Bundle native text-to-speech support\n        run: npx esbuild voice.js --bundle --platform=browser --format=iife --outfile=www/voice.bundle.js\n      - name: Generate Android project
         run: npx cap add android
       - name: Sync web app
         run: npx cap sync android
