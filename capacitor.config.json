@@ -1,6 +1,7 @@
 {
-  "appId": "com.matthew.kingapp",
+  "appId": "com.matthew.king",
   "appName": "الملك ماثيو",
   "webDir": "www",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "android": { "allowMixedContent": false }
 }
