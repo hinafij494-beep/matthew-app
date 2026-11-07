@@ -133,7 +133,7 @@ test("Egyptian Arabic voice locale is preferred",()=>{assert.match(read("voice.j
 test("coding adventure has ordered movement, repeat and debugging levels", () => {
   const academy = read("academy.js");
   assert.match(academy, /const coding=/);
-  assert.match(academy, /repeat:"right","right","right"/);
+  assert.match(academy, /c==="repeat"\?\["right","right","right"\]/);
   assert.match(academy, /صحّح الغلطة/);
   assert.match(academy, /localStorage\.setItem\("matthewCoding"/);
   assert.match(academy, /ar-EG/);
