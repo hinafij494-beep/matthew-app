@@ -5,3 +5,18 @@
 
 .section-head{display:flex;align-items:end;justify-content:space-between;gap:10px}.parent-entry{border:1px solid #e5def7;background:#fff;border-radius:15px;padding:10px 12px;color:#5035b2;font:700 12px inherit;white-space:nowrap}.parent-summary{padding:8px 2px}.parent-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0 22px}.parent-kpis>div{background:#f4f0ff;border-radius:16px;padding:13px 6px;text-align:center}.parent-kpis b{display:block;font-size:23px;color:#5035b2}.parent-kpis small{display:block;font-size:10px;color:#77718b}.parent-summary h3{font-size:17px;margin:20px 0 10px}.report-row{padding:12px 0;border-bottom:1px solid #eeeaf7}.report-row>div:first-child{display:flex;justify-content:space-between;gap:10px}.report-row b{font-size:14px}.report-row small{font-size:11px;color:#77718b}.report-row strong{font-size:14px;color:#5035b2}.report-bar{height:7px;border-radius:10px;background:#eeeaf7;margin:8px 0;overflow:hidden}.report-bar span{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,#6c4bd1,#b6a2f6)}.parent-note{font-size:11px;line-height:1.8;color:#817b97;background:#faf8ff;padding:12px;border-radius:14px}.session-row{font-size:12px;color:#57506e;padding:8px 0;border-bottom:1px solid #f0edf7}.game-card.blue{background:#e5f2ff}
 .king-art{overflow:hidden;border:4px solid #f6d878;box-shadow:0 8px 24px #26165b35}.king-art img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%}.king-art span,.king-art i{display:none}
+
+/* Playful learning refresh */
+body{background:radial-gradient(circle at 8% 12%,#fff0d9 0,transparent 24%),radial-gradient(circle at 94% 5%,#e2f7ff 0,transparent 27%),#fffaf3;color:#27334a}
+.hero{background:linear-gradient(125deg,#246b82,#328e8c 55%,#f2a65a);box-shadow:0 14px 32px #246b822b}
+.install{background:#247b83}.primary{background:linear-gradient(100deg,#267f86,#3c9d91)}
+.progress div{background:linear-gradient(90deg,#f2aa55,#42a89b)}
+.purple{background:#eeeaff}.orange{background:#fff0dc}.green{background:#e5f7e9}.blue{background:#e5f4ff}.pink{background:#ffebf0}
+.game-card{border:1px solid #ffffff;box-shadow:0 8px 22px #29435a12}.game-card strong{color:#283b50}
+.animal-answer{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:112px;background:#fff8e9;border:2px solid #f4e3c7}
+.animal-picture{font-size:43px;line-height:1.25}.animal-label{font-size:17px;font-weight:900}
+.king-art{border-color:#ffe3a4}
+.academy-panel{background:#fff;border-radius:25px;padding:18px;margin-top:18px;box-shadow:0 9px 28px #253b5012;text-align:center}
+.academy-visual{font-size:76px;background:linear-gradient(135deg,#fff4d9,#e8f8f4);border-radius:22px;padding:20px;margin:12px 0}
+.academy-word{font-size:30px;font-weight:900;color:#267b80}.academy-hint{color:#68768a;line-height:1.8}
+.academy-nav{display:grid;grid-template-columns:1fr 1fr;gap:9px}.code-track{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:15px 0}.code-step{background:#e8f5ff;border:2px solid #cde8f4;border-radius:14px;padding:12px;font-size:24px;min-width:54px}.code-step.selected{background:#dff5e5;border-color:#54b78a}.robot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;max-width:300px;margin:15px auto}.robot-cell{aspect-ratio:1;background:#f0f5f8;border-radius:12px;display:grid;place-items:center;font-size:25px}.robot-cell.goal{background:#fff1d7}.academy-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
