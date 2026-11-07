@@ -66,6 +66,9 @@ test("app includes offline cache and install manifest", () => {
   assert.equal(manifest.display, "standalone");
   assert.equal(manifest.lang, "ar");
   assert.ok(manifest.icons.length > 0);
+  assert.ok(fs.existsSync(path.join(root, "voice.js")));
+  assert.ok(html.includes("voice.js"));
+  assert.ok(sw.includes("./voice.js"));
 });
 
 test("progress is saved locally and randomization is used", () => {
@@ -82,4 +85,12 @@ test("all app assets referenced by the page exist", () => {
     assert.ok(fs.existsSync(path.join(root, asset)), `missing ${asset}`);
     assert.ok(html.includes(asset), `page does not reference ${asset}`);
   }
+});
+test("voice module supports Arabic and English speech practice", () => {
+  const voice = read("voice.js");
+  assert.match(voice, /ar-SA/);
+  assert.match(voice, /en-US/);
+  assert.match(voice, /SpeechSynthesisUtterance/);
+  assert.match(voice, /SpeechRecognition/);
+  assert.match(voice, /تحدي النطق/);
 });
