@@ -94,3 +94,28 @@ test("voice module supports Arabic and English speech practice", () => {
   assert.match(voice, /SpeechRecognition/);
   assert.match(voice, /تحدي النطق/);
 });
+
+test("expanded learning modules are loaded and included in offline cache", () => {
+  const html = read("index.html");
+  const sw = read("sw.js");
+  for (const file of ["learning.js", "math-journey.js", "math-english.js"]) {
+    assert.ok(html.includes(file), "page does not load " + file);
+    assert.ok(sw.includes("./" + file), "offline cache missing " + file);
+    assert.ok(fs.existsSync(path.join(root, file)), "missing " + file);
+  }
+});
+
+test("Arabic letter school contains all 28 letters", () => {
+  const lessons = read("lessons.js");
+  const count = (lessons.match(/\{letter:/g) || []).length;
+  assert.ok(count >= 28, "expected 28 Arabic letters, found " + count);
+});
+
+test("English alphabet and Arabic/English numbers are available", () => {
+  const learning = read("learning.js");
+  assert.match(learning, /englishWords/);
+  assert.match(learning, /arabicDigits/);
+  assert.match(learning, /englishNames/);
+  assert.match(learning, /English Alphabet/);
+  assert.match(learning, /الأرقام العربية/);
+});
