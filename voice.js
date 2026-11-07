@@ -1,36 +1,67 @@
 (() => {
-  const speak = (text, lang) => {
-    const synth=window.speechSynthesis;
+  const speak = async (text, lang) => {
+    const native = window.MatthewNativeTTS;
+    if (window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform() && native) {
+      try {
+        const result = await native.getSupportedVoices();
+        const voices = result.voices || [];
+        const prefix = lang.slice(0, 2).toLowerCase();
+        const matches = voices.map((voice, index) => ({ voice, index })).filter(x => x.voice.lang && x.voice.lang.toLowerCase().startsWith(prefix));
+        const femalePattern = /female|woman|fem|zira|samantha|susan|karen|moira|victoria|tessa/i;
+        const femaleLocal = matches.find(x => x.voice.localService && femalePattern.test((x.voice.voiceURI || "") + " " + (x.voice.name || "")));
+        const female = matches.find(x => femalePattern.test((x.voice.voiceURI || "") + " " + (x.voice.name || "")));
+        const local = matches.find(x => x.voice.localService);
+        const selected = femaleLocal || female || local || matches[0];
+        await native.speak({
+          text,
+          lang,
+          rate: lang.startsWith("ar") ? 0.72 : 0.82,
+          pitch: 1.05,
+          volume: 1,
+          ...(selected ? { voice: selected.index } : {})
+        });
+        return;
+      } catch (error) {
+        const status = document.getElementById("speechResult") || document.getElementById("lessonStatus");
+        if (status) status.textContent = "تعذر تشغيل الصوت الداخلي. تأكد من تثبيت صوت اللغة على الهاتف.";
+      }
+    }
+    const synth = window.speechSynthesis;
     if (!synth || !window.SpeechSynthesisUtterance) {
-      const status=document.getElementById("speechResult");
-      if(status)status.textContent="الصوت غير متاح على هذا الجهاز. جرّب فتح التطبيق من Chrome وتأكد من تفعيل تحويل النص إلى كلام.";
+      const status = document.getElementById("speechResult") || document.getElementById("lessonStatus");
+      if (status) status.textContent = "الصوت غير متاح. يلزم تثبيت محرك وأصوات تحويل النص إلى كلام على الجهاز.";
       return;
     }
     synth.cancel();
-    let started=false;
-    const launch=()=>{
-      if(started)return;
-      started=true;
-      const utterance=new SpeechSynthesisUtterance(text);
-      utterance.lang=lang;utterance.rate=lang.startsWith("ar")?0.72:0.8;utterance.pitch=1;utterance.volume=1;
-      const voices=synth.getVoices();
-      const prefix=lang.slice(0,2).toLowerCase();
-      const female=voices.find(v=>v.gender&&String(v.gender).toLowerCase()==="female")||voices.find(v=>/female|woman|zira|samantha|susan|karen|moira|victoria|tessa|google.*female/i.test(v.name||""));
-      const match=female&&female.lang&&female.lang.toLowerCase().startsWith(prefix)?female:voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith(prefix));
-      if(match)utterance.voice=match;
-      utterance.onerror=()=>{
-        const status=document.getElementById("speechResult");
-        if(status)status.textContent="الصوت لم يعمل. تأكد من رفع صوت الوسائط وتفعيل محرك تحويل النص إلى كلام في الهاتف.";
+    let started = false;
+    const launch = () => {
+      if (started) return;
+      started = true;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang;
+      utterance.rate = lang.startsWith("ar") ? 0.72 : 0.82;
+      utterance.pitch = 1.05;
+      utterance.volume = 1;
+      const voices = synth.getVoices();
+      const prefix = lang.slice(0, 2).toLowerCase();
+      const localeVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
+      const femalePattern = /female|woman|zira|samantha|susan|karen|moira|victoria|tessa/i;
+      const match = localeVoices.find(v => femalePattern.test(v.name || "")) || localeVoices[0];
+      if (match) utterance.voice = match;
+      utterance.onerror = () => {
+        const status = document.getElementById("speechResult") || document.getElementById("lessonStatus");
+        if (status) status.textContent = "الصوت لم يعمل. تأكد من تثبيت صوت اللغة في إعدادات تحويل النص إلى كلام.";
       };
-      try{synth.resume();synth.speak(utterance)}catch(error){
-        const status=document.getElementById("speechResult");
-        if(status)status.textContent="تعذر تشغيل الصوت على هذا الجهاز.";
+      try { synth.resume(); synth.speak(utterance); }
+      catch (error) {
+        const status = document.getElementById("speechResult") || document.getElementById("lessonStatus");
+        if (status) status.textContent = "تعذر تشغيل الصوت على هذا الجهاز.";
       }
     };
-    if(synth.getVoices().length)launch();
-    else{
-      synth.addEventListener("voiceschanged",launch,{once:true});
-      setTimeout(launch,900);
+    if (synth.getVoices().length) launch();
+    else {
+      synth.addEventListener("voiceschanged", launch, { once: true });
+      setTimeout(launch, 900);
     }
   };
   window.MatthewVoice = { speak };
