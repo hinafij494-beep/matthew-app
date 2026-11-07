@@ -12,7 +12,8 @@
  panel.innerHTML='<div class="quiz-top"><button class="back" id="acBack">→ رجوع</button><b>🏰 أكاديمية ماثيو</b><span id="acCount"></span></div><div class="progress"><div id="acProgress"></div></div><div id="acMenu" class="academy-menu"><button data-mode="ar">🔠 الحروف العربية (٢٨)</button><button data-mode="en">🔤 English A–Z</button><button data-mode="num">🔢 الأرقام ١–٢٠</button><button data-mode="code">🤖 مبرمج صغير</button></div><div id="acLesson" class="academy-lesson hidden"></div><div id="acActions" class="academy-actions hidden"><button class="voice-button" id="acListen">🔊 اسمع</button><button class="primary" id="acNext">التالي ←</button></div><p id="acStatus" class="feedback" aria-live="polite"></p>';
  host.insertBefore(panel,document.querySelector("footer"));
  let mode="",idx=0,items=[],codingStep=0;
- const arabicDigits=n=>String(n).replace(/[0-9]/g,d=>"٠١٢٣٤٥٦٧٨٩"[Number(d)]);\n const $=id=>document.getElementById(id);
+ const arabicDigits=n=>String(n).replace(/[0-9]/g,d=>"٠١٢٣٤٥٦٧٨٩"[Number(d)]);
+ const $=id=>document.getElementById(id);
  const open=()=>{document.getElementById("gameList").classList.add("hidden");document.getElementById("quiz").classList.add("hidden");document.getElementById("result").classList.add("hidden");panel.classList.remove("hidden");menu()};
  const menu=()=>{$("acMenu").classList.remove("hidden");$("acLesson").classList.add("hidden");$("acActions").classList.add("hidden");$("acStatus").textContent="اختار مغامرتك يا بطل!";$("acCount").textContent="";};
  function begin(m){mode=m;idx=0;items=m==="ar"?arabic:m==="en"?english:m==="num"?nums:[];$("acMenu").classList.add("hidden");$("acLesson").classList.remove("hidden");$("acActions").classList.remove("hidden");$("acStatus").textContent="";if(m==="code"){codingStep=0;renderCode()}else render()}
