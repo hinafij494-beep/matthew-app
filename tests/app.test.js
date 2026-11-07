@@ -164,3 +164,17 @@ test("Arabic number and animal answer options show a picture or numeral with a w
 test("coding levels provide independent hints and a revealable worked example",()=>{const academy=read("academy.js");assert.match(academy,/id="codingHelp"/);assert.match(academy,/id="codingExample"/);assert.match(academy,/solution:\["repeat"\]/);});
 test("coding board and command controls use a consistent left-to-right movement axis",()=>{const css=read("styles.css");assert.match(css,/coding-board\{direction:ltr!important\}/);assert.match(css,/academy-controls\{direction:ltr\}/);});
 test("Arabic voice detection matches actual Arabic Unicode characters",()=>{assert.match(read("voice.js"),/\\u0600-\\u06FF/);});
+
+
+test("Arabic letter school has all 28 letters and correct non-joining forms", () => {
+  const lesson = read("lessons.js");
+  assert.equal((lesson.match(/\\{letter:/g) || []).length, 28);
+  for (const letter of ["د", "ذ", "ر", "ز", "و"]) {
+    assert.match(lesson, new RegExp('letter:"' + letter + '".{0,50}forms:\\["' + letter + '","ـ' + letter + '","ـ' + letter + '"\\]'));
+  }
+  assert.match(lesson, /words:\\["[^"]+","[^"]+","[^"]+"\\]/);
+  assert.match(lesson, /الفتحة/);
+  assert.match(lesson, /الضمة/);
+  assert.match(lesson, /الكسرة/);
+  assert.match(lesson, /السكون/);
+});
