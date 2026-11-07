@@ -30,3 +30,6 @@ body{background:radial-gradient(circle at 8% 12%,#fff0d9 0,transparent 24%),radi
 .answer.visual-answer.wrong{background:#fff0f0;border-color:#ef7777}
 .answer.text-answer{min-height:64px}
 @media(max-width:360px){.answer.visual-answer{min-height:112px}.answer.visual-answer .choice-picture{font-size:36px}.answer.visual-answer .choice-label{font-size:14px}}
+
+/* Coding board coordinates run left-to-right so arrows match robot movement. */
+.coding-board{direction:ltr;grid-auto-flow:row}.coding-board .robot-cell{direction:ltr}.code-track{direction:ltr}.direction-key{font-weight:900;color:#267b80;background:#eef9f5;padding:10px;border-radius:14px}
