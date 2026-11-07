@@ -6,7 +6,7 @@
  card("coding","pink","🤖","مغامرة البرمجة","فكّر ورتّب أوامرك وحرّك الروبوت");
  const panel=document.createElement("section");panel.id="academyPanel";panel.className="academy-panel hidden";document.querySelector("main").insertBefore(panel,document.querySelector("footer"));
  let mode="",index=0,robot={x:0,y:1},commands=[];
- const numbers=Array.from({length:20},(_,i)=>({symbol:"٠١٢٣٤٥٦٧٨٩"[Math.floor((i+1)/10)]+"٠١٢٣٤٥٦٧٨٩"[(i+1)%10],value:i+1,name:["واحد","اتنين","تلاتة","أربعة","خمسة","ستة","سبعة","تمانية","تسعة","عشرة","حداشر","اتناشر","تلتاشر","أربعتاشر","خمستاشر","ستاشر","سبعتاشر","تمنتاشر","تسعتاشر","عشرين"][i],pic:["🍎","⭐","🧸","🚗","⚽","🐠","🌼","🦋","🍓","🎈","🐥","🍉","🚀","🐢","🦁","🐘","🍌","🦄","🌈","🎁"][i]}));
+ const numbers=Array.from({length:20},(_,i)=>({symbol:(i+1).toLocaleString("ar-EG"),value:i+1,name:["واحد","اتنين","تلاتة","أربعة","خمسة","ستة","سبعة","تمانية","تسعة","عشرة","حداشر","اتناشر","تلتاشر","أربعتاشر","خمستاشر","ستاشر","سبعتاشر","تمنتاشر","تسعتاشر","عشرين"][i],pic:["🍎","⭐","🧸","🚗","⚽","🐠","🌼","🦋","🍓","🎈","🐥","🍉","🚀","🐢","🦁","🐘","🍌","🦄","🌈","🎁"][i]}));
  const names=["Apple","Ball","Cat","Dog","Egg","Fish","Giraffe","Hat","Ice cream","Juice","Kite","Lion","Moon","Nest","Orange","Pencil","Queen","Robot","Sun","Tiger","Umbrella","Van","Whale","Xylophone","Yo-yo","Zebra"];
  const pictures=["🍎","⚽","🐱","🐶","🥚","🐟","🦒","🎩","🍦","🧃","🪁","🦁","🌙","🪺","🍊","✏️","👑","🤖","☀️","🐯","☂️","🚐","🐳","🎼","🪀","🦓"];
  const letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((symbol,i)=>({symbol,name:names[i],pic:pictures[i]}));
