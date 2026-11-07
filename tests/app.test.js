@@ -159,3 +159,8 @@ test("Arabic number and animal answer options show a picture or numeral with a w
   assert.match(app, /visual-answer/);
   assert.match(app, /dataset\.answer=item\.text/);
 });
+
+
+test("coding levels provide independent hints and a revealable worked example",()=>{const academy=read("academy.js");assert.match(academy,/id="codingHelp"/);assert.match(academy,/id="codingExample"/);assert.match(academy,/solution:\["repeat"\]/);});
+test("coding board and command controls use a consistent left-to-right movement axis",()=>{const css=read("styles.css");assert.match(css,/coding-board\{direction:ltr!important\}/);assert.match(css,/academy-controls\{direction:ltr\}/);});
+test("Arabic voice detection matches actual Arabic Unicode characters",()=>{assert.match(read("voice.js"),/\\u0600-\\u06FF/);});
