@@ -140,6 +140,13 @@ test("coding adventure has ordered movement, repeat and debugging levels", () =>
 });
 test("academy JavaScript parses without syntax errors", () => {
   const { spawnSync } = require("node:child_process");
-  const result = spawnSync(process.execPath, ["--check", path.join(root, "academy.js")], { encoding: "utf8" });
-  assert.equal(result.status, 0, result.stderr || result.stdout);
+  for (const file of ["academy.js", "app.js", "lessons.js"]) {
+    const result = spawnSync(process.execPath, ["--check", path.join(root, file)], { encoding: "utf8" });
+    assert.equal(result.status, 0, file + ": " + (result.stderr || result.stdout));
+  }
+});
+
+test("parent dashboard includes coding progress", () => {
+  assert.match(read("app.js"), /مغامرة البرمجة/);
+  assert.match(read("app.js"), /coding\.completed/);
 });
