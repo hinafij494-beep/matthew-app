@@ -12,16 +12,16 @@ numbers:[
 {skill:"subtraction",q:"كان معك ٤ مكعبات وأعطيت صديقك واحداً. كم بقي؟",e:"🧱",a:["٢","٣","٤","٥"],c:1,explain:"أربعة ناقص واحد يساوي ثلاثة."}
 ],
 math:[
-{skill:"math-count",q:"How many fingers are on one hand?",e:"🖐️",a:["5","3","7","10"],c:0,explain:"One hand has five fingers. Count them: 1, 2, 3, 4, 5."},
-{skill:"math-count",q:"How many eyes do you have?",e:"👀",a:["1","2","3","4"],c:1,explain:"You have two eyes."},
-{skill:"math-add",q:"What is 2 + 1?",e:"🍎",a:["2","3","4","1"],c:1,explain:"Two plus one makes three. Count: 1, 2, 3."},
-{skill:"math-add",q:"What is 2 + 2?",e:"➕",a:["3","4","5","6"],c:1,explain:"Two plus two equals four."},
-{skill:"math-number",q:"What number comes after 4?",e:"🔢",a:["3","5","6","2"],c:1,explain:"After four comes five."},
-{skill:"math-number",q:"What number comes before 7?",e:"🔢",a:["6","8","5","9"],c:0,explain:"Before seven comes six."},
-{skill:"math-shape",q:"How many sides does a triangle have?",e:"🔺",a:["3","4","5","6"],c:0,explain:"A triangle has three sides."},
-{skill:"math-compare",q:"Which number is bigger?",e:"🦁",a:["2","8","5","1"],c:1,explain:"Eight is bigger than five, two and one."},
-{skill:"math-subtract",q:"You have 4 blocks. Give 1 away. How many are left?",e:"🧱",a:["2","3","4","5"],c:1,explain:"Four take away one equals three."},
-{skill:"math-count",q:"How many wheels does a bicycle have?",e:"🚲",a:["2","3","4","6"],c:0,explain:"A bicycle has two wheels."}
+{language:"en",skill:"math-count",q:"How many fingers are on one hand?",e:"🖐️",a:["5","3","7","10"],c:0,explain:"One hand has five fingers. Count them: 1, 2, 3, 4, 5."},
+{language:"en",skill:"math-count",q:"How many eyes do you have?",e:"👀",a:["1","2","3","4"],c:1,explain:"You have two eyes."},
+{language:"en",skill:"math-add",q:"What is 2 + 1?",e:"🍎",a:["2","3","4","1"],c:1,explain:"Two plus one makes three. Count: 1, 2, 3."},
+{language:"en",skill:"math-add",q:"What is 2 + 2?",e:"➕",a:["3","4","5","6"],c:1,explain:"Two plus two equals four."},
+{language:"en",skill:"math-number",q:"What number comes after 4?",e:"🔢",a:["3","5","6","2"],c:1,explain:"After four comes five."},
+{language:"en",skill:"math-number",q:"What number comes before 7?",e:"🔢",a:["6","8","5","9"],c:0,explain:"Before seven comes six."},
+{language:"en",skill:"math-shape",q:"How many sides does a triangle have?",e:"🔺",a:["3","4","5","6"],c:0,explain:"A triangle has three sides."},
+{language:"en",skill:"math-compare",q:"Which number is bigger?",e:"🦁",a:["2","8","5","1"],c:1,explain:"Eight is bigger than five, two and one."},
+{language:"en",skill:"math-subtract",q:"You have 4 blocks. Give 1 away. How many are left?",e:"🧱",a:["2","3","4","5"],c:1,explain:"Four take away one equals three."},
+{language:"en",skill:"math-count",q:"How many wheels does a bicycle have?",e:"🚲",a:["2","3","4","6"],c:0,explain:"A bicycle has two wheels."}
 ],
 letters:[
 {skill:"initial-letter",q:"كلمة (أسد) تبدأ بحرف؟",e:"🦁",a:["أ","ب","ت","م"],c:0,explain:"أسد تبدأ بحرف الألف: أَسَد."},
@@ -61,7 +61,7 @@ const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floo
 const isEnglish=()=>category==="math";
 const digits=value=>isEnglish()?String(value):String(value).replace(/[0-9]/g,d=>"٠١٢٣٤٥٦٧٨٩"[Number(d)]);
 function start(cat){category=cat;const source=cat==="mixed"?[...bank.numbers,...bank.math,...bank.letters,...bank.colors,...bank.world]:bank[cat];questions=shuffle(source).slice(0,8);index=0;score=0;startedAt=Date.now();$("gameList").classList.add("hidden");$("parentPanel").classList.add("hidden");$("result").classList.add("hidden");$("quiz").classList.remove("hidden");$("categoryName").textContent=names[cat];document.documentElement.lang=isEnglish()?"en":"ar";document.documentElement.dir="rtl";showQuestion();window.scrollTo({top:0,behavior:"smooth"})}
-function showQuestion(){answered=false;const q=questions[index];$("questionEmoji").textContent=q.e;$("questionText").textContent=q.q;$("questionText").lang=isEnglish()?"en":"ar";$("questionCount").textContent=digits((index+1)+" / "+questions.length);$("progressBar").style.width=(index/questions.length*100)+"%";$("feedback").textContent="";$("nextBtn").classList.add("hidden");const choices=shuffle(q.a.map((text,i)=>({text,correct:i===q.c})));$("answers").replaceChildren();choices.forEach(item=>{const b=document.createElement("button");b.className="answer";b.type="button";b.textContent=item.text;b.lang=isEnglish()?"en":"ar";b.addEventListener("click",()=>choose(b,item.correct));$("answers").append(b)})}
+function showQuestion(){answered=false;const q=questions[index],englishQuestion=q.language==="en"||isEnglish();$("questionEmoji").textContent=q.e;$("questionText").textContent=q.q;$("questionText").lang=englishQuestion?"en":"ar";$("questionText").dir=englishQuestion?"ltr":"rtl";$("answers").dir=englishQuestion?"ltr":"rtl";$("questionCount").textContent=digits((index+1)+" / "+questions.length);$("progressBar").style.width=(index/questions.length*100)+"%";$("feedback").textContent="";$("nextBtn").classList.add("hidden");const choices=shuffle(q.a.map((text,i)=>({text,correct:i===q.c})));$("answers").replaceChildren();choices.forEach(item=>{const b=document.createElement("button");b.className="answer";b.type="button";b.textContent=item.text;b.lang=englishQuestion?"en":"ar";b.addEventListener("click",()=>choose(b,item.correct));$("answers").append(b)})}
 function readStats(){try{return JSON.parse(localStorage.getItem("matthewLearningStats")||"{}")}catch(e){return {}}}
 function recordAttempt(skill,correct){const data=readStats(),s=data[skill]||{attempts:0,correct:0,streak:0,history:[]};s.attempts++;if(correct){s.correct++;s.streak++}else{s.streak=0}s.history.push({correct,at:Date.now()});s.history=s.history.slice(-30);data[skill]=s;localStorage.setItem("matthewLearningStats",JSON.stringify(data))}
 function choose(button,correct){if(answered)return;answered=true;document.querySelectorAll(".answer").forEach(b=>b.disabled=true);const q=questions[index];recordAttempt(q.skill,correct);if(correct){score++;button.classList.add("correct");$("feedback").textContent=isEnglish()?"Great job! You got it right! ⭐":"برافو عليك! إجابة صحيحة ⭐"}else{button.classList.add("wrong");$("feedback").textContent=(isEnglish()?"Good try! Let's learn together. ":"محاولة جميلة! نتعلمها معاً. ")+q.explain;document.querySelectorAll(".answer").forEach(b=>{if(b.textContent===q.a[q.c])b.classList.add("correct")})}$("nextBtn").textContent=index===questions.length-1?(isEnglish()?"See your result 🏆":"شوف نتيجتك 🏆"):(isEnglish()?"Next question →":"السؤال التالي ←");$("nextBtn").classList.remove("hidden")}
