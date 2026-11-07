@@ -3,7 +3,7 @@
  const digits=n=>String(n).replace(/[0-9]/g,d=>"٠١٢٣٤٥٦٧٨٩"[+d]);
  const names=["واحد","اتنين","تلاتة","أربعة","خمسة","ستة","سبعة","تمانية","تسعة","عشرة","حداشر","اتناشر","تلتاشر","أربعتاشر","خمستاشر","ستاشر","سبعتاشر","تمنتاشر","تسعتاشر","عشرين"];
  const icons=["🍎","⭐","🧸","🚗","⚽","🐠","🌼","🦋","🍓","🎈","🐥","🍉","🚀","🐢","🦁","🐘","🍌","🦄","🌈","🎁"];
- const panel=document.createElement("section");panel.id="mathJourney";panel.className="academy-panel hidden";document.querySelector("main").insertBefore(panel,document.querySelector("footer"));
+ const panel=document.createElement("section");panel.id="mathJourney";panel.lang="ar";panel.dir="rtl";panel.className="academy-panel hidden";document.querySelector("main").insertBefore(panel,document.querySelector("footer"));
  const card=document.createElement("button");card.type="button";card.className="game-card orange";card.innerHTML='<span class="game-icon">➕</span><strong>الحساب بالعربي: الأرقام ١–٢٠</strong><small>شرح بالصورة والعدّ، وبعده تمارين متنوعة</small><span class="play">ابدأ الحساب ←</span>';document.getElementById("gameList").append(card);
  let level=1,round=[],qIndex=0,score=0,stage="learn",best=0;
  const rand=a=>a[Math.floor(Math.random()*a.length)];
