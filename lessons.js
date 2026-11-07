@@ -1,9 +1,33 @@
 (() => {
   const lessons = [
-    {letter:"أ",name:"الألف",forms:["أ","ـأ","ـأ"],words:["أَسَد","سَأَلَ","مَلْجَأ"],emoji:["🦁","❓","🏡"],sound:"أَ"},
-    {letter:"ب",name:"الباء",forms:["بـ","ـبـ","ـب"],words:["بَطَّة","جَبَل","كِتَاب"],emoji:["🦆","⛰️","📘"],sound:"بَ"},
-    {letter:"ت",name:"التاء",forms:["تـ","ـتـ","ـت"],words:["تَمْر","مَتْجَر","بَيْت"],emoji:["🌴","🏪","🏠"],sound:"تَ"},
-    {letter:"م",name:"الميم",forms:["مـ","ـمـ","ـم"],words:["مَوْز","سَمَك","قَلَم"],emoji:["🍌","🐟","✏️"],sound:"مَ"}
+    {letter:"أ",name:"الألف",forms:["أـ","ـأـ","ـأ"],words:["أسد","أسد","أسد"],emoji:["🦁","🦁","🦁"],sound:"أَ"},
+    {letter:"ب",name:"الباء",forms:["بـ","ـبـ","ـب"],words:["بطة","بطة","بطة"],emoji:["🦆","🦆","🦆"],sound:"بَ"},
+    {letter:"ت",name:"التاء",forms:["تـ","ـتـ","ـت"],words:["تفاحة","تفاحة","تفاحة"],emoji:["🍎","🍎","🍎"],sound:"تَ"},
+    {letter:"ث",name:"الثاء",forms:["ثـ","ـثـ","ـث"],words:["ثعلب","ثعلب","ثعلب"],emoji:["🦊","🦊","🦊"],sound:"ثَ"},
+    {letter:"ج",name:"الجيم",forms:["جـ","ـجـ","ـج"],words:["جمل","جمل","جمل"],emoji:["🐪","🐪","🐪"],sound:"جَ"},
+    {letter:"ح",name:"الحاء",forms:["حـ","ـحـ","ـح"],words:["حصان","حصان","حصان"],emoji:["🐴","🐴","🐴"],sound:"حَ"},
+    {letter:"خ",name:"الخاء",forms:["خـ","ـخـ","ـخ"],words:["خروف","خروف","خروف"],emoji:["🐑","🐑","🐑"],sound:"خَ"},
+    {letter:"د",name:"الدال",forms:["دـ","ـدـ","ـد"],words:["دب","دب","دب"],emoji:["🐻","🐻","🐻"],sound:"دَ"},
+    {letter:"ذ",name:"الذال",forms:["ذـ","ـذـ","ـذ"],words:["ذرة","ذرة","ذرة"],emoji:["🌽","🌽","🌽"],sound:"ذَ"},
+    {letter:"ر",name:"الراء",forms:["رـ","ـرـ","ـر"],words:["رمان","رمان","رمان"],emoji:["🍎","🍎","🍎"],sound:"رَ"},
+    {letter:"ز",name:"الزاي",forms:["زـ","ـزـ","ـز"],words:["زهرة","زهرة","زهرة"],emoji:["🌸","🌸","🌸"],sound:"زَ"},
+    {letter:"س",name:"السين",forms:["سـ","ـسـ","ـس"],words:["سمكة","سمكة","سمكة"],emoji:["🐟","🐟","🐟"],sound:"سَ"},
+    {letter:"ش",name:"الشين",forms:["شـ","ـشـ","ـش"],words:["شمس","شمس","شمس"],emoji:["☀️","☀️","☀️"],sound:"شَ"},
+    {letter:"ص",name:"الصاد",forms:["صـ","ـصـ","ـص"],words:["صقر","صقر","صقر"],emoji:["🦅","🦅","🦅"],sound:"صَ"},
+    {letter:"ض",name:"الضاد",forms:["ضـ","ـضـ","ـض"],words:["ضفدع","ضفدع","ضفدع"],emoji:["🐸","🐸","🐸"],sound:"ضَ"},
+    {letter:"ط",name:"الطاء",forms:["طـ","ـطـ","ـط"],words:["طائرة","طائرة","طائرة"],emoji:["✈️","✈️","✈️"],sound:"طَ"},
+    {letter:"ظ",name:"الظاء",forms:["ظـ","ـظـ","ـظ"],words:["ظرف","ظرف","ظرف"],emoji:["✉️","✉️","✉️"],sound:"ظَ"},
+    {letter:"ع",name:"العين",forms:["عـ","ـعـ","ـع"],words:["عنب","عنب","عنب"],emoji:["🍇","🍇","🍇"],sound:"عَ"},
+    {letter:"غ",name:"الغين",forms:["غـ","ـغـ","ـغ"],words:["غزال","غزال","غزال"],emoji:["🦌","🦌","🦌"],sound:"غَ"},
+    {letter:"ف",name:"الفاء",forms:["فـ","ـفـ","ـف"],words:["فراشة","فراشة","فراشة"],emoji:["🦋","🦋","🦋"],sound:"فَ"},
+    {letter:"ق",name:"القاف",forms:["قـ","ـقـ","ـق"],words:["قمر","قمر","قمر"],emoji:["🌙","🌙","🌙"],sound:"قَ"},
+    {letter:"ك",name:"الكاف",forms:["كـ","ـكـ","ـك"],words:["كتاب","كتاب","كتاب"],emoji:["📘","📘","📘"],sound:"كَ"},
+    {letter:"ل",name:"اللام",forms:["لـ","ـلـ","ـل"],words:["ليمون","ليمون","ليمون"],emoji:["🍋","🍋","🍋"],sound:"لَ"},
+    {letter:"م",name:"الميم",forms:["مـ","ـمـ","ـم"],words:["موز","موز","موز"],emoji:["🍌","🍌","🍌"],sound:"مَ"},
+    {letter:"ن",name:"النون",forms:["نـ","ـنـ","ـن"],words:["نحلة","نحلة","نحلة"],emoji:["🐝","🐝","🐝"],sound:"نَ"},
+    {letter:"هـ",name:"الهاء",forms:["هــ","ـهــ","ـهـ"],words:["هلال","هلال","هلال"],emoji:["🌙","🌙","🌙"],sound:"هـَ"},
+    {letter:"و",name:"الواو",forms:["وـ","ـوـ","ـو"],words:["وردة","وردة","وردة"],emoji:["🌹","🌹","🌹"],sound:"وَ"},
+    {letter:"ي",name:"الياء",forms:["يـ","ـيـ","ـي"],words:["يد","يد","يد"],emoji:["✋","✋","✋"],sound:"يَ"}
   ];
   const marks = [
     {name:"الفتحة",mark:"َ",sample:"بَ",hint:"نفتح الفم قليلاً: بَ",emoji:"☀️"},
@@ -15,7 +39,7 @@
   let letterIndex=0, step=0, markIndex=0, quiz=[], quizIndex=0, score=0;
   const say = text => {
     if (window.MatthewVoice && typeof window.MatthewVoice.speak === "function") {
-      window.MatthewVoice.speak(text, "ar-SA");
+      window.MatthewVoice.speak(text, "ar-EG");
       return;
     }
     const status = $("lessonStatus");
