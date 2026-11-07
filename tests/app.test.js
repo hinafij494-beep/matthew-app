@@ -98,9 +98,9 @@ test("voice module supports Arabic and English speech practice", () => {
 test("Arabic numeracy and English Math use distinct numeral systems", () => {
   const source = read("app.js");
   const start = source.indexOf("const bank=");
-  const end = source.indexOf("\\nconst names=", start);
+  const end = source.indexOf("\nconst names=", start);
   const context = {};
-  vm.runInNewContext(source.slice(start, end) + "\\nglobalThis.bank = bank;", context);
+  vm.runInNewContext(source.slice(start, end) + "\nglobalThis.bank = bank;", context);
   for (const q of context.bank.numbers) {
     assert.ok(q.a.every(value => /^[٠-٩]+$/.test(value)), "Arabic numeracy choices must be Arabic numerals");
   }
