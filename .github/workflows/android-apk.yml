@@ -1,3 +1,4 @@
+# Rebuild trigger: latest main-branch app sources
 name: Build Android APK
 on:
   workflow_dispatch:
