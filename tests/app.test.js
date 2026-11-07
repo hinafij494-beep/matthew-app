@@ -196,3 +196,6 @@ test("Arabic and English math journeys are separate complete 1-to-20 courses", (
   assert.ok(read("sw.js").includes("math-english.js"));
   assert.ok(read("scripts/prepare-web.js").includes("math-english.js"));
 });
+
+test("English phonics course covers all 26 letters with picture words and quizzes",()=>{const src=read("english-phonics.js");assert.equal((src.match(/\["[A-Z]","/g)||[]).length,26);assert.match(src,/English Phonics A–Z/);assert.match(src,/mini quiz/);assert.match(read("index.html"),/english-phonics\.js/);assert.match(read("sw.js"),/english-phonics\.js/);assert.match(read("scripts/prepare-web.js"),/english-phonics\.js/);});
+test("general knowledge has a broad expanded set of child-friendly topics",()=>{const src=read("app.js");for(const topic of ["النباتة","نهر النيل","الخرطوم","القاهرة","الشمس","الأذن"])assert.ok(src.includes(topic)||src.includes(topic.replace("النباتة","النبتة")),topic);});
