@@ -36,11 +36,26 @@ jobs:
           mkdir -p www
           cp index.html styles.css app.js voice.js lessons.js sw.js icon.svg manifest.webmanifest www/
       - name: Install Capacitor
-        run: npm install --no-save @capacitor/core @capacitor/android @capacitor/cli
+        run: npm install --no-save @capacitor/core @capacitor/android @capacitor/cli sharp
       - name: Generate Android project
         run: npx cap add android
       - name: Sync web app
         run: npx cap sync android
+      - name: Apply Matthew launcher icon
+        run: |
+          node <<'NODE'
+          const sharp = require('sharp');
+          const fs = require('fs');
+          const path = require('path');
+          const root = 'android/app/src/main/res';
+          const sizes = {'mipmap-mdpi':48,'mipmap-hdpi':72,'mipmap-xhdpi':96,'mipmap-xxhdpi':144,'mipmap-xxxhdpi':192};
+          (async () => {
+            for (const [folder,size] of Object.entries(sizes)) {
+              const dir = path.join(root,folder); fs.mkdirSync(dir,{recursive:true});
+              for (const name of ['ic_launcher.png','ic_launcher_round.png','ic_launcher_foreground.png']) await sharp('icon.svg').resize(size,size).png().toFile(path.join(dir,name));
+            }
+          })().catch(e => { console.error(e); process.exit(1); });
+          NODE
       - name: Build debug APK
         working-directory: android
         run: |
