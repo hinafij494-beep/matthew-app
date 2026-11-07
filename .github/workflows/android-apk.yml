@@ -43,6 +43,7 @@ jobs:
         run: npm install --no-save @capacitor/core @capacitor/android @capacitor/cli @capacitor-community/text-to-speech esbuild sharp
       - name: Bundle native text-to-speech support
         run: npx esbuild voice.js --bundle --platform=browser --format=iife --outfile=www/voice.bundle.js
+      - name: Generate Android project
         run: npx cap add android
       - name: Sync web app
         run: npx cap sync android
