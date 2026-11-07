@@ -42,7 +42,7 @@
     button.addEventListener("click", () => {
       const question = document.getElementById("questionText")?.textContent || "";
       const answers = [...document.querySelectorAll(".answer")].map(x => x.textContent).join(". ");
-      speak(question + ". " + answers, "ar-SA");
+      speak(question + ". " + answers, "ar-EG");
     });
     area.insertBefore(button, area.querySelector(".question-emoji"));
   });
@@ -70,7 +70,7 @@
       panel.querySelector("#voiceBack").onclick=()=>{panel.classList.add("hidden");document.getElementById("gameList").classList.remove("hidden")};
       panel.querySelector("#arabicMode").onclick=()=>setLang("ar");
       panel.querySelector("#englishMode").onclick=()=>setLang("en");
-      panel.querySelector("#listenWord").onclick=()=>item&&speak(item.word,lang==="ar"?"ar-SA":"en-US");
+      panel.querySelector("#listenWord").onclick=()=>item&&speak(item.word,lang==="ar"?"ar-EG":"en-US");
       panel.querySelector("#nextWord").onclick=next;
       panel.querySelector("#recordWord").onclick=record;
     }
@@ -82,7 +82,7 @@
     const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
     if(!SR){document.getElementById("speechResult").textContent="المتصفح لا يدعم تسجيل النطق. استخدم زر اسمع النطق للتدريب.";return}
     if(recognition)try{recognition.abort()}catch(e){}
-    recognition=new SR();recognition.lang=lang==="ar"?"ar-SA":"en-US";recognition.interimResults=false;recognition.maxAlternatives=3;
+    recognition=new SR();recognition.lang=lang==="ar"?"ar-EG":"en-US";recognition.interimResults=false;recognition.maxAlternatives=3;
     const btn=document.getElementById("recordWord");btn.disabled=true;btn.textContent="🎙️ سامعك...";
     recognition.onresult=e=>{const heard=e.results[0][0].transcript.trim();const clean=x=>x.toLocaleLowerCase().replace(/[ًٌٍَُِّْـ.,!?؟]/g,"").trim();const ok=e.results[0].some(v=>clean(v.transcript)===clean(item.word));attempts++;if(ok)score++;document.getElementById("speechResult").textContent=(ok?"👏 ممتاز! نطق جميل. ":"محاولة حلوة! ")+"سمعت: "+heard+" — الكلمة المطلوبة: "+item.word;document.getElementById("voiceScore").textContent=score+" / "+attempts};
     recognition.onerror=e=>{document.getElementById("speechResult").textContent=e.error==="not-allowed"?"اسمح للمتصفح باستخدام الميكروفون من إعدادات الموقع.":"مش قادر أسمع بوضوح. جرّب مرة تانية.";};
