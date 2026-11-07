@@ -15,7 +15,8 @@
       utterance.lang=lang;utterance.rate=lang.startsWith("ar")?0.72:0.8;utterance.pitch=1;utterance.volume=1;
       const voices=synth.getVoices();
       const prefix=lang.slice(0,2).toLowerCase();
-      const match=voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith(prefix));
+      const female=voices.find(v=>v.gender&&String(v.gender).toLowerCase()==="female")||voices.find(v=>/female|woman|zira|samantha|susan|karen|moira|victoria|tessa|google.*female/i.test(v.name||""));
+      const match=female&&female.lang&&female.lang.toLowerCase().startsWith(prefix)?female:voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith(prefix));
       if(match)utterance.voice=match;
       utterance.onerror=()=>{
         const status=document.getElementById("speechResult");
@@ -32,6 +33,7 @@
       setTimeout(launch,900);
     }
   };
+  window.MatthewVoice = { speak };
   const observer = new MutationObserver(() => {
     const area = document.querySelector(".question-area");
     if (!area || area.querySelector(".speak-question")) return;
@@ -40,9 +42,11 @@
     button.type = "button";
     button.textContent = "🔊 اسمع السؤال";
     button.addEventListener("click", () => {
-      const question = document.getElementById("questionText")?.textContent || "";
+      const questionEl = document.getElementById("questionText");
+      const question = questionEl?.textContent || "";
       const answers = [...document.querySelectorAll(".answer")].map(x => x.textContent).join(". ");
-      speak(question + ". " + answers, "ar-SA");
+      const lang = questionEl?.lang === "en" ? "en-US" : "ar-SA";
+      speak(question + ". " + answers, lang);
     });
     area.insertBefore(button, area.querySelector(".question-emoji"));
   });
