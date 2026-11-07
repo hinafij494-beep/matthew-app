@@ -1,13 +1,13 @@
 (()=> {
  const $=id=>document.getElementById(id);
  const alphabet=[
- ["A","ay","Apple","🍎"],["B","bee","Ball","⚽"],["C","see","Cat","🐱"],["D","dee","Dog","🐶"],
- ["E","ee","Elephant","🐘"],["F","ef","Fish","🐟"],["G","jee","Giraffe","🦒"],["H","aych","Hat","🎩"],
- ["I","eye","Ice cream","🍦"],["J","jay","Juice","🧃"],["K","kay","Kite","🪁"],["L","el","Lion","🦁"],
- ["M","em","Moon","🌙"],["N","en","Nest","🪺"],["O","oh","Orange","🍊"],["P","pee","Pencil","✏️"],
- ["Q","cue","Queen","👑"],["R","ar","Robot","🤖"],["S","ess","Sun","☀️"],["T","tee","Tiger","🐯"],
- ["U","you","Umbrella","☂️"],["V","vee","Van","🚐"],["W","double-you","Whale","🐳"],["X","ex","Xylophone","🎼"],
- ["Y","why","Yo-yo","🪀"],["Z","zee","Zebra","🦓"]
+ ["A","short a","Apple","🍎"],["B","b sound","Ball","⚽"],["C","k sound","Cat","🐱"],["D","d sound","Dog","🐶"],
+ ["E","short e","Elephant","🐘"],["F","f sound","Fish","🐟"],["G","g sound","Giraffe","🦒"],["H","h sound","Hat","🎩"],
+ ["I","short i","Ice cream","🍦"],["J","j sound","Juice","🧃"],["K","k sound","Kite","🪁"],["L","l sound","Lion","🦁"],
+ ["M","m sound","Moon","🌙"],["N","n sound","Nest","🪺"],["O","short o","Orange","🍊"],["P","p sound","Pencil","✏️"],
+ ["Q","kw sound","Queen","👑"],["R","r sound","Robot","🤖"],["S","s sound","Sun","☀️"],["T","t sound","Tiger","🐯"],
+ ["U","short u","Umbrella","☂️"],["V","v sound","Van","🚐"],["W","w sound","Whale","🐳"],["X","z sound in xylophone","Xylophone","🎼"],
+ ["Y","y sound","Yo-yo","🪀"],["Z","z sound","Zebra","🦓"]
  ];
  const panel=document.createElement("section");panel.id="englishLetterSchool";panel.className="academy-panel hidden";panel.lang="en";panel.dir="ltr";
  document.querySelector("main").insertBefore(panel,document.querySelector("footer"));
