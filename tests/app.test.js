@@ -24,7 +24,8 @@ test("quiz bank has at least 40 questions across five subjects", () => {
   vm.runInNewContext(source.slice(start, end) + "\nglobalThis.bank = bank;", context);
   const categories = Object.values(context.bank);
   assert.equal(categories.length, 5);
-  assert.ok(categories.flat().length >= 40);\n  assert.ok(context.bank.math.length >= 8, "English Math has its own question bank");
+  assert.ok(categories.flat().length >= 40);
+  assert.ok(context.bank.math.length >= 8, "English Math has its own question bank");
 });
 
 test("every question has four choices and a valid correct answer", () => {
