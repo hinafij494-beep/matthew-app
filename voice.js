@@ -1,5 +1,11 @@
 (() => {
+  const egyptianize = value => {
+    if (!/[\\u0600-\\u06FF]/.test(String(value))) return String(value);
+    const phrases = [["ما عدد","كام"],["كم عدد","كام"],["ما ناتج","كام ناتج"],["ما لون","إيه لون"],["ما شكل","إيه شكل"],["ما اسم","إيه اسم"],["أي حيوان","أنهي حيوان"],["أي كلمة","أنهي كلمة"],["أي حرف","أنهي حرف"],["يأتي بعد","بييجي بعد"],["يأتي قبل","بييجي قبل"],["لدينا","عندنا"],["نستخدم","بنستخدم"],["تساوي","بتساوي"],["يساوي","بيساوي"],["أحسنت","برافو"],["حاول مرة أخرى","جرّب تاني"],["مرة أخرى","تاني"],["اختر","اختار"],["اضغط","دوس"],["انظر","بص"],["الآن","دلوقتي"],["واحداً","واحد"],["اثنتان","اتنين"],["ثلاثة","تلاتة"]];
+    return phrases.reduce((out,pair)=>out.replaceAll(pair[0],pair[1]),String(value));
+  };
   const speak = async (text, lang) => {
+    if (lang && lang.toLowerCase().startsWith("ar")) text = egyptianize(text);
     const native = window.MatthewNativeTTS;
     if (window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform() && native) {
       try {
@@ -11,7 +17,7 @@
         const femaleLocal = matches.find(x => x.voice.localService && femalePattern.test((x.voice.voiceURI || "") + " " + (x.voice.name || "")));
         const female = matches.find(x => femalePattern.test((x.voice.voiceURI || "") + " " + (x.voice.name || "")));
         const local = matches.find(x => x.voice.localService);
-        const selected = femaleLocal || female || local || matches[0];
+        const selected = (prefix === "ar" ? matches.find(x => x.voice.lang.toLowerCase() === "ar-eg") : null) || femaleLocal || female || local || matches[0];
         await native.speak({
           text,
           lang,
@@ -46,7 +52,7 @@
       const prefix = lang.slice(0, 2).toLowerCase();
       const localeVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
       const femalePattern = /female|woman|zira|samantha|susan|karen|moira|victoria|tessa/i;
-      const match = localeVoices.find(v => femalePattern.test(v.name || "")) || localeVoices[0];
+      const match = (prefix === "ar" ? localeVoices.find(v => v.lang && v.lang.toLowerCase() === "ar-eg") : null) || localeVoices.find(v => femalePattern.test(v.name || "")) || localeVoices[0];
       if (match) utterance.voice = match;
       utterance.onerror = () => {
         const status = document.getElementById("speechResult") || document.getElementById("lessonStatus");
