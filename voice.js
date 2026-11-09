@@ -28,8 +28,14 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     utterance.volume = 1;
     const voices = synth.getVoices() || [];
     const prefix = lang.slice(0, 2).toLowerCase();
-    const selected = voices.find(v => v.lang && v.lang.toLowerCase() === lang.toLowerCase()) ||
-      voices.find(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
+    const matches = voices.map((voice, index) => ({ voice, index }))
+      .filter(x => x.voice.lang && x.voice.lang.toLowerCase().startsWith(prefix));
+    const exact = matches.filter(x => x.voice.lang.toLowerCase() === lang.toLowerCase());
+    const female = matches.filter(x => /female|woman|feminin|أنثى|نسائي/i.test(
+      (x.voice.name || "") + " " + (x.voice.voiceURI || "")
+    ));
+    const selected = (female.find(x => exact.includes(x)) || female[0] ||
+      exact[0] || matches[0])?.voice;
     if (selected) utterance.voice = selected;
     utterance.onstart = () => {
       if (requestId === speechRequest) {
@@ -64,28 +70,38 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
       try {
         // A failed stop must not prevent a new speech request.
         try { await TextToSpeech.stop(); } catch (_) {}
-        const locales = lang.toLowerCase().startsWith("ar")
-          ? [...new Set([lang, "ar-SA", "ar"])]
-          : [...new Set([lang, "en-US", "en"])];
-        let lastError = null;
-        for (const locale of locales) {
-          try {
-            await TextToSpeech.speak({
-              text,
-              lang: locale,
-              rate: lang.toLowerCase().startsWith("ar") ? 0.78 : 0.84,
-              pitch: 1.05,
-              volume: 1,
-              queueStrategy: 0
-            });
-            if (requestId === speechRequest && status) status.textContent = "🔊 اسمع كويس يا بطل";
-            return true;
-          } catch (error) {
-            lastError = error;
-            try { await TextToSpeech.stop(); } catch (_) {}
-          }
+        const requested = lang.toLowerCase();
+        const prefix = requested.startsWith("ar") ? "ar" : "en";
+        let voices = [];
+        try {
+          const result = await TextToSpeech.getSupportedVoices();
+          voices = Array.isArray(result?.voices) ? result.voices : [];
+        } catch (_) {}
+        const candidates = voices.map((voice, index) => ({ voice, index }))
+          .filter(x => x.voice.lang && x.voice.lang.toLowerCase().startsWith(prefix));
+        const exact = candidates.filter(x => x.voice.lang.toLowerCase() === requested);
+        const female = candidates.filter(x => /female|woman|feminin|أنثى|نسائي/i.test(
+          (x.voice.name || "") + " " + (x.voice.voiceURI || "")
+        ));
+        const selected = female.find(x => exact.includes(x)) || female[0] ||
+          exact[0] || candidates[0];
+        const locale = selected?.voice.lang || (prefix === "ar" ? "ar" : "en");
+        const options = {
+          text,
+          lang: locale,
+          rate: prefix === "ar" ? 0.78 : 0.84,
+          pitch: 1.08,
+          volume: 1,
+          queueStrategy: 0
+        };
+        if (selected) options.voice = selected.index;
+        await TextToSpeech.speak(options);
+        if (requestId === speechRequest && status) {
+          status.textContent = female.length
+            ? "🔊 الصوت الأنثوي جاهز"
+            : "🔊 الصوت شغال؛ نوع الصوت حسب الأصوات المثبتة على الهاتف";
         }
-        throw lastError || new Error("No supported speech locale");
+        return true;
       } catch (error) {
         if (requestId === speechRequest && status) {
           status.textContent = "تعذر تشغيل الصوت الأصلي. جاري تجربة صوت الهاتف البديل...";
