@@ -1,10 +1,11 @@
 (()=> {
  const $=id=>document.getElementById(id);
+ const learningList=$("learningList")||$("gameList");
  const digits=n=>String(n).replace(/[0-9]/g,d=>"٠١٢٣٤٥٦٧٨٩"[+d]);
  const names=["واحد","اتنين","تلاتة","أربعة","خمسة","ستة","سبعة","تمانية","تسعة","عشرة","حداشر","اتناشر","تلتاشر","أربعتاشر","خمستاشر","ستاشر","سبعتاشر","تمنتاشر","تسعتاشر","عشرين"];
  const icons=["🍎","⭐","🧸","🚗","⚽","🐠","🌼","🦋","🍓","🎈","🐥","🍉","🚀","🐢","🦁","🐘","🍌","🦄","🌈","🎁"];
  const panel=document.createElement("section");panel.id="mathJourney";panel.lang="ar";panel.dir="rtl";panel.className="academy-panel hidden";document.querySelector("main").insertBefore(panel,document.querySelector("footer"));
- const card=document.createElement("button");card.type="button";card.className="game-card orange";card.innerHTML='<span class="game-icon">➕</span><strong>الحساب بالعربي: الأرقام ١–٢٠</strong><small>شرح بالصورة والعدّ، وبعده تمارين متنوعة</small><span class="play">ابدأ الحساب ←</span>';document.getElementById("gameList").append(card);
+ const card=document.createElement("button");card.type="button";card.className="game-card orange";card.innerHTML='<span class="game-icon">➕</span><strong>الحساب بالعربي: الأرقام ١–٢٠</strong><small>شرح بالصورة والعدّ، وبعده تمارين متنوعة</small><span class="play">ابدأ الحساب ←</span>';learningList.append(card);
  let level=1,round=[],qIndex=0,score=0,stage="learn",best=0;
  const rand=a=>a[Math.floor(Math.random()*a.length)];
  const sample=(answer,max)=>{const set=new Set([answer]);while(set.size<4){let n=answer+Math.floor(Math.random()*7)-3;if(n<1||n>max)n=Math.floor(Math.random()*max)+1;set.add(n)}return [...set].sort(()=>Math.random()-.5)};
@@ -17,8 +18,8 @@
  {q:"كان معانا "+digits(subA)+" نجوم واختفى "+digits(subB)+"، فاضل كام؟",pic:"⭐ ➖ ⭐",a:sample(subA-subB,20),correct:subA-subB,ex:digits(subA)+" - "+digits(subB)+" = "+digits(subA-subB)+". شيل اتنين وعدّ الباقي."},
  {q:"اختار العدد الأكبر: "+digits(n)+" ولا "+digits(prev),pic:"🐘 🐭",a:sample(Math.max(n,prev),20),correct:Math.max(n,prev),ex:"العدد الأكبر هو "+digits(Math.max(n,prev))+"."}
  ].sort(()=>Math.random()-.5).slice(0,4)}
- function open(){level=1;score=0;stage="learn";document.getElementById("gameList").classList.add("hidden");document.getElementById("quiz").classList.add("hidden");document.getElementById("result").classList.add("hidden");document.getElementById("parentPanel")?.classList.add("hidden");panel.classList.remove("hidden");renderLearn()}
- function back(){panel.classList.add("hidden");document.getElementById("gameList").classList.remove("hidden")}
+ function open(){level=1;score=0;stage="learn";document.getElementById("gameList").classList.add("hidden");learningList.classList.add("hidden");document.getElementById("quiz").classList.add("hidden");document.getElementById("result").classList.add("hidden");document.getElementById("parentPanel")?.classList.add("hidden");panel.classList.remove("hidden");renderLearn()}
+ function back(){panel.classList.add("hidden");document.getElementById("gameList").classList.remove("hidden");learningList.classList.remove("hidden")}
  function say(t){if(window.MatthewVoice?.speak)window.MatthewVoice.speak(t,"ar-EG");else if("speechSynthesis"in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="ar-EG";u.rate=.78;speechSynthesis.speak(u)}}
  function header(){return '<div class="quiz-top"><button id="mathBack" class="back" type="button">رجوع ←</button><strong>الحساب بالعربي - الملك ماثيو</strong><span>'+digits(level)+' / ٢٠</span></div><div class="progress"><div style="width:'+level*5+'%"></div></div>'}
  function bindBack(){panel.querySelector("#mathBack").onclick=back}
