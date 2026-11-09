@@ -18,6 +18,7 @@ on:
       - "math-journey.js"
       - "math-english.js"
       - "science.js"
+      - "interactive-games.js"
       - "sw.js"
       - "icon.svg"
       - "manifest.webmanifest"
@@ -44,7 +45,7 @@ jobs:
       - name: Prepare web assets
         run: |
           mkdir -p www
-          cp index.html styles.css app.js voice.js voice-web-fallback.js lessons.js learning.js math-journey.js math-english.js science.js sw.js icon.svg manifest.webmanifest www/
+          cp index.html styles.css app.js voice.js voice-web-fallback.js lessons.js learning.js math-journey.js math-english.js science.js interactive-games.js sw.js icon.svg manifest.webmanifest www/
       - name: Install compatible Capacitor toolchain
         run: |
           # Keep Capacitor 7 paired with Android SDK 35 and the TTS 6.x plugin.
@@ -57,7 +58,7 @@ jobs:
             @capacitor-community/text-to-speech@^6.1.0 \
             esbuild sharp
       - name: Validate JavaScript sources
-        run: npx esbuild app.js lessons.js learning.js math-journey.js math-english.js science.js --outdir=/tmp/matthew-js-check --format=iife
+        run: npx esbuild app.js lessons.js learning.js math-journey.js math-english.js science.js interactive-games.js --outdir=/tmp/matthew-js-check --format=iife
       - name: Bundle native text-to-speech support
         run: npx esbuild voice.js --bundle --platform=browser --format=iife --outfile=www/voice.bundle.js
       - name: Generate Android project
