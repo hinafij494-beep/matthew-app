@@ -78,6 +78,11 @@
     if(step===2) renderMarks();
     if(step===3) renderQuizIntro();
     $("lessonNext").textContent=step===3?"ابدأ الاختبار ⭐":"التالي ←";
+    const current=lessons[letterIndex];
+    if(step===0)setTimeout(()=>say(current.name+"، صوت الحرف "+current.sound),120);
+    if(step===1)setTimeout(()=>say("أشكال حرف "+current.name+". "+current.words.join("، ")),120);
+    if(step===2){const mark=marks[markIndex];const sample=current.letter==="أ"?["أَ","أُ","إِ","أْ"][markIndex]:current.letter+mark.mark;setTimeout(()=>say(mark.name+"، "+sample+". "+mark.hint),120)}
+    if(step===3)setTimeout(()=>say("أحسنت يا ماثيو. يلا نبدأ الاختبار"),120);
   }
   function renderLetter(){
     const l=lessons[letterIndex];
@@ -87,7 +92,8 @@
   }
   function renderForms(){
     const l=lessons[letterIndex];
-    $("lessonBody").innerHTML=`<div class="lesson-title">أشكال حرف ${l.name}</div><p>شكل الحرف بيتغير حسب مكانه في الكلمة</p><div class="form-grid"><div><b>أول الكلمة</b><strong>${l.forms[0]}</strong></div><div><b>وسط الكلمة</b><strong>${l.forms[1]}</strong></div><div><b>آخر الكلمة</b><strong>${l.forms[2]}</strong></div></div><div class="word-examples">${l.words.map((w,i)=>`<div><span>${l.emoji[i]}</span><b>${w}</b></div>`).join("")}</div><p class="voice-note">ملحوظة: حرف الألف لا يتصل بما بعده، لذلك شكله يختلف عن باقي الحروف.</p>`;
+    $("lessonBody").innerHTML=`<div class="lesson-title">أشكال حرف ${l.name}</div><p>شكل الحرف بيتغير حسب مكانه في الكلمة</p><div class="form-grid"><div><b>أول الكلمة</b><strong>${l.forms[0]}</strong></div><div><b>وسط الكلمة</b><strong>${l.forms[1]}</strong></div><div><b>آخر الكلمة</b><strong>${l.forms[2]}</strong></div></div><div class="word-examples">${l.words.map((w,i)=>`<div role="button" tabindex="0"><span>${l.emoji[i]}</span><b>${w}</b></div>`).join("")}</div><p class="voice-note">ملحوظة: حرف الألف لا يتصل بما بعده، لذلك شكله يختلف عن باقي الحروف.</p>`;
+    panel.querySelectorAll(".word-examples>div").forEach((el,i)=>el.addEventListener("click",()=>say(l.words[i],"ar-EG")));
   }
   function renderMarks(){
     const m=marks[markIndex];
@@ -120,6 +126,7 @@
     const questionSpeak=document.createElement("button");questionSpeak.type="button";questionSpeak.className="voice-button question-speak";questionSpeak.textContent="🔊 اسمع السؤال";questionSpeak.onclick=()=>say(q.q+" اختار الإجابة الصحيحة","ar-EG");const questionHeading=panel.querySelector("#lessonBody .lesson-title");if(questionHeading)questionHeading.after(questionSpeak);
     panel.querySelectorAll("[data-answer]").forEach(b=>b.onclick=()=>{if(panel.dataset.done==="1")return;panel.dataset.done="1";const ok=Number(b.dataset.answer)===q.c;if(ok)score++;panel.querySelectorAll("[data-answer]").forEach(x=>{x.disabled=true;if(Number(x.dataset.answer)===q.c)x.classList.add("correct")});if(!ok)b.classList.add("wrong");$("lessonStatus").textContent=ok?"برافو يا بطل! إجابة صحيحة ⭐":"محاولة جميلة! ركز في الحركة وجرب السؤال التالي";$("lessonNext").textContent=quizIndex===quiz.length-1?"النتيجة 🏆":"السؤال التالي ←"});
     panel.dataset.done="0";$("lessonNext").textContent="اختار الإجابة";
+    setTimeout(()=>say(q.q+". اختار الإجابة الصحيحة"),120);
   }
   function finishQuiz(){
     panel.dataset.finished="1";
