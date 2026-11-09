@@ -16,6 +16,7 @@ on:
       - "learning.js"
       - "math-journey.js"
       - "math-english.js"
+      - "science.js"
       - "sw.js"
       - "icon.svg"
       - "manifest.webmanifest"
@@ -41,7 +42,7 @@ jobs:
       - name: Prepare web assets
         run: |
           mkdir -p www
-          cp index.html styles.css app.js voice.js lessons.js learning.js math-journey.js math-english.js sw.js icon.svg manifest.webmanifest www/
+          cp index.html styles.css app.js voice.js lessons.js learning.js math-journey.js math-english.js science.js sw.js icon.svg manifest.webmanifest www/
       - name: Install compatible Capacitor toolchain
         run: |
           # Keep Capacitor 7 paired with Android SDK 35 and the TTS 6.x plugin.
