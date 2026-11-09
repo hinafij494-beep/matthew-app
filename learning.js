@@ -24,7 +24,7 @@
     {id:"arNumbers",title:"الأرقام العربية (١ - ٢٠)",subtitle:"نتعلم العدّ باللهجة المصرية",items:arabicNumbers,lang:"ar-EG"},
     {id:"enNumbers",title:"English Numbers (1 - 20)",subtitle:"Learn to count in English",items:englishNumbers,lang:"en-US"}
   ];
-  const main=document.querySelector("main"),gameList=document.getElementById("gameList");
+  const main=document.querySelector("main"),gameList=document.getElementById("gameList"),learningList=document.getElementById("learningList")||gameList;
   if(!main||!gameList)return;
   const panel=document.createElement("section");
   panel.id="basicLearning";panel.className="academy-panel hidden";panel.dir="rtl";
@@ -34,9 +34,9 @@
   categories.forEach((cat,i)=>{
     const card=document.createElement("button");card.type="button";card.className="game-card "+["orange","blue","green","purple"][i];
     card.innerHTML='<span class="game-icon">'+["📖","🔤","🔢","🔢"][i]+'</span><strong>'+cat.title+'</strong><small>'+cat.subtitle+'</small><span class="play">ابدأ التعلم ←</span>';
-    card.addEventListener("click",()=>open(cat));gameList.append(card);
+    card.addEventListener("click",()=>open(cat));learningList.append(card);
   });
-  function open(cat){active=cat;index=0;gameList.classList.add("hidden");document.getElementById("quiz")?.classList.add("hidden");document.getElementById("result")?.classList.add("hidden");panel.classList.remove("hidden");render()}
+  function open(cat){active=cat;index=0;gameList.classList.add("hidden");learningList.classList.add("hidden");document.getElementById("quiz")?.classList.add("hidden");document.getElementById("result")?.classList.add("hidden");panel.classList.remove("hidden");render()}
   function render(){
     const item=active.items[index];
     const heading=active.lang==="en-US"?"Learn and listen":"اتعلم واسمع";
@@ -48,5 +48,5 @@
     panel.querySelectorAll("[data-index]").forEach(b=>b.onclick=()=>{index=Number(b.dataset.index);render()});
     setTimeout(()=>speak(item.speak,active.lang),120);
   }
-  function close(){panel.classList.add("hidden");gameList.classList.remove("hidden");window.speechSynthesis?.cancel()}
+  function close(){panel.classList.add("hidden");gameList.classList.remove("hidden");learningList.classList.remove("hidden");window.MatthewVoice?.stop()}
 })();
