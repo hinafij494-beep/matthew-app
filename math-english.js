@@ -18,7 +18,7 @@
  ].sort(()=>Math.random()-.5).slice(0,4)}
  function say(t){if(window.MatthewVoice?.speak)window.MatthewVoice.speak(t,"en-US");else if("speechSynthesis"in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.78;speechSynthesis.speak(u)}}
  function header(){return '<div class="quiz-top"><button id="englishMathBack" class="back" type="button">Back ←</button><strong>King Matthew Math</strong><span>'+level+' / 20</span></div><div class="progress"><div style="width:'+level*5+'%"></div></div>'}
- function back(){panel.classList.add("hidden");document.getElementById("gameList").classList.remove("hidden");learningList.classList.remove("hidden")}
+ function back(){panel.classList.add("hidden");document.getElementById("gameList").classList.remove("hidden");learningList.classList.remove("hidden");window.updateStats?.()}
  function bindBack(){panel.querySelector("#englishMathBack").onclick=back}
  function learn(){const n=level;panel.innerHTML=header()+'<div class="academy-visual">🔢</div><div class="math-number">'+n+'</div><h2>'+names[n-1]+'</h2><p class="academy-hint">This is number '+names[n-1]+'. Let’s count together!</p><div class="math-count-pictures">'+countPic(n)+'</div><p class="math-tip">Count each picture one time. The last number you say is the total.</p><button id="englishMathListen" class="voice-button">🔊 Listen</button><button id="englishMathStart" class="primary">I understand! Start practice ⭐</button>';bindBack();panel.querySelector("#englishMathListen").onclick=()=>say("Number "+names[n-1]+". "+n);setTimeout(()=>say("Number "+names[n-1]+". Let us count together"),120);panel.querySelector("#englishMathStart").onclick=startQuiz}
  function startQuiz(){round=questions(level);qIndex=0;score=0;question()}
