@@ -66,7 +66,10 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     const requestId = ++speechRequest;
     const status = getStatus();
     if (status) status.textContent = "⏳ جاري تشغيل الصوت...";
-    if (nativeAndroid()) {
+    // Try the Capacitor native TTS bridge first. Some Android WebViews do not
+    // expose isNativePlatform() reliably even though the native plugin is ready.
+    // Calling the plugin is safe on web: it rejects and falls back to browser TTS.
+    {
       try {
         // A failed stop must not prevent a new speech request.
         try { await TextToSpeech.stop(); } catch (_) {}
