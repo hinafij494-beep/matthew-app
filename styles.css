@@ -1,42 +1,17 @@
-:root{font-family:'Cairo',Tahoma,Arial,sans-serif;color:#292344;background:#f7f5ff;font-synthesis:none}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 90% 0,#eee8ff 0,transparent 30%),#f8f7fc}.topbar{max-width:920px;margin:auto;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:10px}.brand strong{display:block;font-size:18px}.brand small{color:#817b97;font-size:11px}.crown{font-size:34px}.install{border:0;border-radius:20px;padding:9px 14px;background:#5b3cc4;color:white;font:700 12px inherit}.hidden{display:none!important}main{max-width:920px;margin:auto;padding:8px 20px 30px}.hero{background:linear-gradient(120deg,#5b3cc4,#8568e8);border-radius:28px;padding:24px;color:white;display:flex;justify-content:space-between;align-items:center;overflow:hidden;box-shadow:0 14px 30px #5b3cc42b}.eyebrow{font-size:12px;font-weight:800;color:#a99af0}.hero .eyebrow{color:#e1d9ff}.hero h1{font-size:clamp(23px,5vw,34px);margin:6px 0}.hero p{margin:0;color:#eee9ff;font-size:14px}.stats{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}.stats span{background:#ffffff20;border:1px solid #ffffff35;border-radius:18px;padding:6px 12px;font-size:12px}.king-art{position:relative;width:125px;height:125px;flex-shrink:0;border-radius:50%;background:#ffffff25;display:grid;place-items:center;margin:0 10px}.king-art span{font-size:75px;transform:translateY(8px)}.king-art i{position:absolute;font-style:normal;font-size:34px;top:-14px}.section-head{margin:26px 2px 12px}.section-head h2{margin:2px 0;font-size:21px}.games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.game-card{border:0;text-align:right;border-radius:22px;padding:17px;min-height:156px;display:flex;flex-direction:column;align-items:flex-start;color:#292344;font:inherit;cursor:pointer;box-shadow:0 5px 16px #30205b0b;transition:transform .15s}.game-card:active{transform:scale(.98)}.game-icon{font-size:30px;margin-bottom:7px}.game-card strong{font-size:16px}.game-card small{font-size:11px;color:#77718b}.play{font-size:11px;font-weight:800;margin-top:auto;padding-top:9px}.purple{background:#eee9ff}.orange{background:#fff0df}.green{background:#e4f7ed}.blue{background:#e5f2ff}.pink{background:#ffe9f1}.quiz-panel,.result-panel{background:white;border-radius:26px;padding:18px;margin-top:20px;box-shadow:0 8px 28px #30205b0d}.quiz-top{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:800}.back{border:0;background:#f0edfa;color:#5b3cc4;border-radius:15px;padding:7px 12px;font:inherit}.progress{height:8px;background:#eeeaf7;border-radius:20px;margin:16px 0 20px;overflow:hidden}.progress div{height:100%;width:0;background:#8a6be8;border-radius:20px;transition:width .2s}.question-area{text-align:center}.question-emoji{font-size:48px}.question-area h2{font-size:21px;margin:8px 0 18px}.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.answer{background:#f5f2ff;border:2px solid transparent;border-radius:17px;padding:13px 8px;font:700 15px inherit;color:#393052;cursor:pointer;min-height:52px}.answer:disabled{cursor:default}.answer.correct{border-color:#30b978;background:#e5f8ef}.answer.wrong{border-color:#f07878;background:#fff0f0}.feedback{min-height:24px;font-weight:800;font-size:14px}.primary,.secondary{width:100%;border:0;border-radius:17px;padding:13px;margin-top:9px;font:800 15px inherit;cursor:pointer}.primary{background:#5b3cc4;color:white}.secondary{background:#f0edfa;color:#5b3cc4}.result-panel{text-align:center;padding:28px 20px}.result-crown{font-size:65px}.result-panel h2{font-size:25px}.result-stars{font-size:27px;margin:16px}.result-panel p{color:#6e6880}footer{text-align:center;color:#8b859d;font-size:11px;padding:25px 0 5px}footer span{display:block;font-size:10px;margin-top:3px}@media(min-width:650px){.games{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{padding:30px 38px}}@media(max-width:360px){main{padding-inline:12px}.hero{padding:18px}.king-art{width:90px;height:90px}.king-art span{font-size:58px}.answers{gap:7px}.answer{font-size:13px}}
-.voice-button{display:block;width:100%;border:2px solid #ded5ff;background:#f1edff;color:#5035b2;border-radius:16px;padding:12px;margin:8px 0;font:800 14px inherit;cursor:pointer}.voice-button:disabled{opacity:.6}.language-switch{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.pronounce-card{text-align:center;padding:22px 12px;background:#faf8ff;border-radius:22px}.pronounce-card h2{font-size:32px;margin:8px}.pronounce-card p{color:#77718b}.pronounce-card .primary,.pronounce-card .secondary{max-width:420px;margin:9px auto}.voice-note{font-size:11px;color:#817b97;text-align:center;line-height:1.8}.answer{font-family:inherit}.primary,.secondary,.back,.install,.game-card{font-family:inherit}
-
-.lesson-body{text-align:center;padding:12px 2px}.lesson-title{font-size:22px;font-weight:900;color:#5035b2;margin:8px}.big-letter{font-size:88px;line-height:1.35;color:#5b3cc4;background:#f3efff;border-radius:24px;margin:12px auto;max-width:260px}.lesson-example{font-size:20px}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:20px 0}.form-grid>div{background:#f2efff;border-radius:16px;padding:12px 4px}.form-grid b{display:block;font-size:11px;color:#77718b}.form-grid strong{display:block;font-size:38px;color:#5035b2;margin-top:8px}.word-examples{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.word-examples>div{background:#fff4e8;border-radius:15px;padding:12px 3px}.word-examples span{display:block;font-size:30px}.word-examples b{font-size:15px}.mark-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:15px 0}.mark-tabs button,.lesson-answers button{border:2px solid #e8e2f7;background:#f8f6ff;color:#3c315c;border-radius:14px;padding:12px;font:700 14px inherit}.mark-tabs button.active{background:#5b3cc4;color:white;border-color:#5b3cc4}.mark-card{padding:18px;background:#f5f1ff;border-radius:22px}.mark-card>span{font-size:30px}.mark-symbol{font-size:66px;color:#5b3cc4;font-weight:900}.mark-card h2{margin:5px}.lesson-actions{display:grid;gap:8px}.lesson-pager{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lesson-answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}.lesson-answers button{font-size:20px;min-height:58px}.lesson-answers button.correct{background:#e5f8ef;border-color:#30b978}.lesson-answers button.wrong{background:#fff0f0;border-color:#f07878}.lesson-answers button:disabled{opacity:1}
 
 
-/* Learning and math journeys */
-.academy-panel{background:#fff;border-radius:26px;padding:18px;margin-top:20px;box-shadow:0 8px 28px #30205b0d}
-.academy-visual{font-size:52px;text-align:center;margin:12px}
-.math-number{font-size:62px;font-weight:900;color:#5b3cc4;text-align:center;line-height:1.25}
-.academy-panel h2{text-align:center;color:#30264d}
-.academy-hint,.math-tip,.math-stage{text-align:center;line-height:1.9;color:#6e6880}
-.math-count-pictures{text-align:center;font-size:28px;line-height:1.8;background:#faf8ff;border-radius:18px;padding:12px;margin:14px 0;overflow-wrap:anywhere}
-.math-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}
-.math-choices button{border:2px solid #e8e2f7;background:#f8f6ff;border-radius:16px;padding:12px;min-height:66px;font:inherit;color:#393052}
-.math-choices button b,.math-choices button small{display:block}
-.math-choices button b{font-size:24px}
-.math-choices button small{font-size:11px;color:#77718b}
-.math-choices button.correct{border-color:#30b978;background:#e5f8ef}
-.math-choices button.wrong{border-color:#f07878;background:#fff0f0}
-.math-choices button:disabled{opacity:1}
-.math-stage{font-weight:900;color:#5b3cc4}
-.basic-focus{text-align:center;padding:18px;background:#f8f6ff;border-radius:22px;margin:12px 0}
-.basic-emoji{font-size:42px}
-.basic-value{font-size:76px;line-height:1.3;font-weight:900;color:#5b3cc4}
-.basic-focus h2{margin:4px 0}
-.basic-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
-.basic-tile{border:1px solid #e8e2f7;background:#faf9ff;border-radius:14px;padding:8px 3px;min-width:0;font:inherit;color:#393052}
-.basic-tile span,.basic-tile b,.basic-tile small{display:block}
-.basic-tile span{font-size:20px}
-.basic-tile b{font-size:20px;color:#5b3cc4}
-.basic-tile small{font-size:10px;overflow-wrap:anywhere}
-.basic-tile.active{border:2px solid #5b3cc4;background:#f0ebff}
-.basic-nav{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.basic-nav button:disabled{opacity:.45}
-@media(max-width:520px){.basic-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.form-grid strong{font-size:30px}}
-
-.answer{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}.answer-picture{font-size:30px;line-height:1.2;display:inline-flex;align-items:center;justify-content:center;min-width:34px}.answer-label{font-size:16px;font-weight:900}
-
-.question-speak{display:inline-flex;align-items:center;justify-content:center;margin:0 auto 12px;min-height:42px;padding:9px 18px}.answer-picture{font-size:32px;min-width:38px}.answer-label{font-size:16px}
-
-.answer-picture svg{width:38px;height:38px;display:block;flex:0 0 38px}
+/* Matthew offline voice and science academy */
+.home-voice-test{max-width:240px;margin:16px 0 0;background:#fff;color:#5035b2;border-color:#fff}
+.science-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}
+.science-card{border:2px solid #eee8fa;background:#faf8ff;border-radius:18px;padding:14px 8px;min-height:118px;color:#33294f;font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer}
+.science-card:active{transform:scale(.98)}
+.science-card>span{font-size:34px}
+.science-card>b{font-size:14px}
+.science-card>small{font-size:11px;color:#77718b}
+.science-lesson{text-align:center;background:#faf8ff;border-radius:22px;padding:18px 12px;margin-top:14px}
+.science-emoji{font-size:62px}
+.science-lesson h2{margin:8px 0;color:#5035b2}
+.science-summary{font-size:18px;font-weight:900;line-height:1.9;color:#33294f}
+.science-detail{font-size:14px;line-height:2;color:#716a84}
+.science-nav{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+@media(max-width:360px){.science-grid{gap:7px}.science-card{padding:10px 4px}}
