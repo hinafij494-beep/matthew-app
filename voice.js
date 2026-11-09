@@ -373,6 +373,7 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
   if (document.body) {
     observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     addHomeTestButton();
+    addPronunciationChallenge();
     observeQuestions();
   }
 })();
