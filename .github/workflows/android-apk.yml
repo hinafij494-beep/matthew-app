@@ -22,6 +22,7 @@ on:
       - "icon.svg"
       - "manifest.webmanifest"
       - "capacitor.config.json"
+      - "package.json"
       - ".github/workflows/android-apk.yml"
 permissions:
   contents: read
