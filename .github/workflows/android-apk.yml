@@ -54,6 +54,8 @@ jobs:
             @capacitor/cli@^7 \
             @capacitor-community/text-to-speech@^6.1.0 \
             esbuild sharp
+      - name: Validate JavaScript sources
+        run: npx esbuild app.js lessons.js learning.js math-journey.js math-english.js science.js --outdir=/tmp/matthew-js-check --format=iife
       - name: Bundle native text-to-speech support
         run: npx esbuild voice.js --bundle --platform=browser --format=iife --outfile=www/voice.bundle.js
       - name: Generate Android project
