@@ -7,7 +7,7 @@
  const card=document.createElement("button");card.type="button";card.className="game-card orange";card.innerHTML='<span class="game-icon">➕</span><strong>الحساب بالعربي: الأرقام ١–٢٠</strong><small>شرح بالصورة والعدّ، وبعده تمارين متنوعة</small><span class="play">ابدأ الحساب ←</span>';document.getElementById("gameList").append(card);
  let level=1,round=[],qIndex=0,score=0,stage="learn",best=0;
  const rand=a=>a[Math.floor(Math.random()*a.length)];
- const sample=(answer,max)=>{const set=new Set([answer]);while(set.size<4){let n=answer+Math.floor(Math.random()*7)-3;if(n<0||n>max)n=Math.floor(Math.random()*(max+1));set.add(n)}return [...set].sort(()=>Math.random()-.5)};
+ const sample=(answer,max)=>{const set=new Set([answer]);while(set.size<4){let n=answer+Math.floor(Math.random()*7)-3;if(n<1||n>max)n=Math.floor(Math.random()*max)+1;set.add(n)}return [...set].sort(()=>Math.random()-.5)};
  const countPic=n=>Array.from({length:n},(_,i)=>icons[i%icons.length]).join(" ");
  function questions(n){const max=Math.min(20,Math.max(5,n+3)),prev=Math.max(0,n-1),next=Math.min(20,n+1);const addA=Math.max(1,Math.floor(n/2)),addB=Math.min(5,n-addA);const subA=Math.min(20,n+2),subB=2;return [
  {q:"عدّ الصور: كام واحدة؟",pic:countPic(n),a:sample(n,20),correct:n,ex:"عدّ كل صورة واحدة واحدة. المجموع "+digits(n)+"."},
