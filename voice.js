@@ -34,8 +34,8 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     const female = matches.filter(x => /female|woman|feminin|أنثى|نسائي/i.test(
       (x.voice.name || "") + " " + (x.voice.voiceURI || "")
     ));
-    const selected = (female.find(x => exact.includes(x)) || female[0] ||
-      exact[0] || matches[0])?.voice;
+    const selected = (female.find(x => exact.includes(x)) || exact[0] ||
+      female[0] || matches[0])?.voice;
     if (selected) utterance.voice = selected;
     utterance.onstart = () => {
       if (requestId === speechRequest) {
@@ -83,8 +83,8 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
         const female = candidates.filter(x => /female|woman|feminin|أنثى|نسائي/i.test(
           (x.voice.name || "") + " " + (x.voice.voiceURI || "")
         ));
-        const selected = female.find(x => exact.includes(x)) || female[0] ||
-          exact[0] || candidates[0];
+        const selected = female.find(x => exact.includes(x)) || exact[0] ||
+          female[0] || candidates[0];
         const locale = selected?.voice.lang || (prefix === "ar" ? "ar" : "en");
         const options = {
           text,
@@ -97,7 +97,7 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
         if (selected) options.voice = selected.index;
         await TextToSpeech.speak(options);
         if (requestId === speechRequest && status) {
-          status.textContent = female.length
+          status.textContent = (selected && female.includes(selected))
             ? "🔊 الصوت الأنثوي جاهز"
             : "🔊 الصوت شغال؛ نوع الصوت حسب الأصوات المثبتة على الهاتف";
         }
