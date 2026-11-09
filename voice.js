@@ -62,20 +62,33 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     if (status) status.textContent = "⏳ جاري تشغيل الصوت...";
     if (nativeAndroid()) {
       try {
-        await TextToSpeech.stop();
-        await TextToSpeech.speak({
-          text,
-          lang,
-          rate: lang.toLowerCase().startsWith("ar") ? 0.78 : 0.84,
-          pitch: 1.05,
-          volume: 1,
-          queueStrategy: 0
-        });
-        if (requestId === speechRequest && status) status.textContent = "🔊 اسمع كويس يا بطل";
-        return true;
+        // A failed stop must not prevent a new speech request.
+        try { await TextToSpeech.stop(); } catch (_) {}
+        const locales = lang.toLowerCase().startsWith("ar")
+          ? [...new Set([lang, "ar-SA", "ar"])]
+          : [...new Set([lang, "en-US", "en"])];
+        let lastError = null;
+        for (const locale of locales) {
+          try {
+            await TextToSpeech.speak({
+              text,
+              lang: locale,
+              rate: lang.toLowerCase().startsWith("ar") ? 0.78 : 0.84,
+              pitch: 1.05,
+              volume: 1,
+              queueStrategy: 0
+            });
+            if (requestId === speechRequest && status) status.textContent = "🔊 اسمع كويس يا بطل";
+            return true;
+          } catch (error) {
+            lastError = error;
+            try { await TextToSpeech.stop(); } catch (_) {}
+          }
+        }
+        throw lastError || new Error("No supported speech locale");
       } catch (error) {
         if (requestId === speechRequest && status) {
-          status.textContent = "محرك الصوت في أندرويد غير جاهز. فعّل Speech Services by Google وثبّت بيانات الصوت العربي والإنجليزي.";
+          status.textContent = "تعذر تشغيل الصوت الأصلي. جاري تجربة صوت الهاتف البديل...";
         }
         return browserSpeak(text, lang, requestId);
       }
