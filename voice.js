@@ -221,6 +221,123 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     hero.append(button);
   };
 
+  const addPronunciationChallenge = () => {
+    const gameList = document.getElementById("gameList");
+    const main = document.querySelector("main");
+    if (!gameList || !main || document.getElementById("pronunciationChallenge")) return;
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "game-card pink";
+    card.innerHTML = '<span class="game-icon">🎙️</span><strong>تحدي النطق</strong><small>اسمع الكلمة وحاول تنطقها</small><span class="play">ابدأ التدريب ←</span>';
+    gameList.append(card);
+
+    const panel = document.createElement("section");
+    panel.id = "pronunciationChallenge";
+    panel.className = "quiz-panel hidden";
+    panel.innerHTML = '<div class="quiz-top"><button id="pronounceBack" class="back" type="button">→ رجوع</button><strong>🎙️ تحدي النطق</strong><span id="pronounceScore">0 / 0</span></div><div class="language-switch"><button id="pronounceArabic" class="secondary" type="button">العربية</button><button id="pronounceEnglish" class="primary" type="button">English</button></div><div class="pronounce-card"><div id="pronounceEmoji" class="question-emoji">🍎</div><h2 id="pronounceWord">Apple</h2><p id="pronounceMeaning">تفاحة</p><button id="pronounceListen" class="voice-button" type="button">🔊 اسمع النطق</button><button id="pronounceRecord" class="primary" type="button">🎤 اضغط واتكلم</button><p id="pronounceStatus" class="feedback" aria-live="polite">اسمع الكلمة وحاول تكررها</p><button id="pronounceNext" class="secondary" type="button">كلمة جديدة ↻</button></div><p class="voice-note">التعرف على كلامك يعتمد على دعم الهاتف والمتصفح وقد يحتاج اتصالاً بالإنترنت.</p>';
+    main.insertBefore(panel, document.querySelector("footer"));
+
+    const lists = {
+      ar: [
+        {word:"أسد",meaning:"حيوان قوي",emoji:"🦁"},
+        {word:"تفاحة",meaning:"فاكهة لذيذة",emoji:"🍎"},
+        {word:"قمر",meaning:"ينير الليل",emoji:"🌙"},
+        {word:"مدرسة",meaning:"مكان التعلم",emoji:"🏫"},
+        {word:"سيارة",meaning:"وسيلة مواصلات",emoji:"🚗"},
+        {word:"فراشة",meaning:"حشرة جميلة",emoji:"🦋"},
+        {word:"كتاب",meaning:"نقرأ فيه",emoji:"📘"},
+        {word:"شمس",meaning:"تنير النهار",emoji:"☀️"}
+      ],
+      en: [
+        {word:"Apple",meaning:"تفاحة",emoji:"🍎"},
+        {word:"Cat",meaning:"قطة",emoji:"🐱"},
+        {word:"Sun",meaning:"شمس",emoji:"☀️"},
+        {word:"Book",meaning:"كتاب",emoji:"📘"},
+        {word:"Ball",meaning:"كرة",emoji:"⚽"},
+        {word:"Dog",meaning:"كلب",emoji:"🐶"},
+        {word:"Milk",meaning:"حليب",emoji:"🥛"},
+        {word:"Fish",meaning:"سمكة",emoji:"🐟"}
+      ]
+    };
+    let language = "en", current = null, recognition = null, score = 0, attempts = 0;
+    const showScore = () => { panel.querySelector("#pronounceScore").textContent = score + " / " + attempts; };
+    const nextWord = () => {
+      const list = lists[language];
+      let candidate = list[Math.floor(Math.random() * list.length)];
+      if (current && list.length > 1) {
+        while (candidate.word === current.word) candidate = list[Math.floor(Math.random() * list.length)];
+      }
+      current = candidate;
+      panel.querySelector("#pronounceEmoji").textContent = current.emoji;
+      panel.querySelector("#pronounceWord").textContent = current.word;
+      panel.querySelector("#pronounceMeaning").textContent = current.meaning;
+      panel.querySelector("#pronounceStatus").textContent = "اسمع الكلمة وحاول تكررها";
+      showScore();
+    };
+    const setLanguage = value => {
+      language = value;
+      panel.querySelector("#pronounceArabic").className = value === "ar" ? "primary" : "secondary";
+      panel.querySelector("#pronounceEnglish").className = value === "en" ? "primary" : "secondary";
+      current = null;
+      nextWord();
+    };
+    const open = () => {
+      gameList.classList.add("hidden");
+      document.getElementById("learningList")?.classList.add("hidden");
+      document.getElementById("quiz")?.classList.add("hidden");
+      document.getElementById("result")?.classList.add("hidden");
+      panel.classList.remove("hidden");
+      setLanguage("en");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    card.addEventListener("click", open);
+    panel.querySelector("#pronounceBack").addEventListener("click", () => {
+      panel.classList.add("hidden");
+      gameList.classList.remove("hidden");
+      document.getElementById("learningList")?.classList.remove("hidden");
+      stop();
+    });
+    panel.querySelector("#pronounceArabic").addEventListener("click", () => setLanguage("ar"));
+    panel.querySelector("#pronounceEnglish").addEventListener("click", () => setLanguage("en"));
+    panel.querySelector("#pronounceListen").addEventListener("click", () => {
+      if (current) speak(current.word, language === "ar" ? "ar-EG" : "en-US");
+    });
+    panel.querySelector("#pronounceNext").addEventListener("click", nextWord);
+    panel.querySelector("#pronounceRecord").addEventListener("click", () => {
+      const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const status = panel.querySelector("#pronounceStatus");
+      const button = panel.querySelector("#pronounceRecord");
+      if (!SpeechRecognitionClass) {
+        status.textContent = "ميزة التعرف على الكلام غير مدعومة هنا. استخدم زر اسمع النطق للتدريب.";
+        return;
+      }
+      if (recognition) { try { recognition.abort(); } catch (_) {} }
+      recognition = new SpeechRecognitionClass();
+      recognition.lang = language === "ar" ? "ar-EG" : "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 3;
+      button.disabled = true;
+      button.textContent = "🎙️ سامعك...";
+      recognition.onresult = event => {
+        const clean = value => value.toLocaleLowerCase().replace(/[ًٌٍَُِّْـ.,!?؟]/g, "").trim();
+        const alternatives = event.results[0];
+        const heard = alternatives[0].transcript.trim();
+        const correct = Array.from(alternatives).some(item => clean(item.transcript) === clean(current.word));
+        attempts++;
+        if (correct) { score++; sound("correct"); }
+        else sound("wrong");
+        status.textContent = (correct ? "👏 ممتاز! نطق جميل. " : "محاولة حلوة! ") + "سمعت: " + heard + " — الكلمة: " + current.word;
+        showScore();
+      };
+      recognition.onerror = event => {
+        status.textContent = event.error === "not-allowed" ? "اسمح باستخدام الميكروفون من إعدادات التطبيق." : "مش قادر أسمع بوضوح. جرّب مرة تانية.";
+      };
+      recognition.onend = () => { button.disabled = false; button.textContent = "🎤 اضغط واتكلم"; };
+      try { recognition.start(); }
+      catch (_) { button.disabled = false; button.textContent = "🎤 اضغط واتكلم"; }
+    });
+  };
+
   const ensureQuestionButton = area => {
     if (!area || area.querySelector(".speak-question")) return;
     const button = document.createElement("button");
@@ -250,6 +367,7 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
 
   const observer = new MutationObserver(() => {
     addHomeTestButton();
+    addPronunciationChallenge();
     observeQuestions();
   });
   if (document.body) {
