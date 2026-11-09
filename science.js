@@ -89,5 +89,6 @@
     panel.querySelector("#scienceListen").onclick=()=>speak(lesson[0]+". "+lesson[2]+" "+lesson[3]);
     panel.querySelector("#sciencePrev").onclick=()=>renderLesson(Math.max(0,index-1));
     panel.querySelector("#scienceNext").onclick=()=>index===subject.lessons.length-1?renderLessons():renderLesson(index+1);
+    setTimeout(()=>speak(lesson[0]+". "+lesson[2]+" "+lesson[3]),120);
   }
 })();
