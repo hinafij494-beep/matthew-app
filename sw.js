@@ -1,4 +1,4 @@
-const CACHE = "king-matthew-v12";
+const CACHE = "king-matthew-v13";
 const FILES = [
   "./", "./index.html", "./styles.css", "./app.js", "./voice-web-fallback.js",
   "./lessons.js", "./learning.js", "./math-journey.js", "./math-english.js",
