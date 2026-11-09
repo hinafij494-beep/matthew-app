@@ -46,6 +46,7 @@
     panel.querySelector("#basicPrev").onclick=()=>{index=Math.max(0,index-1);render()};
     panel.querySelector("#basicNext").onclick=()=>{index=index===active.items.length-1?0:index+1;render()};
     panel.querySelectorAll("[data-index]").forEach(b=>b.onclick=()=>{index=Number(b.dataset.index);render()});
+    setTimeout(()=>speak(item.speak,active.lang),120);
   }
   function close(){panel.classList.add("hidden");gameList.classList.remove("hidden");window.speechSynthesis?.cancel()}
 })();
