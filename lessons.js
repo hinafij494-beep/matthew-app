@@ -36,6 +36,7 @@
     {name:"السكون",mark:"ْ",sample:"بْ",hint:"نسكن الحرف بلا حركة: أَبْ",emoji:"🤫"}
   ];
   const $ = id => document.getElementById(id);
+  const learningList = $("learningList") || $("gameList");
   let letterIndex=0, step=0, markIndex=0, quiz=[], quizIndex=0, score=0;
   const say = text => {
     if(window.MatthewVoice&&typeof window.MatthewVoice.speak==="function"){
@@ -56,7 +57,7 @@
   const card=document.createElement("button");
   card.className="game-card pink"; card.type="button"; card.dataset.lessonEntry="true";
   card.innerHTML='<span class="game-icon">📚</span><strong>مدرسة الحروف</strong><small>نتعلم الحرف والحركات قبل الاختبار</small><span class="play">ابدأ التعلم ←</span>';
-  $("gameList").append(card);
+  learningList.append(card);
   const panel=document.createElement("section");
   panel.id="letterSchool"; panel.className="quiz-panel hidden";
   panel.innerHTML=`
@@ -67,8 +68,8 @@
     <div class="lesson-actions"><button id="lessonListen" class="voice-button" type="button">🔊 اسمع الدرس</button><button id="lessonNext" class="primary" type="button">التالي ←</button></div>
   `;
   document.querySelector("main").insertBefore(panel,document.querySelector("footer"));
-  function open(){ $("gameList").classList.add("hidden");$("quiz").classList.add("hidden");$("result").classList.add("hidden");panel.classList.remove("hidden");letterIndex=0;step=0;render();}
-  function back(){panel.classList.add("hidden");$("gameList").classList.remove("hidden");window.speechSynthesis?.cancel();}
+  function open(){ $("gameList").classList.add("hidden");learningList.classList.add("hidden");$("quiz").classList.add("hidden");$("result").classList.add("hidden");panel.classList.remove("hidden");letterIndex=0;step=0;render();}
+  function back(){panel.classList.add("hidden");$("gameList").classList.remove("hidden");learningList.classList.remove("hidden");window.MatthewVoice?.stop();}
   function render(){
     $("lessonStatus").textContent="";
     $("lessonStep").textContent=(step+1).toLocaleString("ar-EG")+" / ٤";
