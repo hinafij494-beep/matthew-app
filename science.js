@@ -48,6 +48,7 @@
   ];
   const main=document.querySelector("main");
   const gameList=document.getElementById("gameList");
+  const learningList=document.getElementById("learningList")||gameList;
   if(!main||!gameList)return;
   const panel=document.createElement("section");
   panel.id="scienceAcademy";panel.className="academy-panel hidden";panel.dir="rtl";
@@ -58,10 +59,10 @@
   card.type="button";card.className="game-card green";
   card.innerHTML='<span class="game-icon">🔬</span><strong>عالم العلوم والكون والبرمجة</strong><small>حيوانات ونباتات وجسم الإنسان وتجارب ومنطق</small><span class="play">اكتشف العلوم ←</span>';
   card.addEventListener("click",open);
-  gameList.append(card);
+  learningList.append(card);
   function open(){
     subject=null;
-    gameList.classList.add("hidden");
+    gameList.classList.add("hidden");learningList.classList.add("hidden");
     document.getElementById("quiz")?.classList.add("hidden");
     document.getElementById("result")?.classList.add("hidden");
     panel.classList.remove("hidden");
@@ -69,7 +70,7 @@
   }
   function back(){
     panel.classList.add("hidden");
-    gameList.classList.remove("hidden");
+    gameList.classList.remove("hidden");learningList.classList.remove("hidden");
     window.MatthewVoice?.stop();
   }
   function renderSubjects(){
