@@ -39,8 +39,17 @@ jobs:
         run: |
           mkdir -p www
           cp index.html styles.css app.js voice.js lessons.js learning.js math-journey.js math-english.js sw.js icon.svg manifest.webmanifest www/
-      - name: Install Capacitor
-        run: npm install --no-save @capacitor/core @capacitor/android @capacitor/cli @capacitor-community/text-to-speech esbuild sharp
+      - name: Install compatible Capacitor toolchain
+        run: |
+          # Keep Capacitor 7 paired with Android SDK 35 and the TTS 6.x plugin.
+          # Latest unpinned releases resolve to Capacitor 8 / TTS 8, which
+          # require Android SDK 36 and are incompatible with this build image.
+          npm install --no-save --package-lock=false \
+            @capacitor/core@^7 \
+            @capacitor/android@^7 \
+            @capacitor/cli@^7 \
+            @capacitor-community/text-to-speech@^6.1.0 \
+            esbuild sharp
       - name: Bundle native text-to-speech support
         run: npx esbuild voice.js --bundle --platform=browser --format=iife --outfile=www/voice.bundle.js
       - name: Generate Android project
