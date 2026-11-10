@@ -152,24 +152,14 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
       try {
         try { await TextToSpeech.stop(); } catch (_) {}
         if (id !== requestId) return false;
-        let voices = [];
-        try {
-          const result = await TextToSpeech.getSupportedVoices();
-          voices = Array.isArray(result?.voices) ? result.voices : [];
-        } catch (_) {}
-        const candidates = voices.map((voice, index) => ({ voice, index }))
-          .filter(item => item.voice.lang && item.voice.lang.toLowerCase().startsWith(prefix));
-        const requested = language.toLowerCase();
-        const selected = candidates.find(item => item.voice.lang.toLowerCase() === requested) || candidates[0];
         const options = {
           text,
-          lang: selected?.voice.lang || (prefix === "ar" ? "ar-EG" : "en-US"),
-          rate: prefix === "ar" ? 0.82 : 0.85,
-          pitch: 1.04,
+          lang: language,
+          rate: prefix === "ar" ? 0.9 : 0.92,
+          pitch: 1.0,
           volume: 1,
           queueStrategy: 0
         };
-        if (selected) options.voice = selected.index;
         if (id !== requestId) return false;
         await TextToSpeech.speak(options);
         if (id === requestId) setStatus("🔊 الصوت الأصلي شغال");
