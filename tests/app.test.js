@@ -15,7 +15,7 @@ test("main page includes Arabic layout and all five game modes", () => {
   }
 });
 
-test("quiz bank has at least 30 questions across four subjects", () => {
+test("quiz bank has at least 30 questions across five subjects", () => {
   const source = read("app.js");
   const start = source.indexOf("const bank=");
   const end = source.indexOf("\nconst names=", start);
@@ -23,7 +23,7 @@ test("quiz bank has at least 30 questions across four subjects", () => {
   const context = {};
   vm.runInNewContext(source.slice(start, end) + "\nglobalThis.bank = bank;", context);
   const categories = Object.values(context.bank);
-  assert.equal(categories.length, 4);
+  assert.equal(categories.length, 5);
   assert.ok(categories.flat().length >= 30);
 });
 
@@ -68,7 +68,7 @@ test("app includes offline cache and install manifest", () => {
   assert.ok(manifest.icons.length > 0);
   assert.ok(fs.existsSync(path.join(root, "voice.js")));
   assert.ok(html.includes("voice.bundle.js"));
-  assert.ok(sw.includes("./voice.bundle.js"));
+  assert.ok(sw.includes("./voice-web-fallback.js"));
 });
 
 test("progress is saved locally and randomization is used", () => {
@@ -118,4 +118,25 @@ test("English alphabet and Arabic/English numbers are available", () => {
   assert.match(learning, /englishNames/);
   assert.match(learning, /English Alphabet/);
   assert.match(learning, /الأرقام العربية/);
+});
+
+test("science quiz and touch games are loaded and cached offline", () => {
+  const html = read("index.html");
+  const sw = read("sw.js");
+  const app = read("app.js");
+  const games = read("interactive-games.js");
+  assert.match(app, /science:\[/);
+  assert.match(html, /data-category="science"/);
+  assert.match(html, /interactive-games\.js/);
+  assert.match(sw, /\.\/interactive-games\.js/);
+  assert.match(sw, /\.\/science\.js/);
+  assert.match(games, /وصل الصورة بالكلمة/);
+  assert.match(games, /اسمع واختار/);
+});
+test("browser voice fallback is loaded and cached for offline use", () => {
+  const html = read("index.html");
+  const sw = read("sw.js");
+  assert.match(html, /voice-web-fallback\.js/);
+  assert.match(sw, /\.\/voice-web-fallback\.js/);
+  assert.ok(fs.existsSync(path.join(root, "voice-web-fallback.js")));
 });
