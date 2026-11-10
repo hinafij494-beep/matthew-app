@@ -8,6 +8,7 @@ on:
   push:
     branches: [main]
     paths:
+      - "tests/app.test.js"
       - "index.html"
       - "styles.css"
       - "app.js"
