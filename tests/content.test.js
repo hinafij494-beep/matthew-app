@@ -6,11 +6,14 @@ const path = require("node:path");
 const root = path.join(__dirname, "..");
 const read = (name) => fs.readFileSync(path.join(root, name), "utf8");
 
-test("phase 1-2 modules ship inside the interactive-games bundle", () => {
-  // The Android workflow copies interactive-games.js into the APK. The bundle
-  // is far too large to commit through the API, so the workflow rebuilds it
-  // from the canonical sources (build_bundle.py) before copying. This test
-  // runs that same build and keeps the parts byte-identical to the sources.
+test("code modules ship inside the interactive-games bundle; voice packs load as separate files", () => {
+  // Round 3.2.1 bundle restructure: the Android workflow copies
+  // interactive-games.js into the APK, but the old bundle inlined ALL
+  // voice packs (base64 audio) and hit 29,522,344 bytes — over GitHub's
+  // 25 MB per-file web-UI limit, so it could not be uploaded. Voice data
+  // now loads as separate <script> files (see below); only the code
+  // modules are inlined. This test runs that same build and keeps the
+  // inlined parts byte-identical to the sources.
   const { execFileSync } = require("node:child_process");
   const bundlePath = path.join(root, "interactive-games.js");
   const originalBundle = fs.readFileSync(bundlePath, "utf8");
@@ -23,8 +26,8 @@ test("phase 1-2 modules ship inside the interactive-games bundle", () => {
   }
   const html = read("index.html");
   const sw = read("sw.js");
-  const partFiles = ["mastery.js", "parent.js", "tracing.js", "reading.js", "voice-clips.js", "rescue.js", "color-games.js", "stories.js", "memory-game.js",
-    ...fs.readdirSync(root).filter(f => /^voice-clips-(pack|text)-\d+\.js$/.test(f)).sort()];
+  // Code modules only — voice packs/text chunks must NOT be inlined.
+  const partFiles = ["voice-clips.js", "mastery.js", "parent.js", "tracing.js", "reading.js", "rescue.js", "color-games.js", "stories.js", "memory-game.js", "chess.js"];
   for (const file of partFiles) {
     assert.ok(fs.existsSync(path.join(root, file)), "missing source " + file);
     const source = read(file).trim();
@@ -32,10 +35,33 @@ test("phase 1-2 modules ship inside the interactive-games bundle", () => {
     assert.ok(!html.includes('src="./' + file + '"'), "page should load " + file + " via the bundle only");
     assert.ok(!sw.includes("./" + file), "offline cache must not list " + file + " (not a separate request any more)");
   }
+  // Voice packs: separate files, loaded in numeric order BEFORE the
+  // bundle (defer scripts run in document order, and voice-clips.js —
+  // the first inlined module — snapshots window.__matthewClipData /
+  // __matthewClipText / __matthewClipExact when it runs, so the packs
+  // must already have executed). Each pack only pushes one object into
+  // the shared array, so no pack depends on another pack's order.
+  const packFiles = Array.from({ length: 16 }, (_, i) => "voice-clips-pack-" + (i + 1) + ".js");
+  const textFiles = fs.readdirSync(root).filter(f => /^voice-clips-text-\d+\.js$/.test(f)).sort();
+  assert.deepEqual(textFiles, ["voice-clips-text-1.js"], "expected exactly one voice text chunk file");
+  const loadOrder = [...packFiles, ...textFiles, "interactive-games.js"];
+  let lastPos = -1;
+  for (const file of loadOrder) {
+    const tag = 'src="./' + file + '"';
+    const pos = html.indexOf(tag);
+    assert.ok(pos > lastPos, "page must load " + file + " after the previous voice file and before the bundle");
+    lastPos = pos;
+    assert.ok(sw.includes("./" + file), "offline cache must precache " + file + " (separate request now)");
+    assert.ok(!bundle.includes("// ==== bundled module: " + file + " ===="), "bundle must not inline " + file + " any more");
+  }
   assert.ok(html.includes("interactive-games.js"), "page does not load the bundle file");
   assert.ok(sw.includes("./interactive-games.js"), "offline cache missing the bundle file");
-  assert.match(sw, /king-matthew-v21/);
+  assert.match(sw, /king-matthew-v22/);
   assert.ok(sw.includes("./voice.bundle.js"), "offline cache must precache voice.bundle.js (round 3.2)");
+  // The whole point of the restructure: the bundle must fit GitHub's
+  // 25 MB per-file web-UI limit, with headroom.
+  assert.ok(Buffer.byteLength(bundle, "utf8") < 25 * 1024 * 1024,
+    "bundle must stay under 25 MB for GitHub web upload, got " + Buffer.byteLength(bundle, "utf8") + " bytes");
 });
 
 test("science topics are kept but taught simply, like a game (owner correction)", () => {
