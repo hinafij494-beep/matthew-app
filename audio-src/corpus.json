@@ -372,7 +372,7 @@
  {
   "key": "qb_numbers_6",
   "lang": "ar_EG",
-  "text": "ما ناتج ٢ + ٢؟"
+  "text": "ما ناتج اتنين زائد اتنين؟"
  },
  {
   "key": "qb_numbers_7",
@@ -387,12 +387,12 @@
  {
   "key": "qb_numbers_9",
   "lang": "ar_EG",
-  "text": "ما ناتج ٣ + ٢؟"
+  "text": "ما ناتج تلاتة زائد اتنين؟"
  },
  {
   "key": "qb_numbers_10",
   "lang": "ar_EG",
-  "text": "ما ناتج ٦ - ١؟"
+  "text": "ما ناتج ستة ناقص واحد؟"
  },
  {
   "key": "qb_numbers_11",
@@ -672,7 +672,7 @@
  {
   "key": "qb_science_18",
   "lang": "ar_EG",
-  "text": "ما اللون الناتج من خلط الأصفر والأزرق في الرسم؟"
+  "text": "لما بنشوف برق في السما، وبعد شوية نسمع صوت عالي أوي، الصوت ده اسمه إيه؟"
  },
  {
   "key": "qb_science_19",
@@ -705,6 +705,11 @@
   "text": "أكمل النمط: أحمر، أزرق، أحمر، أزرق، ..."
  },
  {
+  "key": "qb_science_25",
+  "lang": "ar_EG",
+  "text": "بنعمل فقاعات الصابون إزاي؟"
+ },
+ {
   "key": "qb_world_0",
   "lang": "ar_EG",
   "text": "أي حيوان يقول مياو؟"
@@ -725,6 +730,11 @@
   "text": "أي حيوان يُسمى ملك الغابة؟"
  },
  {
+  "key": "qb_world_4",
+  "lang": "ar_EG",
+  "text": "ماذا تعطينا الفرخة؟"
+ },
+ {
   "key": "qb_world_5",
   "lang": "ar_EG",
   "text": "ماذا نلبس في القدم؟"
@@ -743,6 +753,11 @@
   "key": "qb_world_8",
   "lang": "ar_EG",
   "text": "أي حيوان له رقبة طويلة؟"
+ },
+ {
+  "key": "qb_world_9",
+  "lang": "ar_EG",
+  "text": "أي وسيلة مواصلات بتطير في السما؟"
  },
  {
   "key": "qb_world_10",
@@ -1522,22 +1537,22 @@
  {
   "key": "ans_264",
   "lang": "ar_EG",
-  "text": "الأخضر"
+  "text": "الرعد"
  },
  {
   "key": "ans_265",
   "lang": "ar_EG",
-  "text": "الأحمر"
+  "text": "المطر"
  },
  {
   "key": "ans_266",
   "lang": "ar_EG",
-  "text": "الأسود"
+  "text": "الريح"
  },
  {
   "key": "ans_267",
   "lang": "ar_EG",
-  "text": "الوردي"
+  "text": "الثلج"
  },
  {
   "key": "ans_268",
@@ -1627,210 +1642,250 @@
  {
   "key": "ans_292",
   "lang": "ar_EG",
-  "text": "كلب"
+  "text": "بننفخ هوا في مية وصابون"
+ },
+ {
+  "key": "ans_293",
+  "lang": "ar_EG",
+  "text": "بنحطها في الفرن"
  },
  {
   "key": "ans_294",
   "lang": "ar_EG",
-  "text": "بقرة"
+  "text": "بنرميها في البحر"
  },
  {
   "key": "ans_295",
   "lang": "ar_EG",
-  "text": "حصان"
+  "text": "بندفنها في الرمل"
  },
  {
   "key": "ans_296",
   "lang": "ar_EG",
-  "text": "في الماء"
+  "text": "كلب"
  },
  {
-  "key": "ans_297",
+  "key": "ans_298",
   "lang": "ar_EG",
-  "text": "على الشجرة"
+  "text": "بقرة"
  },
  {
   "key": "ans_299",
   "lang": "ar_EG",
-  "text": "في السحاب"
+  "text": "حصان"
+ },
+ {
+  "key": "ans_300",
+  "lang": "ar_EG",
+  "text": "في الماء"
  },
  {
   "key": "ans_301",
   "lang": "ar_EG",
-  "text": "ماء"
- },
- {
-  "key": "ans_302",
-  "lang": "ar_EG",
-  "text": "ورق"
+  "text": "على الشجرة"
  },
  {
   "key": "ans_303",
   "lang": "ar_EG",
-  "text": "حجر"
- },
- {
-  "key": "ans_304",
-  "lang": "ar_EG",
-  "text": "فيل"
+  "text": "في السحاب"
  },
  {
   "key": "ans_305",
   "lang": "ar_EG",
-  "text": "أسد"
+  "text": "ماء"
  },
  {
   "key": "ans_306",
   "lang": "ar_EG",
-  "text": "أرنب"
+  "text": "ورق"
  },
  {
   "key": "ans_307",
+  "lang": "ar_EG",
+  "text": "حجر"
+ },
+ {
+  "key": "ans_308",
+  "lang": "ar_EG",
+  "text": "فيل"
+ },
+ {
+  "key": "ans_309",
+  "lang": "ar_EG",
+  "text": "أسد"
+ },
+ {
+  "key": "ans_310",
+  "lang": "ar_EG",
+  "text": "أرنب"
+ },
+ {
+  "key": "ans_311",
   "lang": "ar_EG",
   "text": "سلحفاة"
  },
  {
   "key": "ans_312",
   "lang": "ar_EG",
-  "text": "قبعة"
- },
- {
-  "key": "ans_313",
-  "lang": "ar_EG",
-  "text": "حذاء"
- },
- {
-  "key": "ans_314",
-  "lang": "ar_EG",
-  "text": "قميص"
+  "text": "بيض"
  },
  {
   "key": "ans_315",
   "lang": "ar_EG",
-  "text": "ساعة"
+  "text": "صوف"
  },
  {
   "key": "ans_316",
   "lang": "ar_EG",
-  "text": "نسر"
+  "text": "قبعة"
  },
  {
   "key": "ans_317",
   "lang": "ar_EG",
-  "text": "عصفور"
+  "text": "حذاء"
  },
  {
   "key": "ans_318",
   "lang": "ar_EG",
-  "text": "بطريق"
+  "text": "قميص"
  },
  {
   "key": "ans_319",
   "lang": "ar_EG",
-  "text": "حمامة"
+  "text": "ساعة"
  },
  {
   "key": "ans_320",
   "lang": "ar_EG",
-  "text": "عسلاً"
+  "text": "نسر"
  },
  {
   "key": "ans_321",
   "lang": "ar_EG",
-  "text": "حليباً"
+  "text": "عصفور"
  },
  {
   "key": "ans_322",
   "lang": "ar_EG",
-  "text": "خبزاً"
+  "text": "بطريق"
+ },
+ {
+  "key": "ans_323",
+  "lang": "ar_EG",
+  "text": "حمامة"
  },
  {
   "key": "ans_324",
   "lang": "ar_EG",
+  "text": "عسلاً"
+ },
+ {
+  "key": "ans_325",
+  "lang": "ar_EG",
+  "text": "حليباً"
+ },
+ {
+  "key": "ans_326",
+  "lang": "ar_EG",
+  "text": "خبزاً"
+ },
+ {
+  "key": "ans_328",
+  "lang": "ar_EG",
   "text": "زرافة"
- },
- {
-  "key": "ans_330",
-  "lang": "ar_EG",
-  "text": "الثلج"
- },
- {
-  "key": "ans_331",
-  "lang": "ar_EG",
-  "text": "داخل البيت"
  },
  {
   "key": "ans_332",
   "lang": "ar_EG",
-  "text": "خرطومه"
+  "text": "طيارة"
  },
  {
   "key": "ans_333",
   "lang": "ar_EG",
-  "text": "جناحه"
+  "text": "سيارة"
  },
  {
   "key": "ans_334",
   "lang": "ar_EG",
-  "text": "ذيله"
+  "text": "قطار"
  },
  {
   "key": "ans_335",
   "lang": "ar_EG",
-  "text": "قدمه"
+  "text": "سفينة"
  },
  {
   "key": "ans_336",
   "lang": "ar_EG",
-  "text": "الأجنحة"
+  "text": "خرطومه"
  },
  {
   "key": "ans_337",
   "lang": "ar_EG",
-  "text": "الزعانف"
+  "text": "جناحه"
  },
  {
   "key": "ans_338",
   "lang": "ar_EG",
-  "text": "الأقدام فقط"
+  "text": "ذيله"
  },
  {
   "key": "ans_339",
   "lang": "ar_EG",
-  "text": "القرون"
+  "text": "قدمه"
  },
  {
   "key": "ans_340",
   "lang": "ar_EG",
-  "text": "ماء وضوء"
+  "text": "الأجنحة"
  },
  {
   "key": "ans_341",
   "lang": "ar_EG",
-  "text": "حلوى"
+  "text": "الزعانف"
  },
  {
   "key": "ans_342",
   "lang": "ar_EG",
-  "text": "ألعاب"
+  "text": "الأقدام فقط"
  },
  {
   "key": "ans_343",
   "lang": "ar_EG",
-  "text": "رمل فقط"
+  "text": "القرون"
+ },
+ {
+  "key": "ans_344",
+  "lang": "ar_EG",
+  "text": "ماء وضوء"
+ },
+ {
+  "key": "ans_345",
+  "lang": "ar_EG",
+  "text": "حلوى"
  },
  {
   "key": "ans_346",
   "lang": "ar_EG",
-  "text": "ثعلب"
+  "text": "ألعاب"
  },
  {
   "key": "ans_347",
   "lang": "ar_EG",
+  "text": "رمل فقط"
+ },
+ {
+  "key": "ans_350",
+  "lang": "ar_EG",
+  "text": "ثعلب"
+ },
+ {
+  "key": "ans_351",
+  "lang": "ar_EG",
   "text": "نمر"
  },
  {
-  "key": "ans_349",
+  "key": "ans_353",
   "lang": "ar_EG",
   "text": "جمل"
  },
@@ -1842,7 +1897,7 @@
  {
   "key": "sci_0_0",
   "lang": "ar_EG",
-  "text": "الثدييات. الفيل من الثدييات. يلد صغاره ويرضعها اللبن. الثدييات دي حيوانات بتولد صغارها وبترضعهم لبن زي الكلب والقطة والبقرة والفيل. جسمهم عليه شعر أو فرو بيدفيهم. الفيل أكبر حيوان على الأرض وعنده خرطوم طويل بيشرب ويسلم بيه."
+  "text": "الثدييات. الفيل من الثدييات. يلد صغاره ويرضعها اللبن. الثدييات دي حيوانات بتولد صغارها وبترضعهم لبن زي الكلب والقطة والبقرة والفيل. جسمهم عليه شعر أو فرو بيدفيهم. الفيل أكبر حيوان على اليابسة وعنده خرطوم طويل بيشرب ويسلم بيه."
  },
  {
   "key": "sci_0_1",
@@ -1982,12 +2037,12 @@
  {
   "key": "sci_4_1",
   "lang": "ar_EG",
-  "text": "قوس قزح. بعد المطر بيظهر قوس قزح بألوانه الحلوة في السما. بعد ما المطر بيخلص والشمس بتطلع، ساعات بيظهر في السما قوس كبير ملون اسمه قوس قزح. ألوانه بالترتيب: أحمر وبرتقالي وأصفر وأخضر وأزرق وبنفسجي. لو شفته في يوم من الأيام، عدّ ألوانه معايا وقولّي شوفت كام لون."
+  "text": "البرق والرعد. البرق نور قوي بيظهر في السما، والرعد صوته العالي اللي بييجي بعده. في يوم فيه سحاب كتير ومطر، ساعات بنشوف نور قوي بيلمع في السما اسمه البرق، وبعد شوية بنسمع صوت عالي أوي اسمه الرعد. البرق بييجي الأول وبعدين الرعد، عشان النور بيوصل لعينينا أسرع من الصوت. ما تخافش من الرعد، هو صوت طبيعي في السما، ولو سمعته وانت بره ادخل البيت واستنى لحد ما المطر يخلص."
  },
  {
   "key": "sci_4_2",
   "lang": "ar_EG",
-  "text": "اللعب بالعجينة. بنلعب بالعجينة ونعمل منها أشكال حلوة. العجينة الملونة بنعجنها بإيدينا ونليّنها، وبعدين نعمل منها أشكال: كرة وتفاحة ونجمة وحيوانات صغيرة. اللعب بالعجينة بيقوي صوابعك وبيخليك تتخيل حاجات حلوة. بعد ما نخلص بنلم العجينة في علبتها عشان ما تنشفش."
+  "text": "فقاعات الصابون. بننفخ هوا في مية وصابون فبتطلع فقاعات شفافة بتطير في الهوا. جرب اللعبة الجميلة دي مع ماما: حط شوية صابون سايل في كباية مية وقلبهم، وبعدين انفخ بالشاليموه أو بالحلقة فهتطلع فقاعات شفافة وملونة بتطير في الهوا. الفقاعة دي كرة صغيرة من الصابون جواها هوا، وبتعكس ألوان جميلة وهي طايرة. جرب تنفخ براحة عشان الفقاعة تكبر، وشوف هتطير لحد فين قبل ما تفرقع!"
  },
  {
   "key": "sci_4_3",
@@ -3686,353 +3741,983 @@
  },
  {
   "key": "rd_syl_0_0",
-  "lang": "ar_EG",
-  "text": "بَ"
+  "lang": "ar_SA",
+  "text": "أَ"
  },
  {
   "key": "rd_syl_0_1",
-  "lang": "ar_EG",
-  "text": "بِ"
+  "lang": "ar_SA",
+  "text": "إِ"
  },
  {
   "key": "rd_syl_0_2",
-  "lang": "ar_EG",
-  "text": "بُ"
+  "lang": "ar_SA",
+  "text": "أُ"
  },
  {
   "key": "rd_syl_0_3",
-  "lang": "ar_EG",
-  "text": "با"
+  "lang": "ar_SA",
+  "text": "آ"
  },
  {
   "key": "rd_syl_0_4",
-  "lang": "ar_EG",
-  "text": "بي"
+  "lang": "ar_SA",
+  "text": "إي"
  },
  {
   "key": "rd_syl_0_5",
-  "lang": "ar_EG",
-  "text": "بو"
+  "lang": "ar_SA",
+  "text": "أو"
  },
  {
   "key": "rd_intro_0",
   "lang": "ar_EG",
-  "text": "الباء. بَ. با"
+  "text": "الألف. أَ. آ"
  },
  {
   "key": "rd_syl_1_0",
-  "lang": "ar_EG",
-  "text": "تَ"
+  "lang": "ar_SA",
+  "text": "بَ"
  },
  {
   "key": "rd_syl_1_1",
-  "lang": "ar_EG",
-  "text": "تِ"
+  "lang": "ar_SA",
+  "text": "بِ"
  },
  {
   "key": "rd_syl_1_2",
-  "lang": "ar_EG",
-  "text": "تُ"
+  "lang": "ar_SA",
+  "text": "بُ"
  },
  {
   "key": "rd_syl_1_3",
-  "lang": "ar_EG",
-  "text": "تا"
+  "lang": "ar_SA",
+  "text": "با"
  },
  {
   "key": "rd_syl_1_4",
-  "lang": "ar_EG",
-  "text": "تي"
+  "lang": "ar_SA",
+  "text": "بي"
  },
  {
   "key": "rd_syl_1_5",
-  "lang": "ar_EG",
-  "text": "تو"
+  "lang": "ar_SA",
+  "text": "بو"
  },
  {
   "key": "rd_intro_1",
   "lang": "ar_EG",
-  "text": "التاء. تَ. تا"
+  "text": "الباء. بَ. با"
  },
  {
   "key": "rd_syl_2_0",
-  "lang": "ar_EG",
-  "text": "ثَ"
+  "lang": "ar_SA",
+  "text": "تَ"
  },
  {
   "key": "rd_syl_2_1",
-  "lang": "ar_EG",
-  "text": "ثِ"
+  "lang": "ar_SA",
+  "text": "تِ"
  },
  {
   "key": "rd_syl_2_2",
-  "lang": "ar_EG",
-  "text": "ثُ"
+  "lang": "ar_SA",
+  "text": "تُ"
  },
  {
   "key": "rd_syl_2_3",
-  "lang": "ar_EG",
-  "text": "ثا"
+  "lang": "ar_SA",
+  "text": "تا"
  },
  {
   "key": "rd_syl_2_4",
-  "lang": "ar_EG",
-  "text": "ثي"
+  "lang": "ar_SA",
+  "text": "تي"
  },
  {
   "key": "rd_syl_2_5",
-  "lang": "ar_EG",
-  "text": "ثو"
+  "lang": "ar_SA",
+  "text": "تو"
  },
  {
   "key": "rd_intro_2",
   "lang": "ar_EG",
-  "text": "الثاء. ثَ. ثا"
+  "text": "التاء. تَ. تا"
  },
  {
   "key": "rd_syl_3_0",
-  "lang": "ar_EG",
-  "text": "مَ"
+  "lang": "ar_SA",
+  "text": "ثَ"
  },
  {
   "key": "rd_syl_3_1",
-  "lang": "ar_EG",
-  "text": "مِ"
+  "lang": "ar_SA",
+  "text": "ثِ"
  },
  {
   "key": "rd_syl_3_2",
-  "lang": "ar_EG",
-  "text": "مُ"
+  "lang": "ar_SA",
+  "text": "ثُ"
  },
  {
   "key": "rd_syl_3_3",
-  "lang": "ar_EG",
-  "text": "ما"
+  "lang": "ar_SA",
+  "text": "ثا"
  },
  {
   "key": "rd_syl_3_4",
-  "lang": "ar_EG",
-  "text": "مي"
+  "lang": "ar_SA",
+  "text": "ثي"
  },
  {
   "key": "rd_syl_3_5",
-  "lang": "ar_EG",
-  "text": "مو"
+  "lang": "ar_SA",
+  "text": "ثو"
  },
  {
   "key": "rd_intro_3",
   "lang": "ar_EG",
-  "text": "الميم. مَ. ما"
+  "text": "الثاء. ثَ. ثا"
  },
  {
   "key": "rd_syl_4_0",
-  "lang": "ar_EG",
-  "text": "نَ"
+  "lang": "ar_SA",
+  "text": "جَ"
  },
  {
   "key": "rd_syl_4_1",
-  "lang": "ar_EG",
-  "text": "نِ"
+  "lang": "ar_SA",
+  "text": "جِ"
  },
  {
   "key": "rd_syl_4_2",
-  "lang": "ar_EG",
-  "text": "نُ"
+  "lang": "ar_SA",
+  "text": "جُ"
  },
  {
   "key": "rd_syl_4_3",
-  "lang": "ar_EG",
-  "text": "نا"
+  "lang": "ar_SA",
+  "text": "جا"
  },
  {
   "key": "rd_syl_4_4",
-  "lang": "ar_EG",
-  "text": "ني"
+  "lang": "ar_SA",
+  "text": "جي"
  },
  {
   "key": "rd_syl_4_5",
-  "lang": "ar_EG",
-  "text": "نو"
+  "lang": "ar_SA",
+  "text": "جو"
  },
  {
   "key": "rd_intro_4",
   "lang": "ar_EG",
-  "text": "النون. نَ. نا"
+  "text": "الجيم. جَ. جا"
  },
  {
   "key": "rd_syl_5_0",
-  "lang": "ar_EG",
-  "text": "سَ"
+  "lang": "ar_SA",
+  "text": "حَ"
  },
  {
   "key": "rd_syl_5_1",
-  "lang": "ar_EG",
-  "text": "سِ"
+  "lang": "ar_SA",
+  "text": "حِ"
  },
  {
   "key": "rd_syl_5_2",
-  "lang": "ar_EG",
-  "text": "سُ"
+  "lang": "ar_SA",
+  "text": "حُ"
  },
  {
   "key": "rd_syl_5_3",
-  "lang": "ar_EG",
-  "text": "سا"
+  "lang": "ar_SA",
+  "text": "حا"
  },
  {
   "key": "rd_syl_5_4",
-  "lang": "ar_EG",
-  "text": "سي"
+  "lang": "ar_SA",
+  "text": "حي"
  },
  {
   "key": "rd_syl_5_5",
-  "lang": "ar_EG",
-  "text": "سو"
+  "lang": "ar_SA",
+  "text": "حو"
  },
  {
   "key": "rd_intro_5",
   "lang": "ar_EG",
-  "text": "السين. سَ. سا"
+  "text": "الحاء. حَ. حا"
  },
  {
   "key": "rd_syl_6_0",
-  "lang": "ar_EG",
-  "text": "كَ"
+  "lang": "ar_SA",
+  "text": "خَ"
  },
  {
   "key": "rd_syl_6_1",
-  "lang": "ar_EG",
-  "text": "كِ"
+  "lang": "ar_SA",
+  "text": "خِ"
  },
  {
   "key": "rd_syl_6_2",
-  "lang": "ar_EG",
-  "text": "كُ"
+  "lang": "ar_SA",
+  "text": "خُ"
  },
  {
   "key": "rd_syl_6_3",
-  "lang": "ar_EG",
-  "text": "كا"
+  "lang": "ar_SA",
+  "text": "خا"
  },
  {
   "key": "rd_syl_6_4",
-  "lang": "ar_EG",
-  "text": "كي"
+  "lang": "ar_SA",
+  "text": "خي"
  },
  {
   "key": "rd_syl_6_5",
-  "lang": "ar_EG",
-  "text": "كو"
+  "lang": "ar_SA",
+  "text": "خو"
  },
  {
   "key": "rd_intro_6",
   "lang": "ar_EG",
-  "text": "الكاف. كَ. كا"
+  "text": "الخاء. خَ. خا"
  },
  {
   "key": "rd_syl_7_0",
-  "lang": "ar_EG",
-  "text": "لَ"
+  "lang": "ar_SA",
+  "text": "دَ"
  },
  {
   "key": "rd_syl_7_1",
-  "lang": "ar_EG",
-  "text": "لِ"
+  "lang": "ar_SA",
+  "text": "دِ"
  },
  {
   "key": "rd_syl_7_2",
-  "lang": "ar_EG",
-  "text": "لُ"
+  "lang": "ar_SA",
+  "text": "دُ"
  },
  {
   "key": "rd_syl_7_3",
-  "lang": "ar_EG",
-  "text": "لا"
+  "lang": "ar_SA",
+  "text": "دا"
  },
  {
   "key": "rd_syl_7_4",
-  "lang": "ar_EG",
-  "text": "لي"
+  "lang": "ar_SA",
+  "text": "دي"
  },
  {
   "key": "rd_syl_7_5",
-  "lang": "ar_EG",
-  "text": "لو"
+  "lang": "ar_SA",
+  "text": "دو"
  },
  {
   "key": "rd_intro_7",
   "lang": "ar_EG",
-  "text": "اللام. لَ. لا"
+  "text": "الدال. دَ. دا"
  },
  {
   "key": "rd_syl_8_0",
-  "lang": "ar_EG",
-  "text": "فَ"
+  "lang": "ar_SA",
+  "text": "ذَ"
  },
  {
   "key": "rd_syl_8_1",
-  "lang": "ar_EG",
-  "text": "فِ"
+  "lang": "ar_SA",
+  "text": "ذِ"
  },
  {
   "key": "rd_syl_8_2",
-  "lang": "ar_EG",
-  "text": "فُ"
+  "lang": "ar_SA",
+  "text": "ذُ"
  },
  {
   "key": "rd_syl_8_3",
-  "lang": "ar_EG",
-  "text": "فا"
+  "lang": "ar_SA",
+  "text": "ذا"
  },
  {
   "key": "rd_syl_8_4",
-  "lang": "ar_EG",
-  "text": "في"
+  "lang": "ar_SA",
+  "text": "ذي"
  },
  {
   "key": "rd_syl_8_5",
-  "lang": "ar_EG",
-  "text": "فو"
+  "lang": "ar_SA",
+  "text": "ذو"
  },
  {
   "key": "rd_intro_8",
   "lang": "ar_EG",
-  "text": "الفاء. فَ. فا"
+  "text": "الذال. ذَ. ذا"
  },
  {
   "key": "rd_syl_9_0",
-  "lang": "ar_EG",
-  "text": "عَ"
+  "lang": "ar_SA",
+  "text": "رَ"
  },
  {
   "key": "rd_syl_9_1",
-  "lang": "ar_EG",
-  "text": "عِ"
+  "lang": "ar_SA",
+  "text": "رِ"
  },
  {
   "key": "rd_syl_9_2",
-  "lang": "ar_EG",
-  "text": "عُ"
+  "lang": "ar_SA",
+  "text": "رُ"
  },
  {
   "key": "rd_syl_9_3",
-  "lang": "ar_EG",
-  "text": "عا"
+  "lang": "ar_SA",
+  "text": "را"
  },
  {
   "key": "rd_syl_9_4",
-  "lang": "ar_EG",
-  "text": "عي"
+  "lang": "ar_SA",
+  "text": "ري"
  },
  {
   "key": "rd_syl_9_5",
-  "lang": "ar_EG",
-  "text": "عو"
+  "lang": "ar_SA",
+  "text": "رو"
  },
  {
   "key": "rd_intro_9",
   "lang": "ar_EG",
+  "text": "الراء. رَ. را"
+ },
+ {
+  "key": "rd_syl_10_0",
+  "lang": "ar_SA",
+  "text": "زَ"
+ },
+ {
+  "key": "rd_syl_10_1",
+  "lang": "ar_SA",
+  "text": "زِ"
+ },
+ {
+  "key": "rd_syl_10_2",
+  "lang": "ar_SA",
+  "text": "زُ"
+ },
+ {
+  "key": "rd_syl_10_3",
+  "lang": "ar_SA",
+  "text": "زا"
+ },
+ {
+  "key": "rd_syl_10_4",
+  "lang": "ar_SA",
+  "text": "زي"
+ },
+ {
+  "key": "rd_syl_10_5",
+  "lang": "ar_SA",
+  "text": "زو"
+ },
+ {
+  "key": "rd_intro_10",
+  "lang": "ar_EG",
+  "text": "الزاي. زَ. زا"
+ },
+ {
+  "key": "rd_syl_11_0",
+  "lang": "ar_SA",
+  "text": "سَ"
+ },
+ {
+  "key": "rd_syl_11_1",
+  "lang": "ar_SA",
+  "text": "سِ"
+ },
+ {
+  "key": "rd_syl_11_2",
+  "lang": "ar_SA",
+  "text": "سُ"
+ },
+ {
+  "key": "rd_syl_11_3",
+  "lang": "ar_SA",
+  "text": "سا"
+ },
+ {
+  "key": "rd_syl_11_4",
+  "lang": "ar_SA",
+  "text": "سي"
+ },
+ {
+  "key": "rd_syl_11_5",
+  "lang": "ar_SA",
+  "text": "سو"
+ },
+ {
+  "key": "rd_intro_11",
+  "lang": "ar_EG",
+  "text": "السين. سَ. سا"
+ },
+ {
+  "key": "rd_syl_12_0",
+  "lang": "ar_SA",
+  "text": "شَ"
+ },
+ {
+  "key": "rd_syl_12_1",
+  "lang": "ar_SA",
+  "text": "شِ"
+ },
+ {
+  "key": "rd_syl_12_2",
+  "lang": "ar_SA",
+  "text": "شُ"
+ },
+ {
+  "key": "rd_syl_12_3",
+  "lang": "ar_SA",
+  "text": "شا"
+ },
+ {
+  "key": "rd_syl_12_4",
+  "lang": "ar_SA",
+  "text": "شي"
+ },
+ {
+  "key": "rd_syl_12_5",
+  "lang": "ar_SA",
+  "text": "شو"
+ },
+ {
+  "key": "rd_intro_12",
+  "lang": "ar_EG",
+  "text": "الشين. شَ. شا"
+ },
+ {
+  "key": "rd_syl_13_0",
+  "lang": "ar_SA",
+  "text": "صَ"
+ },
+ {
+  "key": "rd_syl_13_1",
+  "lang": "ar_SA",
+  "text": "صِ"
+ },
+ {
+  "key": "rd_syl_13_2",
+  "lang": "ar_SA",
+  "text": "صُ"
+ },
+ {
+  "key": "rd_syl_13_3",
+  "lang": "ar_SA",
+  "text": "صا"
+ },
+ {
+  "key": "rd_syl_13_4",
+  "lang": "ar_SA",
+  "text": "صي"
+ },
+ {
+  "key": "rd_syl_13_5",
+  "lang": "ar_SA",
+  "text": "صو"
+ },
+ {
+  "key": "rd_intro_13",
+  "lang": "ar_EG",
+  "text": "الصاد. صَ. صا"
+ },
+ {
+  "key": "rd_syl_14_0",
+  "lang": "ar_SA",
+  "text": "ضَ"
+ },
+ {
+  "key": "rd_syl_14_1",
+  "lang": "ar_SA",
+  "text": "ضِ"
+ },
+ {
+  "key": "rd_syl_14_2",
+  "lang": "ar_SA",
+  "text": "ضُ"
+ },
+ {
+  "key": "rd_syl_14_3",
+  "lang": "ar_SA",
+  "text": "ضا"
+ },
+ {
+  "key": "rd_syl_14_4",
+  "lang": "ar_SA",
+  "text": "ضي"
+ },
+ {
+  "key": "rd_syl_14_5",
+  "lang": "ar_SA",
+  "text": "ضو"
+ },
+ {
+  "key": "rd_intro_14",
+  "lang": "ar_EG",
+  "text": "الضاد. ضَ. ضا"
+ },
+ {
+  "key": "rd_syl_15_0",
+  "lang": "ar_SA",
+  "text": "طَ"
+ },
+ {
+  "key": "rd_syl_15_1",
+  "lang": "ar_SA",
+  "text": "طِ"
+ },
+ {
+  "key": "rd_syl_15_2",
+  "lang": "ar_SA",
+  "text": "طُ"
+ },
+ {
+  "key": "rd_syl_15_3",
+  "lang": "ar_SA",
+  "text": "طا"
+ },
+ {
+  "key": "rd_syl_15_4",
+  "lang": "ar_SA",
+  "text": "طي"
+ },
+ {
+  "key": "rd_syl_15_5",
+  "lang": "ar_SA",
+  "text": "طو"
+ },
+ {
+  "key": "rd_intro_15",
+  "lang": "ar_EG",
+  "text": "الطاء. طَ. طا"
+ },
+ {
+  "key": "rd_syl_16_0",
+  "lang": "ar_SA",
+  "text": "ظَ"
+ },
+ {
+  "key": "rd_syl_16_1",
+  "lang": "ar_SA",
+  "text": "ظِ"
+ },
+ {
+  "key": "rd_syl_16_2",
+  "lang": "ar_SA",
+  "text": "ظُ"
+ },
+ {
+  "key": "rd_syl_16_3",
+  "lang": "ar_SA",
+  "text": "ظا"
+ },
+ {
+  "key": "rd_syl_16_4",
+  "lang": "ar_SA",
+  "text": "ظي"
+ },
+ {
+  "key": "rd_syl_16_5",
+  "lang": "ar_SA",
+  "text": "ظو"
+ },
+ {
+  "key": "rd_intro_16",
+  "lang": "ar_EG",
+  "text": "الظاء. ظَ. ظا"
+ },
+ {
+  "key": "rd_syl_17_0",
+  "lang": "ar_SA",
+  "text": "عَ"
+ },
+ {
+  "key": "rd_syl_17_1",
+  "lang": "ar_SA",
+  "text": "عِ"
+ },
+ {
+  "key": "rd_syl_17_2",
+  "lang": "ar_SA",
+  "text": "عُ"
+ },
+ {
+  "key": "rd_syl_17_3",
+  "lang": "ar_SA",
+  "text": "عا"
+ },
+ {
+  "key": "rd_syl_17_4",
+  "lang": "ar_SA",
+  "text": "عي"
+ },
+ {
+  "key": "rd_syl_17_5",
+  "lang": "ar_SA",
+  "text": "عو"
+ },
+ {
+  "key": "rd_intro_17",
+  "lang": "ar_EG",
   "text": "العين. عَ. عا"
+ },
+ {
+  "key": "rd_syl_18_0",
+  "lang": "ar_SA",
+  "text": "غَ"
+ },
+ {
+  "key": "rd_syl_18_1",
+  "lang": "ar_SA",
+  "text": "غِ"
+ },
+ {
+  "key": "rd_syl_18_2",
+  "lang": "ar_SA",
+  "text": "غُ"
+ },
+ {
+  "key": "rd_syl_18_3",
+  "lang": "ar_SA",
+  "text": "غا"
+ },
+ {
+  "key": "rd_syl_18_4",
+  "lang": "ar_SA",
+  "text": "غي"
+ },
+ {
+  "key": "rd_syl_18_5",
+  "lang": "ar_SA",
+  "text": "غو"
+ },
+ {
+  "key": "rd_intro_18",
+  "lang": "ar_EG",
+  "text": "الغين. غَ. غا"
+ },
+ {
+  "key": "rd_syl_19_0",
+  "lang": "ar_SA",
+  "text": "فَ"
+ },
+ {
+  "key": "rd_syl_19_1",
+  "lang": "ar_SA",
+  "text": "فِ"
+ },
+ {
+  "key": "rd_syl_19_2",
+  "lang": "ar_SA",
+  "text": "فُ"
+ },
+ {
+  "key": "rd_syl_19_3",
+  "lang": "ar_SA",
+  "text": "فا"
+ },
+ {
+  "key": "rd_syl_19_4",
+  "lang": "ar_SA",
+  "text": "في"
+ },
+ {
+  "key": "rd_syl_19_5",
+  "lang": "ar_SA",
+  "text": "فو"
+ },
+ {
+  "key": "rd_intro_19",
+  "lang": "ar_EG",
+  "text": "الفاء. فَ. فا"
+ },
+ {
+  "key": "rd_syl_20_0",
+  "lang": "ar_SA",
+  "text": "قَ"
+ },
+ {
+  "key": "rd_syl_20_1",
+  "lang": "ar_SA",
+  "text": "قِ"
+ },
+ {
+  "key": "rd_syl_20_2",
+  "lang": "ar_SA",
+  "text": "قُ"
+ },
+ {
+  "key": "rd_syl_20_3",
+  "lang": "ar_SA",
+  "text": "قا"
+ },
+ {
+  "key": "rd_syl_20_4",
+  "lang": "ar_SA",
+  "text": "قي"
+ },
+ {
+  "key": "rd_syl_20_5",
+  "lang": "ar_SA",
+  "text": "قو"
+ },
+ {
+  "key": "rd_intro_20",
+  "lang": "ar_EG",
+  "text": "القاف. قَ. قا"
+ },
+ {
+  "key": "rd_syl_21_0",
+  "lang": "ar_SA",
+  "text": "كَ"
+ },
+ {
+  "key": "rd_syl_21_1",
+  "lang": "ar_SA",
+  "text": "كِ"
+ },
+ {
+  "key": "rd_syl_21_2",
+  "lang": "ar_SA",
+  "text": "كُ"
+ },
+ {
+  "key": "rd_syl_21_3",
+  "lang": "ar_SA",
+  "text": "كا"
+ },
+ {
+  "key": "rd_syl_21_4",
+  "lang": "ar_SA",
+  "text": "كي"
+ },
+ {
+  "key": "rd_syl_21_5",
+  "lang": "ar_SA",
+  "text": "كو"
+ },
+ {
+  "key": "rd_intro_21",
+  "lang": "ar_EG",
+  "text": "الكاف. كَ. كا"
+ },
+ {
+  "key": "rd_syl_22_0",
+  "lang": "ar_SA",
+  "text": "لَ"
+ },
+ {
+  "key": "rd_syl_22_1",
+  "lang": "ar_SA",
+  "text": "لِ"
+ },
+ {
+  "key": "rd_syl_22_2",
+  "lang": "ar_SA",
+  "text": "لُ"
+ },
+ {
+  "key": "rd_syl_22_3",
+  "lang": "ar_SA",
+  "text": "لا"
+ },
+ {
+  "key": "rd_syl_22_4",
+  "lang": "ar_SA",
+  "text": "لي"
+ },
+ {
+  "key": "rd_syl_22_5",
+  "lang": "ar_SA",
+  "text": "لو"
+ },
+ {
+  "key": "rd_intro_22",
+  "lang": "ar_EG",
+  "text": "اللام. لَ. لا"
+ },
+ {
+  "key": "rd_syl_23_0",
+  "lang": "ar_SA",
+  "text": "مَ"
+ },
+ {
+  "key": "rd_syl_23_1",
+  "lang": "ar_SA",
+  "text": "مِ"
+ },
+ {
+  "key": "rd_syl_23_2",
+  "lang": "ar_SA",
+  "text": "مُ"
+ },
+ {
+  "key": "rd_syl_23_3",
+  "lang": "ar_SA",
+  "text": "ما"
+ },
+ {
+  "key": "rd_syl_23_4",
+  "lang": "ar_SA",
+  "text": "مي"
+ },
+ {
+  "key": "rd_syl_23_5",
+  "lang": "ar_SA",
+  "text": "مو"
+ },
+ {
+  "key": "rd_intro_23",
+  "lang": "ar_EG",
+  "text": "الميم. مَ. ما"
+ },
+ {
+  "key": "rd_syl_24_0",
+  "lang": "ar_SA",
+  "text": "نَ"
+ },
+ {
+  "key": "rd_syl_24_1",
+  "lang": "ar_SA",
+  "text": "نِ"
+ },
+ {
+  "key": "rd_syl_24_2",
+  "lang": "ar_SA",
+  "text": "نُ"
+ },
+ {
+  "key": "rd_syl_24_3",
+  "lang": "ar_SA",
+  "text": "نا"
+ },
+ {
+  "key": "rd_syl_24_4",
+  "lang": "ar_SA",
+  "text": "ني"
+ },
+ {
+  "key": "rd_syl_24_5",
+  "lang": "ar_SA",
+  "text": "نو"
+ },
+ {
+  "key": "rd_intro_24",
+  "lang": "ar_EG",
+  "text": "النون. نَ. نا"
+ },
+ {
+  "key": "rd_syl_25_0",
+  "lang": "ar_SA",
+  "text": "هـَ"
+ },
+ {
+  "key": "rd_syl_25_1",
+  "lang": "ar_SA",
+  "text": "هـِ"
+ },
+ {
+  "key": "rd_syl_25_2",
+  "lang": "ar_SA",
+  "text": "هـُ"
+ },
+ {
+  "key": "rd_syl_25_3",
+  "lang": "ar_SA",
+  "text": "هـا"
+ },
+ {
+  "key": "rd_syl_25_4",
+  "lang": "ar_SA",
+  "text": "هـي"
+ },
+ {
+  "key": "rd_syl_25_5",
+  "lang": "ar_SA",
+  "text": "هـو"
+ },
+ {
+  "key": "rd_intro_25",
+  "lang": "ar_EG",
+  "text": "الهاء. هـَ. هـا"
+ },
+ {
+  "key": "rd_syl_26_0",
+  "lang": "ar_SA",
+  "text": "وَ"
+ },
+ {
+  "key": "rd_syl_26_1",
+  "lang": "ar_SA",
+  "text": "وِ"
+ },
+ {
+  "key": "rd_syl_26_2",
+  "lang": "ar_SA",
+  "text": "وُ"
+ },
+ {
+  "key": "rd_syl_26_3",
+  "lang": "ar_SA",
+  "text": "وا"
+ },
+ {
+  "key": "rd_syl_26_4",
+  "lang": "ar_SA",
+  "text": "وي"
+ },
+ {
+  "key": "rd_syl_26_5",
+  "lang": "ar_SA",
+  "text": "وو"
+ },
+ {
+  "key": "rd_intro_26",
+  "lang": "ar_EG",
+  "text": "الواو. وَ. وا"
+ },
+ {
+  "key": "rd_syl_27_0",
+  "lang": "ar_SA",
+  "text": "يَ"
+ },
+ {
+  "key": "rd_syl_27_1",
+  "lang": "ar_SA",
+  "text": "يِ"
+ },
+ {
+  "key": "rd_syl_27_2",
+  "lang": "ar_SA",
+  "text": "يُ"
+ },
+ {
+  "key": "rd_syl_27_3",
+  "lang": "ar_SA",
+  "text": "يا"
+ },
+ {
+  "key": "rd_syl_27_4",
+  "lang": "ar_SA",
+  "text": "يي"
+ },
+ {
+  "key": "rd_syl_27_5",
+  "lang": "ar_SA",
+  "text": "يو"
+ },
+ {
+  "key": "rd_intro_27",
+  "lang": "ar_EG",
+  "text": "الياء. يَ. يا"
  },
  {
   "key": "rd_part_0_0",
@@ -4060,11 +4745,6 @@
   "text": "بَ، طَّة. بَطَّة"
  },
  {
-  "key": "rd_part_2_0",
-  "lang": "ar_EG",
-  "text": "أَ"
- },
- {
   "key": "rd_part_2_1",
   "lang": "ar_EG",
   "text": "سَد"
@@ -4075,11 +4755,6 @@
   "text": "أَ، سَد. أَسَد"
  },
  {
-  "key": "rd_part_3_0",
-  "lang": "ar_EG",
-  "text": "قَ"
- },
- {
   "key": "rd_part_3_1",
   "lang": "ar_EG",
   "text": "مَر"
@@ -4088,11 +4763,6 @@
   "key": "rd_blend_3",
   "lang": "ar_EG",
   "text": "قَ، مَر. قَمَر"
- },
- {
-  "key": "rd_part_4_0",
-  "lang": "ar_EG",
-  "text": "شَ"
  },
  {
   "key": "rd_part_4_1",
@@ -4118,11 +4788,6 @@
   "key": "rd_blend_5",
   "lang": "ar_EG",
   "text": "كَ، لْب. كَلْب"
- },
- {
-  "key": "rd_part_6_0",
-  "lang": "ar_EG",
-  "text": "قِ"
  },
  {
   "key": "rd_blend_6",
@@ -4352,7 +5017,7 @@
  {
   "key": "num_ar_l_0",
   "lang": "ar_EG",
-  "text": "ده رقم واحد. 1"
+  "text": "ده رقم واحد. واحد"
  },
  {
   "key": "num_ar_1",
@@ -4362,7 +5027,7 @@
  {
   "key": "num_ar_l_1",
   "lang": "ar_EG",
-  "text": "ده رقم اتنين. 2"
+  "text": "ده رقم اتنين. اتنين"
  },
  {
   "key": "num_ar_2",
@@ -4372,7 +5037,7 @@
  {
   "key": "num_ar_l_2",
   "lang": "ar_EG",
-  "text": "ده رقم تلاتة. 3"
+  "text": "ده رقم تلاتة. تلاتة"
  },
  {
   "key": "num_ar_3",
@@ -4382,7 +5047,7 @@
  {
   "key": "num_ar_l_3",
   "lang": "ar_EG",
-  "text": "ده رقم أربعة. 4"
+  "text": "ده رقم أربعة. أربعة"
  },
  {
   "key": "num_ar_4",
@@ -4392,7 +5057,7 @@
  {
   "key": "num_ar_l_4",
   "lang": "ar_EG",
-  "text": "ده رقم خمسة. 5"
+  "text": "ده رقم خمسة. خمسة"
  },
  {
   "key": "num_ar_5",
@@ -4402,7 +5067,7 @@
  {
   "key": "num_ar_l_5",
   "lang": "ar_EG",
-  "text": "ده رقم ستة. 6"
+  "text": "ده رقم ستة. ستة"
  },
  {
   "key": "num_ar_6",
@@ -4412,7 +5077,7 @@
  {
   "key": "num_ar_l_6",
   "lang": "ar_EG",
-  "text": "ده رقم سبعة. 7"
+  "text": "ده رقم سبعة. سبعة"
  },
  {
   "key": "num_ar_7",
@@ -4422,7 +5087,7 @@
  {
   "key": "num_ar_l_7",
   "lang": "ar_EG",
-  "text": "ده رقم تمانية. 8"
+  "text": "ده رقم تمانية. تمانية"
  },
  {
   "key": "num_ar_8",
@@ -4432,7 +5097,7 @@
  {
   "key": "num_ar_l_8",
   "lang": "ar_EG",
-  "text": "ده رقم تسعة. 9"
+  "text": "ده رقم تسعة. تسعة"
  },
  {
   "key": "num_ar_9",
@@ -4442,7 +5107,7 @@
  {
   "key": "num_ar_l_9",
   "lang": "ar_EG",
-  "text": "ده رقم عشرة. 10"
+  "text": "ده رقم عشرة. عشرة"
  },
  {
   "key": "num_ar_10",
@@ -4452,7 +5117,7 @@
  {
   "key": "num_ar_l_10",
   "lang": "ar_EG",
-  "text": "ده رقم حداشر. 11"
+  "text": "ده رقم حداشر. حداشر"
  },
  {
   "key": "num_ar_11",
@@ -4462,7 +5127,7 @@
  {
   "key": "num_ar_l_11",
   "lang": "ar_EG",
-  "text": "ده رقم اتناشر. 12"
+  "text": "ده رقم اتناشر. اتناشر"
  },
  {
   "key": "num_ar_12",
@@ -4472,7 +5137,7 @@
  {
   "key": "num_ar_l_12",
   "lang": "ar_EG",
-  "text": "ده رقم تلتاشر. 13"
+  "text": "ده رقم تلتاشر. تلتاشر"
  },
  {
   "key": "num_ar_13",
@@ -4482,7 +5147,7 @@
  {
   "key": "num_ar_l_13",
   "lang": "ar_EG",
-  "text": "ده رقم أربعتاشر. 14"
+  "text": "ده رقم أربعتاشر. أربعتاشر"
  },
  {
   "key": "num_ar_14",
@@ -4492,7 +5157,7 @@
  {
   "key": "num_ar_l_14",
   "lang": "ar_EG",
-  "text": "ده رقم خمستاشر. 15"
+  "text": "ده رقم خمستاشر. خمستاشر"
  },
  {
   "key": "num_ar_15",
@@ -4502,7 +5167,7 @@
  {
   "key": "num_ar_l_15",
   "lang": "ar_EG",
-  "text": "ده رقم ستاشر. 16"
+  "text": "ده رقم ستاشر. ستاشر"
  },
  {
   "key": "num_ar_16",
@@ -4512,7 +5177,7 @@
  {
   "key": "num_ar_l_16",
   "lang": "ar_EG",
-  "text": "ده رقم سبعتاشر. 17"
+  "text": "ده رقم سبعتاشر. سبعتاشر"
  },
  {
   "key": "num_ar_17",
@@ -4522,7 +5187,7 @@
  {
   "key": "num_ar_l_17",
   "lang": "ar_EG",
-  "text": "ده رقم تمنتاشر. 18"
+  "text": "ده رقم تمنتاشر. تمنتاشر"
  },
  {
   "key": "num_ar_18",
@@ -4532,7 +5197,7 @@
  {
   "key": "num_ar_l_18",
   "lang": "ar_EG",
-  "text": "ده رقم تسعتاشر. 19"
+  "text": "ده رقم تسعتاشر. تسعتاشر"
  },
  {
   "key": "num_ar_19",
@@ -4542,7 +5207,7 @@
  {
   "key": "num_ar_l_19",
   "lang": "ar_EG",
-  "text": "ده رقم عشرين. 20"
+  "text": "ده رقم عشرين. عشرين"
  },
  {
   "key": "num_en_0",
@@ -4762,7 +5427,7 @@
  {
   "key": "math_ar_q1_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ٠؟ بعد واحد بييجي واحد."
+  "text": "إيه الرقم اللي بعد ١؟ بعد واحد بييجي اتنين."
  },
  {
   "key": "math_ar_q1_2",
@@ -4772,12 +5437,12 @@
  {
   "key": "math_ar_q1_3",
   "lang": "ar_EG",
-  "text": "معانا ١ تفاحات وزودنا ١، بقوا كام؟ ١ + ١ = ٢. عدّهم مع بعض."
+  "text": "معانا تفاحة واحدة وزودنا واحدة، بقوا كام؟ واحد زائد واحد يساوي اتنين. عدّهم مع بعض."
  },
  {
   "key": "math_ar_q1_4",
   "lang": "ar_EG",
-  "text": "كان معانا ٣ نجوم واختفى ٢، فاضل كام؟ ٣ - ٢ = ١. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ٣ نجوم واختفى ٢، فاضل كام؟ تلاتة ناقص اتنين يساوي واحد. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q1_5",
@@ -4792,7 +5457,7 @@
  {
   "key": "math_en_q1_1",
   "lang": "en_US",
-  "text": "What number comes after 0? After undefined comes two."
+  "text": "What number comes after 1? After one comes two."
  },
  {
   "key": "math_en_q1_2",
@@ -4822,7 +5487,7 @@
  {
   "key": "math_ar_q2_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ١؟ بعد واحد بييجي اتنين."
+  "text": "إيه الرقم اللي بعد ٢؟ بعد اتنين بييجي تلاتة."
  },
  {
   "key": "math_ar_q2_2",
@@ -4832,7 +5497,7 @@
  {
   "key": "math_ar_q2_4",
   "lang": "ar_EG",
-  "text": "كان معانا ٤ نجوم واختفى ٢، فاضل كام؟ ٤ - ٢ = ٢. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ٤ نجوم واختفى ٢، فاضل كام؟ أربعة ناقص اتنين يساوي اتنين. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q2_5",
@@ -4847,7 +5512,7 @@
  {
   "key": "math_en_q2_1",
   "lang": "en_US",
-  "text": "What number comes after 1? After one comes three."
+  "text": "What number comes after 2? After two comes three."
  },
  {
   "key": "math_en_q2_2",
@@ -4872,7 +5537,7 @@
  {
   "key": "math_ar_q3_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ٢؟ بعد اتنين بييجي تلاتة."
+  "text": "إيه الرقم اللي بعد ٣؟ بعد تلاتة بييجي أربعة."
  },
  {
   "key": "math_ar_q3_2",
@@ -4882,12 +5547,12 @@
  {
   "key": "math_ar_q3_3",
   "lang": "ar_EG",
-  "text": "معانا ١ تفاحات وزودنا ٢، بقوا كام؟ ١ + ٢ = ٣. عدّهم مع بعض."
+  "text": "معانا تفاحة واحدة وزودنا ٢، بقوا كام؟ واحد زائد اتنين يساوي تلاتة. عدّهم مع بعض."
  },
  {
   "key": "math_ar_q3_4",
   "lang": "ar_EG",
-  "text": "كان معانا ٥ نجوم واختفى ٢، فاضل كام؟ ٥ - ٢ = ٣. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ٥ نجوم واختفى ٢، فاضل كام؟ خمسة ناقص اتنين يساوي تلاتة. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q3_5",
@@ -4902,7 +5567,7 @@
  {
   "key": "math_en_q3_1",
   "lang": "en_US",
-  "text": "What number comes after 2? After two comes four."
+  "text": "What number comes after 3? After three comes four."
  },
  {
   "key": "math_en_q3_2",
@@ -4932,7 +5597,7 @@
  {
   "key": "math_ar_q4_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ٣؟ بعد تلاتة بييجي أربعة."
+  "text": "إيه الرقم اللي بعد ٤؟ بعد أربعة بييجي خمسة."
  },
  {
   "key": "math_ar_q4_2",
@@ -4942,12 +5607,12 @@
  {
   "key": "math_ar_q4_3",
   "lang": "ar_EG",
-  "text": "معانا ٢ تفاحات وزودنا ٢، بقوا كام؟ ٢ + ٢ = ٤. عدّهم مع بعض."
+  "text": "معانا ٢ تفاحات وزودنا ٢، بقوا كام؟ اتنين زائد اتنين يساوي أربعة. عدّهم مع بعض."
  },
  {
   "key": "math_ar_q4_4",
   "lang": "ar_EG",
-  "text": "كان معانا ٦ نجوم واختفى ٢، فاضل كام؟ ٦ - ٢ = ٤. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ٦ نجوم واختفى ٢، فاضل كام؟ ستة ناقص اتنين يساوي أربعة. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q4_5",
@@ -4962,7 +5627,7 @@
  {
   "key": "math_en_q4_1",
   "lang": "en_US",
-  "text": "What number comes after 3? After three comes five."
+  "text": "What number comes after 4? After four comes five."
  },
  {
   "key": "math_en_q4_2",
@@ -4992,7 +5657,7 @@
  {
   "key": "math_ar_q5_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ٤؟ بعد أربعة بييجي خمسة."
+  "text": "إيه الرقم اللي بعد ٥؟ بعد خمسة بييجي ستة."
  },
  {
   "key": "math_ar_q5_2",
@@ -5002,12 +5667,12 @@
  {
   "key": "math_ar_q5_3",
   "lang": "ar_EG",
-  "text": "معانا ٢ تفاحات وزودنا ٣، بقوا كام؟ ٢ + ٣ = ٥. عدّهم مع بعض."
+  "text": "معانا ٢ تفاحات وزودنا ٣، بقوا كام؟ اتنين زائد تلاتة يساوي خمسة. عدّهم مع بعض."
  },
  {
   "key": "math_ar_q5_4",
   "lang": "ar_EG",
-  "text": "كان معانا ٧ نجوم واختفى ٢، فاضل كام؟ ٧ - ٢ = ٥. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ٧ نجوم واختفى ٢، فاضل كام؟ سبعة ناقص اتنين يساوي خمسة. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q5_5",
@@ -5022,7 +5687,7 @@
  {
   "key": "math_en_q5_1",
   "lang": "en_US",
-  "text": "What number comes after 4? After four comes six."
+  "text": "What number comes after 5? After five comes six."
  },
  {
   "key": "math_en_q5_2",
@@ -5052,7 +5717,7 @@
  {
   "key": "math_ar_q6_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ٥؟ بعد خمسة بييجي ستة."
+  "text": "إيه الرقم اللي بعد ٦؟ بعد ستة بييجي سبعة."
  },
  {
   "key": "math_ar_q6_2",
@@ -5062,12 +5727,12 @@
  {
   "key": "math_ar_q6_3",
   "lang": "ar_EG",
-  "text": "معانا ٣ تفاحات وزودنا ٣، بقوا كام؟ ٣ + ٣ = ٦. عدّهم مع بعض."
+  "text": "معانا ٣ تفاحات وزودنا ٣، بقوا كام؟ تلاتة زائد تلاتة يساوي ستة. عدّهم مع بعض."
  },
  {
   "key": "math_ar_q6_4",
   "lang": "ar_EG",
-  "text": "كان معانا ٨ نجوم واختفى ٢، فاضل كام؟ ٨ - ٢ = ٦. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ٨ نجوم واختفى ٢، فاضل كام؟ تمانية ناقص اتنين يساوي ستة. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q6_5",
@@ -5082,7 +5747,7 @@
  {
   "key": "math_en_q6_1",
   "lang": "en_US",
-  "text": "What number comes after 5? After five comes seven."
+  "text": "What number comes after 6? After six comes seven."
  },
  {
   "key": "math_en_q6_2",
@@ -5112,7 +5777,7 @@
  {
   "key": "math_ar_q7_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ٦؟ بعد ستة بييجي سبعة."
+  "text": "إيه الرقم اللي بعد ٧؟ بعد سبعة بييجي تمانية."
  },
  {
   "key": "math_ar_q7_2",
@@ -5122,12 +5787,12 @@
  {
   "key": "math_ar_q7_3",
   "lang": "ar_EG",
-  "text": "معانا ٣ تفاحات وزودنا ٤، بقوا كام؟ ٣ + ٤ = ٧. عدّهم مع بعض."
+  "text": "معانا ٣ تفاحات وزودنا ٤، بقوا كام؟ تلاتة زائد أربعة يساوي سبعة. عدّهم مع بعض."
  },
  {
   "key": "math_ar_q7_4",
   "lang": "ar_EG",
-  "text": "كان معانا ٩ نجوم واختفى ٢، فاضل كام؟ ٩ - ٢ = ٧. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ٩ نجوم واختفى ٢، فاضل كام؟ تسعة ناقص اتنين يساوي سبعة. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q7_5",
@@ -5142,7 +5807,7 @@
  {
   "key": "math_en_q7_1",
   "lang": "en_US",
-  "text": "What number comes after 6? After six comes eight."
+  "text": "What number comes after 7? After seven comes eight."
  },
  {
   "key": "math_en_q7_2",
@@ -5172,7 +5837,7 @@
  {
   "key": "math_ar_q8_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ٧؟ بعد سبعة بييجي تمانية."
+  "text": "إيه الرقم اللي بعد ٨؟ بعد تمانية بييجي تسعة."
  },
  {
   "key": "math_ar_q8_2",
@@ -5182,12 +5847,12 @@
  {
   "key": "math_ar_q8_3",
   "lang": "ar_EG",
-  "text": "معانا ٤ تفاحات وزودنا ٤، بقوا كام؟ ٤ + ٤ = ٨. عدّهم مع بعض."
+  "text": "معانا ٤ تفاحات وزودنا ٤، بقوا كام؟ أربعة زائد أربعة يساوي تمانية. عدّهم مع بعض."
  },
  {
   "key": "math_ar_q8_4",
   "lang": "ar_EG",
-  "text": "كان معانا ١٠ نجوم واختفى ٢، فاضل كام؟ ١٠ - ٢ = ٨. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ١٠ نجوم واختفى ٢، فاضل كام؟ عشرة ناقص اتنين يساوي تمانية. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q8_5",
@@ -5202,7 +5867,7 @@
  {
   "key": "math_en_q8_1",
   "lang": "en_US",
-  "text": "What number comes after 7? After seven comes nine."
+  "text": "What number comes after 8? After eight comes nine."
  },
  {
   "key": "math_en_q8_2",
@@ -5232,7 +5897,7 @@
  {
   "key": "math_ar_q9_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ٨؟ بعد تمانية بييجي تسعة."
+  "text": "إيه الرقم اللي بعد ٩؟ بعد تسعة بييجي عشرة."
  },
  {
   "key": "math_ar_q9_2",
@@ -5242,12 +5907,12 @@
  {
   "key": "math_ar_q9_3",
   "lang": "ar_EG",
-  "text": "معانا ٤ تفاحات وزودنا ٥، بقوا كام؟ ٤ + ٥ = ٩. عدّهم مع بعض."
+  "text": "معانا ٤ تفاحات وزودنا ٥، بقوا كام؟ أربعة زائد خمسة يساوي تسعة. عدّهم مع بعض."
  },
  {
   "key": "math_ar_q9_4",
   "lang": "ar_EG",
-  "text": "كان معانا ١١ نجوم واختفى ٢، فاضل كام؟ ١١ - ٢ = ٩. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ١١ نجوم واختفى ٢، فاضل كام؟ حداشر ناقص اتنين يساوي تسعة. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q9_5",
@@ -5262,7 +5927,7 @@
  {
   "key": "math_en_q9_1",
   "lang": "en_US",
-  "text": "What number comes after 8? After eight comes ten."
+  "text": "What number comes after 9? After nine comes ten."
  },
  {
   "key": "math_en_q9_2",
@@ -5292,7 +5957,7 @@
  {
   "key": "math_ar_q10_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ٩؟ بعد تسعة بييجي عشرة."
+  "text": "إيه الرقم اللي بعد ١٠؟ بعد عشرة بييجي حداشر."
  },
  {
   "key": "math_ar_q10_2",
@@ -5302,12 +5967,12 @@
  {
   "key": "math_ar_q10_3",
   "lang": "ar_EG",
-  "text": "معانا ٥ تفاحات وزودنا ٥، بقوا كام؟ ٥ + ٥ = ١٠. عدّهم مع بعض."
+  "text": "معانا ٥ تفاحات وزودنا ٥، بقوا كام؟ خمسة زائد خمسة يساوي عشرة. عدّهم مع بعض."
  },
  {
   "key": "math_ar_q10_4",
   "lang": "ar_EG",
-  "text": "كان معانا ١٢ نجوم واختفى ٢، فاضل كام؟ ١٢ - ٢ = ١٠. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ١٢ نجوم واختفى ٢، فاضل كام؟ اتناشر ناقص اتنين يساوي عشرة. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q10_5",
@@ -5322,7 +5987,7 @@
  {
   "key": "math_en_q10_1",
   "lang": "en_US",
-  "text": "What number comes after 9? After nine comes eleven."
+  "text": "What number comes after 10? After ten comes eleven."
  },
  {
   "key": "math_en_q10_2",
@@ -5352,7 +6017,7 @@
  {
   "key": "math_ar_q11_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ١٠؟ بعد عشرة بييجي حداشر."
+  "text": "إيه الرقم اللي بعد ١١؟ بعد حداشر بييجي اتناشر."
  },
  {
   "key": "math_ar_q11_2",
@@ -5362,7 +6027,7 @@
  {
   "key": "math_ar_q11_4",
   "lang": "ar_EG",
-  "text": "كان معانا ١٣ نجوم واختفى ٢، فاضل كام؟ ١٣ - ٢ = ١١. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ١٣ نجوم واختفى ٢، فاضل كام؟ تلتاشر ناقص اتنين يساوي حداشر. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q11_5",
@@ -5377,7 +6042,7 @@
  {
   "key": "math_en_q11_1",
   "lang": "en_US",
-  "text": "What number comes after 10? After ten comes twelve."
+  "text": "What number comes after 11? After eleven comes twelve."
  },
  {
   "key": "math_en_q11_2",
@@ -5402,7 +6067,7 @@
  {
   "key": "math_ar_q12_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ١١؟ بعد حداشر بييجي اتناشر."
+  "text": "إيه الرقم اللي بعد ١٢؟ بعد اتناشر بييجي تلتاشر."
  },
  {
   "key": "math_ar_q12_2",
@@ -5412,12 +6077,12 @@
  {
   "key": "math_ar_q12_3",
   "lang": "ar_EG",
-  "text": "معانا ٦ تفاحات وزودنا ٥، بقوا كام؟ ٦ + ٥ = ١١. عدّهم مع بعض."
+  "text": "معانا ٦ تفاحات وزودنا ٥، بقوا كام؟ ستة زائد خمسة يساوي حداشر. عدّهم مع بعض."
  },
  {
   "key": "math_ar_q12_4",
   "lang": "ar_EG",
-  "text": "كان معانا ١٤ نجوم واختفى ٢، فاضل كام؟ ١٤ - ٢ = ١٢. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ١٤ نجوم واختفى ٢، فاضل كام؟ أربعتاشر ناقص اتنين يساوي اتناشر. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q12_5",
@@ -5432,7 +6097,7 @@
  {
   "key": "math_en_q12_1",
   "lang": "en_US",
-  "text": "What number comes after 11? After eleven comes thirteen."
+  "text": "What number comes after 12? After twelve comes thirteen."
  },
  {
   "key": "math_en_q12_2",
@@ -5462,7 +6127,7 @@
  {
   "key": "math_ar_q13_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ١٢؟ بعد اتناشر بييجي تلتاشر."
+  "text": "إيه الرقم اللي بعد ١٣؟ بعد تلتاشر بييجي أربعتاشر."
  },
  {
   "key": "math_ar_q13_2",
@@ -5472,7 +6137,7 @@
  {
   "key": "math_ar_q13_4",
   "lang": "ar_EG",
-  "text": "كان معانا ١٥ نجوم واختفى ٢، فاضل كام؟ ١٥ - ٢ = ١٣. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ١٥ نجوم واختفى ٢، فاضل كام؟ خمستاشر ناقص اتنين يساوي تلتاشر. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q13_5",
@@ -5487,7 +6152,7 @@
  {
   "key": "math_en_q13_1",
   "lang": "en_US",
-  "text": "What number comes after 12? After twelve comes fourteen."
+  "text": "What number comes after 13? After thirteen comes fourteen."
  },
  {
   "key": "math_en_q13_2",
@@ -5512,7 +6177,7 @@
  {
   "key": "math_ar_q14_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ١٣؟ بعد تلتاشر بييجي أربعتاشر."
+  "text": "إيه الرقم اللي بعد ١٤؟ بعد أربعتاشر بييجي خمستاشر."
  },
  {
   "key": "math_ar_q14_2",
@@ -5522,12 +6187,12 @@
  {
   "key": "math_ar_q14_3",
   "lang": "ar_EG",
-  "text": "معانا ٧ تفاحات وزودنا ٥، بقوا كام؟ ٧ + ٥ = ١٢. عدّهم مع بعض."
+  "text": "معانا ٧ تفاحات وزودنا ٥، بقوا كام؟ سبعة زائد خمسة يساوي اتناشر. عدّهم مع بعض."
  },
  {
   "key": "math_ar_q14_4",
   "lang": "ar_EG",
-  "text": "كان معانا ١٦ نجوم واختفى ٢، فاضل كام؟ ١٦ - ٢ = ١٤. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ١٦ نجوم واختفى ٢، فاضل كام؟ ستاشر ناقص اتنين يساوي أربعتاشر. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q14_5",
@@ -5542,7 +6207,7 @@
  {
   "key": "math_en_q14_1",
   "lang": "en_US",
-  "text": "What number comes after 13? After thirteen comes fifteen."
+  "text": "What number comes after 14? After fourteen comes fifteen."
  },
  {
   "key": "math_en_q14_2",
@@ -5572,7 +6237,7 @@
  {
   "key": "math_ar_q15_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ١٤؟ بعد أربعتاشر بييجي خمستاشر."
+  "text": "إيه الرقم اللي بعد ١٥؟ بعد خمستاشر بييجي ستاشر."
  },
  {
   "key": "math_ar_q15_2",
@@ -5582,7 +6247,7 @@
  {
   "key": "math_ar_q15_4",
   "lang": "ar_EG",
-  "text": "كان معانا ١٧ نجوم واختفى ٢، فاضل كام؟ ١٧ - ٢ = ١٥. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ١٧ نجوم واختفى ٢، فاضل كام؟ سبعتاشر ناقص اتنين يساوي خمستاشر. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q15_5",
@@ -5597,7 +6262,7 @@
  {
   "key": "math_en_q15_1",
   "lang": "en_US",
-  "text": "What number comes after 14? After fourteen comes sixteen."
+  "text": "What number comes after 15? After fifteen comes sixteen."
  },
  {
   "key": "math_en_q15_2",
@@ -5622,7 +6287,7 @@
  {
   "key": "math_ar_q16_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ١٥؟ بعد خمستاشر بييجي ستاشر."
+  "text": "إيه الرقم اللي بعد ١٦؟ بعد ستاشر بييجي سبعتاشر."
  },
  {
   "key": "math_ar_q16_2",
@@ -5632,12 +6297,12 @@
  {
   "key": "math_ar_q16_3",
   "lang": "ar_EG",
-  "text": "معانا ٨ تفاحات وزودنا ٥، بقوا كام؟ ٨ + ٥ = ١٣. عدّهم مع بعض."
+  "text": "معانا ٨ تفاحات وزودنا ٥، بقوا كام؟ تمانية زائد خمسة يساوي تلتاشر. عدّهم مع بعض."
  },
  {
   "key": "math_ar_q16_4",
   "lang": "ar_EG",
-  "text": "كان معانا ١٨ نجوم واختفى ٢، فاضل كام؟ ١٨ - ٢ = ١٦. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ١٨ نجوم واختفى ٢، فاضل كام؟ تمنتاشر ناقص اتنين يساوي ستاشر. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q16_5",
@@ -5652,7 +6317,7 @@
  {
   "key": "math_en_q16_1",
   "lang": "en_US",
-  "text": "What number comes after 15? After fifteen comes seventeen."
+  "text": "What number comes after 16? After sixteen comes seventeen."
  },
  {
   "key": "math_en_q16_2",
@@ -5682,7 +6347,7 @@
  {
   "key": "math_ar_q17_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ١٦؟ بعد ستاشر بييجي سبعتاشر."
+  "text": "إيه الرقم اللي بعد ١٧؟ بعد سبعتاشر بييجي تمنتاشر."
  },
  {
   "key": "math_ar_q17_2",
@@ -5692,7 +6357,7 @@
  {
   "key": "math_ar_q17_4",
   "lang": "ar_EG",
-  "text": "كان معانا ١٩ نجوم واختفى ٢، فاضل كام؟ ١٩ - ٢ = ١٧. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ١٩ نجوم واختفى ٢، فاضل كام؟ تسعتاشر ناقص اتنين يساوي سبعتاشر. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q17_5",
@@ -5707,7 +6372,7 @@
  {
   "key": "math_en_q17_1",
   "lang": "en_US",
-  "text": "What number comes after 16? After sixteen comes eighteen."
+  "text": "What number comes after 17? After seventeen comes eighteen."
  },
  {
   "key": "math_en_q17_2",
@@ -5732,7 +6397,7 @@
  {
   "key": "math_ar_q18_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ١٧؟ بعد سبعتاشر بييجي تمنتاشر."
+  "text": "إيه الرقم اللي بعد ١٨؟ بعد تمنتاشر بييجي تسعتاشر."
  },
  {
   "key": "math_ar_q18_2",
@@ -5742,12 +6407,12 @@
  {
   "key": "math_ar_q18_3",
   "lang": "ar_EG",
-  "text": "معانا ٩ تفاحات وزودنا ٥، بقوا كام؟ ٩ + ٥ = ١٤. عدّهم مع بعض."
+  "text": "معانا ٩ تفاحات وزودنا ٥، بقوا كام؟ تسعة زائد خمسة يساوي أربعتاشر. عدّهم مع بعض."
  },
  {
   "key": "math_ar_q18_4",
   "lang": "ar_EG",
-  "text": "كان معانا ٢٠ نجوم واختفى ٢، فاضل كام؟ ٢٠ - ٢ = ١٨. شيل اتنين وعدّ الباقي."
+  "text": "كان معانا ٢٠ نجوم واختفى ٢، فاضل كام؟ عشرين ناقص اتنين يساوي تمنتاشر. شيل اتنين وعدّ الباقي."
  },
  {
   "key": "math_ar_q18_5",
@@ -5762,7 +6427,7 @@
  {
   "key": "math_en_q18_1",
   "lang": "en_US",
-  "text": "What number comes after 17? After seventeen comes nineteen."
+  "text": "What number comes after 18? After eighteen comes nineteen."
  },
  {
   "key": "math_en_q18_2",
@@ -5792,7 +6457,7 @@
  {
   "key": "math_ar_q19_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ١٨؟ بعد تمنتاشر بييجي تسعتاشر."
+  "text": "إيه الرقم اللي بعد ١٩؟ بعد تسعتاشر بييجي عشرين."
  },
  {
   "key": "math_ar_q19_2",
@@ -5812,7 +6477,7 @@
  {
   "key": "math_en_q19_1",
   "lang": "en_US",
-  "text": "What number comes after 18? After eighteen comes twenty."
+  "text": "What number comes after 19? After nineteen comes twenty."
  },
  {
   "key": "math_en_q19_2",
@@ -5832,7 +6497,7 @@
  {
   "key": "math_ar_q20_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد ١٩؟ بعد تسعتاشر بييجي عشرين."
+  "text": "إيه الرقم اللي بعد ٢٠؟ بعد عشرين بييجي عشرين."
  },
  {
   "key": "math_ar_q20_2",
@@ -5842,7 +6507,7 @@
  {
   "key": "math_ar_q20_3",
   "lang": "ar_EG",
-  "text": "معانا ١٠ تفاحات وزودنا ٥، بقوا كام؟ ١٠ + ٥ = ١٥. عدّهم مع بعض."
+  "text": "معانا ١٠ تفاحات وزودنا ٥، بقوا كام؟ عشرة زائد خمسة يساوي خمستاشر. عدّهم مع بعض."
  },
  {
   "key": "math_ar_q20_5",
@@ -5857,7 +6522,7 @@
  {
   "key": "math_en_q20_1",
   "lang": "en_US",
-  "text": "What number comes after 19? After nineteen comes twenty."
+  "text": "What number comes after 20? After twenty comes twenty."
  },
  {
   "key": "math_en_q20_2",
@@ -5876,7 +6541,7 @@
  },
  {
   "key": "les_namesound_0",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الألف، أَ"
  },
  {
@@ -5911,7 +6576,7 @@
  },
  {
   "key": "les_namesound_1",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الباء، بَ"
  },
  {
@@ -5946,7 +6611,7 @@
  },
  {
   "key": "les_namesound_2",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "التاء، تَ"
  },
  {
@@ -5981,7 +6646,7 @@
  },
  {
   "key": "les_namesound_3",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الثاء، ثَ"
  },
  {
@@ -6016,7 +6681,7 @@
  },
  {
   "key": "les_namesound_4",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الجيم، جَ"
  },
  {
@@ -6051,7 +6716,7 @@
  },
  {
   "key": "les_namesound_5",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الحاء، حَ"
  },
  {
@@ -6086,7 +6751,7 @@
  },
  {
   "key": "les_namesound_6",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الخاء، خَ"
  },
  {
@@ -6121,7 +6786,7 @@
  },
  {
   "key": "les_namesound_7",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الدال، دَ"
  },
  {
@@ -6156,7 +6821,7 @@
  },
  {
   "key": "les_namesound_8",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الذال، ذَ"
  },
  {
@@ -6191,7 +6856,7 @@
  },
  {
   "key": "les_namesound_9",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الراء، رَ"
  },
  {
@@ -6226,7 +6891,7 @@
  },
  {
   "key": "les_namesound_10",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الزاي، زَ"
  },
  {
@@ -6261,7 +6926,7 @@
  },
  {
   "key": "les_namesound_11",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "السين، سَ"
  },
  {
@@ -6296,7 +6961,7 @@
  },
  {
   "key": "les_namesound_12",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الشين، شَ"
  },
  {
@@ -6331,7 +6996,7 @@
  },
  {
   "key": "les_namesound_13",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الصاد، صَ"
  },
  {
@@ -6366,7 +7031,7 @@
  },
  {
   "key": "les_namesound_14",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الضاد، ضَ"
  },
  {
@@ -6401,7 +7066,7 @@
  },
  {
   "key": "les_namesound_15",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الطاء، طَ"
  },
  {
@@ -6436,7 +7101,7 @@
  },
  {
   "key": "les_namesound_16",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الظاء، ظَ"
  },
  {
@@ -6471,7 +7136,7 @@
  },
  {
   "key": "les_namesound_17",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "العين، عَ"
  },
  {
@@ -6506,7 +7171,7 @@
  },
  {
   "key": "les_namesound_18",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الغين، غَ"
  },
  {
@@ -6541,7 +7206,7 @@
  },
  {
   "key": "les_namesound_19",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الفاء، فَ"
  },
  {
@@ -6576,7 +7241,7 @@
  },
  {
   "key": "les_namesound_20",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "القاف، قَ"
  },
  {
@@ -6611,7 +7276,7 @@
  },
  {
   "key": "les_namesound_21",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الكاف، كَ"
  },
  {
@@ -6646,7 +7311,7 @@
  },
  {
   "key": "les_namesound_22",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "اللام، لَ"
  },
  {
@@ -6681,7 +7346,7 @@
  },
  {
   "key": "les_namesound_23",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الميم، مَ"
  },
  {
@@ -6716,7 +7381,7 @@
  },
  {
   "key": "les_namesound_24",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "النون، نَ"
  },
  {
@@ -6751,7 +7416,7 @@
  },
  {
   "key": "les_namesound_25",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الهاء، هَ"
  },
  {
@@ -6786,7 +7451,7 @@
  },
  {
   "key": "les_namesound_26",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الواو، وَ"
  },
  {
@@ -6821,7 +7486,7 @@
  },
  {
   "key": "les_namesound_27",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "الياء، يَ"
  },
  {
@@ -6921,142 +7586,142 @@
  },
  {
   "key": "basic_ar_0",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "أ، أَسَد"
  },
  {
   "key": "basic_ar_1",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ب، بَطَّة"
  },
  {
   "key": "basic_ar_2",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ت، تُفَّاحَة"
  },
  {
   "key": "basic_ar_3",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ث، ثَعْلَب"
  },
  {
   "key": "basic_ar_4",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ج، جَمَل"
  },
  {
   "key": "basic_ar_5",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ح، حِصَان"
  },
  {
   "key": "basic_ar_6",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "خ، خَرُوف"
  },
  {
   "key": "basic_ar_7",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "د، دُبّ"
  },
  {
   "key": "basic_ar_8",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ذ، ذِئْب"
  },
  {
   "key": "basic_ar_9",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ر، رِيشَة"
  },
  {
   "key": "basic_ar_10",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ز، زَرَافَة"
  },
  {
   "key": "basic_ar_11",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "س، سَمَكَة"
  },
  {
   "key": "basic_ar_12",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ش، شَمْس"
  },
  {
   "key": "basic_ar_13",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ص، صَقْر"
  },
  {
   "key": "basic_ar_14",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ض، ضِفْدَع"
  },
  {
   "key": "basic_ar_15",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ط، طَائِر"
  },
  {
   "key": "basic_ar_16",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ظ، ظَرْف"
  },
  {
   "key": "basic_ar_17",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ع، عُصْفُور"
  },
  {
   "key": "basic_ar_18",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "غ، غَزَال"
  },
  {
   "key": "basic_ar_19",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ف، فِيل"
  },
  {
   "key": "basic_ar_20",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ق، قِطَّة"
  },
  {
   "key": "basic_ar_21",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ك، كِتَاب"
  },
  {
   "key": "basic_ar_22",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ل، لَبَن"
  },
  {
   "key": "basic_ar_23",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "م، مَوْز"
  },
  {
   "key": "basic_ar_24",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ن، نَمِر"
  },
  {
   "key": "basic_ar_25",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "هـ، هِلَال"
  },
  {
   "key": "basic_ar_26",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "و، وَرْدَة"
  },
  {
   "key": "basic_ar_27",
-  "lang": "ar_EG",
+  "lang": "ar_SA",
   "text": "ي، يَد"
  },
  {
@@ -7388,5 +8053,805 @@
   "key": "basic_ennum_19",
   "lang": "en_US",
   "text": "twenty"
+ },
+ {
+  "key": "cg_instr_numbers",
+  "lang": "ar_EG",
+  "text": "أهلاً يا ملك ماثيو! لعبة لوني العدد! اختار لون من اللوحة، وبعدين دوس على جزء التاج اللي رقمه نفس اللون. وكل ما تدوس على جزء هقولك رقمه!"
+ },
+ {
+  "key": "cg_instr_nature",
+  "lang": "ar_EG",
+  "text": "لعبة سحب لون الطبيعة! شوف الصورة الرمادي، واختار لونها الحقيقي من اللوحة!"
+ },
+ {
+  "key": "cg_instr_patterns",
+  "lang": "ar_EG",
+  "text": "لعبة أكمل تلوين النمط! بص على الألوان اللي في الصف، وخمّن اللون اللي ناقص في الآخر واختاره!"
+ },
+ {
+  "key": "cg_color_6",
+  "lang": "ar_EG",
+  "text": "أبيض"
+ },
+ {
+  "key": "cg_try",
+  "lang": "ar_EG",
+  "text": "حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_intro_0",
+  "lang": "ar_EG",
+  "text": "جولة جديدة يا بطل! دلوقتي هنلوّن الأرقام من واحد لـ ستة!"
+ },
+ {
+  "key": "cg_num_intro_1",
+  "lang": "ar_EG",
+  "text": "جولة جديدة يا بطل! دلوقتي هنلوّن الأرقام من سبعة لـ اتناشر!"
+ },
+ {
+  "key": "cg_num_intro_2",
+  "lang": "ar_EG",
+  "text": "جولة جديدة يا بطل! دلوقتي هنلوّن الأرقام من تلتاشر لـ تمنتاشر!"
+ },
+ {
+  "key": "cg_num_intro_3",
+  "lang": "ar_EG",
+  "text": "جولة جديدة يا بطل! دلوقتي هنلوّن الأرقام من خمستاشر لـ عشرين!"
+ },
+ {
+  "key": "cg_num_done_1",
+  "lang": "ar_EG",
+  "text": "رقم واحد! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_1",
+  "lang": "ar_EG",
+  "text": "رقم واحد! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_1",
+  "lang": "ar_EG",
+  "text": "رقم واحد! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_1",
+  "lang": "ar_EG",
+  "text": "رقم واحد! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_1",
+  "lang": "ar_EG",
+  "text": "رقم واحد! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_2",
+  "lang": "ar_EG",
+  "text": "رقم اتنين! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_2",
+  "lang": "ar_EG",
+  "text": "رقم اتنين! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_2",
+  "lang": "ar_EG",
+  "text": "رقم اتنين! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_2",
+  "lang": "ar_EG",
+  "text": "رقم اتنين! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_2",
+  "lang": "ar_EG",
+  "text": "رقم اتنين! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_3",
+  "lang": "ar_EG",
+  "text": "رقم تلاتة! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_3",
+  "lang": "ar_EG",
+  "text": "رقم تلاتة! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_3",
+  "lang": "ar_EG",
+  "text": "رقم تلاتة! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_3",
+  "lang": "ar_EG",
+  "text": "رقم تلاتة! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_3",
+  "lang": "ar_EG",
+  "text": "رقم تلاتة! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_4",
+  "lang": "ar_EG",
+  "text": "رقم أربعة! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_4",
+  "lang": "ar_EG",
+  "text": "رقم أربعة! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_4",
+  "lang": "ar_EG",
+  "text": "رقم أربعة! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_4",
+  "lang": "ar_EG",
+  "text": "رقم أربعة! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_4",
+  "lang": "ar_EG",
+  "text": "رقم أربعة! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_5",
+  "lang": "ar_EG",
+  "text": "رقم خمسة! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_5",
+  "lang": "ar_EG",
+  "text": "رقم خمسة! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_5",
+  "lang": "ar_EG",
+  "text": "رقم خمسة! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_5",
+  "lang": "ar_EG",
+  "text": "رقم خمسة! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_5",
+  "lang": "ar_EG",
+  "text": "رقم خمسة! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_6",
+  "lang": "ar_EG",
+  "text": "رقم ستة! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_6",
+  "lang": "ar_EG",
+  "text": "رقم ستة! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_6",
+  "lang": "ar_EG",
+  "text": "رقم ستة! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_6",
+  "lang": "ar_EG",
+  "text": "رقم ستة! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_6",
+  "lang": "ar_EG",
+  "text": "رقم ستة! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_7",
+  "lang": "ar_EG",
+  "text": "رقم سبعة! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_7",
+  "lang": "ar_EG",
+  "text": "رقم سبعة! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_7",
+  "lang": "ar_EG",
+  "text": "رقم سبعة! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_7",
+  "lang": "ar_EG",
+  "text": "رقم سبعة! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_7",
+  "lang": "ar_EG",
+  "text": "رقم سبعة! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_8",
+  "lang": "ar_EG",
+  "text": "رقم تمانية! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_8",
+  "lang": "ar_EG",
+  "text": "رقم تمانية! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_8",
+  "lang": "ar_EG",
+  "text": "رقم تمانية! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_8",
+  "lang": "ar_EG",
+  "text": "رقم تمانية! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_8",
+  "lang": "ar_EG",
+  "text": "رقم تمانية! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_9",
+  "lang": "ar_EG",
+  "text": "رقم تسعة! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_9",
+  "lang": "ar_EG",
+  "text": "رقم تسعة! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_9",
+  "lang": "ar_EG",
+  "text": "رقم تسعة! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_9",
+  "lang": "ar_EG",
+  "text": "رقم تسعة! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_9",
+  "lang": "ar_EG",
+  "text": "رقم تسعة! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_10",
+  "lang": "ar_EG",
+  "text": "رقم عشرة! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_10",
+  "lang": "ar_EG",
+  "text": "رقم عشرة! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_10",
+  "lang": "ar_EG",
+  "text": "رقم عشرة! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_10",
+  "lang": "ar_EG",
+  "text": "رقم عشرة! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_10",
+  "lang": "ar_EG",
+  "text": "رقم عشرة! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_11",
+  "lang": "ar_EG",
+  "text": "رقم حداشر! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_11",
+  "lang": "ar_EG",
+  "text": "رقم حداشر! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_11",
+  "lang": "ar_EG",
+  "text": "رقم حداشر! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_11",
+  "lang": "ar_EG",
+  "text": "رقم حداشر! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_11",
+  "lang": "ar_EG",
+  "text": "رقم حداشر! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_12",
+  "lang": "ar_EG",
+  "text": "رقم اتناشر! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_12",
+  "lang": "ar_EG",
+  "text": "رقم اتناشر! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_12",
+  "lang": "ar_EG",
+  "text": "رقم اتناشر! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_12",
+  "lang": "ar_EG",
+  "text": "رقم اتناشر! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_12",
+  "lang": "ar_EG",
+  "text": "رقم اتناشر! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_13",
+  "lang": "ar_EG",
+  "text": "رقم تلتاشر! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_13",
+  "lang": "ar_EG",
+  "text": "رقم تلتاشر! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_13",
+  "lang": "ar_EG",
+  "text": "رقم تلتاشر! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_13",
+  "lang": "ar_EG",
+  "text": "رقم تلتاشر! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_13",
+  "lang": "ar_EG",
+  "text": "رقم تلتاشر! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_14",
+  "lang": "ar_EG",
+  "text": "رقم أربعتاشر! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_14",
+  "lang": "ar_EG",
+  "text": "رقم أربعتاشر! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_14",
+  "lang": "ar_EG",
+  "text": "رقم أربعتاشر! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_14",
+  "lang": "ar_EG",
+  "text": "رقم أربعتاشر! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_14",
+  "lang": "ar_EG",
+  "text": "رقم أربعتاشر! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_15",
+  "lang": "ar_EG",
+  "text": "رقم خمستاشر! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_15",
+  "lang": "ar_EG",
+  "text": "رقم خمستاشر! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_15",
+  "lang": "ar_EG",
+  "text": "رقم خمستاشر! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_15",
+  "lang": "ar_EG",
+  "text": "رقم خمستاشر! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_15",
+  "lang": "ar_EG",
+  "text": "رقم خمستاشر! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_16",
+  "lang": "ar_EG",
+  "text": "رقم ستاشر! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_16",
+  "lang": "ar_EG",
+  "text": "رقم ستاشر! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_16",
+  "lang": "ar_EG",
+  "text": "رقم ستاشر! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_16",
+  "lang": "ar_EG",
+  "text": "رقم ستاشر! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_16",
+  "lang": "ar_EG",
+  "text": "رقم ستاشر! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_17",
+  "lang": "ar_EG",
+  "text": "رقم سبعتاشر! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_17",
+  "lang": "ar_EG",
+  "text": "رقم سبعتاشر! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_17",
+  "lang": "ar_EG",
+  "text": "رقم سبعتاشر! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_17",
+  "lang": "ar_EG",
+  "text": "رقم سبعتاشر! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_17",
+  "lang": "ar_EG",
+  "text": "رقم سبعتاشر! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_18",
+  "lang": "ar_EG",
+  "text": "رقم تمنتاشر! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_18",
+  "lang": "ar_EG",
+  "text": "رقم تمنتاشر! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_18",
+  "lang": "ar_EG",
+  "text": "رقم تمنتاشر! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_18",
+  "lang": "ar_EG",
+  "text": "رقم تمنتاشر! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_18",
+  "lang": "ar_EG",
+  "text": "رقم تمنتاشر! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_19",
+  "lang": "ar_EG",
+  "text": "رقم تسعتاشر! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_19",
+  "lang": "ar_EG",
+  "text": "رقم تسعتاشر! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_19",
+  "lang": "ar_EG",
+  "text": "رقم تسعتاشر! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_19",
+  "lang": "ar_EG",
+  "text": "رقم تسعتاشر! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_19",
+  "lang": "ar_EG",
+  "text": "رقم تسعتاشر! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_num_done_20",
+  "lang": "ar_EG",
+  "text": "رقم عشرين! دي اتلوّنت خلاص!"
+ },
+ {
+  "key": "cg_num_pick_20",
+  "lang": "ar_EG",
+  "text": "رقم عشرين! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون"
+ },
+ {
+  "key": "cg_num_all_20",
+  "lang": "ar_EG",
+  "text": "رقم عشرين! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_num_ok_20",
+  "lang": "ar_EG",
+  "text": "رقم عشرين! برافو يا بطل! لوّنتها صح!"
+ },
+ {
+  "key": "cg_num_try_20",
+  "lang": "ar_EG",
+  "text": "رقم عشرين! حاول تاني يا بطل"
+ },
+ {
+  "key": "cg_nat_tab_0",
+  "lang": "ar_EG",
+  "text": "لعبة سحب لون الطبيعة! شوف الصورة الرمادي، واختار لونها الحقيقي من اللوحة! دي تفاحة! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_q_0",
+  "lang": "ar_EG",
+  "text": "دي تفاحة! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_ok_0",
+  "lang": "ar_EG",
+  "text": "التفاحة حمرا وصحية! التفاح بيقوّي جسمك يا بطل! برافو يا بطل!"
+ },
+ {
+  "key": "cg_nat_all_0",
+  "lang": "ar_EG",
+  "text": "التفاحة حمرا وصحية! التفاح بيقوّي جسمك يا بطل! برافو يا ملك ماثيو! لوّنت كل حاجات الطبيعة صح! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_nat_tab_1",
+  "lang": "ar_EG",
+  "text": "لعبة سحب لون الطبيعة! شوف الصورة الرمادي، واختار لونها الحقيقي من اللوحة! دي شمس! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_q_1",
+  "lang": "ar_EG",
+  "text": "دي شمس! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_ok_1",
+  "lang": "ar_EG",
+  "text": "الشمس صفرا ومنوّرة! الشمس بتدفّي الدنيا كلها! برافو يا بطل!"
+ },
+ {
+  "key": "cg_nat_all_1",
+  "lang": "ar_EG",
+  "text": "الشمس صفرا ومنوّرة! الشمس بتدفّي الدنيا كلها! برافو يا ملك ماثيو! لوّنت كل حاجات الطبيعة صح! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_nat_tab_2",
+  "lang": "ar_EG",
+  "text": "لعبة سحب لون الطبيعة! شوف الصورة الرمادي، واختار لونها الحقيقي من اللوحة! دي سمكة! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_q_2",
+  "lang": "ar_EG",
+  "text": "دي سمكة! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_ok_2",
+  "lang": "ar_EG",
+  "text": "السمكة زرقا وبتعوم في البحر الأزرق! برافو يا بطل!"
+ },
+ {
+  "key": "cg_nat_all_2",
+  "lang": "ar_EG",
+  "text": "السمكة زرقا وبتعوم في البحر الأزرق! برافو يا ملك ماثيو! لوّنت كل حاجات الطبيعة صح! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_nat_tab_3",
+  "lang": "ar_EG",
+  "text": "لعبة سحب لون الطبيعة! شوف الصورة الرمادي، واختار لونها الحقيقي من اللوحة! دي ورقة شجرة! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_q_3",
+  "lang": "ar_EG",
+  "text": "دي ورقة شجرة! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_ok_3",
+  "lang": "ar_EG",
+  "text": "ورقة الشجرة خضرا! الشجر الأخضر بينضّف الهوا اللي بنتنفسه! برافو يا بطل!"
+ },
+ {
+  "key": "cg_nat_all_3",
+  "lang": "ar_EG",
+  "text": "ورقة الشجرة خضرا! الشجر الأخضر بينضّف الهوا اللي بنتنفسه! برافو يا ملك ماثيو! لوّنت كل حاجات الطبيعة صح! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_nat_tab_4",
+  "lang": "ar_EG",
+  "text": "لعبة سحب لون الطبيعة! شوف الصورة الرمادي، واختار لونها الحقيقي من اللوحة! دي سحابة! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_q_4",
+  "lang": "ar_EG",
+  "text": "دي سحابة! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_ok_4",
+  "lang": "ar_EG",
+  "text": "السحابة بيضا وبتطير في السما! السحاب الأبيض بيجيب المطر! برافو يا بطل!"
+ },
+ {
+  "key": "cg_nat_all_4",
+  "lang": "ar_EG",
+  "text": "السحابة بيضا وبتطير في السما! السحاب الأبيض بيجيب المطر! برافو يا ملك ماثيو! لوّنت كل حاجات الطبيعة صح! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_nat_tab_5",
+  "lang": "ar_EG",
+  "text": "لعبة سحب لون الطبيعة! شوف الصورة الرمادي، واختار لونها الحقيقي من اللوحة! دي وردة! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_q_5",
+  "lang": "ar_EG",
+  "text": "دي وردة! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_ok_5",
+  "lang": "ar_EG",
+  "text": "الوردة وردي وريحتها حلوة! الورد بيجمّل الدنيا! برافو يا بطل!"
+ },
+ {
+  "key": "cg_nat_all_5",
+  "lang": "ar_EG",
+  "text": "الوردة وردي وريحتها حلوة! الورد بيجمّل الدنيا! برافو يا ملك ماثيو! لوّنت كل حاجات الطبيعة صح! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_nat_tab_6",
+  "lang": "ar_EG",
+  "text": "لعبة سحب لون الطبيعة! شوف الصورة الرمادي، واختار لونها الحقيقي من اللوحة! دي فراولة! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_q_6",
+  "lang": "ar_EG",
+  "text": "دي فراولة! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_ok_6",
+  "lang": "ar_EG",
+  "text": "الفراولة حمرا وحلوة! الفراولة فاكهة لذيذة ومفيدة! برافو يا بطل!"
+ },
+ {
+  "key": "cg_nat_all_6",
+  "lang": "ar_EG",
+  "text": "الفراولة حمرا وحلوة! الفراولة فاكهة لذيذة ومفيدة! برافو يا ملك ماثيو! لوّنت كل حاجات الطبيعة صح! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_nat_tab_7",
+  "lang": "ar_EG",
+  "text": "لعبة سحب لون الطبيعة! شوف الصورة الرمادي، واختار لونها الحقيقي من اللوحة! دي جزرة! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_q_7",
+  "lang": "ar_EG",
+  "text": "دي جزرة! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!"
+ },
+ {
+  "key": "cg_nat_ok_7",
+  "lang": "ar_EG",
+  "text": "الجزرة برتقالي وصحية! الجزر بيقوّي عينينا يا بطل! برافو يا بطل!"
+ },
+ {
+  "key": "cg_nat_all_7",
+  "lang": "ar_EG",
+  "text": "الجزرة برتقالي وصحية! الجزر بيقوّي عينينا يا بطل! برافو يا ملك ماثيو! لوّنت كل حاجات الطبيعة صح! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_pat_tab_1",
+  "lang": "ar_EG",
+  "text": "لعبة أكمل تلوين النمط! بص على الألوان اللي في الصف، وخمّن اللون اللي ناقص في الآخر واختاره! بص على الصف يا بطل! أحمر، أصفر، أحمر، أصفر، أحمر، وبعدين إيه؟ اختار اللون الصح!"
+ },
+ {
+  "key": "cg_pat_intro_1",
+  "lang": "ar_EG",
+  "text": "بص على الصف يا بطل! أحمر، أصفر، أحمر، أصفر، أحمر، وبعدين إيه؟ اختار اللون الصح!"
+ },
+ {
+  "key": "cg_pat_ok_1",
+  "lang": "ar_EG",
+  "text": "برافو يا بطل! النمط كده صح! اللون الناقص هو أصفر!"
+ },
+ {
+  "key": "cg_pat_tab_2",
+  "lang": "ar_EG",
+  "text": "لعبة أكمل تلوين النمط! بص على الألوان اللي في الصف، وخمّن اللون اللي ناقص في الآخر واختاره! بص على الصف يا بطل! أزرق، أزرق، أخضر، أزرق، أزرق، وبعدين إيه؟ اختار اللون الصح!"
+ },
+ {
+  "key": "cg_pat_intro_2",
+  "lang": "ar_EG",
+  "text": "بص على الصف يا بطل! أزرق، أزرق، أخضر، أزرق، أزرق، وبعدين إيه؟ اختار اللون الصح!"
+ },
+ {
+  "key": "cg_pat_ok_2",
+  "lang": "ar_EG",
+  "text": "برافو يا بطل! النمط كده صح! اللون الناقص هو أخضر!"
+ },
+ {
+  "key": "cg_pat_tab_3",
+  "lang": "ar_EG",
+  "text": "لعبة أكمل تلوين النمط! بص على الألوان اللي في الصف، وخمّن اللون اللي ناقص في الآخر واختاره! بص على الصف يا بطل! برتقالي، برتقالي، بنفسجي، بنفسجي، برتقالي، وبعدين إيه؟ اختار اللون الصح!"
+ },
+ {
+  "key": "cg_pat_intro_3",
+  "lang": "ar_EG",
+  "text": "بص على الصف يا بطل! برتقالي، برتقالي، بنفسجي، بنفسجي، برتقالي، وبعدين إيه؟ اختار اللون الصح!"
+ },
+ {
+  "key": "cg_pat_ok_3",
+  "lang": "ar_EG",
+  "text": "برافو يا بطل! النمط كده صح! اللون الناقص هو برتقالي!"
+ },
+ {
+  "key": "cg_pat_all_3",
+  "lang": "ar_EG",
+  "text": "برافو يا بطل! النمط كده صح! اللون الناقص هو برتقالي! برافو يا ملك ماثيو! خلّصت ٣ أنماط! خدت ألماسة جديدة لتاجك!"
+ },
+ {
+  "key": "cg_pat_tab_4",
+  "lang": "ar_EG",
+  "text": "لعبة أكمل تلوين النمط! بص على الألوان اللي في الصف، وخمّن اللون اللي ناقص في الآخر واختاره! بص على الصف يا بطل! أحمر، أزرق، أحمر، أزرق، أحمر، وبعدين إيه؟ اختار اللون الصح!"
+ },
+ {
+  "key": "cg_pat_intro_4",
+  "lang": "ar_EG",
+  "text": "بص على الصف يا بطل! أحمر، أزرق، أحمر، أزرق، أحمر، وبعدين إيه؟ اختار اللون الصح!"
+ },
+ {
+  "key": "cg_pat_ok_4",
+  "lang": "ar_EG",
+  "text": "برافو يا بطل! النمط كده صح! اللون الناقص هو أزرق!"
+ },
+ {
+  "key": "cg_pat_tab_5",
+  "lang": "ar_EG",
+  "text": "لعبة أكمل تلوين النمط! بص على الألوان اللي في الصف، وخمّن اللون اللي ناقص في الآخر واختاره! بص على الصف يا بطل! أخضر، أخضر، أصفر، أخضر، أخضر، وبعدين إيه؟ اختار اللون الصح!"
+ },
+ {
+  "key": "cg_pat_intro_5",
+  "lang": "ar_EG",
+  "text": "بص على الصف يا بطل! أخضر، أخضر، أصفر، أخضر، أخضر، وبعدين إيه؟ اختار اللون الصح!"
+ },
+ {
+  "key": "cg_pat_tab_6",
+  "lang": "ar_EG",
+  "text": "لعبة أكمل تلوين النمط! بص على الألوان اللي في الصف، وخمّن اللون اللي ناقص في الآخر واختاره! بص على الصف يا بطل! وردي، وردي، برتقالي، برتقالي، وردي، وبعدين إيه؟ اختار اللون الصح!"
+ },
+ {
+  "key": "cg_pat_intro_6",
+  "lang": "ar_EG",
+  "text": "بص على الصف يا بطل! وردي، وردي، برتقالي، برتقالي، وردي، وبعدين إيه؟ اختار اللون الصح!"
+ },
+ {
+  "key": "cg_pat_ok_6",
+  "lang": "ar_EG",
+  "text": "برافو يا بطل! النمط كده صح! اللون الناقص هو وردي!"
+ },
+ {
+  "key": "cg_pat_all_6",
+  "lang": "ar_EG",
+  "text": "برافو يا بطل! النمط كده صح! اللون الناقص هو وردي! برافو يا ملك ماثيو! خلّصت ٣ أنماط! خدت ألماسة جديدة لتاجك!"
  }
 ]
