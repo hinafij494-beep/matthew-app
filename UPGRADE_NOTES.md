@@ -46,3 +46,12 @@ Owner feedback implemented:
   artwork, rescue card first, airier cards.
 - Bundle: `interactive-games.js` now also inlines `voice-clips.js` and
   `rescue.js` (regenerate with `python3 build_bundle.py`). SW cache: v17.
+
+## Round 3 — owner's corrections after trying Round 2 (2026-11-11)
+
+- **Teacher voice everywhere**: the clip corpus grew from 44 fixed lines to ~900 recorded clips (audio-src/corpus.json, built by build-corpus.js): every quiz question AND answer, every science lesson, letter explanations/forms/harakat, reading syllables/words, number lines, and all four stories — all in the same recorded Egyptian teacher voice (Aria). voice-clips.js (build-voice-clips.py) maps normalized text → clip with Arabic-Indic digit folding; MatthewClips.playSequence chains clips (question → answers → correct answer).
+- **Answers are spoken and pictured**: "اسمع السؤال والاختيارات" button, a 🔊 on every answer, the correct answer is spoken after answering, and every one of the 212 unique answers has a picture (window.AnswerPics in app.js) shown beside the word — Matthew cannot read yet.
+- **No overlapping speech**: speak() stops any playing clip first; feedback() claims the speech channel and its delayed praise yields to any newer speech; delayed correct-answer narration is token-guarded per question.
+- **Science topics restored, taught simply**: magnet, float/sink, dissolving and ice/water are back as play-style lessons (simple, rich, from zero — never the dry textbook phrasing) plus simple bank questions. Quiz length 8 → 10.
+- **Four story adventures** (rescue.js engine): مغامرة الإنقاذ، تحدي حيوانات الغابة، رحلة الغابة مع مارك، كنز الملك — questions reshuffled every run, themed pools for animals/treasure stories.
+- **Adventure design**: full-screen focus mode (home chrome hidden while a story is open), an animated illustrated scene (sun, drifting clouds, grass, bobbing king on horseback who travels across the scene per stage, waving kids), circular stage map, gradient story cards.
