@@ -4,14 +4,16 @@
   const BY_KEY = Object.assign({}, ...(window.__matthewClipData || []));
   for (const k of Object.keys(BY_KEY)) { const t = k.indexOf("~"); if (t > 0) { const base = k.slice(0, t); BY_KEY[base] = (BY_KEY[base] || "") + BY_KEY[k]; delete BY_KEY[k]; } }
   const BY_TEXT = Object.assign({}, ...(window.__matthewClipText || []));
+  const EXACT = Object.assign({}, ...(window.__matthewClipExact || []));
   const DIGITS = {"٠":"0","١":"1","٢":"2","٣":"3","٤":"4","٥":"5","٦":"6","٧":"7","٨":"8","٩":"9"};
   const norm = value => String(value || "").replace(/[٠-٩]/g, c => DIGITS[c]).replace(/[ً-ٰٟـ]/g, "").replace(/[^ء-يa-zA-Z0-9 ]/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
-  const urls = {}; let audio = null;
+  const urls = {}; const urlOrder = []; const URL_CACHE_MAX = 30; let audio = null;
   const supported = () => { try { const a = audio || new Audio(); return !!a.canPlayType && a.canPlayType('audio/ogg; codecs="opus"') !== ""; } catch (_) { return false; } };
-  const urlFor = key => { if (!urls[key]) { const bin = atob(BY_KEY[key]); const bytes = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i); urls[key] = URL.createObjectURL(new Blob([bytes], { type: "audio/ogg" })); } return urls[key]; };
+  const urlFor = key => { if (!urls[key]) { const bin = atob(BY_KEY[key]); const bytes = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i); urls[key] = URL.createObjectURL(new Blob([bytes], { type: "audio/ogg" })); urlOrder.push(key); while (urlOrder.length > URL_CACHE_MAX) { const old = urlOrder.shift(); if (old !== key && urls[old]) { try { URL.revokeObjectURL(urls[old]); } catch (_) {} delete urls[old]; } } } return urls[key]; };
   const playKey = key => { if (!BY_KEY[key] || !supported()) return false; try { if (!audio) audio = new Audio(); audio.onended = null; audio.pause(); audio.src = urlFor(key); audio.currentTime = 0; const p = audio.play(); if (p && p.catch) p.catch(() => {}); return true; } catch (_) { return false; } };
-  const play = text => { const key = BY_TEXT[norm(text)]; return key ? playKey(key) : false; };
-  const playSequence = texts => { const keys = []; for (const t of texts || []) { const k = BY_TEXT[norm(t)]; if (!k) return false; keys.push(k); } if (!keys.length || !supported()) return false; try { if (!audio) audio = new Audio(); let i = 0; const next = () => { if (i >= keys.length) { audio.onended = null; return; } audio.src = urlFor(keys[i++]); const pr = audio.play(); if (pr && pr.catch) pr.catch(() => {}); }; audio.onended = next; next(); return true; } catch (_) { return false; } };
+  const keyFor = text => EXACT[String(text || "").trim()] || BY_TEXT[norm(text)];
+  const play = text => { const key = keyFor(text); return key ? playKey(key) : false; };
+  const playSequence = texts => { const keys = []; for (const t of texts || []) { const k = keyFor(t); if (!k) return false; keys.push(k); } if (!keys.length || !supported()) return false; try { if (!audio) audio = new Audio(); let i = 0; const next = () => { if (i >= keys.length) { audio.onended = null; return; } audio.src = urlFor(keys[i++]); const pr = audio.play(); if (pr && pr.catch) pr.catch(() => {}); }; audio.onended = next; next(); return true; } catch (_) { return false; } };
   const stop = () => { try { if (audio) { audio.onended = null; audio.pause(); } } catch (_) {} };
   window.MatthewClips = { playKey, play, playSequence, stop, has: key => !!BY_KEY[key], keys: Object.keys(BY_KEY), count: Object.keys(BY_TEXT).length };
 })();

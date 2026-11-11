@@ -66,9 +66,9 @@ runtime = """// voice-clips.js — مقاطع صوت الميس المسجلة (
   const EXACT = Object.assign({}, ...(window.__matthewClipExact || []));
   const DIGITS = {"٠":"0","١":"1","٢":"2","٣":"3","٤":"4","٥":"5","٦":"6","٧":"7","٨":"8","٩":"9"};
   const norm = value => String(value || "").replace(/[٠-٩]/g, c => DIGITS[c]).replace(/[ً-ٰٟـ]/g, "").replace(/[^ء-يa-zA-Z0-9 ]/g, " ").replace(/\\s+/g, " ").trim().toLowerCase();
-  const urls = {}; let audio = null;
+  const urls = {}; const urlOrder = []; const URL_CACHE_MAX = 30; let audio = null;
   const supported = () => { try { const a = audio || new Audio(); return !!a.canPlayType && a.canPlayType('audio/ogg; codecs="opus"') !== ""; } catch (_) { return false; } };
-  const urlFor = key => { if (!urls[key]) { const bin = atob(BY_KEY[key]); const bytes = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i); urls[key] = URL.createObjectURL(new Blob([bytes], { type: "audio/ogg" })); } return urls[key]; };
+  const urlFor = key => { if (!urls[key]) { const bin = atob(BY_KEY[key]); const bytes = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i); urls[key] = URL.createObjectURL(new Blob([bytes], { type: "audio/ogg" })); urlOrder.push(key); while (urlOrder.length > URL_CACHE_MAX) { const old = urlOrder.shift(); if (old !== key && urls[old]) { try { URL.revokeObjectURL(urls[old]); } catch (_) {} delete urls[old]; } } } return urls[key]; };
   const playKey = key => { if (!BY_KEY[key] || !supported()) return false; try { if (!audio) audio = new Audio(); audio.onended = null; audio.pause(); audio.src = urlFor(key); audio.currentTime = 0; const p = audio.play(); if (p && p.catch) p.catch(() => {}); return true; } catch (_) { return false; } };
   const keyFor = text => EXACT[String(text || "").trim()] || BY_TEXT[norm(text)];
   const play = text => { const key = keyFor(text); return key ? playKey(key) : false; };

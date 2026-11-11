@@ -132,7 +132,7 @@
   function renderLetter(){
     const l=lessons[letterIndex];
     const ex=explainFor(l);
-    $("lessonBody").innerHTML=`<div class="lesson-title">أهلاً يا ماثيو الملك 👑</div><p>النهارده هنتعلم حرف جديد</p><div class="big-letter">${l.letter}</div><h2>${l.name}</h2><p class="lesson-example">صوت الحرف: <b>${l.sound}</b></p><div class="explain-box"><strong>🧕 الميس بتشرح لك من الصفر</strong><p>${ex.shown}</p></div><div class="lesson-pager"><button id="prevLetter" class="secondary" ${letterIndex===0?"disabled":""}>الحرف السابق</button><button id="nextLetter" class="secondary">${letterIndex===lessons.length-1?"ابدأ من الأول":"الحرف التالي"}</button></div>`;
+    $("lessonBody").innerHTML=`<div class="lesson-title">أهلاً يا ماثيو الملك 👑</div><p>النهارده هنتعلم حرف جديد</p><div class="big-letter sticky-panel">${l.letter}</div><h2>${l.name}</h2><p class="lesson-example">صوت الحرف: <b>${l.sound}</b></p><div class="explain-box"><strong>🧕 الميس بتشرح لك من الصفر</strong><p>${ex.shown}</p></div><div class="lesson-pager"><button id="prevLetter" class="secondary" ${letterIndex===0?"disabled":""}>الحرف السابق</button><button id="nextLetter" class="secondary">${letterIndex===lessons.length-1?"ابدأ من الأول":"الحرف التالي"}</button></div>`;
     $("prevLetter").onclick=()=>{letterIndex=(letterIndex+lessons.length-1)%lessons.length;render()};
     $("nextLetter").onclick=()=>{letterIndex=(letterIndex+1)%lessons.length;render()};
     $("lessonListen").onclick=()=>say(ex.spoken);
@@ -153,7 +153,7 @@
     $("lessonListen").onclick=()=>say(soundHint+"، "+sample);
   }
   function renderQuizIntro(){
-    $("lessonBody").innerHTML='<div class="lesson-title">جاهز يا بطل؟ 🏆</div><div class="big-letter">⭐</div><h2>اختبار الحركات والحروف</h2><p>هنسألك أسئلة مختلفة عن صوت الحرف وشكله والفتحة والضمة والكسرة والسكون.</p><p>كل مرة هتلاقي أسئلة بترتيب مختلف!</p>';
+    $("lessonBody").innerHTML='<div class="lesson-title">جاهز يا بطل؟ 🏆</div><div class="big-letter sticky-panel">⭐</div><h2>اختبار الحركات والحروف</h2><p>هنسألك أسئلة مختلفة عن صوت الحرف وشكله والفتحة والضمة والكسرة والسكون.</p><p>كل مرة هتلاقي أسئلة بترتيب مختلف!</p>';
     $("lessonListen").onclick=()=>say("أحسنت يا ماثيو. يلا نبدأ الاختبار");
   }
   function makeQuiz(){
@@ -178,7 +178,7 @@
   }
   function finishQuiz(){
     panel.dataset.finished="1";
-    $("lessonBody").innerHTML=`<div class="lesson-title">برافو يا ملك ماثيو! 👑</div><div class="big-letter">🏆</div><h2>${score.toLocaleString("ar-EG")} من ${quiz.length.toLocaleString("ar-EG")}</h2><p>${score>=8?"ممتاز! أنت بطل الحروف والحركات ⭐":"شاطر! نعيد الدرس ونجرب تاني 💜"}</p><button id="retryLesson" class="primary">اختبار جديد بأسئلة مختلفة</button>`;
+    $("lessonBody").innerHTML=`<div class="lesson-title">برافو يا ملك ماثيو! 👑</div><div class="big-letter sticky-panel">🏆</div><h2>${score.toLocaleString("ar-EG")} من ${quiz.length.toLocaleString("ar-EG")}</h2><p>${score>=8?"ممتاز! أنت بطل الحروف والحركات ⭐":"شاطر! نعيد الدرس ونجرب تاني 💜"}</p><button id="retryLesson" class="primary">اختبار جديد بأسئلة مختلفة</button>`;
     $("retryLesson").onclick=()=>{step=3;makeQuiz()};
     $("lessonNext").textContent="العودة للدروس";
     $("lessonProgress").style.width="100%";

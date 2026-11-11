@@ -17,6 +17,10 @@ const norm = s => String(s || "")
   .replace(/[^ء-يa-zA-Z0-9 ]/g, " ")
   .replace(/\s+/g, " ").trim().toLowerCase();
 const add = (key, text, lang = "ar_EG") => {
+  // Round 3.2: taught letter names/sounds/syllables are recorded in Fusha
+  // (ar_SA) — the Egyptian dialect renders ج/ق/ث/ذ/ظ non-scholastically.
+  // The override keys off the clip key, so it survives regeneration.
+  if (/^(les_namesound|basic_ar|rd_syl)_/.test(key)) lang = "ar_SA";
   const n = norm(text);
   if (!n) return;
   // Short vocalised texts (syllables like بَ بِ بُ) differ ONLY by their
@@ -99,7 +103,9 @@ for (const [key, v] of Object.entries(keyed)) add(key, v.text, v.lang);
   const LETTERS = grab("LETTERS"), AR_WORDS = grab("AR_WORDS"), CVC = grab("CVC_WORDS");
   const FATHA = "َ", KASRA = "ِ", DAMMA = "ُ";
   LETTERS.forEach((L, i) => {
-    const syl = [L.base + FATHA, L.base + KASRA, L.base + DAMMA, L.base + "ا", L.base + "ي", L.base + "و"];
+    // Mirror of reading.js syllablesFor: الألف has special forms (إِ / آ).
+    const syl = L.base === "أ" ? ["أَ", "إِ", "أُ", "آ", "إي", "أو"]
+      : [L.base + FATHA, L.base + KASRA, L.base + DAMMA, L.base + "ا", L.base + "ي", L.base + "و"];
     syl.forEach((s, si) => add("rd_syl_" + i + "_" + si, s));
     add("rd_intro_" + i, L.name + ". " + syl[0] + ". " + syl[3]);
   });
@@ -121,7 +127,7 @@ for (const [key, v] of Object.entries(keyed)) add(key, v.text, v.lang);
   const arNames = ev(ar.slice(ar.indexOf("const names=") + "const names=".length, ar.indexOf("];", ar.indexOf("const names=")) + 1));
   arNames.forEach((n, i) => {
     add("num_ar_" + i, "ده رقم " + n + ". يلا نعدّ الصور سوا");
-    add("num_ar_l_" + i, "ده رقم " + n + ". " + (i + 1));
+    add("num_ar_l_" + i, "ده رقم " + n + ". " + n);
   });
   const en = read("math-english.js");
   const enNames = ev(en.slice(en.indexOf("const names=") + "const names=".length, en.indexOf("];", en.indexOf("const names=")) + 1));
@@ -149,18 +155,19 @@ add("voice_test_line", "أهلاً يا ملك ماثيو! يلا نتعلم و�
     const prev = Math.max(0, n - 1), next = Math.min(20, n + 1);
     const addA = Math.max(1, Math.floor(n / 2)), addB = Math.max(1, Math.min(5, n - addA));
     const subA = Math.min(20, n + 2), subB = 2;
+    const apples = a => a === 1 ? "تفاحة واحدة" : digits(a) + " تفاحات";
     const aq = [
       ["عدّ الصور: كام واحدة؟", "عدّ كل صورة واحدة واحدة. المجموع " + digits(n) + "."],
-      ["إيه الرقم اللي بعد " + digits(prev) + "؟", "بعد " + arNames[Math.max(0, prev - 1)] + " بييجي " + arNames[n - 1] + "."],
+      ["إيه الرقم اللي بعد " + digits(n) + "؟", "بعد " + arNames[n - 1] + " بييجي " + arNames[next - 1] + "."],
       ["إيه الرقم اللي قبل " + digits(next) + "؟", "قبل " + arNames[next - 1] + " بييجي " + arNames[n - 1] + "."],
-      ["معانا " + digits(addA) + " تفاحات وزودنا " + digits(addB) + "، بقوا كام؟", digits(addA) + " + " + digits(addB) + " = " + digits(addA + addB) + ". عدّهم مع بعض."],
-      ["كان معانا " + digits(subA) + " نجوم واختفى " + digits(subB) + "، فاضل كام؟", digits(subA) + " - " + digits(subB) + " = " + digits(subA - subB) + ". شيل اتنين وعدّ الباقي."],
+      ["معانا " + apples(addA) + " وزودنا " + (addB === 1 ? "واحدة" : digits(addB)) + "، بقوا كام؟", arNames[addA - 1] + " زائد " + arNames[addB - 1] + " يساوي " + arNames[addA + addB - 1] + ". عدّهم مع بعض."],
+      ["كان معانا " + digits(subA) + " نجوم واختفى " + digits(subB) + "، فاضل كام؟", arNames[subA - 1] + " ناقص " + arNames[subB - 1] + " يساوي " + arNames[subA - subB - 1] + ". شيل اتنين وعدّ الباقي."],
       ["اختار العدد الأكبر: " + digits(n) + " ولا " + digits(prev), "العدد الأكبر هو " + digits(Math.max(n, prev)) + "."]
     ];
     aq.forEach(([q, ex], i) => add("math_ar_q" + n + "_" + i, q + " " + ex));
     const eq = [
       ["Count the pictures. How many are there?", "Count each picture once. There are " + n + "."],
-      ["What number comes after " + prev + "?", "After " + enNames[prev - 1] + " comes " + enNames[next - 1] + "."],
+      ["What number comes after " + n + "?", "After " + enNames[n - 1] + " comes " + enNames[next - 1] + "."],
       ["What number comes before " + next + "?", "Before " + enNames[next - 1] + " comes " + enNames[n - 1] + "."],
       ["You have " + addA + " apples and get " + addB + " more. How many now?", addA + " + " + addB + " = " + (addA + addB) + ". Count them together."],
       ["You have " + subA + " stars. " + subB + " disappear. How many are left?", subA + " - " + subB + " = " + (subA - subB) + "."],
@@ -211,6 +218,57 @@ add("voice_test_line", "أهلاً يا ملك ماثيو! يلا نتعلم و�
   arDigits.forEach((d, i) => add("basic_arnum_" + i, arNames[i] + "، " + d));
   const enNames = grabLit("const englishNames=[");
   enNames.forEach((n, i) => add("basic_ennum_" + i, n, "en_US"));
+}
+
+// 12) workshop color games (color-games.js spoken lines — mirrors the
+// runtime generators so every composed sentence has a recorded clip)
+{
+  const src = read("color-games.js");
+  const grabLit = decl => { const i = src.indexOf(decl); let depth = 0; const j = src.indexOf("[", i); for (let k = j; k < src.length; k++) { if (src[k] === "[") depth++; if (src[k] === "]") { depth--; if (!depth) return ev(src.slice(j, k + 1)); } } };
+  const grabObj = decl => { const i = src.indexOf(decl); const j = src.indexOf("{", i); let depth = 0; for (let k = j; k < src.length; k++) { if (src[k] === "{") depth++; if (src[k] === "}") { depth--; if (!depth) return ev(src.slice(j, k + 1)); } } };
+  const COLORS = grabLit("const COLORS = [");
+  const NATURE = grabLit("const NATURE = [");
+  const PATTERN_TYPES = grabLit("const PATTERN_TYPES = [");
+  const PATTERN_PAIRS = grabLit("const PATTERN_PAIRS = [");
+  const NUM_WINDOWS = grabLit("const NUM_WINDOWS = [");
+  const NUM_NAMES = grabLit("const NUM_NAMES = [");
+  const INSTRUCTIONS = grabObj("const INSTRUCTIONS = {");
+  const colorById = id => COLORS.find(c => c.id === id) || COLORS[0];
+  add("cg_instr_numbers", INSTRUCTIONS.numbers);
+  add("cg_instr_nature", INSTRUCTIONS.nature);
+  add("cg_instr_patterns", INSTRUCTIONS.patterns);
+  COLORS.forEach((c, i) => add("cg_color_" + i, c.name));
+  add("cg_try", "حاول تاني يا بطل");
+  // numbers game: 4 round intros + 20 numbers x 5 message types
+  NUM_WINDOWS.forEach((w, wi) => add("cg_num_intro_" + wi, "جولة جديدة يا بطل! دلوقتي هنلوّن الأرقام من " + NUM_NAMES[w[0] - 1] + " لـ " + NUM_NAMES[w[5] - 1] + "!"));
+  NUM_NAMES.forEach((name, i) => {
+    const n = i + 1;
+    add("cg_num_done_" + n, "رقم " + name + "! دي اتلوّنت خلاص!");
+    add("cg_num_pick_" + n, "رقم " + name + "! اختار لون الأول من اللوحة، وبعدين دوس على الجزء اللي رقمه نفس اللون");
+    add("cg_num_all_" + n, "رقم " + name + "! برافو يا ملك ماثيو! لوّنت التاج كله! خدت ألماسة جديدة لتاجك!");
+    add("cg_num_ok_" + n, "رقم " + name + "! برافو يا بطل! لوّنتها صح!");
+    add("cg_num_try_" + n, "رقم " + name + "! حاول تاني يا بطل");
+  });
+  // nature game: tab-speech + question + fact lines (plain + set-complete)
+  NATURE.forEach((item, i) => {
+    add("cg_nat_tab_" + i, INSTRUCTIONS.nature + " دي " + item.name + "! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!");
+    add("cg_nat_q_" + i, "دي " + item.name + "! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!");
+    add("cg_nat_ok_" + i, item.fact + " برافو يا بطل!");
+    add("cg_nat_all_" + i, item.fact + " برافو يا ملك ماثيو! لوّنت كل حاجات الطبيعة صح! خدت ألماسة جديدة لتاجك!");
+  });
+  // patterns game: 6 distinct rounds (type cycles every 3, pair every 6)
+  for (let r = 1; r <= 6; r++) {
+    const type = PATTERN_TYPES[(r - 1) % PATTERN_TYPES.length];
+    const pair = PATTERN_PAIRS[(r - 1) % PATTERN_PAIRS.length];
+    const a = colorById(pair[0]), b = colorById(pair[1]);
+    const slots = type.slots.map(v => (v === 0 ? a : b));
+    const seq = slots.slice(0, 5).map(c => c.name).join("، ");
+    const target = slots[5];
+    add("cg_pat_tab_" + r, INSTRUCTIONS.patterns + " بص على الصف يا بطل! " + seq + "، وبعدين إيه؟ اختار اللون الصح!");
+    add("cg_pat_intro_" + r, "بص على الصف يا بطل! " + seq + "، وبعدين إيه؟ اختار اللون الصح!");
+    add("cg_pat_ok_" + r, "برافو يا بطل! النمط كده صح! اللون الناقص هو " + target.name + "!");
+    if (r % 3 === 0) add("cg_pat_all_" + r, "برافو يا بطل! النمط كده صح! اللون الناقص هو " + target.name + "! برافو يا ملك ماثيو! خلّصت ٣ أنماط! خدت ألماسة جديدة لتاجك!");
+  }
 }
 
 const out = [...corpus.values()];

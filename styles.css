@@ -147,3 +147,58 @@
 .trace-wrap{position:relative;width:min(84vw,320px);height:min(84vw,320px);margin:10px auto;background:#fff;border:3px dashed #cfc4ef;border-radius:22px;overflow:hidden;display:block}
 .trace-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
 #traceCanvas{background:transparent;border:0;border-radius:0;touch-action:none}
+
+/* ===== Round 3.2: sticky display panels ===== */
+/* Keeps the selected letter/number panel pinned to the top of the viewport
+   while the grid below it scrolls. The panels live inside academy-panel /
+   quiz-panel sections on a normally scrolling page (no overflow:hidden
+   ancestor on the scroll path), so plain position:sticky works. */
+.sticky-panel{position:sticky;top:0;z-index:5;background:#f8f6ff;box-shadow:0 8px 18px rgba(48,32,91,.14)}
+/* The letter-school big letter keeps its own lavender background. */
+.big-letter.sticky-panel{background:#f3efff}
+
+/* ===== Round 3.2: graphics + movement in games (transform/opacity only) ===== */
+@keyframes matthewBob{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-5px) rotate(-4deg)}}
+@keyframes matthewKingBob{0%,100%{transform:translateY(8px)}50%{transform:translateY(0)}}
+@keyframes matthewPopIn{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+@keyframes matthewCelebrate{0%{transform:scale(1)}30%{transform:scale(1.12) rotate(-2deg)}60%{transform:scale(1.06) rotate(2deg)}100%{transform:scale(1)}}
+@keyframes matthewFeedbackPop{from{opacity:0;transform:scale(.85) translateY(6px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes matthewSparkle{0%,100%{transform:rotate(-5deg) scale(1);opacity:.9}50%{transform:rotate(5deg) scale(1.12);opacity:1}}
+@keyframes matthewBadgeBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes matthewGroundScroll{from{transform:translateX(0)}to{transform:translateX(52px)}}
+@keyframes matthewKingRide{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
+
+/* Gentle bobbing / wiggling for characters (display:inline-block so the
+   transform applies to these inline emoji spans). */
+.game-icon{display:inline-block;animation:matthewBob 2.6s ease-in-out infinite}
+.king-art span{animation:matthewKingBob 2.8s ease-in-out infinite}
+.question-emoji{animation:matthewPopIn .45s ease-out both}
+
+/* Lively feedback on correct answers: one celebratory pulse when the
+   .correct class is added. Same treatment for the correct-answer buttons
+   in the letter school, math journeys and reading games. */
+.answer.correct,.lesson-answers button.correct,.math-choices button.correct,.read-choice.correct{animation:matthewCelebrate .55s ease-in-out}
+.feedback{animation:matthewFeedbackPop .35s ease-out both}
+
+/* Crown sparkle: subtle rotate/scale + opacity shimmer. */
+.crown,.result-crown{display:inline-block;animation:matthewSparkle 2.2s ease-in-out infinite}
+
+/* Animated adventure scene. The scene itself (.rescue-scene, .scene-sun,
+   .scene-cloud, .rescue-kids, .rescue-stop.now) is styled by the injected
+   #rescueStyle block in rescue.js, which already animates the sun
+   (rescueSpin), clouds (rescueDrift), kids (rescueWave) and the current
+   map stop (rescuePulse) — those are left untouched. These additive rules
+   bring the remaining scene pieces alive: the stage badge bobs, the
+   ground stripes scroll (period 52px, matching the repeating gradient,
+   so the loop is seamless; the scene clips the overhang), and the king
+   on horseback rides with a bob + lean. The #rescueScene selector
+   outranks the injected .rescue-king rule, so the ride replaces rescueBob
+   while keeping the same bob motion. */
+.scene-badge{animation:matthewBadgeBob 2.4s ease-in-out infinite}
+.scene-ground{left:-52px;right:-52px;animation:matthewGroundScroll 1.8s linear infinite}
+#rescueScene .rescue-king{animation:matthewKingRide 1s ease-in-out infinite}
+
+@media (prefers-reduced-motion: reduce){
+  .game-icon,.king-art span,.question-emoji,.answer.correct,.lesson-answers button.correct,.math-choices button.correct,.read-choice.correct,.feedback,.crown,.result-crown,.scene-badge,.scene-ground,#rescueScene .rescue-king,.scene-sun,.scene-cloud,.rescue-kids,.rescue-map .rescue-stop.now{animation:none!important}
+  #rescueScene .rescue-king{transition:none}
+}

@@ -20,3 +20,13 @@
   cleaned). Repeated letters like "رررر" must be spaced ("ر ر ر ر").
 - Reject any clip whose duration is slower than 5 chars/sec; regenerate
   (with the cleaned input) until it lands near the natural ~10 chars/sec.
+- Round 3.2: taught letter names/sounds/syllables (`les_namesound_*`,
+  `basic_ar_*`, `rd_syl_*`) are recorded in Fusha (`ar_SA`, same Aria
+  voice) — the Egyptian dialect renders ج/ق/ث/ذ/ظ non-scholastically.
+  `build-corpus.js` forces `ar_SA` for those keys, and `gen6.js` keeps
+  diacritics for `ar_SA` (they carry the vowel). A bare single letter
+  ("مُ", "آ") can return empty audio: the synthesis input is drilled
+  twice ("مُ، مُ") while the corpus text stays one syllable.
+- Math operation explanations are recorded with fully spoken text
+  ("اتنين زائد اتنين يساوي أربعة") — no `+`/`-`/`=` symbols, and the
+  math-journey generators mirror the corpus exactly.

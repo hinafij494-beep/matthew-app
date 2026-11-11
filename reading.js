@@ -19,19 +19,46 @@
   const FATHA = "َ", KASRA = "ِ", DAMMA = "ُ";
   // Letters that connect to what follows use their joined form in syllables.
   const LETTERS = [
+    { base: "أ", joined: "أ", name: "الألف" },
     { base: "ب", joined: "بـ", name: "الباء" },
     { base: "ت", joined: "تـ", name: "التاء" },
     { base: "ث", joined: "ثـ", name: "الثاء" },
-    { base: "م", joined: "مـ", name: "الميم" },
-    { base: "ن", joined: "نـ", name: "النون" },
+    { base: "ج", joined: "جـ", name: "الجيم" },
+    { base: "ح", joined: "حـ", name: "الحاء" },
+    { base: "خ", joined: "خـ", name: "الخاء" },
+    { base: "د", joined: "د", name: "الدال" },
+    { base: "ذ", joined: "ذ", name: "الذال" },
+    { base: "ر", joined: "ر", name: "الراء" },
+    { base: "ز", joined: "ز", name: "الزاي" },
     { base: "س", joined: "سـ", name: "السين" },
+    { base: "ش", joined: "شـ", name: "الشين" },
+    { base: "ص", joined: "صـ", name: "الصاد" },
+    { base: "ض", joined: "ضـ", name: "الضاد" },
+    { base: "ط", joined: "طـ", name: "الطاء" },
+    { base: "ظ", joined: "ظـ", name: "الظاء" },
+    { base: "ع", joined: "عـ", name: "العين" },
+    { base: "غ", joined: "غـ", name: "الغين" },
+    { base: "ف", joined: "فـ", name: "الفاء" },
+    { base: "ق", joined: "قـ", name: "القاف" },
     { base: "ك", joined: "كـ", name: "الكاف" },
     { base: "ل", joined: "لـ", name: "اللام" },
-    { base: "ف", joined: "فـ", name: "الفاء" },
-    { base: "ع", joined: "عـ", name: "العين" }
+    { base: "م", joined: "مـ", name: "الميم" },
+    { base: "ن", joined: "نـ", name: "النون" },
+    { base: "هـ", joined: "هـ", name: "الهاء" },
+    { base: "و", joined: "و", name: "الواو" },
+    { base: "ي", joined: "يـ", name: "الياء" }
   ];
 
   function syllablesFor(letter) {
+    // الألف لها أشكال خاصة: الكسرة على همزة تحت الألف (إِ) والمد بالألف (آ).
+    if (letter.base === "أ") return [
+      { text: "أَ", say: "أَ", label: "فتحة" },
+      { text: "إِ", say: "إِ", label: "كسرة" },
+      { text: "أُ", say: "أُ", label: "ضمة" },
+      { text: "آ", say: "آ", label: "مد بالألف" },
+      { text: "إي", say: "إي", label: "مد بالياء" },
+      { text: "أو", say: "أو", label: "مد بالواو" }
+    ];
     return [
       { text: letter.joined + FATHA, say: letter.base + FATHA, label: "فتحة" },
       { text: letter.joined + KASRA, say: letter.base + KASRA, label: "كسرة" },
@@ -134,6 +161,7 @@
     const letter = LETTERS[letterIndex];
     const syllables = syllablesFor(letter);
     panel.innerHTML = header("📖 مقاطع حرف " + letter.name) +
+      '<div class="read-sticky" style="position:sticky;top:0;z-index:5;background:#fff;border-radius:22px;box-shadow:0 6px 18px #30205b1a;display:flex;align-items:center;justify-content:center;gap:14px;padding:10px;margin:10px 0"><span style="font-size:64px;font-weight:900;line-height:1;color:#5b3cc4">' + letter.base + '</span><span style="text-align:right"><b style="font-size:20px;display:block">' + letter.name + '</b><small style="color:#77718b">اضغط على المقطع واسمعه</small></span></div>' +
       '<p class="touch-game-instruction">من الصفر يا بطل: الحرف لوحده ليه صوت، ولما بنحط عليه فتحة أو كسرة أو ضمة صوته بيتغيّر شوية صغيرة. اضغط على كل مقطع واسمع صوته كويس وقوله ورايا، وبعد شوية هنركّب المقاطع على بعض ونعمل منها كلمة كاملة نقراها سوا!</p>' +
       '<div class="read-syllables">' + syllables.map((s, i) => '<button type="button" class="read-syllable" data-syl="' + i + '"><b>' + s.text + '</b><small>' + s.label + '</small></button>').join("") + '</div>' +
       '<div class="basic-nav"><button id="readPrevLetter" class="secondary" type="button">الحرف السابق</button>' +
@@ -148,7 +176,7 @@
   function renderArWord() {
     const item = AR_WORDS[wordIndex % AR_WORDS.length];
     panel.innerHTML = header("📖 نبني كلمة") +
-      '<div class="basic-focus"><div class="basic-emoji">' + item.emoji + '</div>' +
+      '<div class="basic-focus" style="position:sticky;top:0;z-index:5;box-shadow:0 6px 18px #30205b1a"><div class="basic-emoji">' + item.emoji + '</div>' +
       '<div class="read-parts">' + item.parts.map((p, i) => '<button type="button" class="read-part" data-part="' + i + '">' + p + '</button>').join('<span class="read-plus">+</span>') +
       '<span class="read-plus">=</span><button type="button" class="read-part whole" id="readWhole">' + item.word + '</button></div>' +
       '<h2>' + item.meaning + '</h2><p>اضغط على كل مقطع، وبعدين اضغط على الكلمة كلها</p>' +
@@ -166,7 +194,7 @@
   function renderCvc() {
     const item = CVC_WORDS[wordIndex % CVC_WORDS.length];
     panel.innerHTML = header("📖 English CVC Words") +
-      '<div class="basic-focus" dir="ltr"><div class="basic-emoji">' + item.emoji + '</div>' +
+      '<div class="basic-focus" dir="ltr" style="position:sticky;top:0;z-index:5;box-shadow:0 6px 18px #30205b1a"><div class="basic-emoji">' + item.emoji + '</div>' +
       '<div class="read-parts">' + item.sounds.map((s, i) => '<button type="button" class="read-part" data-sound="' + i + '">' + s + '</button>').join('<span class="read-plus">+</span>') +
       '<span class="read-plus">=</span><button type="button" class="read-part whole" id="readWholeEn">' + item.word + '</button></div>' +
       '<p>Tap each sound, then blend them together</p>' +

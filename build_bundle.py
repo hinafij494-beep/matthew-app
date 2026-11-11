@@ -7,7 +7,7 @@ tests/content.test.js asserts byte-identity of each inlined part."""
 import re, pathlib
 root = pathlib.Path(__file__).parent
 BUNDLE = root / "interactive-games.js"
-PARTS = (sorted(__import__("glob").glob("voice-clips-pack-*.js"), key=lambda p: int(p.rsplit("-",1)[1].split(".")[0])) + sorted(__import__("glob").glob("voice-clips-text-*.js")) + ["voice-clips.js", "mastery.js", "parent.js", "tracing.js", "reading.js", "rescue.js"])
+PARTS = (sorted(__import__("glob").glob("voice-clips-pack-*.js"), key=lambda p: int(p.rsplit("-",1)[1].split(".")[0])) + sorted(__import__("glob").glob("voice-clips-text-*.js")) + ["voice-clips.js", "mastery.js", "parent.js", "tracing.js", "reading.js", "rescue.js", "color-games.js"])
 MARK = "// ==== bundled module: {name} ====\n"
 def core_of(text):
     for name in PARTS:
