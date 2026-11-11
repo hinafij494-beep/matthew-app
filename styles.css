@@ -118,3 +118,6 @@
 .explain-box strong{color:#9a6a00}
 .explain-box p{line-height:2.05;margin:6px 0 0;color:#5b4a1f}
 @media(max-width:360px){.king-art{width:130px;height:112px}}
+
+.answer{position:relative}
+.answer-say{position:absolute;inset-inline-end:10px;top:50%;transform:translateY(-50%);background:#fff3;border:1px solid #0002;border-radius:999px;padding:2px 8px;font-size:1rem}
