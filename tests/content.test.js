@@ -6,15 +6,23 @@ const path = require("node:path");
 const root = path.join(__dirname, "..");
 const read = (name) => fs.readFileSync(path.join(root, name), "utf8");
 
-test("phase 1-2 modules are loaded by the page and cached offline", () => {
+test("phase 1-2 modules ship inside the interactive-games bundle", () => {
+  // The Android workflow copies interactive-games.js into the APK and cannot
+  // be edited by the app integration, so the new modules are inlined there.
+  // This test keeps the bundle byte-identical to the canonical sources.
+  const bundle = read("interactive-games.js");
   const html = read("index.html");
   const sw = read("sw.js");
   for (const file of ["mastery.js", "parent.js", "tracing.js", "reading.js"]) {
-    assert.ok(fs.existsSync(path.join(root, file)), "missing " + file);
-    assert.ok(html.includes(file), "page does not load " + file);
-    assert.ok(sw.includes("./" + file), "offline cache missing " + file);
+    assert.ok(fs.existsSync(path.join(root, file)), "missing source " + file);
+    const source = read(file).trim();
+    assert.ok(bundle.includes(source), "bundle is out of sync with " + file + " — regenerate it from the sources");
+    assert.ok(!html.includes('src="./' + file + '"'), "page should load " + file + " via the bundle only");
+    assert.ok(!sw.includes("./" + file), "offline cache must not list " + file + " (not a separate request any more)");
   }
-  assert.match(sw, /king-matthew-v15/);
+  assert.ok(html.includes("interactive-games.js"), "page does not load the bundle file");
+  assert.ok(sw.includes("./interactive-games.js"), "offline cache missing the bundle file");
+  assert.match(sw, /king-matthew-v16/);
 });
 
 // The Muse GitHub App cannot modify workflow files (GitHub reserves the

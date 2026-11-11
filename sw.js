@@ -1,9 +1,8 @@
-const CACHE = "king-matthew-v15";
+const CACHE = "king-matthew-v16";
 const FILES = [
   "./", "./index.html", "./styles.css", "./app.js", "./voice-web-fallback.js",
   "./lessons.js", "./learning.js", "./math-journey.js", "./math-english.js",
-  "./science.js", "./interactive-games.js", "./mastery.js", "./parent.js",
-  "./tracing.js", "./reading.js", "./manifest.webmanifest", "./icon.svg"
+  "./science.js", "./interactive-games.js", "./manifest.webmanifest", "./icon.svg"
 ];
 
 self.addEventListener("install", event => {
