@@ -148,6 +148,7 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     const prefix = language.toLowerCase().startsWith("ar") ? "ar" : "en";
     setStatus("⏳ جاري تشغيل الصوت...");
     try { window.speechSynthesis?.cancel(); } catch (_) {}
+    try { window.MatthewClips?.stop(); } catch (_) {}
 
     // صوت الميس المسجل: لو الجملة عندنا كمقطع طبيعي نشغّله بدل صوت الجهاز الآلي.
     try {
@@ -182,6 +183,19 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     return browserSpeak(text, language, id);
   };
 
+  const speakSequence = (texts, lang = "ar-EG") => {
+    const list = (texts || []).map(x => String(x || "").trim()).filter(Boolean);
+    if (!list.length) return false;
+    try {
+      if (window.MatthewClips && window.MatthewClips.playSequence(list)) {
+        requestId++;
+        setStatus("🔊 اسمع صوت الميس يا بطل");
+        return true;
+      }
+    } catch (_) {}
+    return speak(list.join("، "), lang);
+  };
+
   const stop = async () => {
     requestId++;
     try { window.MatthewClips?.stop(); } catch (_) {}
@@ -199,22 +213,24 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
   const tryKeys = ["try1", "try2", "try3"];
   let praiseIndex = 0, tryIndex = 0;
   const feedback = kind => {
+    const id = ++requestId;
+    try { window.MatthewClips?.stop(); } catch (_) {}
+    try { window.speechSynthesis?.cancel(); } catch (_) {}
+    if (isAndroidNative()) { try { TextToSpeech.stop(); } catch (_) {} }
     sound(kind);
     try {
       const clips = window.MatthewClips;
       if (!clips) return;
-      if (kind === "correct") {
-        const key = praiseKeys[praiseIndex++ % praiseKeys.length];
-        setTimeout(() => clips.playKey(key), 280);
-      } else if (kind === "wrong") {
-        const key = tryKeys[tryIndex++ % tryKeys.length];
-        setTimeout(() => clips.playKey(key), 280);
-      }
+      const key = kind === "correct"
+        ? praiseKeys[praiseIndex++ % praiseKeys.length]
+        : kind === "wrong" ? tryKeys[tryIndex++ % tryKeys.length] : null;
+      if (key) setTimeout(() => { if (id === requestId) clips.playKey(key); }, 280);
     } catch (_) {}
   };
 
   window.MatthewVoice = {
     speak,
+    speakSequence,
     stop,
     test,
     unlock: unlockAudio,

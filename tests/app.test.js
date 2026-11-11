@@ -13,7 +13,7 @@ test("main page includes Arabic layout and all game modes", () => {
   for (const id of ["numbers", "letters", "colors", "world", "science"]) {
     assert.ok(html.includes('data-category="' + id + '"'), `missing game mode: ${id}`);
   }
-  assert.ok(html.includes('data-rescue="1"'), "missing rescue adventure card");
+  assert.ok(html.includes('data-stories="1"'), "missing stories adventure card");
 });
 
 test("quiz bank has at least 30 questions across five subjects", () => {
@@ -77,7 +77,7 @@ test("progress is saved locally and randomization is used", () => {
   assert.match(js, /localStorage\.setItem\("matthewBest"/);
   assert.match(js, /localStorage\.setItem\("matthewStars"/);
   assert.match(js, /Math\.random\(\)/);
-  assert.match(js, /slice\(0,8\)/);
+  assert.match(js, /slice\(0,10\)/);
 });
 
 test("all app assets referenced by the page exist", () => {

@@ -46,3 +46,32 @@ Owner feedback implemented:
   artwork, rescue card first, airier cards.
 - Bundle: `interactive-games.js` now also inlines `voice-clips.js` and
   `rescue.js` (regenerate with `python3 build_bundle.py`). SW cache: v17.
+
+## Round 3 — owner's corrections after trying Round 2 (2026-11-11)
+
+- **Teacher voice everywhere**: the clip corpus grew from 44 fixed lines to ~900 recorded clips (audio-src/corpus.json, built by build-corpus.js): every quiz question AND answer, every science lesson, letter explanations/forms/harakat, reading syllables/words, number lines, and all four stories — all in the same recorded Egyptian teacher voice (Aria). voice-clips.js (build-voice-clips.py) maps normalized text → clip with Arabic-Indic digit folding; MatthewClips.playSequence chains clips (question → answers → correct answer).
+- **Answers are spoken and pictured**: "اسمع السؤال والاختيارات" button, a 🔊 on every answer, the correct answer is spoken after answering, and every one of the 212 unique answers has a picture (window.AnswerPics in app.js) shown beside the word — Matthew cannot read yet.
+- **No overlapping speech**: speak() stops any playing clip first; feedback() claims the speech channel and its delayed praise yields to any newer speech; delayed correct-answer narration is token-guarded per question.
+- **Science topics restored, taught simply**: magnet, float/sink, dissolving and ice/water are back as play-style lessons (simple, rich, from zero — never the dry textbook phrasing) plus simple bank questions. Quiz length 8 → 10.
+- **Four story adventures** (rescue.js engine): مغامرة الإنقاذ، تحدي حيوانات الغابة، رحلة الغابة مع مارك، كنز الملك — questions reshuffled every run, themed pools for animals/treasure stories.
+- **Adventure design**: full-screen focus mode (home chrome hidden while a story is open), an animated illustrated scene (sun, drifting clouds, grass, bobbing king on horseback who travels across the scene per stage, waving kids), circular stage map, gradient story cards.
+
+## Round 3 — voice fix (2026-11-11)
+
+- 20 letter-lesson clips rendered stretched (90–382s for ~270 chars) because
+  the TTS input carried heavy diacritics. Root cause confirmed by A/B test
+  (same text: stripped = 26s, vocalized = 93s). Regenerated those 20 from
+  diacritics-stripped text (repeated letters spaced, e.g. "ر ر ر ر");
+  all now land at 22–33s. The corpus texts stay vocalized — only the
+  synthesis input is cleaned. Any clip slower than 5 chars/sec is rejected.
+- Clips are packed as `voice-clips-pack-*.js` (each < 100KB) plus
+  `voice-clips-text-1.js`; base64 longer than 55KB is split into `key~N`
+  segments and rejoined by the voice-clips.js runtime. The old
+  `voice-clips-data-*.js` files on the branch are superseded and ignored.
+- `interactive-games.js` (now ~10MB) is rebuilt in CI by the Android
+  workflow (`python3 build_bundle.py` before copying web assets — this
+  step must be added to `.github/workflows/android-apk.yml` by the repo
+  owner, see `../android-apk-updated.yml` in the workspace). The committed
+  bundle is intentionally stale; the tests rebuild it in memory.
+- Push ceiling learned: a single GitHub push_files argument caps at ~128KB,
+  so clips ship as many small pack files.
