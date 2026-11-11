@@ -18,6 +18,7 @@
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis, function () {
   const STORAGE_KEY = "matthewMasteryV1";
+  const CROWN_KEY = "matthewCrownV1";
   const DAY = 24 * 60 * 60 * 1000;
   // Review ladder in days, indexed by level 0..4. Level 0 = review today.
   const INTERVALS_DAYS = [0, 1, 3, 7, 14];
@@ -47,6 +48,52 @@
     try { store.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (_) { /* quota */ }
   }
 
+  // ---- Royal crown store (scope 10) ----
+  // The crown decorates King Matthew for every correct answer: +1 star per
+  // correct answer, +1 diamond whenever a skill climbs a mastery level.
+  // It lives under its own key so the mastery ladder (level / streak /
+  // accuracy / nextReviewAt) never changes shape or meaning.
+  function loadCrown() {
+    const store = storage();
+    if (!store) return { stars: 0, diamonds: 0 };
+    try {
+      const raw = JSON.parse(store.getItem(CROWN_KEY) || "{}");
+      const num = v => {
+        const n = Number(v);
+        return Number.isFinite(n) ? Math.max(0, Math.floor(n)) : 0;
+      };
+      return { stars: raw && typeof raw === "object" ? num(raw.stars) : 0, diamonds: raw && typeof raw === "object" ? num(raw.diamonds) : 0 };
+    } catch (_) {
+      return { stars: 0, diamonds: 0 };
+    }
+  }
+
+  function saveCrown(crownData) {
+    const store = storage();
+    if (!store) return;
+    try {
+      store.setItem(CROWN_KEY, JSON.stringify({
+        stars: Math.max(0, Math.floor(Number(crownData.stars) || 0)),
+        diamonds: Math.max(0, Math.floor(Number(crownData.diamonds) || 0))
+      }));
+    } catch (_) { /* quota */ }
+  }
+
+  // Current crown counts: { stars, diamonds } (zeros when nothing is stored).
+  function crown() {
+    return loadCrown();
+  }
+
+  // Add bonus stars / diamonds (e.g. +1 diamond for finishing a whole game).
+  // Missing or negative amounts count as 0. Returns the updated counts.
+  function awardCrown(stars, diamonds) {
+    const current = loadCrown();
+    current.stars += Math.max(0, Math.floor(Number(stars) || 0));
+    current.diamonds += Math.max(0, Math.floor(Number(diamonds) || 0));
+    saveCrown(current);
+    return { stars: current.stars, diamonds: current.diamonds };
+  }
+
   function blank(now) {
     return { seen: 0, correct: 0, wrong: 0, streak: 0, level: 0, lastAt: 0, nextReviewAt: now };
   }
@@ -57,6 +104,7 @@
     const at = typeof now === "number" ? now : Date.now();
     const data = load();
     const entry = data[skillId] || blank(at);
+    const prevLevel = entry.level;
     entry.seen += 1;
     entry.lastAt = at;
     if (isCorrect) {
@@ -76,6 +124,10 @@
     entry.nextReviewAt = at + INTERVALS_DAYS[entry.level] * DAY;
     data[skillId] = entry;
     save(data);
+    // Crown: a star for every correct answer, a diamond when the skill
+    // climbs a rung. This only writes the separate crown key; the entry
+    // returned above is exactly what the ladder computed.
+    if (isCorrect) awardCrown(1, entry.level > prevLevel ? 1 : 0);
     return entry;
   }
 
@@ -146,8 +198,11 @@
 
   return {
     STORAGE_KEY,
+    CROWN_KEY,
     INTERVALS_DAYS,
     record,
+    crown,
+    awardCrown,
     get,
     all,
     accuracy,

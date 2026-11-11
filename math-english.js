@@ -10,7 +10,7 @@
  const countPic=n=>Array.from({length:n},(_,i)=>icons[i%icons.length]).join(" ");
  function questions(n){const prev=Math.max(1,n-1),next=Math.min(20,n+1),addA=Math.max(1,Math.floor(n/2)),addB=Math.max(1,Math.min(5,n-addA)),subA=Math.min(20,n+2),subB=2;return [
  {q:"Count the pictures. How many are there?",pic:countPic(n),a:sample(n),correct:n,ex:"Count each picture once. There are "+n+"."},
- {q:"What number comes after "+prev+"?",pic:"➡️ 🔢",a:sample(next),correct:next,ex:"After "+names[prev-1]+" comes "+names[next-1]+"."},
+ {q:"What number comes after "+n+"?",pic:"➡️ 🔢",a:sample(next),correct:next,ex:"After "+names[n-1]+" comes "+names[next-1]+"."},
  {q:"What number comes before "+next+"?",pic:"⬅️ 🔢",a:sample(n),correct:n,ex:"Before "+names[next-1]+" comes "+names[n-1]+"."},
  {q:"You have "+addA+" apples and get "+addB+" more. How many now?",pic:"🍎 ➕ 🍎",a:sample(addA+addB),correct:addA+addB,ex:addA+" + "+addB+" = "+(addA+addB)+". Count them together."},
  {q:"You have "+subA+" stars. "+subB+" disappear. How many are left?",pic:"⭐ ➖ ⭐",a:sample(subA-subB),correct:subA-subB,ex:subA+" - "+subB+" = "+(subA-subB)+"."},

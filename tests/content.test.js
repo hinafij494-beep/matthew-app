@@ -23,7 +23,7 @@ test("phase 1-2 modules ship inside the interactive-games bundle", () => {
   }
   const html = read("index.html");
   const sw = read("sw.js");
-  const partFiles = ["mastery.js", "parent.js", "tracing.js", "reading.js", "voice-clips.js", "rescue.js",
+  const partFiles = ["mastery.js", "parent.js", "tracing.js", "reading.js", "voice-clips.js", "rescue.js", "color-games.js",
     ...fs.readdirSync(root).filter(f => /^voice-clips-(pack|text)-\d+\.js$/.test(f)).sort()];
   for (const file of partFiles) {
     assert.ok(fs.existsSync(path.join(root, file)), "missing source " + file);
@@ -34,7 +34,8 @@ test("phase 1-2 modules ship inside the interactive-games bundle", () => {
   }
   assert.ok(html.includes("interactive-games.js"), "page does not load the bundle file");
   assert.ok(sw.includes("./interactive-games.js"), "offline cache missing the bundle file");
-  assert.match(sw, /king-matthew-v19/);
+  assert.match(sw, /king-matthew-v20/);
+  assert.ok(sw.includes("./voice.bundle.js"), "offline cache must precache voice.bundle.js (round 3.2)");
 });
 
 test("science topics are kept but taught simply, like a game (owner correction)", () => {
@@ -281,7 +282,7 @@ test("question pictures never reveal the answer (round 3.1)", () => {
     const correctPic = pics[q.a[q.c]];
     assert.notStrictEqual(q.e, correctPic, "question picture reveals its answer: " + q.q);
   }
-  const hear = Object.values(bank).flat().find(q => q.q.includes("نسمع"));
+  const hear = Object.values(bank).flat().find(q => q.q.startsWith("بماذا نسمع"));
   assert.strictEqual(hear.e, "🎵", "the hearing question must not show an ear");
 });
 
@@ -309,4 +310,128 @@ test("home is four big doors and the hero is an intro only (round 3.1)", () => {
   const css = read("styles.css");
   assert.match(css, /\.door-learn\{/, "doors need their own bright styles");
   assert.match(css, /\.back\{[^}]*padding:14px 24px/, "the back button must be big and clear");
+});
+
+// ---------------- Round 3.2 ----------------
+
+test("science swaps the two removed lessons for lightning and soap bubbles (round 3.2)", () => {
+  const src = read("science.js");
+  for (const title of ["البرق والرعد", "فقاعات الصابون"]) {
+    assert.ok(src.includes('["' + title + '"'), "missing new science lesson: " + title);
+  }
+  for (const title of ["قوس قزح", "اللعب بالعجينة"]) {
+    assert.ok(!src.includes('["' + title + '"'), "removed science lesson still present: " + title);
+  }
+  assert.ok(src.includes("الفيل أكبر حيوان على اليابسة"), "mammals lesson must say the elephant is the biggest LAND animal");
+  const lessons = [...src.matchAll(/\["([^"]+)","([^"]+)","([^"]+)","([^"]+)"\]/g)];
+  assert.equal(lessons.length, 47, "expected 47 science lessons after the swap, got " + lessons.length);
+});
+
+test("question bank has no duplicates and covers the new science lessons (round 3.2)", () => {
+  const src = read("app.js");
+  const bank = vm.runInNewContext("(" + src.slice(src.indexOf("const bank=") + 11, src.indexOf("\nconst names=")).replace(/;\s*$/, "") + ")", Object.create(null));
+  const seen = new Map();
+  let total = 0;
+  for (const [cat, qs] of Object.entries(bank)) for (const q of qs) {
+    total++;
+    assert.ok(!seen.has(q.q), "duplicate question in " + cat + " (also in " + seen.get(q.q) + "): " + q.q);
+    seen.set(q.q, cat);
+    assert.ok(q.a.length === 4 && q.c >= 0 && q.c < 4, "bad answers for: " + q.q);
+  }
+  assert.equal(total, 90, "expected 90 bank questions after cleanup, got " + total);
+  const all = Object.values(bank).flat();
+  assert.ok(all.some(q => q.q.includes("برق") && q.a[q.c].includes("رعد")), "missing the new lightning question");
+  assert.ok(all.some(q => q.q.includes("فقاعات")), "missing the new soap-bubble question");
+  assert.equal(all.filter(q => q.q.includes("قوس قزح")).length, 1, "the rainbow bank question stays exactly once");
+  for (const q of all.filter(q => q.q.startsWith("ما ناتج"))) {
+    assert.ok(!/[0-9٠-٩+−]/.test(q.q), "operation question must be fully spoken, no digits or symbols: " + q.q);
+  }
+});
+
+test("reading teaches all 28 Arabic letters (round 3.2)", () => {
+  const src = read("reading.js");
+  const start = src.indexOf("const LETTERS = [");
+  const end = src.indexOf("];", start) + 1;
+  const letters = vm.runInNewContext("(" + src.slice(start + "const LETTERS = ".length, end).replace(/;\s*$/, "") + ")", Object.create(null));
+  assert.equal(letters.length, 28, "expected 28 reading letters, got " + letters.length);
+  assert.ok(letters.some(l => l.base === "ج"), "reading must include ج");
+  assert.ok(letters.some(l => l.base === "ق"), "reading must include ق");
+  assert.equal(new Set(letters.map(l => l.base)).size, 28, "reading letters must be unique");
+});
+
+test("colouring-games workshop is registered inside the Games door (round 3.2)", () => {
+  const cg = read("color-games.js");
+  for (const name of ["ورشة ألعاب وتلوين الملك ماثيو", "لوني العدد", "سحب لون الطبيعة", "أكمل تلوين النمط"]) {
+    assert.ok(cg.includes(name), "workshop missing game: " + name);
+  }
+  assert.ok(cg.includes('setAttribute("data-workshop", "1")'), "workshop card must carry data-workshop");
+  assert.ok(cg.includes("NUM_WINDOWS"), "numbers game must cover 1–20 in windows");
+  assert.ok(cg.includes("NATURE") && cg.includes("PATTERN_TYPES"), "workshop must have nature and pattern games");
+  assert.ok(!cg.includes("غلط"), "workshop must never use negative language");
+  assert.ok(cg.includes("حاول تاني يا بطل"), "wrong answers must only get the gentle retry line");
+  const app = read("app.js");
+  assert.ok(app.includes("dataset.workshop"), "workshop card must classify into the Games door");
+});
+
+test("display panels stay fixed while the grid scrolls (round 3.2)", () => {
+  const css = read("styles.css");
+  assert.match(css, /\.sticky-panel\{position:sticky;top:0;z-index:5/, "sticky panel style missing");
+  assert.ok(read("learning.js").includes("basic-focus sticky-panel"), "basic learning panel must be sticky");
+  assert.ok(read("lessons.js").includes("big-letter sticky-panel"), "letter school panel must be sticky");
+  assert.ok(read("reading.js").includes("position:sticky"), "reading panels must be sticky");
+});
+
+test("tracing is easy for a 5-year-old: chunky brush, gap-free strokes, low goal (round 3.2)", () => {
+  const tracing = read("tracing.js");
+  assert.match(tracing, /ctx\.lineWidth = 26/, "brush must be chunky (26px)");
+  assert.match(tracing, /const GOAL = 0\.40/, "completion goal must be easy (40%)");
+  assert.match(tracing, /Math\.ceil\(dist \/ 2\)/, "strokes must be interpolated in 2px steps");
+  assert.ok(tracing.includes("destination-in"), "strokes must still be confined inside the outline");
+  assert.ok(tracing.includes("trace-color"), "the 6-colour palette must stay");
+});
+
+test("games move: CSS keyframe animations and lively feedback (round 3.2)", () => {
+  const css = read("styles.css");
+  for (const kf of ["matthewBob", "matthewPopIn", "matthewCelebrate", "matthewSparkle", "matthewKingRide"]) {
+    assert.ok(css.includes("@keyframes " + kf), "missing animation: " + kf);
+  }
+  assert.match(css, /@media \(prefers-reduced-motion/, "reduced-motion users must be respected");
+});
+
+test("royal crown rewards persist and praise only (round 3.2)", () => {
+  const mastery = read("mastery.js");
+  assert.ok(mastery.includes("matthewCrownV1"), "crown must persist in localStorage");
+  assert.match(mastery, /awardCrown/, "crown must be awardable");
+  assert.match(mastery, /awardCrown\(1,/, "correct answers must earn a star");
+  assert.ok(read("color-games.js").includes("royalCrownShelf"), "the crown must be visible on the home hero");
+});
+
+test("letter names, sounds and syllables are recorded in Fusha (round 3.2)", () => {
+  const bc = read("build-corpus.js");
+  assert.match(bc, /\/\^\(les_namesound\|basic_ar\|rd_syl\)_\//, "build-corpus must force ar_SA for letter/syllable keys");
+  const corpus = JSON.parse(read("audio-src/corpus.json"));
+  const sa = corpus.filter(e => e.lang === "ar_SA");
+  assert.ok(sa.length >= 200, "expected 200+ Fusha clips, got " + sa.length);
+  for (const prefix of ["les_namesound_", "basic_ar_", "rd_syl_"]) {
+    assert.ok(sa.some(e => e.key.startsWith(prefix)), "missing Fusha clips for " + prefix);
+  }
+  const syl = corpus.filter(e => e.key.startsWith("rd_syl_"));
+  assert.ok(syl.length >= 168, "expected 168 syllable clips (28 letters x 6), got " + syl.length);
+});
+
+test("voice-clip object-URL cache is capped (round 3.2)", () => {
+  const vc = read("voice-clips.js");
+  assert.match(vc, /URL_CACHE_MAX = 30/, "URL cache must be capped at 30");
+  assert.ok(vc.includes("URL.revokeObjectURL"), "evicted clip URLs must be revoked");
+  const template = read("build-voice-clips.py");
+  assert.ok(template.includes("URL_CACHE_MAX = 30"), "the pack template must carry the same cap");
+});
+
+test("workshop spoken lines are in the voice corpus (round 3.2)", () => {
+  const corpus = JSON.parse(read("audio-src/corpus.json"));
+  const cg = corpus.filter(e => e.key.startsWith("cg_"));
+  assert.ok(cg.length >= 150, "expected 150+ workshop clips in the corpus, got " + cg.length);
+  for (const key of ["cg_instr_numbers", "cg_instr_nature", "cg_instr_patterns", "cg_try", "cg_num_intro_0", "cg_nat_q_0", "cg_pat_intro_1"]) {
+    assert.ok(cg.some(e => e.key === key), "corpus missing workshop clip " + key);
+  }
 });

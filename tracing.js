@@ -36,7 +36,7 @@
       speak: item => item
     }
   };
-  const GOAL = 0.55; // 55% of the guide must be traced
+  const GOAL = 0.40; // 40% of the guide must be traced — easier for a 5-year-old
   const GRID = 72;   // mask resolution
 
   const panel = document.createElement("section");
@@ -159,13 +159,28 @@
       mctx.font = "bold 230px system-ui, sans-serif";
       mctx.textAlign = "center"; mctx.textBaseline = "middle";
       mctx.fillText(glyph, 160, 172);
+      // Dilate the full-resolution mask by ~3px so strokes just outside
+      // the visible outline still paint (forgiving edge for a 5-year-old).
+      // A centred stroke expands the glyph outline by ~half its width
+      // on each side; the destination-in clip below uses this same
+      // dilated mask, so tolerant strokes are not erased on pointerup.
+      mctx.strokeStyle = "#000";
+      mctx.lineWidth = 6;
+      mctx.strokeText(glyph, 160, 172);
       try { maskData = mctx.getImageData(0, 0, 320, 320).data; } catch (_) { /* no mask: fall back to grid */ }
     }
     const inside = (x, y) => {
       if (!maskData) return true;
       const xi = Math.round(x), yi = Math.round(y);
-      if (xi < 0 || yi < 0 || xi >= 320 || yi >= 320) return false;
-      return maskData[(yi * 320 + xi) * 4 + 3] > 40;
+      // ~3px tolerance: a point counts as inside if ANY pixel in a
+      // 3px neighbourhood has mask alpha > 40, so a finger landing
+      // just outside the visible outline still paints.
+      for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) {
+        const nx = xi + dx, ny = yi + dy;
+        if (nx < 0 || ny < 0 || nx >= 320 || ny >= 320) continue;
+        if (maskData[(ny * 320 + nx) * 4 + 3] > 40) return true;
+      }
+      return false;
     };
     // Draw the guide glyph on the bottom canvas.
     gtx.clearRect(0, 0, 320, 320);
@@ -180,7 +195,7 @@
     ctx.clearRect(0, 0, 320, 320);
     ctx.strokeStyle = traceColor;
     ctx.fillStyle = traceColor;
-    ctx.lineWidth = 16;
+    ctx.lineWidth = 26;
     ctx.lineCap = "round"; ctx.lineJoin = "round";
     strokeCtx = ctx;
 
@@ -190,7 +205,7 @@
     };
     const markCoverage = (x, y) => {
       const gx = Math.floor(x / 320 * GRID), gy = Math.floor(y / 320 * GRID);
-      for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
+      for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) {
         const cx = gx + dx, cy = gy + dy;
         if (cx < 0 || cy < 0 || cx >= GRID || cy >= GRID) continue;
         const cell = cy * GRID + cx;
@@ -200,13 +215,13 @@
       panel.querySelector("#traceProgress").style.width = Math.min(100, Math.round(ratio * 100)) + "%";
       if (ratio >= GOAL && !done) finishTracing(glyph, set);
     };
-    const dot = p => { ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI * 2); ctx.fill(); };
+    const dot = p => { ctx.beginPath(); ctx.arc(p.x, p.y, 13, 0, Math.PI * 2); ctx.fill(); };
     let pen = null; // last point INSIDE the glyph, or null while outside
     const paintTo = p => {
       if (!inside(p.x, p.y)) { pen = null; return; }
       if (!pen) { dot(p); pen = p; markCoverage(p.x, p.y); return; }
       const dist = Math.hypot(p.x - pen.x, p.y - pen.y);
-      const steps = Math.max(1, Math.ceil(dist / 4));
+      const steps = Math.max(1, Math.ceil(dist / 2)); // 2px steps: gap-free even on fast swipes
       let from = pen;
       for (let s = 1; s <= steps; s++) {
         const sp = { x: pen.x + (p.x - pen.x) * s / steps, y: pen.y + (p.y - pen.y) * s / steps };
@@ -214,6 +229,7 @@
           if (from) { ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(sp.x, sp.y); ctx.stroke(); }
           else dot(sp);
           from = sp;
+          markCoverage(sp.x, sp.y); // count coverage along the whole stroke, not only at the endpoint
         } else from = null;
       }
       pen = p;
