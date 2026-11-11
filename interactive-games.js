@@ -101,7 +101,7 @@
     let answered=false;
     panel.querySelectorAll("[data-listen]").forEach(button=>button.onclick=()=>{
       if(answered)return;answered=true;
-      const correct=button.dataset.listen===currentTarget.id;
+      const correct=button.dataset.listen===currentTarget.id;try{window.MatthewMastery?.record("listening",correct);window.MatthewMastery?.record("listen:"+currentTarget.id,correct)}catch(_){}
       if(correct){score++;button.classList.add("correct");panel.querySelector("#touchGameFeedback").textContent="برافو يا ملك ماثيو! إجابة صحيحة ⭐";window.MatthewVoice?.feedback("correct")}
       else{button.classList.add("wrong");panel.querySelector("#touchGameFeedback").textContent="محاولة جميلة! الإجابة الصحيحة "+currentTarget.value;window.MatthewVoice?.feedback("wrong")}
       panel.querySelectorAll("[data-listen]").forEach(x=>{x.disabled=true;if(x.dataset.listen===currentTarget.id)x.classList.add("correct")});
