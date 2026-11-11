@@ -41,12 +41,15 @@
   const tryKeys = ["try1", "try2", "try3"];
   let praiseIndex = 0, tryIndex = 0;
   const feedback = type => {
+    const fid = ++request;
+    try { window.MatthewClips?.stop(); } catch (_) {}
+    try { window.speechSynthesis?.cancel(); } catch (_) {}
     if (type === "correct") {
       tone(660, 0.13); tone(880, 0.17, 0.13); tone(1046, 0.2, 0.29);
-      try { const c = window.MatthewClips; if (c) setTimeout(() => c.playKey(praiseKeys[praiseIndex++ % praiseKeys.length]), 280); } catch (_) {}
+      try { const c = window.MatthewClips; if (c) setTimeout(() => { if (fid === request) c.playKey(praiseKeys[praiseIndex++ % praiseKeys.length]); }, 280); } catch (_) {}
     } else if (type === "wrong") {
       tone(330, 0.16); tone(260, 0.19, 0.14);
-      try { const c = window.MatthewClips; if (c) setTimeout(() => c.playKey(tryKeys[tryIndex++ % tryKeys.length]), 280); } catch (_) {}
+      try { const c = window.MatthewClips; if (c) setTimeout(() => { if (fid === request) c.playKey(tryKeys[tryIndex++ % tryKeys.length]); }, 280); } catch (_) {}
     } else tone(520, 0.055, 0, 0.03);
   };
 
@@ -75,6 +78,7 @@
     }
     sayStatus("⏳ جاري تشغيل الصوت...");
     try { if (window.MatthewClips && window.MatthewClips.play(text)) { sayStatus("🔊 اسمع صوت الميس يا بطل"); return true; } } catch (_) {}
+    try { window.MatthewClips?.stop(); } catch (_) {}
     try {
       synth.cancel();
       const voices = await waitVoices(synth);
@@ -114,7 +118,14 @@
     return speak("أهلاً يا ماثيو يا بطل! أنا الميس بتاعتك، يلا بينا نتعلّم ونلعب مع بعض.", "ar-EG");
   };
 
-  window.MatthewVoice = { speak, stop, test, feedback, unlock: () => getAudio()?.resume(), installVoiceData: async () => false };
+  const speakSequence = (texts, lang = "ar-EG") => {
+    const list = (texts || []).map(x => String(x || "").trim()).filter(Boolean);
+    if (!list.length) return false;
+    try { if (window.MatthewClips && window.MatthewClips.playSequence(list)) { sayStatus("🔊 اسمع صوت الميس يا بطل"); return true; } } catch (_) {}
+    return speak(list.join("، "), lang);
+  };
+
+  window.MatthewVoice = { speak, speakSequence, stop, test, feedback, unlock: () => getAudio()?.resume(), installVoiceData: async () => false };
 
   document.addEventListener("pointerdown", event => {
     const ctx = getAudio();

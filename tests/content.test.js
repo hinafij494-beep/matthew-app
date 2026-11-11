@@ -7,13 +7,25 @@ const root = path.join(__dirname, "..");
 const read = (name) => fs.readFileSync(path.join(root, name), "utf8");
 
 test("phase 1-2 modules ship inside the interactive-games bundle", () => {
-  // The Android workflow copies interactive-games.js into the APK and cannot
-  // be edited by the app integration, so the new modules are inlined there.
-  // This test keeps the bundle byte-identical to the canonical sources.
-  const bundle = read("interactive-games.js");
+  // The Android workflow copies interactive-games.js into the APK. The bundle
+  // is far too large to commit through the API, so the workflow rebuilds it
+  // from the canonical sources (build_bundle.py) before copying. This test
+  // runs that same build and keeps the parts byte-identical to the sources.
+  const { execFileSync } = require("node:child_process");
+  const bundlePath = path.join(root, "interactive-games.js");
+  const originalBundle = fs.readFileSync(bundlePath, "utf8");
+  let bundle = originalBundle;
+  try {
+    execFileSync("python3", [path.join(root, "build_bundle.py")], { stdio: "pipe" });
+    bundle = fs.readFileSync(bundlePath, "utf8");
+  } finally {
+    fs.writeFileSync(bundlePath, originalBundle);
+  }
   const html = read("index.html");
   const sw = read("sw.js");
-  for (const file of ["mastery.js", "parent.js", "tracing.js", "reading.js", "voice-clips.js", "rescue.js"]) {
+  const partFiles = ["mastery.js", "parent.js", "tracing.js", "reading.js", "voice-clips.js", "rescue.js",
+    ...fs.readdirSync(root).filter(f => /^voice-clips-(data|text)-\d+\.js$/.test(f)).sort()];
+  for (const file of partFiles) {
     assert.ok(fs.existsSync(path.join(root, file)), "missing source " + file);
     const source = read(file).trim();
     assert.ok(bundle.includes(source), "bundle is out of sync with " + file + " — regenerate it from the sources");
@@ -22,13 +34,21 @@ test("phase 1-2 modules ship inside the interactive-games bundle", () => {
   }
   assert.ok(html.includes("interactive-games.js"), "page does not load the bundle file");
   assert.ok(sw.includes("./interactive-games.js"), "offline cache missing the bundle file");
-  assert.match(sw, /king-matthew-v17/);
+  assert.match(sw, /king-matthew-v18/);
 });
 
-test("science content is age-simple: no magnet, dissolving, float/sink or states of matter", () => {
-  const banned = /مغناطيس|الذوبان|يذوب|يطفو|يغوص|الاهتزاز|حالات المادة|الخياشيم/;
-  assert.ok(!banned.test(read("science.js")), "science lessons still contain an advanced topic");
-  assert.ok(!banned.test(read("app.js")), "quiz bank still contains an advanced topic");
+test("science topics are kept but taught simply, like a game (owner correction)", () => {
+  const science = read("science.js");
+  for (const topic of ["المغناطيس", "يطفو", "يغوص", "السكر بيختفي", "التلج والمية"]) {
+    assert.ok(science.includes(topic), "science lesson missing kept topic: " + topic);
+  }
+  // the dry textbook phrasing the owner rejected must be gone
+  for (const dry of ["يجذب بعض الأشياء المصنوعة من الحديد", "يجذب بعض المعادن", "حالات المادة", "الاهتزاز", "الخياشيم"]) {
+    assert.ok(!science.includes(dry), "dry phrasing still present: " + dry);
+  }
+  const bank = read("app.js");
+  assert.ok(bank.includes("مشبك معدن"), "quiz bank missing the simple magnet question");
+  assert.ok(bank.includes("هتطفو فوق المية"), "quiz bank missing the simple float question");
 });
 
 test("science lessons are many and richly explained", () => {
@@ -46,22 +66,90 @@ test("recorded teacher voice clips exist and the rescue game uses real clip keys
   assert.ok(keys.length >= 40, "expected at least 40 recorded clips");
   const voiceClips = read("voice-clips.js");
   assert.match(voiceClips, /window\.MatthewClips/);
-  for (const key of keys) assert.ok(voiceClips.includes('"' + key + '"'), "voice-clips.js missing clip " + key);
+  const fsx = require("node:fs");
+  const chunkText = fsx.readdirSync(__dirname + "/..").filter(f => /^voice-clips-data-\d+\.js$/.test(f)).map(f => read(f)).join("\n");
+  for (const key of keys) assert.ok(chunkText.includes('"' + key + '":'), "clip data chunks missing clip " + key);
   const rescue = read("rescue.js");
-  const used = [...rescue.matchAll(/(?:clip:\s*|playKey\(|speak\([^)]*?,\s*)"(rescue(?:Stage|Closer|Intro|Win|Ask)[A-Za-z0-9]*)"/g)].map(m => m[1])
-    .concat([...rescue.matchAll(/"(rescueCloser\d)"/g)].map(m => m[1]));
-  assert.ok(new Set(used).size >= 9, "rescue.js should reference its stage/closer/win clips");
+  const used = [...rescue.matchAll(/(?:clip:\s*|introClip:\s*|winClip:\s*|playKey\(|speak\([^)]*?,\s*)"((?:rescue|story)(?:Stage|Closer|Intro|Win|Ask|Animals|Trip|Treasure|Lion|Fox|Bear|Tiger)[A-Za-z0-9]*)"/g)].map(m => m[1])
+    .concat([...rescue.matchAll(/"((?:rescue|story)[A-Za-z]*Closer\d)"/g)].map(m => m[1]));
+  assert.ok(new Set(used).size >= 20, "rescue.js should reference its story/stage/closer/win clips, got " + [...new Set(used)].join(","));
   for (const key of new Set(used)) assert.ok(keys.includes(key), "rescue.js uses unknown clip key " + key);
   assert.match(read("voice.js"), /MatthewClips/);
 });
 
-test("rescue adventure replaces the plain surprise quiz on the home screen", () => {
+test("story adventures replace the plain surprise quiz on the home screen", () => {
   const html = read("index.html");
-  assert.ok(html.includes('data-rescue="1"'), "home is missing the rescue card");
+  assert.ok(html.includes('data-stories="1"'), "home is missing the stories card");
   assert.ok(!html.includes('data-category="mixed"'), "plain surprise quiz card still on home");
   const rescue = read("rescue.js");
-  assert.ok(rescue.includes("مارك") && rescue.includes("مريم"), "rescue story must star Mark and Maryam");
-  assert.ok(rescue.includes("STAGES"), "rescue game must be stage-based");
+  for (const title of ["مغامرة الإنقاذ", "تحدي حيوانات الغابة", "رحلة الغابة مع مارك", "كنز الملك"]) {
+    assert.ok(rescue.includes(title), "missing story: " + title);
+  }
+  assert.ok(rescue.includes("مارك") && rescue.includes("مريم"), "stories must star Mark and Maryam");
+  assert.ok(rescue.includes("STORIES"), "stories engine must be story-based");
+  assert.match(rescue, /questions = shuffle\(all\)/, "story questions must be reshuffled every run");
+});
+
+test("recorded teacher voice covers the whole quiz bank and the corpus", () => {
+  const corpus = JSON.parse(read("audio-src/corpus.json"));
+  assert.ok(corpus.length >= 600, "corpus should cover the app, got " + corpus.length);
+  const fsy = require("node:fs");
+  const textChunks = fsy.readdirSync(__dirname + "/..").filter(f => /^voice-clips-text-\d+\.js$/.test(f)).sort();
+  assert.ok(textChunks.length >= 1, "missing voice-clips-text chunk files");
+  const byText = {};
+  for (const f of textChunks) {
+    const src = read(f);
+    Object.assign(byText, JSON.parse(src.slice(src.indexOf("push(") + 5, src.lastIndexOf(");"))));
+  }
+  const digits = { "٠": "0", "١": "1", "٢": "2", "٣": "3", "٤": "4", "٥": "5", "٦": "6", "٧": "7", "٨": "8", "٩": "9" };
+  const norm = s => String(s || "").replace(/[٠-٩]/g, c => digits[c]).replace(/[ً-ٰٟـ]/g, "").replace(/[^ء-يa-zA-Z0-9 ]/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+  const src = read("app.js");
+  const bank = vm.runInNewContext("(" + src.slice(src.indexOf("const bank=") + 11, src.indexOf("\nconst names=")).replace(/;\s*$/, "") + ")", Object.create(null));
+  let checked = 0;
+  for (const qs of Object.values(bank)) for (const q of qs) {
+    assert.ok(byText[norm(q.q)], "no teacher clip for question: " + q.q);
+    for (const a of q.a) assert.ok(byText[norm(a)], "no teacher clip for answer: " + a);
+    checked++;
+  }
+  assert.ok(checked >= 85, "expected to check the whole bank, got " + checked);
+  assert.ok(byText[norm("الإجابة الصحيحة هي")], "missing the correct-answer prefix clip");
+});
+
+test("every quiz answer has a picture (Matthew cannot read yet)", () => {
+  const src = read("app.js");
+  const m = src.match(/window\.AnswerPics=(\{.*?\});/s);
+  assert.ok(m, "app.js is missing the AnswerPics map");
+  const pics = JSON.parse(m[1]);
+  const bank = vm.runInNewContext("(" + src.slice(src.indexOf("const bank=") + 11, src.indexOf("\nconst names=")).replace(/;\s*$/, "") + ")", Object.create(null));
+  let checked = 0;
+  for (const qs of Object.values(bank)) for (const q of qs) for (const a of q.a) {
+    assert.ok(pics[a], "answer has no picture: " + a);
+    checked++;
+  }
+  assert.ok(checked >= 350, "expected to check all bank answers, got " + checked);
+  assert.ok(read("rescue.js").includes("answer-picture"), "story answers must show pictures too");
+});
+
+test("stories open in a clean full-screen focus with an animated scene", () => {
+  const rescue = read("rescue.js");
+  assert.ok(rescue.includes("focusMode"), "stories must hide the home clutter while open");
+  assert.ok(rescue.includes("scene-ground") && rescue.includes("rescueBob"), "adventure scene must be illustrated and animated");
+});
+
+test("quizzes pronounce answers and speech never overlaps", () => {
+  const html = read("index.html");
+  assert.ok(html.includes('id="listenAllBtn"'), "quiz is missing the listen-to-question-and-answers button");
+  const app = read("app.js");
+  assert.ok(app.includes("speakSequence"), "main quiz must narrate question + answers in sequence");
+  assert.ok(app.includes("answer-say"), "each answer needs its own speaker button");
+  const rescue = read("rescue.js");
+  assert.ok(rescue.includes("speakSequence") && rescue.includes("answer-say"), "stories must narrate answers too");
+  const voice = read("voice.js");
+  assert.ok(voice.includes("speakSequence"), "MatthewVoice must expose speakSequence");
+  assert.match(voice, /if \(id === requestId\) clips\.playKey\(key\)/, "delayed praise must yield to newer speech (no overlap)");
+  assert.match(voice, /const speak = async[\s\S]{0,700}MatthewClips\?\.stop\(\)/, "speak() must stop a playing clip before TTS so voices never overlap");
+  const vc = read("voice-clips.js");
+  assert.ok(vc.includes("playSequence"), "recorded clips must support chained playback");
 });
 
 test("arabic letter lessons explain from zero with mouth hints", () => {
