@@ -13,7 +13,7 @@ test("phase 1-2 modules ship inside the interactive-games bundle", () => {
   const bundle = read("interactive-games.js");
   const html = read("index.html");
   const sw = read("sw.js");
-  for (const file of ["mastery.js", "parent.js", "tracing.js", "reading.js"]) {
+  for (const file of ["mastery.js", "parent.js", "tracing.js", "reading.js", "voice-clips.js", "rescue.js"]) {
     assert.ok(fs.existsSync(path.join(root, file)), "missing source " + file);
     const source = read(file).trim();
     assert.ok(bundle.includes(source), "bundle is out of sync with " + file + " — regenerate it from the sources");
@@ -22,7 +22,53 @@ test("phase 1-2 modules ship inside the interactive-games bundle", () => {
   }
   assert.ok(html.includes("interactive-games.js"), "page does not load the bundle file");
   assert.ok(sw.includes("./interactive-games.js"), "offline cache missing the bundle file");
-  assert.match(sw, /king-matthew-v16/);
+  assert.match(sw, /king-matthew-v17/);
+});
+
+test("science content is age-simple: no magnet, dissolving, float/sink or states of matter", () => {
+  const banned = /مغناطيس|الذوبان|يذوب|يطفو|يغوص|الاهتزاز|حالات المادة|الخياشيم/;
+  assert.ok(!banned.test(read("science.js")), "science lessons still contain an advanced topic");
+  assert.ok(!banned.test(read("app.js")), "quiz bank still contains an advanced topic");
+});
+
+test("science lessons are many and richly explained", () => {
+  const src = read("science.js");
+  const lessons = [...src.matchAll(/\["([^"]+)","([^"]+)","([^"]+)","([^"]+)"\]/g)];
+  assert.ok(lessons.length >= 40, "expected at least 40 science lessons, got " + lessons.length);
+  for (const [, title, , , long] of lessons) {
+    assert.ok(long.length >= 100, "lesson explanation too short: " + title);
+  }
+});
+
+test("recorded teacher voice clips exist and the rescue game uses real clip keys", () => {
+  const clips = JSON.parse(read("audio-src/clips.json"));
+  const keys = Object.keys(clips);
+  assert.ok(keys.length >= 40, "expected at least 40 recorded clips");
+  const voiceClips = read("voice-clips.js");
+  assert.match(voiceClips, /window\.MatthewClips/);
+  for (const key of keys) assert.ok(voiceClips.includes('"' + key + '"'), "voice-clips.js missing clip " + key);
+  const rescue = read("rescue.js");
+  const used = [...rescue.matchAll(/(?:clip:\s*|playKey\(|speak\([^)]*?,\s*)"(rescue(?:Stage|Closer|Intro|Win|Ask)[A-Za-z0-9]*)"/g)].map(m => m[1])
+    .concat([...rescue.matchAll(/"(rescueCloser\d)"/g)].map(m => m[1]));
+  assert.ok(new Set(used).size >= 9, "rescue.js should reference its stage/closer/win clips");
+  for (const key of new Set(used)) assert.ok(keys.includes(key), "rescue.js uses unknown clip key " + key);
+  assert.match(read("voice.js"), /MatthewClips/);
+});
+
+test("rescue adventure replaces the plain surprise quiz on the home screen", () => {
+  const html = read("index.html");
+  assert.ok(html.includes('data-rescue="1"'), "home is missing the rescue card");
+  assert.ok(!html.includes('data-category="mixed"'), "plain surprise quiz card still on home");
+  const rescue = read("rescue.js");
+  assert.ok(rescue.includes("مارك") && rescue.includes("مريم"), "rescue story must star Mark and Maryam");
+  assert.ok(rescue.includes("STAGES"), "rescue game must be stage-based");
+});
+
+test("arabic letter lessons explain from zero with mouth hints", () => {
+  const lessons = read("lessons.js");
+  assert.match(lessons, /explainFor/);
+  assert.match(lessons, /الميس بتشرح/);
+  assert.match(lessons, /HINTS/);
 });
 
 // The Muse GitHub App cannot modify workflow files (GitHub reserves the
