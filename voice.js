@@ -4,8 +4,6 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
   let requestId = 0;
   let audioContext = null;
   let audioUnlocked = false;
-  let questionTimer = null;
-  let lastAutoQuestion = "";
 
   const statusNode = () =>
     document.getElementById("speechResult") ||
@@ -209,9 +207,19 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     return speak("أهلاً يا ماثيو يا بطل! أنا الميس بتاعتك، يلا بينا نتعلّم ونلعب مع بعض.", "ar-EG");
   };
 
-  const praiseKeys = ["praise1", "praise2", "praise3", "praise4", "praise5"];
+  // Round 3.2.1 note 25b: مس نانسي joins the praise rotation (1 in 6) —
+  // «أنا مس نانسي وبحبك يا ماثيو، برافو يا بطل!» (recorded clip praise_nancy).
+  // Nancy-lines draft: her 10 praise variants + 5 gentle try-agains are
+  // woven in alongside — every 3rd correct answer gets a rotating
+  // nancy_praise_* line, every 2nd wrong answer a rotating nancy_retry_*
+  // line — so her voice is regular but never every single time, and the
+  // old praise1–5 / try1–3 clips keep their slots. Clip keys are stable:
+  // her real recordings will replace these TTS clips under the same keys.
+  const praiseKeys = ["praise1", "praise2", "praise3", "praise4", "praise5", "praise_nancy"];
+  const nancyPraiseKeys = ["nancy_praise_1", "nancy_praise_2", "nancy_praise_3", "nancy_praise_4", "nancy_praise_5", "nancy_praise_6", "nancy_praise_7", "nancy_praise_8", "nancy_praise_9", "nancy_praise_10"];
   const tryKeys = ["try1", "try2", "try3"];
-  let praiseIndex = 0, tryIndex = 0;
+  const nancyRetryKeys = ["nancy_retry_1", "nancy_retry_2", "nancy_retry_3", "nancy_retry_4", "nancy_retry_5"];
+  let praiseIndex = 0, tryIndex = 0, nancyPraiseIndex = 0, nancyRetryIndex = 0, correctCount = 0, wrongCount = 0;
   const feedback = kind => {
     const id = ++requestId;
     try { window.MatthewClips?.stop(); } catch (_) {}
@@ -222,9 +230,21 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
       const clips = window.MatthewClips;
       if (!clips) return;
       const key = kind === "correct"
-        ? praiseKeys[praiseIndex++ % praiseKeys.length]
-        : kind === "wrong" ? tryKeys[tryIndex++ % tryKeys.length] : null;
-      if (key) setTimeout(() => { if (id === requestId) clips.playKey(key); }, 280);
+        ? (++correctCount % 3 === 0
+          ? nancyPraiseKeys[nancyPraiseIndex++ % nancyPraiseKeys.length]
+          : praiseKeys[praiseIndex++ % praiseKeys.length])
+        : kind === "wrong"
+          ? (++wrongCount % 2 === 0
+            ? nancyRetryKeys[nancyRetryIndex++ % nancyRetryKeys.length]
+            : tryKeys[tryIndex++ % tryKeys.length])
+          : null;
+      if (key) setTimeout(() => {
+        if (id === requestId && clips.playKey(key)) return;
+        // Unpacked Nancy clip (not generated yet): fall back to the old
+        // generic clip of the same mood, never silence.
+        if (id === requestId && (key === "praise_nancy" || key.startsWith("nancy_praise_"))) clips.playKey("praise1");
+        else if (id === requestId && key.startsWith("nancy_retry_")) clips.playKey("try1");
+      }, 280);
     } catch (_) {}
   };
 
@@ -269,7 +289,7 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     const panel = document.createElement("section");
     panel.id = "pronunciationChallenge";
     panel.className = "quiz-panel hidden";
-    panel.innerHTML = '<div class="quiz-top"><button id="pronounceBack" class="back" type="button">→ رجوع</button><strong>🎙️ تحدي النطق</strong><span id="pronounceScore">0 / 0</span></div><div class="language-switch"><button id="pronounceArabic" class="secondary" type="button">العربية</button><button id="pronounceEnglish" class="primary" type="button">English</button></div><div class="pronounce-card"><div id="pronounceEmoji" class="question-emoji">🍎</div><h2 id="pronounceWord">Apple</h2><p id="pronounceMeaning">تفاحة</p><button id="pronounceListen" class="voice-button" type="button">🔊 اسمع النطق</button><button id="pronounceRecord" class="primary" type="button">🎤 اضغط واتكلم</button><p id="pronounceStatus" class="feedback" aria-live="polite">اسمع الكلمة وحاول تكررها</p><button id="pronounceNext" class="secondary" type="button">كلمة جديدة ↻</button></div><p class="voice-note">التعرف على كلامك يعتمد على دعم الهاتف والمتصفح وقد يحتاج اتصالاً بالإنترنت.</p>';
+    panel.innerHTML = '<div class="quiz-top"><button id="pronounceBack" class="back" type="button">→ رجوع</button><strong>🎙️ تحدي النطق</strong><span id="pronounceScore">0 / 0</span></div><div class="language-switch"><button id="pronounceArabic" class="secondary" type="button">العربية</button><button id="pronounceEnglish" class="primary" type="button">الإنجليزية</button></div><div class="pronounce-card"><div id="pronounceEmoji" class="question-emoji">🍎</div><h2 id="pronounceWord">Apple</h2><p id="pronounceMeaning">تفاحة</p><button id="pronounceListen" class="voice-button" type="button">🔊 اسمع النطق</button><button id="pronounceRecord" class="primary" type="button">🎤 اضغط واتكلم</button><p id="pronounceStatus" class="feedback" aria-live="polite">اسمع الكلمة وحاول تكررها</p><button id="pronounceNext" class="secondary" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div><p class="voice-note">التعرف على كلامك يعتمد على دعم الهاتف والمتصفح وقد يحتاج اتصالاً بالإنترنت.</p>';
     main.insertBefore(panel, document.querySelector("footer"));
 
     const lists = {
@@ -308,6 +328,7 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
       panel.querySelector("#pronounceMeaning").textContent = current.meaning;
       panel.querySelector("#pronounceStatus").textContent = "اسمع الكلمة وحاول تكررها";
       showScore();
+      speak(current.word, language === "ar" ? "ar-EG" : "en-US");
     };
     const setLanguage = value => {
       language = value;
@@ -378,26 +399,26 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     const button = document.createElement("button");
     button.type = "button";
     button.className = "voice-button speak-question";
-    button.textContent = "🔊 إعادة سماع السؤال";
+    button.textContent = "🔊 اسمع السؤال";
     button.addEventListener("click", () => {
       const question = document.getElementById("questionText")?.textContent?.trim();
-      if (question) speak(question, "ar-EG");
+      if (!question) return;
+      let choices = [];
+      try { if (typeof lastChoices !== "undefined" && Array.isArray(lastChoices)) choices = lastChoices; } catch (_) {}
+      if (choices.length) speakSequence([question, ...choices], "ar-EG");
+      else speak(question, "ar-EG");
     });
     const heading = area.querySelector("#questionText");
     if (heading) heading.after(button);
   };
 
+  // Round 3.2.1: no auto-narration here — showQuestion() already speaks the
+  // question + choices in order (350ms). Re-speaking the question alone at
+  // 180ms made it play twice. This observer only keeps the replay button.
   const observeQuestions = () => {
     const area = document.querySelector(".question-area");
     if (!area) return;
     ensureQuestionButton(area);
-    const heading = area.querySelector("#questionText");
-    if (!heading) return;
-    const question = heading.textContent.trim();
-    if (!question || question === lastAutoQuestion) return;
-    lastAutoQuestion = question;
-    clearTimeout(questionTimer);
-    questionTimer = setTimeout(() => speak(question, "ar-EG"), 180);
   };
 
   const observer = new MutationObserver(() => {

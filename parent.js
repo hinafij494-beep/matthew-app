@@ -22,11 +22,11 @@
     "mixed": "اختبار المفاجآت",
     "arabic-letters": "مدرسة الحروف العربية",
     "math-ar": "رحلة الحساب بالعربي",
-    "math-en": "Math in English",
+    "math-en": "الرياضيات بالإنجليزي",
     "listening": "اسمع واختار",
     "tracing": "تتبّع الكتابة",
     "reading-ar": "بداية القراءة بالعربي",
-    "reading-en": "English CVC reading"
+    "reading-en": "قراءة الكلمات الإنجليزية"
   };
   const digits = value => String(value).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[Number(d)]);
   const pct = value => digits(Math.round(value * 100)) + "٪";

@@ -1,29 +1,23 @@
 (() => {
-  const arabicLetters = [
-    ["أ","أَسَد","🦁"],["ب","بَطَّة","🦆"],["ت","تُفَّاحَة","🍎"],["ث","ثَعْلَب","🦊"],
-    ["ج","جَمَل","🐪"],["ح","حِصَان","🐎"],["خ","خَرُوف","🐑"],["د","دُبّ","🐻"],
-    ["ذ","ذِئْب","🐺"],["ر","رِيشَة","🪶"],["ز","زَرَافَة","🦒"],["س","سَمَكَة","🐟"],
-    ["ش","شَمْس","☀️"],["ص","صَقْر","🦅"],["ض","ضِفْدَع","🐸"],["ط","طَائِر","🐦"],
-    ["ظ","ظَرْف","✉️"],["ع","عُصْفُور","🐤"],["غ","غَزَال","🦌"],["ف","فِيل","🐘"],
-    ["ق","قِطَّة","🐱"],["ك","كِتَاب","📘"],["ل","لَبَن","🥛"],["م","مَوْز","🍌"],
-    ["ن","نَمِر","🐅"],["هـ","هِلَال","🌙"],["و","وَرْدَة","🌹"],["ي","يَد","✋"]
-  ].map(x => ({value:x[0],word:x[1],emoji:x[2],speak:x[0]+"، "+x[1]}));
+  // Round 3.2.1 note 9: the Arabic-letters card is gone — the letter
+  // school (lessons.js) is the one Arabic-letters entry now, with its
+  // picker and unified lesson. arNumbers, enLetters, enNumbers stay.
   const englishWords = ["Apple","Ball","Cat","Dog","Elephant","Fish","Grapes","House","Ice cream","Juice","Kite","Lion","Monkey","Nest","Orange","Pencil","Queen","Rabbit","Sun","Tiger","Umbrella","Van","Watch","Xylophone","Yo-yo","Zebra"];
+  const arabicMeanings = ["تفاحة","كورة","قطة","كلب","فيل","سمكة","عنب","بيت","آيس كريم","عصير","طيارة ورق","أسد","قرد","عش","برتقالة","قلم رصاص","ملكة","أرنب","شمس","نمر","شمسية","عربية","ساعة","إكسيليفون","يويو","حمار وحشي"];
   const phonicsSounds=["short a","buh","kuh","duh","eh","fff","guh","huh","ih","juh","kuh","lll","mmm","nnn","ah","puh","kwuh","rrr","sss","tuh","uh","vvv","wuh","ks","yuh","zzz"];
   const englishLetters = englishWords.map((word,i) => {
     const letter=String.fromCharCode(65+i);
-    return {value:letter,lowercase:letter.toLowerCase(),phonics:phonicsSounds[i],word,emoji:["🍎","⚽","🐱","🐶","🐘","🐟","🍇","🏠","🍦","🧃","🪁","🦁","🐵","🪺","🍊","✏️","👑","🐰","☀️","🐯","☂️","🚐","⌚","🎵","🪀","🦓"][i],speak:letter+", lowercase "+letter.toLowerCase()+", "+phonicsSounds[i]+", for "+word};
+    return {value:letter,lowercase:letter.toLowerCase(),phonics:phonicsSounds[i],word,emoji:["🍎","⚽","🐱","🐶","🐘","🐟","🍇","🏠","🍦","🧃","🪁","🦁","🐵","🪺","🍊","✏️","👑","🐰","☀️","🐯","☂️","🚐","⌚","<svg viewBox='0 0 64 64' aria-hidden='true'><g stroke='#5b6067' stroke-width='1.5'><rect x='10' y='10' width='44' height='6' rx='3' fill='#e14b6d'/><rect x='12' y='18' width='40' height='6' rx='3' fill='#ff9d45'/><rect x='14' y='26' width='36' height='6' rx='3' fill='#ffd94d'/><rect x='16' y='34' width='32' height='6' rx='3' fill='#8bd9a7'/><rect x='18' y='42' width='28' height='6' rx='3' fill='#69b7ff'/></g><path d='M14 52 L26 34 M50 52 L40 30' stroke='#8a5a24' stroke-width='3' stroke-linecap='round'/><circle cx='26' cy='32' r='4' fill='#e14b6d'/><circle cx='40' cy='28' r='4' fill='#2169a8'/></svg>","🪀","🦓"][i],speak:"حرف "+letter+"، شكله الصغير "+letter.toLowerCase()+"، صوته "+phonicsSounds[i]+"، زي كلمة "+word+" يعني "+arabicMeanings[i]};
   });
   const arabicNames=["واحد","اتنين","تلاتة","أربعة","خمسة","ستة","سبعة","تمانية","تسعة","عشرة","حداشر","اتناشر","تلتاشر","أربعتاشر","خمستاشر","ستاشر","سبعتاشر","تمنتاشر","تسعتاشر","عشرين"];
   const arabicDigits=["١","٢","٣","٤","٥","٦","٧","٨","٩","١٠","١١","١٢","١٣","١٤","١٥","١٦","١٧","١٨","١٩","٢٠"];
   const englishNames=["one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen","twenty"];
-  const arabicNumbers=arabicDigits.map((n,i)=>({value:n,word:arabicNames[i],emoji:"🔢",speak:arabicNames[i]+"، "+n}));
+  const arabicNumbers=arabicDigits.map((n,i)=>({value:n,word:arabicNames[i],emoji:"🔢",speak:arabicNames[i]}));
   const englishNumbers=englishNames.map((n,i)=>({value:String(i+1),word:n,emoji:"🔢",speak:n}));
   const categories=[
-    {id:"arLetters",title:"الحروف العربية (أ - ي)",subtitle:"٢٨ حرفًا مع النطق والكلمات",items:arabicLetters,lang:"ar-EG"},
-    {id:"enLetters",title:"English Alphabet (A - Z)",subtitle:"26 letters with a word for each letter",items:englishLetters,lang:"en-US"},
+    {id:"enLetters",title:"الحروف الإنجليزية (A - Z)",subtitle:"٢٦ حرف مع كلمة لكل حرف",items:englishLetters,lang:"ar-EG"},
     {id:"arNumbers",title:"الأرقام العربية (١ - ٢٠)",subtitle:"نتعلم العدّ باللهجة المصرية",items:arabicNumbers,lang:"ar-EG"},
-    {id:"enNumbers",title:"English Numbers (1 - 20)",subtitle:"Learn to count in English",items:englishNumbers,lang:"en-US"}
+    {id:"enNumbers",title:"الأرقام الإنجليزية (1 - 20)",subtitle:"نتعلم العدّ بالإنجليزي",items:englishNumbers,lang:"en-US"}
   ];
   const main=document.querySelector("main"),gameList=document.getElementById("gameList"),learningList=document.getElementById("learningList")||gameList;
   if(!main||!gameList)return;
@@ -40,8 +34,8 @@
   function open(cat){active=cat;index=0;gameList.classList.add("hidden");learningList.classList.add("hidden");document.getElementById("quiz")?.classList.add("hidden");document.getElementById("result")?.classList.add("hidden");panel.classList.remove("hidden");render()}
   function render(){
     const item=active.items[index];
-    const heading=active.lang==="en-US"?"Learn and listen":"اتعلم واسمع";
-    panel.innerHTML='<div class="quiz-top"><button id="basicBack" class="back" type="button">🏠 الرئيسية</button><strong>'+active.title+'</strong><span>'+String(index+1).replace(/[0-9]/g,d=>"٠١٢٣٤٥٦٧٨٩"[+d])+' / '+active.items.length.toLocaleString(active.lang==="en-US"?"en-US":"ar-EG")+'</span></div><div class="progress"><div style="width:'+((index+1)/active.items.length*100)+'%"></div></div><div class="basic-focus sticky-panel"><div class="basic-emoji">'+item.emoji+'</div><div class="basic-value">'+item.value+'</div>'+(active.id==="enLetters"?'<div class="lowercase-letter">Lowercase: '+item.lowercase+'</div><div class="phonics-note">Sound: '+item.phonics+'</div>':'')+'<h2>'+item.word+'</h2><p>'+heading+'</p><button id="basicListen" class="voice-button" type="button">🔊 '+(active.lang==="en-US"?"Listen":"اسمع")+'</button></div><div class="basic-grid">'+active.items.map((x,i)=>'<button type="button" class="basic-tile '+(i===index?"active":"")+'" data-index="'+i+'"><span>'+x.emoji+'</span><b>'+(x.lowercase?x.value+" / "+x.lowercase:x.value)+'</b><small>'+x.word+'</small></button>').join("")+'</div><div class="basic-nav"><button id="basicPrev" class="secondary" type="button" '+(index===0?"disabled":"")+'>'+(active.lang==="en-US"?"Previous":"السابق")+'</button><button id="basicNext" class="primary" type="button">'+(index===active.items.length-1?(active.lang==="en-US"?"Back to start":"ارجع للبداية"):(active.lang==="en-US"?"Next":"التالي"))+' ←</button></div>';
+    const heading="اتعلم واسمع";
+    panel.innerHTML='<div class="quiz-top"><button id="basicBack" class="back" type="button">🏠 الرئيسية</button><strong>'+active.title+'</strong><span>'+String(index+1).replace(/[0-9]/g,d=>"٠١٢٣٤٥٦٧٨٩"[+d])+' / '+active.items.length.toLocaleString("ar-EG")+'</span></div><div class="progress"><div style="width:'+((index+1)/active.items.length*100)+'%"></div></div><div class="basic-focus sticky-panel"><div class="basic-emoji">'+item.emoji+'</div><div class="basic-value">'+item.value+'</div>'+(active.id==="enLetters"?'<div class="lowercase-letter">الشكل الصغير: '+item.lowercase+'</div><div class="phonics-note">الصوت: '+item.phonics+'</div>':'')+'<h2>'+item.word+'</h2><p>'+heading+'</p><button id="basicListen" class="voice-button" type="button">🔊 اسمع</button></div><div class="basic-grid">'+active.items.map((x,i)=>'<button type="button" class="basic-tile '+(i===index?"active":"")+'" data-index="'+i+'"><span>'+x.emoji+'</span><b>'+(x.lowercase?x.value+" / "+x.lowercase:x.value)+'</b><small>'+x.word+'</small></button>').join("")+'</div><div class="basic-nav"><button id="basicPrev" class="secondary" type="button" '+(index===0?"disabled":"")+'>السابق</button><button id="basicNext" class="primary" type="button">'+(index===active.items.length-1?"ارجع للبداية":"التالي")+' ←</button></div>';
     panel.querySelector("#basicBack").onclick=close;
     panel.querySelector("#basicListen").onclick=()=>speak(item.speak,active.lang);
     panel.querySelector("#basicPrev").onclick=()=>{index=Math.max(0,index-1);render()};

@@ -114,9 +114,26 @@
       const u = new SpeechSynthesisUtterance(text); u.lang = lang; u.rate = 0.85; speechSynthesis.speak(u);
     }
   };
+  // Rescue.js pattern: a clip KEY plays first (exact clip, no text-map
+  // collision); the spoken text is only the device-TTS fallback. NOTE:
+  // MatthewVoice.speak(text, lang) takes a LANGUAGE as 2nd arg, not a key.
+  const speakKey = (text, key, lang) => {
+    try { if (key && window.MatthewClips && window.MatthewClips.playKey(key)) return; } catch (_) {}
+    speak(text, lang);
+  };
+  // Ordered narration (name then syllables, blend lines): the recorded-clip
+  // sequence player resolves texts via EXACT[trim] first (diacritic
+  // syllables) then BY_TEXT[norm] (names, blend lines).
+  const speakSequence = (texts, lang) => {
+    const list = (texts || []).map(t => String(t || "").trim()).filter(Boolean);
+    if (!list.length) return;
+    try { if (window.MatthewClips && window.MatthewClips.playSequence(list)) return; } catch (_) {}
+    if (window.MatthewVoice && window.MatthewVoice.speakSequence) window.MatthewVoice.speakSequence(list, lang);
+    else speak(list.join("، "), lang);
+  };
   const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 
-  let mode = "ar-syllables", letterIndex = 0, wordIndex = 0;
+  let mode = "ar-syllables", letterIndex = 0, wordIndex = 0, picker = true;
 
   function open() {
     gameList.classList.add("hidden");
@@ -125,6 +142,7 @@
     document.getElementById("result")?.classList.add("hidden");
     document.getElementById("parentPanel")?.classList.add("hidden");
     panel.classList.remove("hidden");
+    picker = true;
     render();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -136,96 +154,136 @@
     window.MatthewVoice?.stop();
   }
 
-  function header(title) {
-    return '<div class="quiz-top"><button id="readBack" class="back" type="button">🏠 الرئيسية</button><strong>' + title + '</strong><span>📖</span></div>' +
+  // Hierarchical back (note 16): an item screen goes back to its picker,
+  // a picker screen goes home — never straight home from an item. The mode
+  // tabs in the header are the mode menu, reachable from every picker.
+  function header(title, backToPicker) {
+    return '<div class="quiz-top"><button id="readBack" class="back" type="button">' + (backToPicker ? "→ رجوع" : "🏠 الرئيسية") + '</button><strong>' + title + '</strong><span>📖</span></div>' +
       '<div class="trace-sets">' +
       '<button type="button" class="trace-set' + (mode === "ar-syllables" ? " active" : "") + '" data-mode="ar-syllables">مقاطع عربي</button>' +
       '<button type="button" class="trace-set' + (mode === "ar-words" ? " active" : "") + '" data-mode="ar-words">كلمات عربي</button>' +
-      '<button type="button" class="trace-set' + (mode === "en-cvc" ? " active" : "") + '" data-mode="en-cvc">English CVC</button>' +
+      '<button type="button" class="trace-set' + (mode === "en-cvc" ? " active" : "") + '" data-mode="en-cvc">كلمات إنجليزية</button>' +
       '<button type="button" class="trace-set' + (mode === "quiz" ? " active" : "") + '" data-mode="quiz">تحدي القراءة</button></div>';
   }
 
-  function bindHeader(title) {
-    panel.querySelector("#readBack").onclick = close;
-    panel.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => { mode = b.dataset.mode; render(); });
+  function bindHeader(backToPicker) {
+    panel.querySelector("#readBack").onclick = backToPicker ? () => { picker = true; render(); } : close;
+    panel.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => { mode = b.dataset.mode; picker = true; render(); });
   }
 
   function render() {
-    if (mode === "ar-syllables") renderSyllables();
-    else if (mode === "ar-words") renderArWord();
-    else if (mode === "en-cvc") renderCvc();
+    if (mode === "ar-syllables") { if (picker) renderSyllablePicker(); else renderSyllables(); }
+    else if (mode === "ar-words") { if (picker) renderArWordPicker(); else renderArWord(); }
+    else if (mode === "en-cvc") { if (picker) renderCvcPicker(); else renderCvc(); }
     else renderQuiz();
+  }
+
+  function renderSyllablePicker() {
+    panel.innerHTML = header("📖 مقاطع عربي") +
+      '<div class="lesson-title">اختار حرف يا ملك ماثيو 👑</div><p>اضغط على أي حرف عشان تسمع مقاطعه</p>' +
+      '<div class="basic-grid letter-picker">' + LETTERS.map((l, i) => '<button type="button" class="basic-tile" data-letter="' + i + '"><b>' + l.base + '</b><small>' + l.name + '</small></button>').join("") + '</div>';
+    bindHeader(false);
+    panel.querySelectorAll("[data-letter]").forEach(b => b.onclick = () => { letterIndex = Number(b.dataset.letter); picker = false; renderSyllables(); });
   }
 
   function renderSyllables() {
     const letter = LETTERS[letterIndex];
     const syllables = syllablesFor(letter);
-    panel.innerHTML = header("📖 مقاطع حرف " + letter.name) +
+    panel.innerHTML = header("📖 مقاطع حرف " + letter.name, true) +
       '<div class="read-sticky" style="position:sticky;top:0;z-index:5;background:#fff;border-radius:22px;box-shadow:0 6px 18px #30205b1a;display:flex;align-items:center;justify-content:center;gap:14px;padding:10px;margin:10px 0"><span style="font-size:64px;font-weight:900;line-height:1;color:#5b3cc4">' + letter.base + '</span><span style="text-align:right"><b style="font-size:20px;display:block">' + letter.name + '</b><small style="color:#77718b">اضغط على المقطع واسمعه</small></span></div>' +
       '<p class="touch-game-instruction">من الصفر يا بطل: الحرف لوحده ليه صوت، ولما بنحط عليه فتحة أو كسرة أو ضمة صوته بيتغيّر شوية صغيرة. اضغط على كل مقطع واسمع صوته كويس وقوله ورايا، وبعد شوية هنركّب المقاطع على بعض ونعمل منها كلمة كاملة نقراها سوا!</p>' +
       '<div class="read-syllables">' + syllables.map((s, i) => '<button type="button" class="read-syllable" data-syl="' + i + '"><b>' + s.text + '</b><small>' + s.label + '</small></button>').join("") + '</div>' +
-      '<div class="basic-nav"><button id="readPrevLetter" class="secondary" type="button">الحرف السابق</button>' +
-      '<button id="readNextLetter" class="primary" type="button">الحرف التالي ←</button></div>';
-    bindHeader();
-    panel.querySelectorAll("[data-syl]").forEach(b => b.onclick = () => speak(syllables[Number(b.dataset.syl)].say, "ar-EG"));
+      '<div class="basic-nav"><button id="readPrevLetter" class="secondary" type="button">الحرف السابق<span class="pager-arrow">→</span></button>' +
+      '<button id="readNextLetter" class="primary" type="button">الحرف التالي<span class="pager-arrow">←</span></button></div>';
+    bindHeader(true);
+    panel.querySelectorAll("[data-syl]").forEach(b => b.onclick = () => speakKey(syllables[Number(b.dataset.syl)].say, "rd_syl_" + letterIndex + "_" + b.dataset.syl, "ar-EG"));
     panel.querySelector("#readPrevLetter").onclick = () => { letterIndex = (letterIndex + LETTERS.length - 1) % LETTERS.length; renderSyllables(); };
     panel.querySelector("#readNextLetter").onclick = () => { letterIndex = (letterIndex + 1) % LETTERS.length; renderSyllables(); };
-    setTimeout(() => speak(letter.name + ". " + syllables[0].say + ". " + syllables[3].say, "ar-EG"), 150);
+    // Full narration on open: the letter name (lsq_name_*) then ALL 6
+    // syllables in order (rd_syl_* via the EXACT map) — not a short version.
+    setTimeout(() => speakSequence([letter.name].concat(syllables.map(s => s.say)), "ar-EG"), 150);
+  }
+
+  function renderArWordPicker() {
+    panel.innerHTML = header("📖 نبني كلمة") +
+      '<div class="lesson-title">اختار كلمة يا ملك ماثيو 👑</div><p>اضغط على أي كلمة عشان نبنيها سوا</p>' +
+      '<div class="basic-grid letter-picker">' + AR_WORDS.map((w, i) => '<button type="button" class="basic-tile" data-word="' + i + '"><span>' + w.emoji + '</span><b>' + w.word + '</b><small>' + w.meaning + '</small></button>').join("") + '</div>';
+    bindHeader(false);
+    panel.querySelectorAll("[data-word]").forEach(b => b.onclick = () => { wordIndex = Number(b.dataset.word); picker = false; renderArWord(); });
   }
 
   function renderArWord() {
-    const item = AR_WORDS[wordIndex % AR_WORDS.length];
-    panel.innerHTML = header("📖 نبني كلمة") +
+    const wi = wordIndex % AR_WORDS.length;
+    const item = AR_WORDS[wi];
+    const blend = item.parts.join("، ") + ". " + item.word;
+    panel.innerHTML = header("📖 نبني كلمة", true) +
       '<div class="basic-focus" style="position:sticky;top:0;z-index:5;box-shadow:0 6px 18px #30205b1a"><div class="basic-emoji">' + item.emoji + '</div>' +
       '<div class="read-parts">' + item.parts.map((p, i) => '<button type="button" class="read-part" data-part="' + i + '">' + p + '</button>').join('<span class="read-plus">+</span>') +
       '<span class="read-plus">=</span><button type="button" class="read-part whole" id="readWhole">' + item.word + '</button></div>' +
       '<h2>' + item.meaning + '</h2><p>اضغط على كل مقطع، وبعدين اضغط على الكلمة كلها</p>' +
       '<button id="readWordListen" class="voice-button" type="button">🔊 اسمع الكلمة</button></div>' +
-      '<div class="basic-nav"><button id="readPrevWord" class="secondary" type="button">الكلمة السابقة</button>' +
-      '<button id="readNextWord" class="primary" type="button">كلمة جديدة ←</button></div>';
-    bindHeader();
-    panel.querySelectorAll("[data-part]").forEach(b => b.onclick = () => speak(item.parts[Number(b.dataset.part)], "ar-EG"));
-    panel.querySelector("#readWhole").onclick = () => speak(item.word, "ar-EG");
-    panel.querySelector("#readWordListen").onclick = () => speak(item.parts.join("، ") + ". " + item.word, "ar-EG");
+      '<div class="basic-nav"><button id="readPrevWord" class="secondary" type="button">الكلمة السابقة<span class="pager-arrow">→</span></button>' +
+      '<button id="readNextWord" class="primary" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div>';
+    bindHeader(true);
+    panel.querySelectorAll("[data-part]").forEach(b => b.onclick = () => speakKey(item.parts[Number(b.dataset.part)], "rd_part_" + wi + "_" + b.dataset.part, "ar-EG"));
+    panel.querySelector("#readWhole").onclick = () => speakKey(item.word, "rd_word_" + wi, "ar-EG");
+    panel.querySelector("#readWordListen").onclick = () => speakKey(blend, "rd_blend_" + wi, "ar-EG");
     panel.querySelector("#readPrevWord").onclick = () => { wordIndex = (wordIndex + AR_WORDS.length - 1) % AR_WORDS.length; renderArWord(); };
     panel.querySelector("#readNextWord").onclick = () => { wordIndex = (wordIndex + 1) % AR_WORDS.length; renderArWord(); };
+    // Full narration on open: the whole blend line (rd_blend_*).
+    setTimeout(() => speakKey(blend, "rd_blend_" + wi, "ar-EG"), 150);
+  }
+
+  function renderCvcPicker() {
+    panel.innerHTML = header("📖 كلمات إنجليزية") +
+      '<div class="lesson-title">اختار كلمة يا ملك ماثيو 👑</div><p>اضغط على أي كلمة عشان نسمع أصواتها</p>' +
+      '<div class="basic-grid letter-picker">' + CVC_WORDS.map((w, i) => '<button type="button" class="basic-tile" data-cvc="' + i + '"><span>' + w.emoji + '</span><b dir="ltr">' + w.word + '</b></button>').join("") + '</div>';
+    bindHeader(false);
+    panel.querySelectorAll("[data-cvc]").forEach(b => b.onclick = () => { wordIndex = Number(b.dataset.cvc); picker = false; renderCvc(); });
   }
 
   function renderCvc() {
-    const item = CVC_WORDS[wordIndex % CVC_WORDS.length];
-    panel.innerHTML = header("📖 English CVC Words") +
+    const wi = wordIndex % CVC_WORDS.length;
+    const item = CVC_WORDS[wi];
+    const blend = item.sounds.join(", ") + ". " + item.word;
+    panel.innerHTML = header("📖 كلمات إنجليزية", true) +
       '<div class="basic-focus" dir="ltr" style="position:sticky;top:0;z-index:5;box-shadow:0 6px 18px #30205b1a"><div class="basic-emoji">' + item.emoji + '</div>' +
       '<div class="read-parts">' + item.sounds.map((s, i) => '<button type="button" class="read-part" data-sound="' + i + '">' + s + '</button>').join('<span class="read-plus">+</span>') +
       '<span class="read-plus">=</span><button type="button" class="read-part whole" id="readWholeEn">' + item.word + '</button></div>' +
-      '<p>Tap each sound, then blend them together</p>' +
-      '<button id="readCvcListen" class="voice-button" type="button">🔊 Listen</button></div>' +
-      '<div class="basic-nav"><button id="readPrevCvc" class="secondary" type="button">Previous</button>' +
-      '<button id="readNextCvc" class="primary" type="button">New word →</button></div>';
-    bindHeader();
-    panel.querySelectorAll("[data-sound]").forEach(b => b.onclick = () => speak(item.sounds[Number(b.dataset.sound)], "en-US"));
-    panel.querySelector("#readWholeEn").onclick = () => speak(item.word, "en-US");
-    panel.querySelector("#readCvcListen").onclick = () => speak(item.sounds.join(", ") + ". " + item.word, "en-US");
+      '<p>اضغط على كل صوت، وبعدين ادمجهم مع بعض</p>' +
+      '<button id="readCvcListen" class="voice-button" type="button">🔊 اسمع</button></div>' +
+      '<div class="basic-nav"><button id="readPrevCvc" class="secondary" type="button">السابق<span class="pager-arrow">→</span></button>' +
+      '<button id="readNextCvc" class="primary" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div>';
+    bindHeader(true);
+    panel.querySelectorAll("[data-sound]").forEach(b => b.onclick = () => speakKey(item.sounds[Number(b.dataset.sound)], "rd_cvc_s_" + wi + "_" + b.dataset.sound, "en-US"));
+    panel.querySelector("#readWholeEn").onclick = () => speakKey(item.word, "rd_cvc_" + wi, "en-US");
+    panel.querySelector("#readCvcListen").onclick = () => speakKey(blend, "rd_cvc_blend_" + wi, "en-US");
     panel.querySelector("#readPrevCvc").onclick = () => { wordIndex = (wordIndex + CVC_WORDS.length - 1) % CVC_WORDS.length; renderCvc(); };
     panel.querySelector("#readNextCvc").onclick = () => { wordIndex = (wordIndex + 1) % CVC_WORDS.length; renderCvc(); };
+    // Full narration on open: the whole blend line (rd_cvc_blend_*).
+    setTimeout(() => speakKey(blend, "rd_cvc_blend_" + wi, "en-US"), 150);
   }
 
   function renderQuiz() {
     const useArabic = Math.random() < 0.5;
     let prompt, spoken, lang, skill, choices;
     if (useArabic) {
-      const item = AR_WORDS[Math.floor(Math.random() * AR_WORDS.length)];
+      const itemIdx = Math.floor(Math.random() * AR_WORDS.length);
+      const item = AR_WORDS[itemIdx];
       prompt = item.emoji + " " + item.meaning;
       spoken = item.word; lang = "ar-EG"; skill = "reading-ar";
       choices = shuffle([item, ...shuffle(AR_WORDS.filter(w => w.word !== item.word)).slice(0, 3)]);
       panel.innerHTML = header("📖 تحدي القراءة") +
         '<div class="basic-focus"><div class="basic-emoji">' + item.emoji + '</div><h2>اسمع الكلمة واختارها</h2>' +
-        '<button id="readQuizListen" class="voice-button" type="button">🔊 اسمع الكلمة</button>' +
+        '<button id="readQuizListen" class="voice-button" type="button">🔊 اسمع السؤال</button>' +
         '<div class="read-choices">' + choices.map(c => '<button type="button" class="read-choice" data-word="' + c.word + '">' + c.word + '</button>').join("") + '</div>' +
         '<p id="readQuizMsg" class="feedback" aria-live="polite"></p>' +
-        '<button id="readQuizNext" class="primary hidden" type="button">كلمة جديدة ←</button></div>';
+        '<button id="readQuizNext" class="primary hidden" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div>';
       bindHeader();
-      panel.querySelector("#readQuizListen").onclick = () => speak(spoken, lang);
-      setTimeout(() => speak(spoken, lang), 200);
+      // Note 22: the replay button re-speaks the prompt word ONLY — never
+      // the choices (this is a listening-identification quiz).
+      panel.querySelector("#readQuizListen").onclick = () => speakKey(spoken, "rd_word_" + itemIdx, lang);
+      setTimeout(() => speakKey(spoken, "rd_word_" + itemIdx, lang), 200);
       let answered = false;
       panel.querySelectorAll("[data-word]").forEach(b => b.onclick = () => {
         if (answered) return; answered = true;
@@ -239,18 +297,21 @@
         panel.querySelector("#readQuizNext").onclick = renderQuiz;
       });
     } else {
-      const item = CVC_WORDS[Math.floor(Math.random() * CVC_WORDS.length)];
+      const itemIdx = Math.floor(Math.random() * CVC_WORDS.length);
+      const item = CVC_WORDS[itemIdx];
       spoken = item.word; lang = "en-US"; skill = "reading-en";
       choices = shuffle([item, ...shuffle(CVC_WORDS.filter(w => w.word !== item.word)).slice(0, 3)]);
-      panel.innerHTML = header("📖 Reading Challenge") +
-        '<div class="basic-focus" dir="ltr"><div class="basic-emoji">' + item.emoji + '</div><h2>Listen and choose the word</h2>' +
-        '<button id="readQuizListen" class="voice-button" type="button">🔊 Listen</button>' +
+      panel.innerHTML = header("📖 تحدي القراءة") +
+        '<div class="basic-focus"><div class="basic-emoji">' + item.emoji + '</div><h2>اسمع واختار الكلمة</h2>' +
+        '<button id="readQuizListen" class="voice-button" type="button">🔊 اسمع السؤال</button>' +
         '<div class="read-choices">' + choices.map(c => '<button type="button" class="read-choice" data-word="' + c.word + '">' + c.word + '</button>').join("") + '</div>' +
         '<p id="readQuizMsg" class="feedback" aria-live="polite"></p>' +
-        '<button id="readQuizNext" class="primary hidden" type="button">New word →</button></div>';
+        '<button id="readQuizNext" class="primary hidden" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div>';
       bindHeader();
-      panel.querySelector("#readQuizListen").onclick = () => speak(spoken, lang);
-      setTimeout(() => speak(spoken, lang), 200);
+      // Note 22: the replay button re-speaks the prompt word ONLY — never
+      // the choices (this is a listening-identification quiz).
+      panel.querySelector("#readQuizListen").onclick = () => speakKey(spoken, "rd_cvc_" + itemIdx, lang);
+      setTimeout(() => speakKey(spoken, "rd_cvc_" + itemIdx, lang), 200);
       let answered = false;
       panel.querySelectorAll("[data-word]").forEach(b => b.onclick = () => {
         if (answered) return; answered = true;
@@ -258,7 +319,7 @@
         try { window.MatthewMastery?.record(skill, correct); window.MatthewMastery?.record("read-cvc:" + item.word, correct); } catch (_) { /* ignore */ }
         b.classList.add(correct ? "correct" : "wrong");
         panel.querySelectorAll("[data-word]").forEach(x => { x.disabled = true; if (x.dataset.word === item.word) x.classList.add("correct"); });
-        panel.querySelector("#readQuizMsg").textContent = correct ? "Great reading! ⭐" : "That word is " + item.word + ". Listen carefully and try the next one.";
+        panel.querySelector("#readQuizMsg").textContent = correct ? "قراءة جميلة! ⭐" : "الكلمة دي " + item.word + ". اسمعها كويس وجرب اللي بعدها.";
         if (correct) window.MatthewVoice?.feedback("correct"); else window.MatthewVoice?.feedback("wrong");
         panel.querySelector("#readQuizNext").classList.remove("hidden");
         panel.querySelector("#readQuizNext").onclick = renderQuiz;

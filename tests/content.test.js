@@ -23,7 +23,7 @@ test("phase 1-2 modules ship inside the interactive-games bundle", () => {
   }
   const html = read("index.html");
   const sw = read("sw.js");
-  const partFiles = ["mastery.js", "parent.js", "tracing.js", "reading.js", "voice-clips.js", "rescue.js", "color-games.js",
+  const partFiles = ["mastery.js", "parent.js", "tracing.js", "reading.js", "voice-clips.js", "rescue.js", "color-games.js", "stories.js", "memory-game.js",
     ...fs.readdirSync(root).filter(f => /^voice-clips-(pack|text)-\d+\.js$/.test(f)).sort()];
   for (const file of partFiles) {
     assert.ok(fs.existsSync(path.join(root, file)), "missing source " + file);
@@ -34,7 +34,7 @@ test("phase 1-2 modules ship inside the interactive-games bundle", () => {
   }
   assert.ok(html.includes("interactive-games.js"), "page does not load the bundle file");
   assert.ok(sw.includes("./interactive-games.js"), "offline cache missing the bundle file");
-  assert.match(sw, /king-matthew-v20/);
+  assert.match(sw, /king-matthew-v21/);
   assert.ok(sw.includes("./voice.bundle.js"), "offline cache must precache voice.bundle.js (round 3.2)");
 });
 
@@ -152,14 +152,17 @@ test("quizzes pronounce answers and speech never overlaps", () => {
   const html = read("index.html");
   assert.ok(!html.includes('id="listenAllBtn"'), "no tap-to-listen button: narration must be automatic (owner, round 3.1)");
   const app = read("app.js");
-  assert.ok(app.includes("speakSequence([q.q,...lastChoices]"), "main quiz must auto-narrate question + choices in order");
+  // Round 3.2.1 (Nancy, note 25b): the Miss Nancy quiz intro is prepended
+  // before the question on the FIRST question only — the question + choices
+  // still follow it in order inside the same speakSequence call.
+  assert.match(app, /speakSequence\(\[.*q\.q,\.\.\.lastChoices\]/, "main quiz must auto-narrate question + choices in order");
   assert.ok(!app.includes("answer-say"), "answers must not carry their own speaker buttons (owner, round 3.1)");
   const rescue = read("rescue.js");
   assert.ok(rescue.includes("speakSequence([current.q, ...lastChoices]"), "stories must auto-narrate question + choices too");
   assert.ok(!rescue.includes("answer-say") && !rescue.includes("rescueListen"), "stories must not carry listen buttons (owner, round 3.1)");
   const voice = read("voice.js");
   assert.ok(voice.includes("speakSequence"), "MatthewVoice must expose speakSequence");
-  assert.match(voice, /if \(id === requestId\) clips\.playKey\(key\)/, "delayed praise must yield to newer speech (no overlap)");
+  assert.match(voice, /if \(id === requestId[^}]*playKey\(key\)/, "delayed praise must yield to newer speech (no overlap)");
   assert.match(voice, /const speak = async[\s\S]{0,700}MatthewClips\?\.stop\(\)/, "speak() must stop a playing clip before TTS so voices never overlap");
   const vc = read("voice-clips.js");
   assert.ok(vc.includes("playSequence"), "recorded clips must support chained playback");
@@ -247,19 +250,18 @@ test("reading module teaches syllables, blending and CVC words", () => {
   }
 });
 
-test("basic Arabic letter examples do not reuse one emoji for two words", () => {
-  const learning = read("learning.js");
-  const start = learning.indexOf("const arabicLetters");
-  const end = learning.indexOf("].map", start);
-  assert.ok(start >= 0 && end > start);
-  const entries = [...learning.slice(start, end).matchAll(/\["([^"]+)","([^"]+)","([^"]+)"\]/g)]
-    .map(m => ({ letter: m[1], word: m[2], emoji: m[3] }));
-  assert.equal(entries.length, 28, "expected 28 basic letter examples");
-  const byEmoji = new Map();
-  for (const entry of entries) {
-    assert.ok(!byEmoji.has(entry.emoji),
-      `emoji ${entry.emoji} used for both ${byEmoji.get(entry.emoji)} and ${entry.word}`);
-    byEmoji.set(entry.emoji, entry.word);
+test("unified letter lessons do not reuse one emoji for two words (round 3.2.1)", () => {
+  // Note 9 moved the Arabic-letter word examples from learning.js into
+  // the unified lesson (lessons.js); the rule now applies per lesson:
+  // the three word examples on one screen must have distinct pictures.
+  const lessons = read("lessons.js");
+  const m = lessons.match(/const lessons = (\[.*?\]);/s);
+  assert.ok(m, "lessons array not found");
+  const arr = vm.runInNewContext("(" + m[1] + ")", Object.create(null));
+  assert.strictEqual(arr.length, 28, "expected 28 lessons");
+  for (const l of arr) {
+    assert.strictEqual(l.words.length, 3, "letter " + l.letter + " must have 3 example words");
+    assert.strictEqual(new Set(l.emoji).size, 3, "letter " + l.letter + " reuses an emoji for two of its words");
   }
 });
 
@@ -408,11 +410,14 @@ test("royal crown rewards persist and praise only (round 3.2)", () => {
 
 test("letter names, sounds and syllables are recorded in Fusha (round 3.2)", () => {
   const bc = read("build-corpus.js");
-  assert.match(bc, /\/\^\(les_namesound\|basic_ar\|rd_syl\)_\//, "build-corpus must force ar_SA for letter/syllable keys");
+  // Round 3.2.1 (phonetics expert): rd_intro_* and lsq_name_* are letter
+  // names/sounds too — they were ar_EG, so ج was taught as [g] on the first
+  // reading screen. The force regex was extended to cover them as well.
+  assert.match(bc, /\/\^\(les_namesound\|rd_syl\|tr_ar\|rd_intro\|lsq_name\)_\//, "build-corpus must force ar_SA for letter/syllable keys");
   const corpus = JSON.parse(read("audio-src/corpus.json"));
   const sa = corpus.filter(e => e.lang === "ar_SA");
   assert.ok(sa.length >= 200, "expected 200+ Fusha clips, got " + sa.length);
-  for (const prefix of ["les_namesound_", "basic_ar_", "rd_syl_"]) {
+  for (const prefix of ["les_namesound_", "rd_syl_", "tr_ar_", "rd_intro_", "lsq_name_"]) {
     assert.ok(sa.some(e => e.key.startsWith(prefix)), "missing Fusha clips for " + prefix);
   }
   const syl = corpus.filter(e => e.key.startsWith("rd_syl_"));
@@ -431,7 +436,357 @@ test("workshop spoken lines are in the voice corpus (round 3.2)", () => {
   const corpus = JSON.parse(read("audio-src/corpus.json"));
   const cg = corpus.filter(e => e.key.startsWith("cg_"));
   assert.ok(cg.length >= 150, "expected 150+ workshop clips in the corpus, got " + cg.length);
-  for (const key of ["cg_instr_numbers", "cg_instr_nature", "cg_instr_patterns", "cg_try", "cg_num_intro_0", "cg_nat_q_0", "cg_pat_intro_1"]) {
-    assert.ok(cg.some(e => e.key === key), "corpus missing workshop clip " + key);
+  for (const key of ["cg_instr_numbers", "cg_instr_nature", "cg_instr_patterns", "mem_try_1", "cg_num_intro_0", "cg_nat_q_0", "cg_pat_intro_1"]) {
+    assert.ok(cg.some(e => e.key === key) || corpus.some(e => e.key === key), "corpus missing workshop clip " + key);
   }
+  // "حاول تاني يا بطل" is the workshop try-again line too, but build-corpus
+  // dedupes by text — the memory game's mem_try_1 (added first, §7) owns
+  // that text now, so the old cg_try key is gone while the spoken line
+  // (color-games speaks it by text) still resolves to a recorded clip.
+  assert.ok(corpus.some(e => e.text === "حاول تاني يا بطل"), "workshop try-again line must have a recorded clip");
+});
+
+test("every tracing glyph speaks a recorded bare-glyph clip (round 3.2.1)", () => {
+  // Round 3.2.1 (revised by the reading/tracing implementation): tracing
+  // speaks each glyph by an EXPLICIT recorded clip key (SETS[].key(i)),
+  // never by bare-text lookup — the text map structurally cannot tell en
+  // "1" from ar "١" (same norm "1"), and bare Arabic glyphs collide with
+  // damma syllables there (خَ/خِ/خُ all normalise to "خ", damma wins).
+  // Pre-fix this was broken three ways: 11 English letters + "١٠" had no
+  // clip at all (silent on the tablet), 12 Arabic letters resolved to a
+  // damma syllable clip, and 16 resolved to Egyptian-dialect quiz-answer
+  // clips (ج as "g"). The explicit key's clip must therefore be a BARE
+  // glyph clip in the right language.
+  const bare = s => String(s || "").replace(/[ـ]/g, "").toLowerCase();
+  const parsePushes = src => {
+    const out = [];
+    let from = 0;
+    for (;;) {
+      const start = src.indexOf("push(", from);
+      if (start < 0) break;
+      let i = start + 5, depth = 0, inStr = false, esc = false, end = -1;
+      for (; i < src.length; i++) {
+        const ch = src[i];
+        if (inStr) { if (esc) esc = false; else if (ch === "\\") esc = true; else if (ch === '"') inStr = false; continue; }
+        if (ch === '"') inStr = true;
+        else if (ch === "{") depth++;
+        else if (ch === "}") { depth--; if (depth === 0) { end = i + 1; break; } }
+      }
+      assert.ok(end > 0, "unbalanced push JSON in voice pack");
+      out.push({ kind: src.slice(Math.max(0, start - 40), start), obj: JSON.parse(src.slice(start + 5, end)) });
+      from = end;
+    }
+    return out;
+  };
+  const byKey = new Set();
+  for (const f of fs.readdirSync(root).filter(f => /^voice-clips-(pack|text)-\d+\.js$/.test(f)).sort()) {
+    for (const { kind, obj } of parsePushes(read(f))) {
+      if (kind.includes("__matthewClipData")) for (const k of Object.keys(obj)) byKey.add(k.split("~")[0]);
+    }
+  }
+  const tsrc = read("tracing.js");
+  // evaluate the SETS literal (object with items + key arrow functions)
+  const setsStart = tsrc.indexOf("const SETS = {") + "const SETS = ".length;
+  const setsSrc = tsrc.slice(setsStart, tsrc.indexOf("};", setsStart) + 1);
+  const sets = vm.runInNewContext("(" + setsSrc + ")", Object.create(null));
+  for (const id of ["arLetters", "enLetters", "arNumbers", "enNumbers"])
+    assert.ok(typeof sets[id].key === "function", "tracing set " + id + " must map glyphs to explicit clip keys");
+  assert.ok(tsrc.includes("speakKey("), "tracing must speak glyphs via the playKey-first speakKey helper");
+  const corpus = JSON.parse(read("audio-src/corpus.json"));
+  const byKeyEntry = new Map(corpus.map(e => [e.key, e]));
+  const wantLang = { arLetters: "ar_SA", enLetters: "en_US", arNumbers: "ar_EG", enNumbers: "en_US" };
+  let checked = 0;
+  for (const [setId, set] of Object.entries(sets)) {
+    set.items.forEach((glyph, i) => {
+      const key = set.key(i);
+      assert.ok(key, "no explicit clip key for tracing glyph " + glyph + " (" + setId + ")");
+      const base = String(key).split("~")[0];
+      assert.ok(byKey.has(base), "clip " + key + " for glyph " + glyph + " is not in the voice packs");
+      const entry = byKeyEntry.get(base);
+      assert.ok(entry, "clip " + key + " is missing from the corpus");
+      assert.strictEqual(bare(entry.text), bare(glyph),
+        "glyph " + glyph + " resolves to a non-bare clip (" + entry.key + ": " + entry.text + ")");
+      assert.strictEqual(entry.lang, wantLang[setId],
+        "glyph " + glyph + " clip " + entry.key + " is " + entry.lang + ", want " + wantLang[setId]);
+      checked++;
+    });
+  }
+  assert.ok(checked >= 74, "expected to check all tracing glyphs, got " + checked);
+});
+
+// ---------------- Round 3.2.1 ----------------
+
+test("math in English and the English alphabet explain in Arabic (round 3.2.1)", () => {
+  const me = read("math-english.js");
+  // taught content stays English: number names and digits
+  assert.ok(me.includes('["one","two","three"'), "English number names must stay");
+  for (const s of ["عدّ الصور، فيه كام واحدة؟", "إيه الرقم اللي بعد", "إيه الرقم الأكبر", "فهمت! يلا نتدرب ⭐", "اسمع السؤال", "رجوع →", "الرياضيات بالإنجليزي", "برافو يا بطل! إجابة صح ⭐", "ولا يهمك، نتعلم سوا"])
+    assert.ok(me.includes(s), "missing Arabic string in math-english.js: " + s);
+  for (const s of ["Count the pictures", "What number comes after", "What number comes before", "Which number is bigger", "You have", "Listen to the question", "I understand! Start practice", "Great job!", "Amazing work!", "Try again", "See your result", "You finished Math", "Next level", "Continue to next lesson", "King Matthew Math", "Math in English"])
+    assert.ok(!me.includes(s), "English instruction remains in math-english.js: " + s);
+  assert.match(me, /speak\(t,"ar-EG"\)/, "math-english say() must speak explanations in ar-EG");
+  assert.match(me, /u\.lang="ar-EG"/, "math-english TTS fallback must be ar-EG");
+  const learning = read("learning.js");
+  assert.ok(learning.includes("arabicMeanings"), "enLetters needs the Arabic meanings array");
+  assert.ok(learning.includes("شكله الصغير"), "enLetters spoken line must use Arabic framing");
+  assert.ok(learning.includes("زي كلمة"), "enLetters spoken line must frame the English word in Arabic");
+  assert.ok(learning.includes("يعني"), "enLetters spoken line must give the Arabic meaning");
+  assert.ok(!learning.includes(", lowercase "), "enLetters spoken line must not be all-English");
+  for (const s of ["الحروف الإنجليزية", "الأرقام الإنجليزية", "الشكل الصغير:", "الصوت:", "اتعلم واسمع"])
+    assert.ok(learning.includes(s), "missing Arabic label in learning.js: " + s);
+  for (const s of ["English Alphabet", "English Numbers", "Learn to count in English", "Learn and listen", "Lowercase:", "Sound:"])
+    assert.ok(!learning.includes(s), "English UI remains in learning.js: " + s);
+  const reading = read("reading.js");
+  for (const s of ["كلمات إنجليزية", "اضغط على كل صوت، وبعدين ادمجهم مع بعض", "تحدي القراءة", "اسمع واختار الكلمة", "قراءة جميلة! ⭐", "الكلمة دي "])
+    assert.ok(reading.includes(s), "missing Arabic string in reading.js: " + s);
+  for (const s of ["English CVC", "Tap each sound", "Reading Challenge", "Listen and choose the word", "Great reading!", "That word is"])
+    assert.ok(!reading.includes(s), "English instruction remains in reading.js: " + s);
+});
+
+test("no English button, menu or instruction label remains (round 3.2.1)", () => {
+  // String literals only: element ids like englishMathListen contain
+  // "Listen" but are never shown, so they must not trip the scan. Single
+  // words match on word boundaries; phrases match as substrings. Bare
+  // "English" is intentionally NOT denied: voice.js has an العربية /
+  // English language-name switch, which is a label, not an instruction.
+  const DENY_PHRASES = ["Learn and listen", "Back to start", "Lowercase:", "Sound:", "New word", "Try again", "I understand", "Start practice", "Count the pictures", "Count each picture", "What number", "Which number", "You have", "Great job", "Amazing work", "Good try", "See your result", "You finished", "Tap each sound", "Listen and choose", "That word is", "Great reading", "Review the lesson", "Listen to the question", "English Alphabet", "English Numbers", "English CVC", "Math in English", "Reading Challenge", "King Matthew Math", "Learn to count", "Learn numbers", "Continue to next", "Next level", "Next question", "This is number", "You got", "is the bigger number", "comes after", "comes before", "How many are", "How many now", "are left", "apples and get", "disappear"];
+  const DENY_WORDS = ["Listen", "Previous", "Next", "Challenge"];
+  const FILES = ["index.html", "app.js", "lessons.js", "learning.js", "math-journey.js", "math-english.js", "science.js", "reading.js", "tracing.js", "rescue.js", "color-games.js", "parent.js", "mastery.js", "voice.js", "voice-web-fallback.js", "sw.js"];
+  const extractLiterals = src => {
+    const lits = [];
+    const re = /'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|`(?:[^`\\]|\\.)*`/g;
+    let m;
+    while ((m = re.exec(src))) lits.push(m[0].slice(1, -1));
+    return lits;
+  };
+  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  for (const f of FILES) {
+    for (const lit of extractLiterals(read(f))) {
+      for (const p of DENY_PHRASES)
+        assert.ok(!lit.includes(p), "English UI remains in " + f + ": " + JSON.stringify(p) + " in " + JSON.stringify(lit.slice(0, 80)));
+      for (const w of DENY_WORDS)
+        assert.ok(!new RegExp("(^|[^A-Za-z])" + esc(w) + "([^A-Za-z]|$)").test(lit), "English UI word remains in " + f + ": " + JSON.stringify(w) + " in " + JSON.stringify(lit.slice(0, 80)));
+    }
+  }
+});
+
+test("no spoken quiz question contains its own correct answer (round 3.2.1)", () => {
+  const digits = { "٠": "0", "١": "1", "٢": "2", "٣": "3", "٤": "4", "٥": "5", "٦": "6", "٧": "7", "٨": "8", "٩": "9" };
+  const norm = s => String(s || "").replace(/[٠-٩]/g, c => digits[c]).replace(/[ً-ٰٟـ]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي").replace(/[^ء-يa-zA-Z0-9 ]/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+  const src = read("app.js");
+  const bank = vm.runInNewContext("(" + src.slice(src.indexOf("const bank=") + 11, src.indexOf("\nconst names=")).replace(/;\s*$/, "") + ")", Object.create(null));
+  // Pattern completion is legitimate: the pattern is the given piece and
+  // the next element is the asked piece — the child must still work out
+  // the sequence rule, the answer is not handed over.
+  const ALLOW = ["أكمل النمط: أحمر، أزرق، أحمر، أزرق، ..."];
+  let checked = 0;
+  for (const qs of Object.values(bank)) for (const q of qs) {
+    if (ALLOW.includes(q.q)) continue;
+    const nq = norm(q.q);
+    const ans = q.a[q.c];
+    const na = norm(ans);
+    if (na.length >= 2) {
+      assert.ok(!nq.includes(na), "question contains its answer: " + q.q + " => " + ans);
+      for (const w of na.split(" ").map(w => w.replace(/^ال/, "")).filter(w => w.length >= 3))
+        assert.ok(!nq.split(" ").includes(w), "question contains an answer word '" + w + "': " + q.q + " => " + ans);
+    } else {
+      // Single-letter answer: only a standalone token counts — a bare
+      // glyph is a substring of almost any Arabic text, so a substring
+      // check would flag every first/next-letter question, which are
+      // legitimate (give the word, ask for its letter).
+      assert.ok(!nq.split(" ").includes(na), "question names its single-letter answer: " + q.q + " => " + ans);
+    }
+    checked++;
+  }
+  assert.ok(checked >= 89, "expected to check the whole bank, got " + checked);
+  // Letter-school quiz: the glyph/sample is visual only (q.show); the
+  // spoken question is q.q + " اختار الإجابة الصحيحة" and never names it.
+  const lessons = read("lessons.js");
+  assert.ok(!lessons.includes('"ما اسم هذا الحرف؟ "+l.letter'), "letter quiz must not put the glyph in the spoken question");
+  assert.ok(!lessons.includes('"ما اسم الحركة في "+m.sample'), "haraka quiz must not put the sample in the spoken question");
+  assert.ok(lessons.includes("show:l.letter"), "letter quiz must show the glyph visually");
+  assert.ok(lessons.includes("show:m.sample"), "haraka quiz must show the sample visually");
+  assert.ok(lessons.includes("q.show?"), "showQuiz must render the visual glyph/sample display");
+  assert.ok(lessons.includes("speakSequence([spoken,...q.a]"), "letter quiz must auto-narrate question then choices");
+  assert.ok(!lessons.includes("questionSpeak"), "letter quiz must not use tap-to-listen for the question only");
+});
+
+test("letter-school pager buttons have big arrows under their labels (round 3.2.1)", () => {
+  const lessons = read("lessons.js");
+  assert.ok(lessons.includes("pager-arrow"), "pager buttons must carry the arrow spans");
+  assert.match(lessons, /الحرف السابق[\s\S]{0,200}?→/, "previous button must show → under its label");
+  assert.match(lessons, /الحرف التالي[\s\S]{0,200}?←/, "next button must show ← under its label");
+  const css = read("styles.css");
+  assert.match(css, /\.pager-arrow\{[^}]*font-size:44px/, "pager arrows must be large and clear");
+  assert.match(css, /\.lesson-pager button\{[^}]*flex-direction:column/, "pager buttons must stack label over arrow");
+});
+
+test("letter lessons auto-speak the full explanation and narrate forms per position (round 3.2.1)", () => {
+  const lessons = read("lessons.js");
+  // Notes 10–11: the unified lesson builds the full explanation and
+  // auto-speaks it on open; the short version is never spoken.
+  assert.ok(lessons.includes("const ex=explainFor(l)"), "unified lesson must build the full explanation");
+  assert.ok(lessons.includes("say(ex.spoken)"), "lesson must auto-speak the full explanation on open");
+  assert.ok(!lessons.includes("explainFor(current).short"), "lesson must not auto-speak the short version");
+  assert.ok(lessons.includes("formsListen"), "lesson must have a listen button for the forms narration");
+  assert.ok(lessons.includes("في أول الكلمة"), "step 1 narration must name the first position");
+  assert.ok(lessons.includes("وفي نص الكلمة"), "step 1 narration must name the middle position");
+  assert.ok(lessons.includes("وفي آخر الكلمة"), "step 1 narration must name the last position");
+  assert.ok(lessons.includes("زي كلمة"), "step 1 narration must give the example word per position");
+  const corpus = JSON.parse(read("audio-src/corpus.json"));
+  const byKey = new Map(corpus.map(e => [e.key, e]));
+  for (let i = 0; i < 28; i++) {
+    assert.ok(byKey.has("let_full_" + i), "missing full lesson clip for letter " + i);
+    assert.ok(byKey.has("let_forms_" + i), "missing per-position forms clip for letter " + i);
+    const f = byKey.get("let_forms_" + i).text;
+    assert.ok(f.includes("في أول الكلمة") && f.includes("وفي نص الكلمة") && f.includes("وفي آخر الكلمة"),
+      "forms narration for letter " + i + " must name all three positions");
+  }
+});
+
+test("letter school opens with a picker of all 28 letters (round 3.2.1)", () => {
+  const lessons = read("lessons.js");
+  assert.ok(lessons.includes("renderPicker"), "letter school must have a picker screen");
+  assert.ok(lessons.includes("step=-1"), "the school must open on the picker");
+  assert.match(lessons, /step=-1;quiz=\[\];quizIndex=0;score=0;render\(\)/, "open() must start on the picker with a fresh quiz");
+  assert.ok(lessons.includes("data-letter"), "picker tiles must carry the letter index");
+  assert.ok(lessons.includes("letterIndex=Number(b.dataset.letter);step=0;render()"), "tapping a picker tile must open that letter's lesson");
+  assert.ok(lessons.includes("basic-grid letter-picker"), "picker must use the app grid style");
+  const m = lessons.match(/const lessons = (\[.*?\]);/s);
+  assert.ok(m, "lessons array not found");
+  const arr = vm.runInNewContext("(" + m[1] + ")", Object.create(null));
+  assert.strictEqual(arr.length, 28, "picker must offer all 28 letters");
+  assert.ok(lessons.includes("lessons.map((l,i)=>"), "picker grid must map over all lessons");
+  // back from a lesson returns to the picker; back from the picker returns home
+  assert.match(lessons, /lessonBack"\)\.onclick=\(\)=>\{if\(step===-1\)\{back\(\)\}else/, "back must go to the picker from a lesson and home from the picker");
+  const css = read("styles.css");
+  assert.match(css, /\.letter-picker \.basic-tile b\{[^}]*font-size:36px/, "picker glyphs must be big");
+});
+
+test("letter-quiz and Arabic-journey spoken strings are covered by the voice corpus (round 3.2.1)", () => {
+  const corpus = JSON.parse(read("audio-src/corpus.json"));
+  const digits = { "٠": "0", "١": "1", "٢": "2", "٣": "3", "٤": "4", "٥": "5", "٦": "6", "٧": "7", "٨": "8", "٩": "9" };
+  const norm = s => String(s || "").replace(/[٠-٩]/g, c => digits[c]).replace(/[ً-ٰٟـ]/g, "").replace(/[^ء-يa-zA-Z0-9 ]/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+  const norms = new Set(corpus.map(e => norm(e.text)));
+  const need = (t, why) => assert.ok(norms.has(norm(t)), "no corpus clip for " + why + ": " + t);
+  need("ما اسم هذا الحرف؟ اختار الإجابة الصحيحة", "letter-quiz question");
+  need("ما اسم الحركة في المقطع ده؟ اختار الإجابة الصحيحة", "haraka-quiz question");
+  need("اختار حرف يا ملك ماثيو", "letter picker greeting");
+  const lessonsSrc = read("lessons.js");
+  const arr = vm.runInNewContext("(" + lessonsSrc.match(/const lessons = (\[.*?\]);/s)[1] + ")", Object.create(null));
+  for (const l of arr) {
+    need("أي شكل لحرف " + l.name + " في أول الكلمة؟ اختار الإجابة الصحيحة", "form question");
+    need(l.name, "letter-name choice");
+  }
+  for (const h of ["الفتحة", "الضمة", "الكسرة", "السكون"]) {
+    need("أي مقطع عليه " + h.replace(/^ال/, "") + "؟ اختار الإجابة الصحيحة", "syllable question");
+    need(h, "haraka-name choice");
+  }
+  for (const d of ["حركة أخرى", "الشدة", "التنوين"]) need(d, "haraka distractor");
+  // Arabic explanations are recorded in ar_EG, not en_US
+  for (const e of corpus.filter(e => e.key.startsWith("math_en_q") || e.key.startsWith("basic_en_")))
+    assert.strictEqual(e.lang, "ar_EG", e.key + " must be recorded in ar_EG");
+  assert.ok(corpus.filter(e => e.key.startsWith("math_en_q")).length >= 100, "math_en_q coverage");
+  assert.strictEqual(corpus.filter(e => e.key.startsWith("basic_en_")).length, 26, "basic_en_ coverage");
+});
+
+test("the Lessons door offers exactly one Arabic-letters entry: the unified school (round 3.2.1)", () => {
+  const learning = read("learning.js");
+  assert.ok(!learning.includes('id:"arLetters"'), "the duplicate Arabic-letters card must be gone from learning.js");
+  assert.ok(!learning.includes("arabicLetters"), "the basic Arabic-letters data must be gone with the card");
+  for (const id of ["enLetters", "arNumbers", "enNumbers"])
+    assert.ok(learning.includes('id:"' + id + '"'), "learning.js must keep " + id);
+  const lessons = read("lessons.js");
+  assert.strictEqual((lessons.match(/dataset\.lessonEntry="true"/g) || []).length, 1, "exactly one letter-school entry card");
+  assert.ok(lessons.includes("مدرسة الحروف"), "the single entry is the letter school");
+  // the unified lesson holds everything about a letter on one screen
+  for (const s of ["explain-box", "form-grid", "word-examples", "mark-tabs", "mark-card", "lesson-pager", "formsListen"])
+    assert.ok(lessons.includes(s), "unified lesson is missing: " + s);
+  assert.ok(lessons.includes("letterQuizBtn"), "the picker must offer the quiz directly");
+  assert.ok(lessons.includes("🏆 اختبر نفسك"), "the lesson must offer the quiz directly");
+});
+
+test("lessons are unified on one screen with no step wizard or intro screens (round 3.2.1)", () => {
+  const lessons = read("lessons.js");
+  // no step wizard: the old per-step renderers and step branches are gone
+  for (const s of ["renderLetter(", "renderForms(", "renderMarks(", "renderQuizIntro(", "step===1", "step===2", "step===3", "جاهز يا بطل"])
+    assert.ok(!lessons.includes(s), "step wizard remains in lessons.js: " + s);
+  assert.ok(lessons.includes("function renderLesson()"), "the unified lesson screen is missing");
+  assert.ok(lessons.includes("function renderPicker()"), "the picker is missing");
+  // taps from home to lesson content: door → school card → letter = 3 taps,
+  // and the lesson screen itself holds everything (no further steps)
+  assert.ok(lessons.includes("letterIndex=Number(b.dataset.letter);step=0;render()"), "picker tap must open the lesson directly");
+  assert.ok(lessons.includes("letterQuizBtn"), "quiz must be one tap from the picker");
+  // the quiz starts straight from the lesson or the picker — no intro screen
+  assert.ok(!lessons.includes("أحسنت يا ماثيو. يلا نبدأ الاختبار"), "quiz-intro screen must be gone");
+  // basic learning has no intro screen either: a category card opens straight on its first item
+  const learning = read("learning.js");
+  assert.match(learning, /function open\(cat\)\{active=cat;index=0;/, "basic learning must open straight on the first item");
+});
+
+test("number answers are Arabic-Indic digits and quizzes are script-consistent (round 3.2.1, notes 26-28)", () => {
+  const src = read("app.js");
+  const bank = vm.runInNewContext("(" + src.slice(src.indexOf("const bank=") + 11, src.indexOf("\nconst names=")).replace(/;\s*$/, "") + ")", Object.create(null));
+  const numWords = /^(واحد|واحدة|اثنان|اثنتان|ثلاثة|ثلاث|أربعة|أربع|خمسة|خمس|ستة|سبعة|ثمانية|تسعة|عشرة|اثنا عشر)$/;
+  for (const qs of Object.values(bank)) for (const q of qs) {
+    for (const s of [q.q, ...q.a]) assert.ok(!/[0-9]/.test(s), "Latin digit in an Arabic quiz: " + q.q + " | " + s);
+    for (const a of q.a) assert.ok(!numWords.test(a), "number answer must be a digit, not a word: " + q.q + " | " + a);
+  }
+  // AnswerPics: number words/digits picture as the Arabic-Indic digit itself,
+  // never a finger emoji or a Latin keycap digit (same rule as stories.js)
+  const pics = JSON.parse(src.match(/window\.AnswerPics=(\{.*?\});/s)[1]);
+  const wordToDigit = { "واحد": "١", "واحدة": "١", "اثنان": "٢", "اثنتان": "٢", "ثلاثة": "٣", "ثلاث": "٣", "أربعة": "٤", "أربع": "٤", "خمسة": "٥", "خمس": "٥", "ستة": "٦", "سبعة": "٧", "ثمانية": "٨", "تسعة": "٩", "عشرة": "١٠", "اثنا عشر": "١٢" };
+  for (const [w, d] of Object.entries(wordToDigit)) assert.strictEqual(pics[w], d, "number-word picture must be the Arabic digit: " + w);
+  for (const d of ["١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "١٠", "١١", "١٢", "١٣", "١٤", "١٦", "١٧"]) assert.strictEqual(pics[d], d, "digit picture must be the Arabic digit itself: " + d);
+  for (const [k, v] of Object.entries(pics)) {
+    if (String(v).startsWith("<svg")) continue; // the مستطيل SVG carries viewBox coordinates
+    assert.ok(!/[0-9]/.test(v) && v !== "🔟", "Latin digit picture in AnswerPics: " + k + " → " + v);
+  }
+});
+
+test("مستطيل shows a plain rectangle, not a framed picture (round 3.2.1, note 29)", () => {
+  const src = read("app.js");
+  const pics = JSON.parse(src.match(/window\.AnswerPics=(\{.*?\});/s)[1]);
+  const rect = pics["مستطيل"];
+  assert.ok(String(rect).startsWith("<svg") && String(rect).includes("<rect"), "مستطيل must be a drawn rectangle SVG, got: " + rect);
+  assert.ok(!String(rect).includes("🖼️"), "مستطيل must not be the framed-picture emoji");
+  assert.strictEqual(pics["مربع"], "🟦", "مربع must be a square");
+  assert.strictEqual(pics["مثلث"], "🔺", "مثلث must be a triangle");
+  assert.strictEqual(pics["دائرة"], "🔵", "دائرة must be a circle");
+  // rescue.js renders answers through the shared AnswerPics, so it gets the rectangle too
+  assert.ok(read("rescue.js").includes("window.answerPic"), "stories must use the shared AnswerPics");
+});
+
+test("mark-tab narration names the letter's own sample, never ب (round 3.2.1, note 14)", () => {
+  const corpus = JSON.parse(read("audio-src/corpus.json"));
+  const byKey = {};
+  for (const e of corpus) byKey[e.key] = e;
+  // spoken string is "NAME، SAMPLE. HINT: SAMPLE" — the hint must end with
+  // the letter's own sample (the sample after "، " and before ". ")
+  let checked = 0;
+  for (const e of corpus) {
+    if (!e.key.startsWith("let_mark_")) continue;
+    const m = e.text.match(/^[^،]+، ([^.]+)\. [^:]+: (.+)$/);
+    assert.ok(m, "let_mark text has an unexpected shape: " + e.key + " " + e.text);
+    assert.strictEqual(m[2], m[1], "mark hint ends with the wrong sample: " + e.key + " " + e.text);
+    checked++;
+  }
+  assert.strictEqual(checked, 112, "expected 112 mark clips, got " + checked);
+  const lessons = read("lessons.js");
+  assert.ok(lessons.includes('say(m.name+"، "+markSample()+". "+m.hint+": "+markSample())'), "mark tap must speak name + own sample + hint + own sample");
+  assert.ok(!lessons.includes('hint:"نفتح الفم قليلاً: بَ"') && !lessons.includes('hint:"نسكن الحرف بلا حركة: أَبْ"'), "marks must not hardcode the ب sample in their hints");
+});
+
+test("sukun syllable choices have recorded Fusha clips (round 3.2.1, note 14)", () => {
+  const corpus = JSON.parse(read("audio-src/corpus.json"));
+  const byKey = {};
+  for (const e of corpus) byKey[e.key] = e;
+  for (const [i, s] of ["بْ", "تْ", "مْ", "سْ"].entries()) {
+    const e = byKey["lsq_syl_sukun_" + i];
+    assert.ok(e, "missing sukun clip: lsq_syl_sukun_" + i);
+    assert.strictEqual(e.text, s);
+    assert.strictEqual(e.lang, "ar_SA");
+  }
+  const lessons = read("lessons.js");
+  for (const s of ["بْ", "تْ", "مْ", "سْ"]) assert.ok(lessons.includes('"' + s + '"'), "quiz must offer the sukun choice " + s);
 });

@@ -27,7 +27,7 @@
       winStory: "أنقذت مارك ومريم! هما بخير وفرحانين بيك أوي يا أحلى أخ في الدنيا!"
     },
     {
-      id: "animals", title: "تحدي حيوانات الغابة", icon: "🦁", hero: "🤴🗡️", goal: "👑", cats: ["world", "science"],
+      id: "animals", title: "تحدي حيوانات الغابة", icon: "🦁", hero: "🤴🐴", goal: "👑", cats: ["world", "science"],
       desc: "واجه الأسد والثعلب والدب والنمر وكسبهم بذكائك",
       introClip: "storyAnimalsIntro",
       intro: "الملك ماثيو دخل الغابة، وحيوانات الغابة عايزة تتحداه بأسئلة! جاوب صح يا بطل وعدّي كل حيوان!",
@@ -82,6 +82,13 @@
     window.MatthewVoice?.speak(text, "ar-EG");
   };
   const arabicDigits = value => String(value).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[Number(d)]);
+  // حارس صور الأسئلة (تدقيق الصور، الجولة ٣.٢.١) — نفس قاعدة app.js:
+  // صورة السؤال لازم ما تكشفش الإجابة الصح ولا ترسم اختيار غلط، ولو
+  // حصل نعرض 🤔 بدلها. نسخة محلية هنا عشان المغامرات تشتغل من الباندل
+  // من غير ما تعتمد على ترتيب تحميل app.js؛ والاختبار بيتأكد إن النسختين
+  // متطابقتين على كل أسئلة البنك والقصص.
+  const PIC_MEANS={"🌞":["الشمس"],"🌙":["القمر","قمر"],"🦊":["الثعلب","ثعلب","برتقالي"],"🐯":["النمر","نمر"],"🦋":["الفراشة","فراشة","جناحيها","الأجنحة"],"🌿":["الورقة","ورقة","العشب","أخضر"],"🌦":["بعد المطر","المطر"],"🏃":["نزقها برجلينا"],"🏖":["هتطفو فوق المية","هتطفو فوق","الماء","البحر"],"🌌":["بالليل","الليل","النجوم"],"❄":["بطريق","الثلج"],"🍌":["الموز","موز","أصفر"],"🍅":["الطماطم","طماطم","أحمر"],"🌱":["أخضر","العشب"],"🩺":["القلب"],"🟪":["مربع"],"🔺":["مثلث"]};
+  const safeQuestionEmoji=q=>{if(!q||!q.e)return "🤔";if(/شكل|ضلع/.test(q.q||""))return "🤔";const strip=s=>String(s).replace(/\uFE0F/g,"");const shown=q.e;const clean=strip(shown);const pics=(typeof window!=="undefined"&&window.AnswerPics)||{};const depicts=word=>{if(!word)return false;if(strip(pics[word])===clean)return true;for(const key of Object.keys(PIC_MEANS)){if(clean.includes(strip(key))&&PIC_MEANS[key].includes(word))return true}return false};if(!q.a)return shown;for(let i=0;i<q.a.length;i++)if(depicts(q.a[i]))return "🤔";return shown};
   const shuffle = arr => { const b = [...arr]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 
   const panel = document.createElement("section");
@@ -91,7 +98,7 @@
   panel.innerHTML =
     '<div class="quiz-top"><button id="rescueBack" class="back" type="button">→ رجوع</button><strong>📖 قصص ومغامرات الملك ماثيو</strong><span id="rescueProgress"></span></div>' +
     '<div class="rescue-map" id="rescueMap" aria-hidden="true"></div>' +
-    '<div class="rescue-scene" id="rescueScene"><span class="scene-sun">☀️</span><span class="scene-cloud c1">☁️</span><span class="scene-cloud c2">☁️</span><span class="scene-badge" id="rescueStageIcon">🌲</span><span class="rescue-king" id="rescueHero">🤴🐴</span><span class="rescue-kids" id="rescueGoal">👶👧</span><span class="scene-ground"></span></div>' +
+    '<div class="rescue-scene" id="rescueScene"><span class="scene-sun">☀️</span><span class="scene-cloud c1">☁️</span><span class="scene-cloud c2">☁️</span><span class="scene-badge" id="rescueStageIcon">🌲</span><span class="rescue-king" id="rescueHero" role="img" aria-label="الملك ماثيو راكب حصانه وماسك سيفه"><svg viewBox="0 0 200 150" aria-hidden="true"><ellipse cx="100" cy="142" rx="68" ry="7" fill="#00000018"/><circle class="hero-dust" cx="152" cy="134" r="4" fill="#d8c9a3"/><circle class="hero-dust" cx="164" cy="138" r="3" fill="#d8c9a3"/><path d="M146 82 q24 2 20 24 q-2 10 -12 8 q8 -12 -2 -24 q-4 -6 -8 -6 Z" fill="#8a5a24"/><g class="horse-leg leg-b"><rect x="126" y="106" width="9" height="32" rx="4" fill="#8a5a24"/><rect x="126" y="132" width="9" height="7" rx="2" fill="#4a2f14"/></g><g class="horse-leg leg-b"><rect x="140" y="106" width="9" height="32" rx="4" fill="#8a5a24"/><rect x="140" y="132" width="9" height="7" rx="2" fill="#4a2f14"/></g><rect x="52" y="76" width="96" height="36" rx="17" fill="#b5793b"/><path d="M58 84 L40 52 L56 44 L74 78 Z" fill="#b5793b"/><ellipse cx="36" cy="46" rx="14" ry="10" transform="rotate(-25 36 46)" fill="#b5793b"/><ellipse cx="24" cy="52" rx="8" ry="6" fill="#c98d4e"/><path d="M34 34 l-3 -10 l8 7 Z" fill="#b5793b"/><path d="M46 40 q-8 -6 -14 0 l4 -8 q8 -4 12 4 Z" fill="#8a5a24"/><circle cx="33" cy="44" r="2" fill="#4a2f14"/><g class="horse-leg"><rect x="58" y="106" width="9" height="32" rx="4" fill="#8a5a24"/><rect x="58" y="132" width="9" height="7" rx="2" fill="#4a2f14"/></g><g class="horse-leg"><rect x="74" y="106" width="9" height="32" rx="4" fill="#8a5a24"/><rect x="74" y="132" width="9" height="7" rx="2" fill="#4a2f14"/></g><rect x="88" y="66" width="36" height="18" rx="6" fill="#e14b6d"/><rect x="94" y="62" width="24" height="10" rx="4" fill="#7c4a21"/><path class="hero-cape" d="M96 50 q-24 6 -28 26 q10 2 16 -6 q6 -10 12 -12 Z" fill="#d92b4f"/><rect x="94" y="44" width="22" height="34" rx="8" fill="#5b3cc4"/><path d="M114 52 L132 34" stroke="#ffd9b3" stroke-width="7" stroke-linecap="round"/><path d="M128 30 l8 8" stroke="#ffb340" stroke-width="4" stroke-linecap="round"/><path d="M132 34 L150 10" stroke="#e8edf2" stroke-width="5" stroke-linecap="round"/><path d="M150 10 l-8 1 l4 -6 Z" fill="#ffb340"/><g class="hero-face"><circle cx="105" cy="32" r="13" fill="#ffd9b3"/><circle cx="100" cy="31" r="1.8" fill="#4a2f14"/><circle cx="110" cy="31" r="1.8" fill="#4a2f14"/><path d="M100 38 q5 4 10 0" stroke="#b5651d" stroke-width="2" fill="none" stroke-linecap="round"/></g><path d="M93 24 L95 12 L101 20 L106 9 L111 20 L117 12 L118 24 Z" fill="#ffb340" stroke="#e08e00" stroke-width="2" stroke-linejoin="round"/><path d="M28 52 q22 14 54 26" stroke="#7c4a21" stroke-width="2" fill="none"/></svg></span><span class="rescue-kids" id="rescueGoal">👶👧</span><span class="scene-ground"></span></div>' +
     '<h2 id="rescueTitle">اختار مغامرتك!</h2>' +
     '<p id="rescueStory" class="rescue-story"></p>' +
     '<div id="rescuePlay"></div>';
@@ -130,12 +137,12 @@
     hideOthers();
     panel.classList.remove("hidden");
     $("rescueMap").innerHTML = "";
-    $("rescueHero").textContent = "🤴🐴";
     $("rescueStageIcon").textContent = "📖";
     $("rescueGoal").textContent = "🏰";
     $("rescueProgress").textContent = "";
     $("rescueTitle").textContent = "اختار مغامرتك يا ملك! 📖";
-    $("rescueStory").textContent = "كل قصة فيها مراحل وأسئلة جديدة كل مرة. اختار قصة وابدأ المغامرة!";
+    $("rescueStory").textContent = "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!";
+    speak("أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!", "storyPickerIntro");
     const play = $("rescuePlay");
     play.innerHTML = '<div class="science-grid story-grid">' + STORIES.map((s, i) => {
       let best = 0;
@@ -155,7 +162,6 @@
     stage = 0; inStage = 0; score = 0; total = 0;
     hideOthers();
     panel.classList.remove("hidden");
-    $("rescueHero").textContent = story.hero;
     $("rescueGoal").textContent = story.goal;
     startStage(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -190,11 +196,11 @@
     current = questions[(stage * PER_STAGE + inStage) % questions.length];
     const play = $("rescuePlay");
     play.innerHTML =
-      '<div class="question-emoji">' + current.e + '</div>' +
+      '<div class="question-emoji">' + safeQuestionEmoji(current) + '</div>' +
       '<h3 class="rescue-question">' + arabicDigits(current.q) + '</h3>' +
       '<div class="answers" id="rescueAnswers"></div>' +
       '<p class="feedback" id="rescueFeedback"></p>' +
-      '<button type="button" class="primary hidden" id="rescueNext">كمّل المغامرة ←</button>';
+      '<button type="button" class="primary hidden" id="rescueNext">كمّل المغامرة <span class="pager-arrow">←</span></button>';
     setTimeout(() => {
       if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence([current.q, ...lastChoices], "ar-EG");
       else window.MatthewVoice?.speak(current.q, "ar-EG");
@@ -202,6 +208,16 @@
     const answers = play.querySelector("#rescueAnswers");
     const items = shuffle(current.a.map((text, i) => ({ text, correct: i === current.c })));
     lastChoices = items.map(x => x.text);
+    const listenBtn = document.createElement("button");
+    listenBtn.type = "button";
+    listenBtn.className = "voice-button speak-question";
+    listenBtn.textContent = "🔊 اسمع السؤال";
+    const replayQ = current.q, replayChoices = [...lastChoices];
+    listenBtn.addEventListener("click", () => {
+      if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence([replayQ, ...replayChoices], "ar-EG");
+      else window.MatthewVoice?.speak(replayQ, "ar-EG");
+    });
+    play.insertBefore(listenBtn, answers);
     items.forEach(item => {
       const b = document.createElement("button");
       b.type = "button"; b.className = "answer"; b.dataset.answer = item.text;
@@ -247,9 +263,9 @@
     const s = story.stages[stage];
     $("rescueTitle").textContent = "قرّبت يا بطل! 🎉";
     $("rescueStory").textContent = "عدّيت مرحلة! كمّل كده وانت هتوصل…";
-    speak(s.line, story.closers[Math.min(stage - 1, story.closers.length - 1)]);
+    speak("عدّيت مرحلة! كمّل كده وانت هتوصل…");
     const play = $("rescuePlay");
-    play.innerHTML = '<div class="question-emoji">' + s.icon + '</div><h3 class="rescue-question">المرحلة اللي جاية: ' + s.name + '</h3><button type="button" class="primary" id="rescueGo">يلا كمّل ←</button>';
+    play.innerHTML = '<div class="question-emoji">' + s.icon + '</div><h3 class="rescue-question">المرحلة اللي جاية: ' + s.name + '</h3><button type="button" class="primary" id="rescueGo">يلا كمّل <span class="pager-arrow">←</span></button>';
     play.querySelector("#rescueGo").addEventListener("click", () => startStage(false));
   };
 
@@ -258,8 +274,7 @@
     $("rescueHero").style.insetInlineStart = "76%";
     $("rescueTitle").textContent = story.winTitle;
     $("rescueStory").textContent = story.winStory;
-    speak(story.win, story.winClip);
-    window.MatthewVoice?.feedback("correct");
+    speak(story.winStory);
     const stars = Math.max(1, Math.round((score / Math.max(1, total)) * 5));
     try {
       const old = Number(localStorage.getItem("matthewStars") || 0);
@@ -278,9 +293,9 @@
       '<div class="question-emoji">' + story.hero + story.goal + '</div>' +
       '<div class="result-stars">' + "⭐".repeat(stars) + "☆".repeat(5 - stars) + '</div>' +
       '<p class="feedback">جاوبت صح على ' + arabicDigits(score) + ' من ' + arabicDigits(total) + ' أسئلة</p>' +
-      '<button type="button" class="primary" id="rescueAgain">العب القصة دي تاني ←</button>' +
-      '<button type="button" class="secondary" id="rescueStories">اختار قصة تانية 📖</button>' +
-      '<button type="button" class="secondary" id="rescueHome">العودة للمملكة</button>';
+      '<button type="button" class="primary" id="rescueAgain">العب القصة دي تاني <span class="pager-arrow">←</span></button>' +
+      '<button type="button" class="secondary" id="rescueStories">→ اختار قصة تانية 📖</button>' +
+      '<button type="button" class="secondary" id="rescueHome">→ العودة للمملكة</button>';
     play.querySelector("#rescueAgain").addEventListener("click", () => startStory(story));
     play.querySelector("#rescueStories").addEventListener("click", openPicker);
     play.querySelector("#rescueHome").addEventListener("click", close);
@@ -290,7 +305,6 @@
     focusMode(false);
     panel.classList.add("hidden");
     gameList.classList.remove("hidden");
-    document.getElementById("learningList")?.classList.remove("hidden");
     try { window.MatthewVoice?.stop(); } catch (_) {}
     if (typeof updateStats === "function") { try { updateStats(); } catch (_) {} }
   };
@@ -334,7 +348,15 @@
       ".story-grid .story-card.srescue{background:linear-gradient(160deg,#ffe3ec,#fff)}" +
       ".story-grid .story-card.sanimals{background:linear-gradient(160deg,#e2f7d9,#fff)}" +
       ".story-grid .story-card.strip{background:linear-gradient(160deg,#d9f2ff,#fff)}" +
-      ".story-grid .story-card.streasure{background:linear-gradient(160deg,#fff3c4,#fff)}";
+      ".story-grid .story-card.streasure{background:linear-gradient(160deg,#fff3c4,#fff)}" +
+      ".rescue-king svg{width:98px;height:auto;display:block;overflow:visible}" +
+      ".rescue-king .horse-leg{transform-box:fill-box;transform-origin:50% 0;animation:rescueGallop .45s ease-in-out infinite alternate}" +
+      ".rescue-king .leg-b{animation-delay:-.22s}" +
+      "@keyframes rescueGallop{from{transform:rotate(-16deg)}to{transform:rotate(16deg)}}" +
+      ".rescue-king .hero-cape{transform-box:fill-box;transform-origin:100% 50%;animation:rescueCape .7s ease-in-out infinite alternate}" +
+      "@keyframes rescueCape{from{transform:rotate(-4deg) translateX(0)}to{transform:rotate(5deg) translateX(-3px)}}" +
+      ".rescue-king .hero-dust{animation:rescueDust .9s ease-out infinite}" +
+      "@keyframes rescueDust{0%{opacity:.7;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(14px,-6px) scale(1.8)}}";
     document.head.append(style);
   }
 

@@ -3,7 +3,6 @@
 
   let audio = null;
   let request = 0;
-  let lastQuestion = "";
 
   const status = () =>
     document.getElementById("speechResult") ||
@@ -37,19 +36,25 @@
     } catch (_) {}
   };
 
-  const praiseKeys = ["praise1", "praise2", "praise3", "praise4", "praise5"];
+  // Round 3.2.1 note 25b (mirrors voice.js): مس نانسي praise/retry lines
+  // woven into the same rotation — every 3rd correct answer a rotating
+  // nancy_praise_* line, every 2nd wrong answer a rotating nancy_retry_*
+  // line; old praise1–5 / try1–3 keep their slots. Clip keys are stable.
+  const praiseKeys = ["praise1", "praise2", "praise3", "praise4", "praise5", "praise_nancy"];
+  const nancyPraiseKeys = ["nancy_praise_1", "nancy_praise_2", "nancy_praise_3", "nancy_praise_4", "nancy_praise_5", "nancy_praise_6", "nancy_praise_7", "nancy_praise_8", "nancy_praise_9", "nancy_praise_10"];
   const tryKeys = ["try1", "try2", "try3"];
-  let praiseIndex = 0, tryIndex = 0;
+  const nancyRetryKeys = ["nancy_retry_1", "nancy_retry_2", "nancy_retry_3", "nancy_retry_4", "nancy_retry_5"];
+  let praiseIndex = 0, tryIndex = 0, nancyPraiseIndex = 0, nancyRetryIndex = 0, correctCount = 0, wrongCount = 0;
   const feedback = type => {
     const fid = ++request;
     try { window.MatthewClips?.stop(); } catch (_) {}
     try { window.speechSynthesis?.cancel(); } catch (_) {}
     if (type === "correct") {
       tone(660, 0.13); tone(880, 0.17, 0.13); tone(1046, 0.2, 0.29);
-      try { const c = window.MatthewClips; if (c) setTimeout(() => { if (fid === request) c.playKey(praiseKeys[praiseIndex++ % praiseKeys.length]); }, 280); } catch (_) {}
+      try { const c = window.MatthewClips; if (c) setTimeout(() => { if (fid !== request) return; const key = (++correctCount % 3 === 0 ? nancyPraiseKeys[nancyPraiseIndex++ % nancyPraiseKeys.length] : praiseKeys[praiseIndex++ % praiseKeys.length]); if (c.playKey(key)) return; if (key === "praise_nancy" || key.startsWith("nancy_praise_")) c.playKey("praise1"); }, 280); } catch (_) {}
     } else if (type === "wrong") {
       tone(330, 0.16); tone(260, 0.19, 0.14);
-      try { const c = window.MatthewClips; if (c) setTimeout(() => { if (fid === request) c.playKey(tryKeys[tryIndex++ % tryKeys.length]); }, 280); } catch (_) {}
+      try { const c = window.MatthewClips; if (c) setTimeout(() => { if (fid !== request) return; const key = (++wrongCount % 2 === 0 ? nancyRetryKeys[nancyRetryIndex++ % nancyRetryKeys.length] : tryKeys[tryIndex++ % tryKeys.length]); if (!c.playKey(key) && key.startsWith("nancy_retry_")) c.playKey("try1"); }, 280); } catch (_) {}
     } else tone(520, 0.055, 0, 0.03);
   };
 
@@ -148,7 +153,7 @@
     if (!area || area.querySelector(".speak-question")) return;
     const button = document.createElement("button");
     button.type = "button"; button.className = "voice-button speak-question";
-    button.textContent = "🔊 إعادة سماع السؤال";
+    button.textContent = "🔊 اسمع السؤال";
     button.addEventListener("click", () => {
       const question = document.getElementById("questionText")?.textContent?.trim();
       if (question) speak(question, "ar-EG");
@@ -156,16 +161,13 @@
     area.querySelector("#questionText")?.after(button);
   };
 
+  // Round 3.2.1: the observer only ensures the replay button exists — it
+  // must NOT re-speak the question (showQuestion already narrates it once).
   const observer = new MutationObserver(() => {
     addHomeButton();
     const area = document.querySelector(".question-area");
     if (!area) return;
     addQuestionButton(area);
-    const heading = area.querySelector("#questionText");
-    const question = heading?.textContent?.trim() || "";
-    if (!question || question === lastQuestion) return;
-    lastQuestion = question;
-    setTimeout(() => speak(question, "ar-EG"), 180);
   });
 
   if (document.body) {
