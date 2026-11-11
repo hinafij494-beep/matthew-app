@@ -18,8 +18,14 @@ const norm = s => String(s || "")
   .replace(/\s+/g, " ").trim().toLowerCase();
 const add = (key, text, lang = "ar_EG") => {
   const n = norm(text);
-  if (!n || corpus.has(n)) return;
-  corpus.set(n, { key, lang, text });
+  if (!n) return;
+  // Short vocalised texts (syllables like بَ بِ بُ) differ ONLY by their
+  // diacritics: dedupe them by their exact text or the vowels collapse
+  // into a single clip and every haraka sounds the same.
+  const bare = text.replace(/[ً-ٰٟـ]/g, "").trim();
+  const dedupeKey = /[ً-ٟ]/.test(text) && bare.length <= 3 ? "exact:" + text.trim() : n;
+  if (corpus.has(dedupeKey)) return;
+  corpus.set(dedupeKey, { key, lang, text });
 };
 
 // 1) keyed clips (praise, stories, greetings...)
@@ -128,6 +134,84 @@ for (const [key, v] of Object.entries(keyed)) add(key, v.text, v.lang);
 // 7) a few fixed lines from other modules
 add("ig_pickword", "اختار الكلمة المناسبة للصورة");
 add("voice_test_line", "أهلاً يا ملك ماثيو! يلا نتعلم ونلعب. برافو يا بطل!");
+
+
+// 8) math journey question lines — questions(n) is a deterministic function of the
+// level in both journeys, and say() speaks q + " " + ex as one string. Mirror the
+// generators exactly so every journey question has a recorded clip.
+{
+  const digits = n => String(n).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[+d]);
+  const arSrc = read("math-journey.js");
+  const arNames = ev(arSrc.slice(arSrc.indexOf("const names=") + "const names=".length, arSrc.indexOf("];", arSrc.indexOf("const names=")) + 1));
+  const enSrc = read("math-english.js");
+  const enNames = ev(enSrc.slice(enSrc.indexOf("const names=") + "const names=".length, enSrc.indexOf("];", enSrc.indexOf("const names=")) + 1));
+  for (let n = 1; n <= 20; n++) {
+    const prev = Math.max(0, n - 1), next = Math.min(20, n + 1);
+    const addA = Math.max(1, Math.floor(n / 2)), addB = Math.max(1, Math.min(5, n - addA));
+    const subA = Math.min(20, n + 2), subB = 2;
+    const aq = [
+      ["عدّ الصور: كام واحدة؟", "عدّ كل صورة واحدة واحدة. المجموع " + digits(n) + "."],
+      ["إيه الرقم اللي بعد " + digits(prev) + "؟", "بعد " + arNames[Math.max(0, prev - 1)] + " بييجي " + arNames[n - 1] + "."],
+      ["إيه الرقم اللي قبل " + digits(next) + "؟", "قبل " + arNames[next - 1] + " بييجي " + arNames[n - 1] + "."],
+      ["معانا " + digits(addA) + " تفاحات وزودنا " + digits(addB) + "، بقوا كام؟", digits(addA) + " + " + digits(addB) + " = " + digits(addA + addB) + ". عدّهم مع بعض."],
+      ["كان معانا " + digits(subA) + " نجوم واختفى " + digits(subB) + "، فاضل كام؟", digits(subA) + " - " + digits(subB) + " = " + digits(subA - subB) + ". شيل اتنين وعدّ الباقي."],
+      ["اختار العدد الأكبر: " + digits(n) + " ولا " + digits(prev), "العدد الأكبر هو " + digits(Math.max(n, prev)) + "."]
+    ];
+    aq.forEach(([q, ex], i) => add("math_ar_q" + n + "_" + i, q + " " + ex));
+    const eq = [
+      ["Count the pictures. How many are there?", "Count each picture once. There are " + n + "."],
+      ["What number comes after " + prev + "?", "After " + enNames[prev - 1] + " comes " + enNames[next - 1] + "."],
+      ["What number comes before " + next + "?", "Before " + enNames[next - 1] + " comes " + enNames[n - 1] + "."],
+      ["You have " + addA + " apples and get " + addB + " more. How many now?", addA + " + " + addB + " = " + (addA + addB) + ". Count them together."],
+      ["You have " + subA + " stars. " + subB + " disappear. How many are left?", subA + " - " + subB + " = " + (subA - subB) + "."],
+      ["Which number is bigger: " + n + " or " + prev + "?", Math.max(n, prev) + " is the bigger number."]
+    ];
+    eq.forEach(([q, ex], i) => add("math_en_q" + n + "_" + i, q + " " + ex, "en_US"));
+  }
+}
+
+// 9) letter-school spoken combinations (steps, mark tab, quiz narration)
+{
+  const src = read("lessons.js");
+  const grabArr = decl => { const i = src.indexOf(decl); let depth = 0; const j = src.indexOf("[", i); for (let k = j; k < src.length; k++) { if (src[k] === "[") depth++; if (src[k] === "]") { depth--; if (!depth) return ev(src.slice(j, k + 1)); } } };
+  const L = grabArr("const lessons ="), M = grabArr("const marks =");
+  const HINTS = ["نفتح الفم قليلاً", "نضم الشفتين", "نكسر الصوت", "نسكن الحرف بلا حركة"];
+  const sampleFor = (l, mi) => l.letter === "أ" ? ["أَ", "أُ", "إِ", "أْ"][mi] : l.letter + M[mi].mark;
+  L.forEach((l, li) => {
+    add("les_namesound_" + li, l.name + "، " + l.sound);
+    M.forEach((m, mi) => add("les_marklisten_" + li + "_" + mi, HINTS[mi] + "، " + sampleFor(l, mi)));
+    const q1 = "ما اسم هذا الحرف؟ " + l.letter, q2 = "أي شكل لحرف " + l.name + " في أول الكلمة؟";
+    add("les_quiz1_" + li, q1 + ". اختار الإجابة الصحيحة"); add("les_quiz1b_" + li, q1 + " اختار الإجابة الصحيحة");
+    add("les_quiz2_" + li, q2 + ". اختار الإجابة الصحيحة"); add("les_quiz2b_" + li, q2 + " اختار الإجابة الصحيحة");
+  });
+  M.forEach((m, mi) => {
+    const q = "ما اسم الحركة في " + m.sample + "؟";
+    add("les_quizm_" + mi, q + ". اختار الإجابة الصحيحة"); add("les_quizmb_" + mi, q + " اختار الإجابة الصحيحة");
+  });
+  ["أي مقطع عليه فتحة؟", "أي مقطع عليه ضمة؟", "أي مقطع عليه كسرة؟", "أي مقطع عليه سكون؟"].forEach((q, i) => {
+    add("les_qsylq_" + i, q + ". اختار الإجابة الصحيحة"); add("les_qsylqb_" + i, q + " اختار الإجابة الصحيحة");
+  });
+}
+
+// 10) touch-game target lines
+["حرف الألف", "حرف الباء", "حرف التاء", "حرف الميم", "الرقم واحد", "الرقم اتنين", "الرقم تلاتة", "الرقم أربعة"]
+  .forEach((s, i) => add("touch_pick_" + i, "اسمع كويس يا ماثيو. اختار " + s));
+
+// 11) basic-learning spoken lines (learning.js item.speak compositions)
+{
+  const src = read("learning.js");
+  const grabLit = decl => { const i = src.indexOf(decl); let depth = 0; const j = src.indexOf("[", i); for (let k = j; k < src.length; k++) { if (src[k] === "[") depth++; if (src[k] === "]") { depth--; if (!depth) return ev(src.slice(j, k + 1)); } } };
+  const arPairs = grabLit("const arabicLetters = [");
+  arPairs.forEach((x, i) => add("basic_ar_" + i, x[0] + "، " + x[1]));
+  const words = grabLit("const englishWords = [");
+  const phon = grabLit("const phonicsSounds=[");
+  words.forEach((w, i) => { const L = String.fromCharCode(65 + i); add("basic_en_" + i, L + ", lowercase " + L.toLowerCase() + ", " + phon[i] + ", for " + w, "en_US"); });
+  const arNames = grabLit("const arabicNames=[");
+  const arDigits = grabLit("const arabicDigits=[");
+  arDigits.forEach((d, i) => add("basic_arnum_" + i, arNames[i] + "، " + d));
+  const enNames = grabLit("const englishNames=[");
+  enNames.forEach((n, i) => add("basic_ennum_" + i, n, "en_US"));
+}
 
 const out = [...corpus.values()];
 fs.writeFileSync(path.join(root, "audio-src/corpus.json"), JSON.stringify(out, null, 1));

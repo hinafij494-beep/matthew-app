@@ -121,3 +121,29 @@
 
 .answer{position:relative}
 .answer-say{position:absolute;inset-inline-end:10px;top:50%;transform:translateY(-50%);background:#fff3;border:1px solid #0002;border-radius:999px;padding:2px 8px;font-size:1rem}
+
+/* ===== Round 3.1: home doors, bigger buttons, tracing palette ===== */
+.home-doors{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.door{border:0;border-radius:26px;padding:22px 14px;color:#fff;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font:inherit;box-shadow:0 10px 22px rgba(57,32,120,.22);min-height:158px;justify-content:center}
+.door-icon{font-size:54px;line-height:1}
+.door strong{font-size:24px;font-weight:900}
+.door small{font-size:15px;font-weight:700;opacity:.92}
+.door-learn{background:linear-gradient(140deg,#6d4bd1,#9b7ff0)}
+.door-quiz{background:linear-gradient(140deg,#f07f13,#ffb03a)}
+.door-games{background:linear-gradient(140deg,#1f9d63,#4cc38a)}
+.door-colors{background:linear-gradient(140deg,#e2498a,#ff7ab5)}
+.door:active{transform:scale(.97)}
+.door-bar{display:flex;align-items:center;gap:14px;margin:14px 0}
+.door-bar strong{font-size:23px;font-weight:900;color:#392f54}
+#parentCorner{margin:10px 0}
+.back{background:linear-gradient(140deg,#6d4bd1,#5b3cc4);color:#fff;border-radius:18px;padding:14px 24px;font-size:19px;font-weight:900;box-shadow:0 8px 18px rgba(91,60,196,.35);cursor:pointer}
+.primary,.secondary{min-height:58px;font-size:19px;padding:15px 26px;border-radius:18px;font-weight:900}
+.voice-button{font-size:17px;padding:14px}
+.game-card{padding:20px}
+.game-card strong{font-size:20px}
+.trace-colors{display:flex;gap:12px;justify-content:center;margin:10px 0;flex-wrap:wrap}
+.trace-color{width:48px;height:48px;border-radius:50%;border:3px solid #fff;box-shadow:0 3px 8px rgba(30,20,60,.3);cursor:pointer;padding:0}
+.trace-color.active{outline:4px solid #5b3cc4;transform:scale(1.15)}
+.trace-wrap{position:relative;width:min(84vw,320px);height:min(84vw,320px);margin:10px auto;background:#fff;border:3px dashed #cfc4ef;border-radius:22px;overflow:hidden;display:block}
+.trace-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+#traceCanvas{background:transparent;border:0;border-radius:0;touch-action:none}

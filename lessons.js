@@ -167,7 +167,8 @@
     quiz=qs.sort(()=>Math.random()-.5).slice(0,10);quizIndex=0;score=0;showQuiz();
   }
   function showQuiz(){
-    const q=quiz[quizIndex];$("lessonStep").textContent=(quizIndex+1).toLocaleString("ar-EG")+" / "+quiz.length.toLocaleString("ar-EG");
+    const q=quiz[quizIndex];
+    if(!q._shuffled){const order=q.a.map((a,i)=>({a,ok:i===q.c})).sort(()=>Math.random()-.5);q.a=order.map(x=>x.a);q.c=order.findIndex(x=>x.ok);q._shuffled=true}$("lessonStep").textContent=(quizIndex+1).toLocaleString("ar-EG")+" / "+quiz.length.toLocaleString("ar-EG");
     $("lessonProgress").style.width=(quizIndex/quiz.length*100)+"%";
     $("lessonBody").innerHTML=`<div class="lesson-title">اختبار الملك ماثيو 👑</div><h2>${q.q}</h2><div class="lesson-answers">${q.a.map((a,i)=>`<button data-answer="${i}"><span class="answer-picture" aria-hidden="true">${({ "أ":"🦁","ب":"🦆","ت":"🍎","ث":"🦊","ج":"🐪","ح":"🐎","خ":"🐑","د":"🐻","ذ":"🐺","ر":"🍎","ز":"🦒","س":"🐟","ش":"☀️","ص":"🦅","ض":"🐸","ط":"🐦","ظ":"✉️","ع":"🐤","غ":"🦌","ف":"🐘","ق":"🐱","ك":"📘","ل":"🥛","م":"🍌","ن":"🐅","ه":"🐦","هـ":"🐦","و":"🌹","ي":"✋"}[a]||"🔤")}</span><span class="answer-label">${a}</span></button>`).join("")}</div>`;
     const questionSpeak=document.createElement("button");questionSpeak.type="button";questionSpeak.className="voice-button question-speak";questionSpeak.textContent="🔊 اسمع السؤال";questionSpeak.onclick=()=>say(q.q+" اختار الإجابة الصحيحة","ar-EG");const questionHeading=panel.querySelector("#lessonBody .lesson-title");if(questionHeading)questionHeading.after(questionSpeak);

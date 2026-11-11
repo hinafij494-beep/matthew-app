@@ -51,6 +51,11 @@
   learningList.append(card);
 
   let setId = "arLetters", index = 0, mask = null, covered = null, guideCells = 0, hitCells = 0, drawing = false, done = false;
+  const COLORS = [
+    { c: "#e53935", n: "أحمر" }, { c: "#fb8c00", n: "برتقالي" }, { c: "#f9a825", n: "أصفر" },
+    { c: "#43a047", n: "أخضر" }, { c: "#1e88e5", n: "أزرق" }, { c: "#8e24aa", n: "بنفسجي" }
+  ];
+  let traceColor = COLORS[1].c, strokeCtx = null;
 
   const speak = (text, lang) => {
     if (window.MatthewVoice && window.MatthewVoice.speak) window.MatthewVoice.speak(text, lang);
@@ -115,8 +120,9 @@
       '<div class="quiz-top"><button id="traceBack" class="back" type="button">🏠 الرئيسية</button><strong>✏️ اكتب بإصبعك</strong><span>' +
       String(index + 1).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[+d]) + ' / ' + String(set.items.length).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[+d]) + '</span></div>' +
       '<div class="trace-sets">' + Object.entries(SETS).map(([id, s]) => '<button type="button" class="trace-set' + (id === setId ? " active" : "") + '" data-set="' + id + '">' + s.title + '</button>').join("") + '</div>' +
-      '<p class="touch-game-instruction">امشِ بإصبعك على الحرف الرمادي لحد ما تلوّنه كله</p>' +
-      '<div class="trace-wrap" dir="' + set.dir + '"><canvas id="traceCanvas" width="320" height="320" aria-label="لوحة تتبع ' + glyph + '"></canvas></div>' +
+      '<p class="touch-game-instruction">لوّن الحرف من جوّه بس بإصبعك، واختار اللون اللي يعجبك</p>' +
+      '<div class="trace-colors" role="group" aria-label="اختار لون التلوين">' + COLORS.map(col => '<button type="button" class="trace-color' + (col.c === traceColor ? " active" : "") + '" data-color="' + col.c + '" style="background:' + col.c + '" aria-label="لون ' + col.n + '"></button>').join("") + '</div>' +
+      '<div class="trace-wrap" dir="' + set.dir + '"><canvas id="traceGuide" width="320" height="320" aria-hidden="true"></canvas><canvas id="traceCanvas" width="320" height="320" aria-label="لوحة تتبع ' + glyph + '"></canvas></div>' +
       '<div class="progress"><div id="traceProgress" style="width:0%"></div></div>' +
       '<p id="traceMsg" class="feedback" aria-live="polite"></p>' +
       '<div class="basic-nav"><button id="traceListen" class="voice-button" type="button">🔊 اسمع</button>' +
@@ -128,27 +134,55 @@
     panel.querySelector("#traceClear").onclick = render;
     panel.querySelector("#traceNext").onclick = () => { index = (index + 1) % set.items.length; render(); };
     setupCanvas(glyph, set);
+    panel.querySelectorAll(".trace-color").forEach(b => b.onclick = () => {
+      traceColor = b.dataset.color;
+      panel.querySelectorAll(".trace-color").forEach(x => x.classList.toggle("active", x === b));
+      if (strokeCtx) { strokeCtx.strokeStyle = traceColor; strokeCtx.fillStyle = traceColor; }
+    });
     setTimeout(() => speak(set.speak(glyph), set.lang), 150);
   }
 
   function setupCanvas(glyph, set) {
+    const guide = panel.querySelector("#traceGuide");
     const canvas = panel.querySelector("#traceCanvas");
-    const ctx = canvas.getContext("2d");
-    if (!ctx) { panel.querySelector("#traceMsg").textContent = "هذا الجهاز لا يدعم لوحة الرسم."; return; }
+    const gtx = guide && guide.getContext("2d");
+    const ctx = canvas && canvas.getContext("2d");
+    if (!gtx || !ctx) { panel.querySelector("#traceMsg").textContent = "هذا الجهاز لا يدعم لوحة الرسم."; return; }
     buildMask(glyph);
-    // Draw the guide glyph.
+    // Full-resolution glyph mask: paint may only exist inside the letter.
+    const maskC = document.createElement("canvas");
+    maskC.width = 320; maskC.height = 320;
+    const mctx = maskC.getContext("2d", { willReadFrequently: true });
+    let maskData = null;
+    if (mctx) {
+      mctx.fillStyle = "#000";
+      mctx.font = "bold 230px system-ui, sans-serif";
+      mctx.textAlign = "center"; mctx.textBaseline = "middle";
+      mctx.fillText(glyph, 160, 172);
+      try { maskData = mctx.getImageData(0, 0, 320, 320).data; } catch (_) { /* no mask: fall back to grid */ }
+    }
+    const inside = (x, y) => {
+      if (!maskData) return true;
+      const xi = Math.round(x), yi = Math.round(y);
+      if (xi < 0 || yi < 0 || xi >= 320 || yi >= 320) return false;
+      return maskData[(yi * 320 + xi) * 4 + 3] > 40;
+    };
+    // Draw the guide glyph on the bottom canvas.
+    gtx.clearRect(0, 0, 320, 320);
+    gtx.font = "bold 230px system-ui, sans-serif";
+    gtx.textAlign = "center"; gtx.textBaseline = "middle";
+    gtx.fillStyle = "rgba(91,60,196,0.18)";
+    gtx.fillText(glyph, 160, 172);
+    gtx.strokeStyle = "rgba(91,60,196,0.45)";
+    gtx.lineWidth = 2;
+    gtx.strokeText(glyph, 160, 172);
+    // The stroke canvas (top) starts empty; colour comes from the palette.
     ctx.clearRect(0, 0, 320, 320);
-    ctx.font = "bold 230px system-ui, sans-serif";
-    ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.fillStyle = "rgba(91,60,196,0.18)";
-    ctx.fillText(glyph, 160, 172);
-    ctx.strokeStyle = "rgba(91,60,196,0.45)";
-    ctx.lineWidth = 2;
-    ctx.strokeText(glyph, 160, 172);
-    // Prepare the tracing stroke style.
-    ctx.strokeStyle = "#ff8a3d";
+    ctx.strokeStyle = traceColor;
+    ctx.fillStyle = traceColor;
     ctx.lineWidth = 16;
     ctx.lineCap = "round"; ctx.lineJoin = "round";
+    strokeCtx = ctx;
 
     const pos = event => {
       const rect = canvas.getBoundingClientRect();
@@ -166,22 +200,44 @@
       panel.querySelector("#traceProgress").style.width = Math.min(100, Math.round(ratio * 100)) + "%";
       if (ratio >= GOAL && !done) finishTracing(glyph, set);
     };
-    let last = null;
+    const dot = p => { ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI * 2); ctx.fill(); };
+    let pen = null; // last point INSIDE the glyph, or null while outside
+    const paintTo = p => {
+      if (!inside(p.x, p.y)) { pen = null; return; }
+      if (!pen) { dot(p); pen = p; markCoverage(p.x, p.y); return; }
+      const dist = Math.hypot(p.x - pen.x, p.y - pen.y);
+      const steps = Math.max(1, Math.ceil(dist / 4));
+      let from = pen;
+      for (let s = 1; s <= steps; s++) {
+        const sp = { x: pen.x + (p.x - pen.x) * s / steps, y: pen.y + (p.y - pen.y) * s / steps };
+        if (inside(sp.x, sp.y)) {
+          if (from) { ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(sp.x, sp.y); ctx.stroke(); }
+          else dot(sp);
+          from = sp;
+        } else from = null;
+      }
+      pen = p;
+      markCoverage(p.x, p.y);
+    };
+    const clipToGlyph = () => {
+      if (!maskData) return;
+      ctx.save();
+      ctx.globalCompositeOperation = "destination-in";
+      ctx.drawImage(maskC, 0, 0);
+      ctx.restore();
+    };
     canvas.addEventListener("pointerdown", event => {
-      drawing = true; last = pos(event);
-      canvas.setPointerCapture(event.pointerId);
-      markCoverage(last.x, last.y);
+      drawing = true; pen = null;
+      try { canvas.setPointerCapture(event.pointerId); } catch (_) {}
+      paintTo(pos(event));
       event.preventDefault();
     });
     canvas.addEventListener("pointermove", event => {
-      if (!drawing || !last) return;
-      const p = pos(event);
-      ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke();
-      markCoverage(p.x, p.y);
-      last = p;
+      if (!drawing) return;
+      paintTo(pos(event));
       event.preventDefault();
     });
-    const stop = () => { drawing = false; last = null; };
+    const stop = () => { if (drawing) clipToGlyph(); drawing = false; pen = null; };
     canvas.addEventListener("pointerup", stop);
     canvas.addEventListener("pointercancel", stop);
   }

@@ -34,7 +34,7 @@ test("phase 1-2 modules ship inside the interactive-games bundle", () => {
   }
   assert.ok(html.includes("interactive-games.js"), "page does not load the bundle file");
   assert.ok(sw.includes("./interactive-games.js"), "offline cache missing the bundle file");
-  assert.match(sw, /king-matthew-v18/);
+  assert.match(sw, /king-matthew-v19/);
 });
 
 test("science topics are kept but taught simply, like a game (owner correction)", () => {
@@ -99,7 +99,18 @@ test("recorded teacher voice covers the whole quiz bank and the corpus", () => {
   const byText = {};
   for (const f of textChunks) {
     const src = read(f);
-    Object.assign(byText, JSON.parse(src.slice(src.indexOf("push(") + 5, src.lastIndexOf(");"))));
+    {
+      const start = src.indexOf("push(") + 5;
+      let depth = 0, end = -1, inStr = false, esc = false;
+      for (let i = start; i < src.length; i++) {
+        const ch = src[i];
+        if (inStr) { if (esc) esc = false; else if (ch === "\\") esc = true; else if (ch === '"') inStr = false; continue; }
+        if (ch === '"') inStr = true;
+        else if (ch === '{') depth++;
+        else if (ch === '}') { depth--; if (depth === 0) { end = i + 1; break; } }
+      }
+      Object.assign(byText, JSON.parse(src.slice(start, end)));
+    }
   }
   const digits = { "٠": "0", "١": "1", "٢": "2", "٣": "3", "٤": "4", "٥": "5", "٦": "6", "٧": "7", "٨": "8", "٩": "9" };
   const norm = s => String(s || "").replace(/[٠-٩]/g, c => digits[c]).replace(/[ً-ٰٟـ]/g, "").replace(/[^ء-يa-zA-Z0-9 ]/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
@@ -138,12 +149,13 @@ test("stories open in a clean full-screen focus with an animated scene", () => {
 
 test("quizzes pronounce answers and speech never overlaps", () => {
   const html = read("index.html");
-  assert.ok(html.includes('id="listenAllBtn"'), "quiz is missing the listen-to-question-and-answers button");
+  assert.ok(!html.includes('id="listenAllBtn"'), "no tap-to-listen button: narration must be automatic (owner, round 3.1)");
   const app = read("app.js");
-  assert.ok(app.includes("speakSequence"), "main quiz must narrate question + answers in sequence");
-  assert.ok(app.includes("answer-say"), "each answer needs its own speaker button");
+  assert.ok(app.includes("speakSequence([q.q,...lastChoices]"), "main quiz must auto-narrate question + choices in order");
+  assert.ok(!app.includes("answer-say"), "answers must not carry their own speaker buttons (owner, round 3.1)");
   const rescue = read("rescue.js");
-  assert.ok(rescue.includes("speakSequence") && rescue.includes("answer-say"), "stories must narrate answers too");
+  assert.ok(rescue.includes("speakSequence([current.q, ...lastChoices]"), "stories must auto-narrate question + choices too");
+  assert.ok(!rescue.includes("answer-say") && !rescue.includes("rescueListen"), "stories must not carry listen buttons (owner, round 3.1)");
   const voice = read("voice.js");
   assert.ok(voice.includes("speakSequence"), "MatthewVoice must expose speakSequence");
   assert.match(voice, /if \(id === requestId\) clips\.playKey\(key\)/, "delayed praise must yield to newer speech (no overlap)");
@@ -258,4 +270,43 @@ test("quiz answer handlers record mastery in every learning flow", () => {
   assert.match(read("interactive-games.js"), /MatthewMastery\?\.record/);
   assert.match(read("reading.js"), /MatthewMastery\?\.record/);
   assert.match(read("tracing.js"), /MatthewMastery\?\.record/);
+});
+
+test("question pictures never reveal the answer (round 3.1)", () => {
+  const src = read("app.js");
+  const m = src.match(/window\.AnswerPics=(\{.*?\});/s);
+  const pics = JSON.parse(m[1]);
+  const bank = vm.runInNewContext("(" + src.slice(src.indexOf("const bank=") + 11, src.indexOf("\nconst names=")).replace(/;\s*$/, "") + ")", Object.create(null));
+  for (const qs of Object.values(bank)) for (const q of qs) {
+    const correctPic = pics[q.a[q.c]];
+    assert.notStrictEqual(q.e, correctPic, "question picture reveals its answer: " + q.q);
+  }
+  const hear = Object.values(bank).flat().find(q => q.q.includes("نسمع"));
+  assert.strictEqual(hear.e, "🎵", "the hearing question must not show an ear");
+});
+
+test("letter-school quiz shuffles its answers (round 3.1)", () => {
+  const lessons = read("lessons.js");
+  assert.ok(lessons.includes("_shuffled"), "letter quiz must shuffle answers so the correct one is not always first");
+  assert.match(lessons, /q\.c=order\.findIndex/, "the correct index must be remapped after shuffling");
+});
+
+test("tracing confines colour inside the letter and offers a colour palette (round 3.1)", () => {
+  const tracing = read("tracing.js");
+  assert.ok(tracing.includes("destination-in"), "finished strokes must be clipped to the glyph mask");
+  assert.ok(tracing.includes("traceGuide"), "guide and strokes must be separate stacked canvases");
+  assert.ok(tracing.includes("trace-color"), "a colour palette must be rendered");
+  const colors = tracing.match(/#[0-9a-f]{6}/gi) || [];
+  assert.ok(new Set(colors.map(c => c.toLowerCase())).size >= 6, "palette must offer at least six colours");
+});
+
+test("home is four big doors and the hero is an intro only (round 3.1)", () => {
+  const app = read("app.js");
+  for (const label of ["الدروس", "الأسئلة والاختبارات", "الألعاب", "الألوان والتلوين"])
+    assert.ok(app.includes(label), "missing home door: " + label);
+  assert.ok(app.includes("homeDoors"), "home doors navigation is missing");
+  assert.match(app, /hero\.style\.display = \(!open && !current\)/, "hero must show only on the doors home, never inside a section");
+  const css = read("styles.css");
+  assert.match(css, /\.door-learn\{/, "doors need their own bright styles");
+  assert.match(css, /\.back\{[^}]*padding:14px 24px/, "the back button must be big and clear");
 });

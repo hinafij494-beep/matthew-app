@@ -192,23 +192,20 @@
     play.innerHTML =
       '<div class="question-emoji">' + current.e + '</div>' +
       '<h3 class="rescue-question">' + arabicDigits(current.q) + '</h3>' +
-      '<button type="button" class="voice-button" id="rescueListen">🔊 اسمع السؤال والاختيارات</button>' +
       '<div class="answers" id="rescueAnswers"></div>' +
       '<p class="feedback" id="rescueFeedback"></p>' +
       '<button type="button" class="primary hidden" id="rescueNext">كمّل المغامرة ←</button>';
-    play.querySelector("#rescueListen").addEventListener("click", () => {
+    setTimeout(() => {
       if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence([current.q, ...lastChoices], "ar-EG");
-      else window.MatthewVoice?.speak(current.q + " " + lastChoices.join("، "), "ar-EG");
-    });
-    setTimeout(() => window.MatthewVoice?.speak(current.q, "ar-EG"), 350);
+      else window.MatthewVoice?.speak(current.q, "ar-EG");
+    }, 350);
     const answers = play.querySelector("#rescueAnswers");
     const items = shuffle(current.a.map((text, i) => ({ text, correct: i === current.c })));
     lastChoices = items.map(x => x.text);
     items.forEach(item => {
       const b = document.createElement("button");
       b.type = "button"; b.className = "answer"; b.dataset.answer = item.text;
-      b.innerHTML = '<span class="answer-picture">' + (window.answerPic ? window.answerPic(item.text, current) : current.e) + '</span><span class="answer-label">' + arabicDigits(item.text) + '</span><span class="answer-say" title="اسمع الإجابة">🔊</span>';
-      b.querySelector(".answer-say").addEventListener("click", e => { e.stopPropagation(); window.MatthewVoice?.speak(item.text, "ar-EG"); });
+      b.innerHTML = '<span class="answer-picture">' + (window.answerPic ? window.answerPic(item.text, current) : current.e) + '</span><span class="answer-label">' + arabicDigits(item.text) + '</span>';
       b.addEventListener("click", () => choose(b, item.correct, answers));
       answers.append(b);
     });

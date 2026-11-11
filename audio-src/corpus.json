@@ -2120,6 +2120,11 @@
   "text": "أي شكل لحرف الألف في أول الكلمة؟"
  },
  {
+  "key": "let_word_0_0",
+  "lang": "ar_EG",
+  "text": "أَسَد"
+ },
+ {
   "key": "let_word_0_1",
   "lang": "ar_EG",
   "text": "سَأَلَ"
@@ -2240,6 +2245,11 @@
   "text": "مَتْجَر"
  },
  {
+  "key": "let_word_2_2",
+  "lang": "ar_EG",
+  "text": "بَيْت"
+ },
+ {
   "key": "let_full_3",
   "lang": "ar_EG",
   "text": "ده حرف الثاء، وصوته ثَ. بنطلّع طرف لساننا بره شوية صغيرة بين سناننا وبننفخ هوا خفيف. شكله بيتغير حسب مكانه في الكلمة: في أول الكلمة بيبقى ثـ، وفي نص الكلمة ـثـ، وفي آخر الكلمة ـث. بنشوفه في كلمات بنعرفها زي ثَعْلَب ومِثَال وحَدِيث. يلا نقول صوته مع بعض بصوت عالي: ثَ، ثَ، ثَ!"
@@ -2338,6 +2348,11 @@
   "key": "let_q2_4",
   "lang": "ar_EG",
   "text": "أي شكل لحرف الجيم في أول الكلمة؟"
+ },
+ {
+  "key": "let_word_4_0",
+  "lang": "ar_EG",
+  "text": "جَمَل"
  },
  {
   "key": "let_word_4_1",
@@ -2635,6 +2650,11 @@
   "text": "فَرَاشَة"
  },
  {
+  "key": "let_word_9_2",
+  "lang": "ar_EG",
+  "text": "قَمَر"
+ },
+ {
   "key": "let_full_10",
   "lang": "ar_EG",
   "text": "ده حرف الزاي، وصوته زَ. صوت زنّان بيهز سناننا، زي صوت النحلة وهي طايرة: زززز. شكله بيتغير حسب مكانه في الكلمة: في أول الكلمة بيبقى ز، وفي نص الكلمة ـز، وفي آخر الكلمة ـز. بنشوفه في كلمات بنعرفها زي زَرَافَة ومَوْز وخُبْز. يلا نقول صوته مع بعض بصوت عالي: زَ، زَ، زَ!"
@@ -2678,6 +2698,16 @@
   "key": "let_q2_10",
   "lang": "ar_EG",
   "text": "أي شكل لحرف الزاي في أول الكلمة؟"
+ },
+ {
+  "key": "let_word_10_1",
+  "lang": "ar_EG",
+  "text": "مَوْز"
+ },
+ {
+  "key": "let_word_10_2",
+  "lang": "ar_EG",
+  "text": "خُبْز"
  },
  {
   "key": "let_full_11",
@@ -2728,6 +2758,11 @@
   "key": "let_word_11_1",
   "lang": "ar_EG",
   "text": "مَسْجِد"
+ },
+ {
+  "key": "let_word_11_2",
+  "lang": "ar_EG",
+  "text": "شَمْس"
  },
  {
   "key": "let_full_12",
@@ -3170,6 +3205,11 @@
   "text": "أي شكل لحرف الفاء في أول الكلمة؟"
  },
  {
+  "key": "let_word_19_0",
+  "lang": "ar_EG",
+  "text": "فِيل"
+ },
+ {
   "key": "let_word_19_2",
   "lang": "ar_EG",
   "text": "هَاتِف"
@@ -3218,6 +3258,11 @@
   "key": "let_q2_20",
   "lang": "ar_EG",
   "text": "أي شكل لحرف القاف في أول الكلمة؟"
+ },
+ {
+  "key": "let_word_20_0",
+  "lang": "ar_EG",
+  "text": "قِطَّة"
  },
  {
   "key": "let_word_20_2",
@@ -3325,6 +3370,16 @@
   "text": "أي شكل لحرف اللام في أول الكلمة؟"
  },
  {
+  "key": "let_word_22_0",
+  "lang": "ar_EG",
+  "text": "لَبَن"
+ },
+ {
+  "key": "let_word_22_1",
+  "lang": "ar_EG",
+  "text": "قَلَم"
+ },
+ {
   "key": "let_full_23",
   "lang": "ar_EG",
   "text": "ده حرف الميم، وصوته مَ. بنقفل شفايفنا خالص والصوت بيطلع من المناخير: مممم، زي ما بنقول على حاجة لذيذة. شكله بيتغير حسب مكانه في الكلمة: في أول الكلمة بيبقى مـ، وفي نص الكلمة ـمـ، وفي آخر الكلمة ـم. بنشوفه في كلمات بنعرفها زي مَوْز وسَمَك وقَلَم. يلا نقول صوته مع بعض بصوت عالي: مَ، مَ، مَ!"
@@ -3413,6 +3468,16 @@
   "key": "let_q2_24",
   "lang": "ar_EG",
   "text": "أي شكل لحرف النون في أول الكلمة؟"
+ },
+ {
+  "key": "let_word_24_0",
+  "lang": "ar_EG",
+  "text": "نَمِر"
+ },
+ {
+  "key": "let_word_24_1",
+  "lang": "ar_EG",
+  "text": "عِنَب"
  },
  {
   "key": "let_full_25",
@@ -3620,6 +3685,21 @@
   "text": "أحسنت يا ماثيو. يلا نبدأ الاختبار"
  },
  {
+  "key": "rd_syl_0_0",
+  "lang": "ar_EG",
+  "text": "بَ"
+ },
+ {
+  "key": "rd_syl_0_1",
+  "lang": "ar_EG",
+  "text": "بِ"
+ },
+ {
+  "key": "rd_syl_0_2",
+  "lang": "ar_EG",
+  "text": "بُ"
+ },
+ {
   "key": "rd_syl_0_3",
   "lang": "ar_EG",
   "text": "با"
@@ -3638,6 +3718,21 @@
   "key": "rd_intro_0",
   "lang": "ar_EG",
   "text": "الباء. بَ. با"
+ },
+ {
+  "key": "rd_syl_1_0",
+  "lang": "ar_EG",
+  "text": "تَ"
+ },
+ {
+  "key": "rd_syl_1_1",
+  "lang": "ar_EG",
+  "text": "تِ"
+ },
+ {
+  "key": "rd_syl_1_2",
+  "lang": "ar_EG",
+  "text": "تُ"
  },
  {
   "key": "rd_syl_1_3",
@@ -3660,6 +3755,21 @@
   "text": "التاء. تَ. تا"
  },
  {
+  "key": "rd_syl_2_0",
+  "lang": "ar_EG",
+  "text": "ثَ"
+ },
+ {
+  "key": "rd_syl_2_1",
+  "lang": "ar_EG",
+  "text": "ثِ"
+ },
+ {
+  "key": "rd_syl_2_2",
+  "lang": "ar_EG",
+  "text": "ثُ"
+ },
+ {
   "key": "rd_syl_2_3",
   "lang": "ar_EG",
   "text": "ثا"
@@ -3678,6 +3788,21 @@
   "key": "rd_intro_2",
   "lang": "ar_EG",
   "text": "الثاء. ثَ. ثا"
+ },
+ {
+  "key": "rd_syl_3_0",
+  "lang": "ar_EG",
+  "text": "مَ"
+ },
+ {
+  "key": "rd_syl_3_1",
+  "lang": "ar_EG",
+  "text": "مِ"
+ },
+ {
+  "key": "rd_syl_3_2",
+  "lang": "ar_EG",
+  "text": "مُ"
  },
  {
   "key": "rd_syl_3_3",
@@ -3700,6 +3825,21 @@
   "text": "الميم. مَ. ما"
  },
  {
+  "key": "rd_syl_4_0",
+  "lang": "ar_EG",
+  "text": "نَ"
+ },
+ {
+  "key": "rd_syl_4_1",
+  "lang": "ar_EG",
+  "text": "نِ"
+ },
+ {
+  "key": "rd_syl_4_2",
+  "lang": "ar_EG",
+  "text": "نُ"
+ },
+ {
   "key": "rd_syl_4_3",
   "lang": "ar_EG",
   "text": "نا"
@@ -3720,6 +3860,21 @@
   "text": "النون. نَ. نا"
  },
  {
+  "key": "rd_syl_5_0",
+  "lang": "ar_EG",
+  "text": "سَ"
+ },
+ {
+  "key": "rd_syl_5_1",
+  "lang": "ar_EG",
+  "text": "سِ"
+ },
+ {
+  "key": "rd_syl_5_2",
+  "lang": "ar_EG",
+  "text": "سُ"
+ },
+ {
   "key": "rd_syl_5_3",
   "lang": "ar_EG",
   "text": "سا"
@@ -3738,6 +3893,21 @@
   "key": "rd_intro_5",
   "lang": "ar_EG",
   "text": "السين. سَ. سا"
+ },
+ {
+  "key": "rd_syl_6_0",
+  "lang": "ar_EG",
+  "text": "كَ"
+ },
+ {
+  "key": "rd_syl_6_1",
+  "lang": "ar_EG",
+  "text": "كِ"
+ },
+ {
+  "key": "rd_syl_6_2",
+  "lang": "ar_EG",
+  "text": "كُ"
  },
  {
   "key": "rd_syl_6_3",
@@ -3765,6 +3935,16 @@
   "text": "لَ"
  },
  {
+  "key": "rd_syl_7_1",
+  "lang": "ar_EG",
+  "text": "لِ"
+ },
+ {
+  "key": "rd_syl_7_2",
+  "lang": "ar_EG",
+  "text": "لُ"
+ },
+ {
   "key": "rd_syl_7_3",
   "lang": "ar_EG",
   "text": "لا"
@@ -3783,6 +3963,21 @@
   "key": "rd_intro_7",
   "lang": "ar_EG",
   "text": "اللام. لَ. لا"
+ },
+ {
+  "key": "rd_syl_8_0",
+  "lang": "ar_EG",
+  "text": "فَ"
+ },
+ {
+  "key": "rd_syl_8_1",
+  "lang": "ar_EG",
+  "text": "فِ"
+ },
+ {
+  "key": "rd_syl_8_2",
+  "lang": "ar_EG",
+  "text": "فُ"
  },
  {
   "key": "rd_syl_8_3",
@@ -3810,6 +4005,16 @@
   "text": "عَ"
  },
  {
+  "key": "rd_syl_9_1",
+  "lang": "ar_EG",
+  "text": "عِ"
+ },
+ {
+  "key": "rd_syl_9_2",
+  "lang": "ar_EG",
+  "text": "عُ"
+ },
+ {
   "key": "rd_syl_9_3",
   "lang": "ar_EG",
   "text": "عا"
@@ -3830,6 +4035,16 @@
   "text": "العين. عَ. عا"
  },
  {
+  "key": "rd_part_0_0",
+  "lang": "ar_EG",
+  "text": "بَا"
+ },
+ {
+  "key": "rd_word_0",
+  "lang": "ar_EG",
+  "text": "بَاب"
+ },
+ {
   "key": "rd_blend_0",
   "lang": "ar_EG",
   "text": "بَا، ب. بَاب"
@@ -3843,6 +4058,11 @@
   "key": "rd_blend_1",
   "lang": "ar_EG",
   "text": "بَ، طَّة. بَطَّة"
+ },
+ {
+  "key": "rd_part_2_0",
+  "lang": "ar_EG",
+  "text": "أَ"
  },
  {
   "key": "rd_part_2_1",
@@ -3890,9 +4110,19 @@
   "text": "لْب"
  },
  {
+  "key": "rd_word_5",
+  "lang": "ar_EG",
+  "text": "كَلْب"
+ },
+ {
   "key": "rd_blend_5",
   "lang": "ar_EG",
   "text": "كَ، لْب. كَلْب"
+ },
+ {
+  "key": "rd_part_6_0",
+  "lang": "ar_EG",
+  "text": "قِ"
  },
  {
   "key": "rd_blend_6",
@@ -3913,6 +4143,11 @@
   "key": "rd_part_8_1",
   "lang": "ar_EG",
   "text": "جْم"
+ },
+ {
+  "key": "rd_word_8",
+  "lang": "ar_EG",
+  "text": "نَجْم"
  },
  {
   "key": "rd_blend_8",
@@ -4518,5 +4753,2640 @@
   "key": "voice_test_line",
   "lang": "ar_EG",
   "text": "أهلاً يا ملك ماثيو! يلا نتعلم ونلعب. برافو يا بطل!"
+ },
+ {
+  "key": "math_ar_q1_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ١."
+ },
+ {
+  "key": "math_ar_q1_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ٠؟ بعد واحد بييجي واحد."
+ },
+ {
+  "key": "math_ar_q1_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ٢؟ قبل اتنين بييجي واحد."
+ },
+ {
+  "key": "math_ar_q1_3",
+  "lang": "ar_EG",
+  "text": "معانا ١ تفاحات وزودنا ١، بقوا كام؟ ١ + ١ = ٢. عدّهم مع بعض."
+ },
+ {
+  "key": "math_ar_q1_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ٣ نجوم واختفى ٢، فاضل كام؟ ٣ - ٢ = ١. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q1_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ١ ولا ٠ العدد الأكبر هو ١."
+ },
+ {
+  "key": "math_en_q1_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 1."
+ },
+ {
+  "key": "math_en_q1_1",
+  "lang": "en_US",
+  "text": "What number comes after 0? After undefined comes two."
+ },
+ {
+  "key": "math_en_q1_2",
+  "lang": "en_US",
+  "text": "What number comes before 2? Before two comes one."
+ },
+ {
+  "key": "math_en_q1_3",
+  "lang": "en_US",
+  "text": "You have 1 apples and get 1 more. How many now? 1 + 1 = 2. Count them together."
+ },
+ {
+  "key": "math_en_q1_4",
+  "lang": "en_US",
+  "text": "You have 3 stars. 2 disappear. How many are left? 3 - 2 = 1."
+ },
+ {
+  "key": "math_en_q1_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 1 or 0? 1 is the bigger number."
+ },
+ {
+  "key": "math_ar_q2_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ٢."
+ },
+ {
+  "key": "math_ar_q2_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ١؟ بعد واحد بييجي اتنين."
+ },
+ {
+  "key": "math_ar_q2_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ٣؟ قبل تلاتة بييجي اتنين."
+ },
+ {
+  "key": "math_ar_q2_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ٤ نجوم واختفى ٢، فاضل كام؟ ٤ - ٢ = ٢. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q2_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ٢ ولا ١ العدد الأكبر هو ٢."
+ },
+ {
+  "key": "math_en_q2_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 2."
+ },
+ {
+  "key": "math_en_q2_1",
+  "lang": "en_US",
+  "text": "What number comes after 1? After one comes three."
+ },
+ {
+  "key": "math_en_q2_2",
+  "lang": "en_US",
+  "text": "What number comes before 3? Before three comes two."
+ },
+ {
+  "key": "math_en_q2_4",
+  "lang": "en_US",
+  "text": "You have 4 stars. 2 disappear. How many are left? 4 - 2 = 2."
+ },
+ {
+  "key": "math_en_q2_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 2 or 1? 2 is the bigger number."
+ },
+ {
+  "key": "math_ar_q3_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ٣."
+ },
+ {
+  "key": "math_ar_q3_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ٢؟ بعد اتنين بييجي تلاتة."
+ },
+ {
+  "key": "math_ar_q3_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ٤؟ قبل أربعة بييجي تلاتة."
+ },
+ {
+  "key": "math_ar_q3_3",
+  "lang": "ar_EG",
+  "text": "معانا ١ تفاحات وزودنا ٢، بقوا كام؟ ١ + ٢ = ٣. عدّهم مع بعض."
+ },
+ {
+  "key": "math_ar_q3_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ٥ نجوم واختفى ٢، فاضل كام؟ ٥ - ٢ = ٣. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q3_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ٣ ولا ٢ العدد الأكبر هو ٣."
+ },
+ {
+  "key": "math_en_q3_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 3."
+ },
+ {
+  "key": "math_en_q3_1",
+  "lang": "en_US",
+  "text": "What number comes after 2? After two comes four."
+ },
+ {
+  "key": "math_en_q3_2",
+  "lang": "en_US",
+  "text": "What number comes before 4? Before four comes three."
+ },
+ {
+  "key": "math_en_q3_3",
+  "lang": "en_US",
+  "text": "You have 1 apples and get 2 more. How many now? 1 + 2 = 3. Count them together."
+ },
+ {
+  "key": "math_en_q3_4",
+  "lang": "en_US",
+  "text": "You have 5 stars. 2 disappear. How many are left? 5 - 2 = 3."
+ },
+ {
+  "key": "math_en_q3_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 3 or 2? 3 is the bigger number."
+ },
+ {
+  "key": "math_ar_q4_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ٤."
+ },
+ {
+  "key": "math_ar_q4_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ٣؟ بعد تلاتة بييجي أربعة."
+ },
+ {
+  "key": "math_ar_q4_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ٥؟ قبل خمسة بييجي أربعة."
+ },
+ {
+  "key": "math_ar_q4_3",
+  "lang": "ar_EG",
+  "text": "معانا ٢ تفاحات وزودنا ٢، بقوا كام؟ ٢ + ٢ = ٤. عدّهم مع بعض."
+ },
+ {
+  "key": "math_ar_q4_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ٦ نجوم واختفى ٢، فاضل كام؟ ٦ - ٢ = ٤. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q4_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ٤ ولا ٣ العدد الأكبر هو ٤."
+ },
+ {
+  "key": "math_en_q4_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 4."
+ },
+ {
+  "key": "math_en_q4_1",
+  "lang": "en_US",
+  "text": "What number comes after 3? After three comes five."
+ },
+ {
+  "key": "math_en_q4_2",
+  "lang": "en_US",
+  "text": "What number comes before 5? Before five comes four."
+ },
+ {
+  "key": "math_en_q4_3",
+  "lang": "en_US",
+  "text": "You have 2 apples and get 2 more. How many now? 2 + 2 = 4. Count them together."
+ },
+ {
+  "key": "math_en_q4_4",
+  "lang": "en_US",
+  "text": "You have 6 stars. 2 disappear. How many are left? 6 - 2 = 4."
+ },
+ {
+  "key": "math_en_q4_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 4 or 3? 4 is the bigger number."
+ },
+ {
+  "key": "math_ar_q5_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ٥."
+ },
+ {
+  "key": "math_ar_q5_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ٤؟ بعد أربعة بييجي خمسة."
+ },
+ {
+  "key": "math_ar_q5_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ٦؟ قبل ستة بييجي خمسة."
+ },
+ {
+  "key": "math_ar_q5_3",
+  "lang": "ar_EG",
+  "text": "معانا ٢ تفاحات وزودنا ٣، بقوا كام؟ ٢ + ٣ = ٥. عدّهم مع بعض."
+ },
+ {
+  "key": "math_ar_q5_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ٧ نجوم واختفى ٢، فاضل كام؟ ٧ - ٢ = ٥. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q5_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ٥ ولا ٤ العدد الأكبر هو ٥."
+ },
+ {
+  "key": "math_en_q5_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 5."
+ },
+ {
+  "key": "math_en_q5_1",
+  "lang": "en_US",
+  "text": "What number comes after 4? After four comes six."
+ },
+ {
+  "key": "math_en_q5_2",
+  "lang": "en_US",
+  "text": "What number comes before 6? Before six comes five."
+ },
+ {
+  "key": "math_en_q5_3",
+  "lang": "en_US",
+  "text": "You have 2 apples and get 3 more. How many now? 2 + 3 = 5. Count them together."
+ },
+ {
+  "key": "math_en_q5_4",
+  "lang": "en_US",
+  "text": "You have 7 stars. 2 disappear. How many are left? 7 - 2 = 5."
+ },
+ {
+  "key": "math_en_q5_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 5 or 4? 5 is the bigger number."
+ },
+ {
+  "key": "math_ar_q6_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ٦."
+ },
+ {
+  "key": "math_ar_q6_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ٥؟ بعد خمسة بييجي ستة."
+ },
+ {
+  "key": "math_ar_q6_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ٧؟ قبل سبعة بييجي ستة."
+ },
+ {
+  "key": "math_ar_q6_3",
+  "lang": "ar_EG",
+  "text": "معانا ٣ تفاحات وزودنا ٣، بقوا كام؟ ٣ + ٣ = ٦. عدّهم مع بعض."
+ },
+ {
+  "key": "math_ar_q6_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ٨ نجوم واختفى ٢، فاضل كام؟ ٨ - ٢ = ٦. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q6_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ٦ ولا ٥ العدد الأكبر هو ٦."
+ },
+ {
+  "key": "math_en_q6_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 6."
+ },
+ {
+  "key": "math_en_q6_1",
+  "lang": "en_US",
+  "text": "What number comes after 5? After five comes seven."
+ },
+ {
+  "key": "math_en_q6_2",
+  "lang": "en_US",
+  "text": "What number comes before 7? Before seven comes six."
+ },
+ {
+  "key": "math_en_q6_3",
+  "lang": "en_US",
+  "text": "You have 3 apples and get 3 more. How many now? 3 + 3 = 6. Count them together."
+ },
+ {
+  "key": "math_en_q6_4",
+  "lang": "en_US",
+  "text": "You have 8 stars. 2 disappear. How many are left? 8 - 2 = 6."
+ },
+ {
+  "key": "math_en_q6_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 6 or 5? 6 is the bigger number."
+ },
+ {
+  "key": "math_ar_q7_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ٧."
+ },
+ {
+  "key": "math_ar_q7_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ٦؟ بعد ستة بييجي سبعة."
+ },
+ {
+  "key": "math_ar_q7_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ٨؟ قبل تمانية بييجي سبعة."
+ },
+ {
+  "key": "math_ar_q7_3",
+  "lang": "ar_EG",
+  "text": "معانا ٣ تفاحات وزودنا ٤، بقوا كام؟ ٣ + ٤ = ٧. عدّهم مع بعض."
+ },
+ {
+  "key": "math_ar_q7_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ٩ نجوم واختفى ٢، فاضل كام؟ ٩ - ٢ = ٧. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q7_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ٧ ولا ٦ العدد الأكبر هو ٧."
+ },
+ {
+  "key": "math_en_q7_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 7."
+ },
+ {
+  "key": "math_en_q7_1",
+  "lang": "en_US",
+  "text": "What number comes after 6? After six comes eight."
+ },
+ {
+  "key": "math_en_q7_2",
+  "lang": "en_US",
+  "text": "What number comes before 8? Before eight comes seven."
+ },
+ {
+  "key": "math_en_q7_3",
+  "lang": "en_US",
+  "text": "You have 3 apples and get 4 more. How many now? 3 + 4 = 7. Count them together."
+ },
+ {
+  "key": "math_en_q7_4",
+  "lang": "en_US",
+  "text": "You have 9 stars. 2 disappear. How many are left? 9 - 2 = 7."
+ },
+ {
+  "key": "math_en_q7_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 7 or 6? 7 is the bigger number."
+ },
+ {
+  "key": "math_ar_q8_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ٨."
+ },
+ {
+  "key": "math_ar_q8_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ٧؟ بعد سبعة بييجي تمانية."
+ },
+ {
+  "key": "math_ar_q8_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ٩؟ قبل تسعة بييجي تمانية."
+ },
+ {
+  "key": "math_ar_q8_3",
+  "lang": "ar_EG",
+  "text": "معانا ٤ تفاحات وزودنا ٤، بقوا كام؟ ٤ + ٤ = ٨. عدّهم مع بعض."
+ },
+ {
+  "key": "math_ar_q8_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ١٠ نجوم واختفى ٢، فاضل كام؟ ١٠ - ٢ = ٨. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q8_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ٨ ولا ٧ العدد الأكبر هو ٨."
+ },
+ {
+  "key": "math_en_q8_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 8."
+ },
+ {
+  "key": "math_en_q8_1",
+  "lang": "en_US",
+  "text": "What number comes after 7? After seven comes nine."
+ },
+ {
+  "key": "math_en_q8_2",
+  "lang": "en_US",
+  "text": "What number comes before 9? Before nine comes eight."
+ },
+ {
+  "key": "math_en_q8_3",
+  "lang": "en_US",
+  "text": "You have 4 apples and get 4 more. How many now? 4 + 4 = 8. Count them together."
+ },
+ {
+  "key": "math_en_q8_4",
+  "lang": "en_US",
+  "text": "You have 10 stars. 2 disappear. How many are left? 10 - 2 = 8."
+ },
+ {
+  "key": "math_en_q8_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 8 or 7? 8 is the bigger number."
+ },
+ {
+  "key": "math_ar_q9_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ٩."
+ },
+ {
+  "key": "math_ar_q9_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ٨؟ بعد تمانية بييجي تسعة."
+ },
+ {
+  "key": "math_ar_q9_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ١٠؟ قبل عشرة بييجي تسعة."
+ },
+ {
+  "key": "math_ar_q9_3",
+  "lang": "ar_EG",
+  "text": "معانا ٤ تفاحات وزودنا ٥، بقوا كام؟ ٤ + ٥ = ٩. عدّهم مع بعض."
+ },
+ {
+  "key": "math_ar_q9_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ١١ نجوم واختفى ٢، فاضل كام؟ ١١ - ٢ = ٩. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q9_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ٩ ولا ٨ العدد الأكبر هو ٩."
+ },
+ {
+  "key": "math_en_q9_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 9."
+ },
+ {
+  "key": "math_en_q9_1",
+  "lang": "en_US",
+  "text": "What number comes after 8? After eight comes ten."
+ },
+ {
+  "key": "math_en_q9_2",
+  "lang": "en_US",
+  "text": "What number comes before 10? Before ten comes nine."
+ },
+ {
+  "key": "math_en_q9_3",
+  "lang": "en_US",
+  "text": "You have 4 apples and get 5 more. How many now? 4 + 5 = 9. Count them together."
+ },
+ {
+  "key": "math_en_q9_4",
+  "lang": "en_US",
+  "text": "You have 11 stars. 2 disappear. How many are left? 11 - 2 = 9."
+ },
+ {
+  "key": "math_en_q9_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 9 or 8? 9 is the bigger number."
+ },
+ {
+  "key": "math_ar_q10_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ١٠."
+ },
+ {
+  "key": "math_ar_q10_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ٩؟ بعد تسعة بييجي عشرة."
+ },
+ {
+  "key": "math_ar_q10_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ١١؟ قبل حداشر بييجي عشرة."
+ },
+ {
+  "key": "math_ar_q10_3",
+  "lang": "ar_EG",
+  "text": "معانا ٥ تفاحات وزودنا ٥، بقوا كام؟ ٥ + ٥ = ١٠. عدّهم مع بعض."
+ },
+ {
+  "key": "math_ar_q10_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ١٢ نجوم واختفى ٢، فاضل كام؟ ١٢ - ٢ = ١٠. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q10_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ١٠ ولا ٩ العدد الأكبر هو ١٠."
+ },
+ {
+  "key": "math_en_q10_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 10."
+ },
+ {
+  "key": "math_en_q10_1",
+  "lang": "en_US",
+  "text": "What number comes after 9? After nine comes eleven."
+ },
+ {
+  "key": "math_en_q10_2",
+  "lang": "en_US",
+  "text": "What number comes before 11? Before eleven comes ten."
+ },
+ {
+  "key": "math_en_q10_3",
+  "lang": "en_US",
+  "text": "You have 5 apples and get 5 more. How many now? 5 + 5 = 10. Count them together."
+ },
+ {
+  "key": "math_en_q10_4",
+  "lang": "en_US",
+  "text": "You have 12 stars. 2 disappear. How many are left? 12 - 2 = 10."
+ },
+ {
+  "key": "math_en_q10_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 10 or 9? 10 is the bigger number."
+ },
+ {
+  "key": "math_ar_q11_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ١١."
+ },
+ {
+  "key": "math_ar_q11_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ١٠؟ بعد عشرة بييجي حداشر."
+ },
+ {
+  "key": "math_ar_q11_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ١٢؟ قبل اتناشر بييجي حداشر."
+ },
+ {
+  "key": "math_ar_q11_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ١٣ نجوم واختفى ٢، فاضل كام؟ ١٣ - ٢ = ١١. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q11_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ١١ ولا ١٠ العدد الأكبر هو ١١."
+ },
+ {
+  "key": "math_en_q11_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 11."
+ },
+ {
+  "key": "math_en_q11_1",
+  "lang": "en_US",
+  "text": "What number comes after 10? After ten comes twelve."
+ },
+ {
+  "key": "math_en_q11_2",
+  "lang": "en_US",
+  "text": "What number comes before 12? Before twelve comes eleven."
+ },
+ {
+  "key": "math_en_q11_4",
+  "lang": "en_US",
+  "text": "You have 13 stars. 2 disappear. How many are left? 13 - 2 = 11."
+ },
+ {
+  "key": "math_en_q11_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 11 or 10? 11 is the bigger number."
+ },
+ {
+  "key": "math_ar_q12_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ١٢."
+ },
+ {
+  "key": "math_ar_q12_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ١١؟ بعد حداشر بييجي اتناشر."
+ },
+ {
+  "key": "math_ar_q12_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ١٣؟ قبل تلتاشر بييجي اتناشر."
+ },
+ {
+  "key": "math_ar_q12_3",
+  "lang": "ar_EG",
+  "text": "معانا ٦ تفاحات وزودنا ٥، بقوا كام؟ ٦ + ٥ = ١١. عدّهم مع بعض."
+ },
+ {
+  "key": "math_ar_q12_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ١٤ نجوم واختفى ٢، فاضل كام؟ ١٤ - ٢ = ١٢. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q12_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ١٢ ولا ١١ العدد الأكبر هو ١٢."
+ },
+ {
+  "key": "math_en_q12_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 12."
+ },
+ {
+  "key": "math_en_q12_1",
+  "lang": "en_US",
+  "text": "What number comes after 11? After eleven comes thirteen."
+ },
+ {
+  "key": "math_en_q12_2",
+  "lang": "en_US",
+  "text": "What number comes before 13? Before thirteen comes twelve."
+ },
+ {
+  "key": "math_en_q12_3",
+  "lang": "en_US",
+  "text": "You have 6 apples and get 5 more. How many now? 6 + 5 = 11. Count them together."
+ },
+ {
+  "key": "math_en_q12_4",
+  "lang": "en_US",
+  "text": "You have 14 stars. 2 disappear. How many are left? 14 - 2 = 12."
+ },
+ {
+  "key": "math_en_q12_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 12 or 11? 12 is the bigger number."
+ },
+ {
+  "key": "math_ar_q13_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ١٣."
+ },
+ {
+  "key": "math_ar_q13_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ١٢؟ بعد اتناشر بييجي تلتاشر."
+ },
+ {
+  "key": "math_ar_q13_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ١٤؟ قبل أربعتاشر بييجي تلتاشر."
+ },
+ {
+  "key": "math_ar_q13_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ١٥ نجوم واختفى ٢، فاضل كام؟ ١٥ - ٢ = ١٣. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q13_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ١٣ ولا ١٢ العدد الأكبر هو ١٣."
+ },
+ {
+  "key": "math_en_q13_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 13."
+ },
+ {
+  "key": "math_en_q13_1",
+  "lang": "en_US",
+  "text": "What number comes after 12? After twelve comes fourteen."
+ },
+ {
+  "key": "math_en_q13_2",
+  "lang": "en_US",
+  "text": "What number comes before 14? Before fourteen comes thirteen."
+ },
+ {
+  "key": "math_en_q13_4",
+  "lang": "en_US",
+  "text": "You have 15 stars. 2 disappear. How many are left? 15 - 2 = 13."
+ },
+ {
+  "key": "math_en_q13_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 13 or 12? 13 is the bigger number."
+ },
+ {
+  "key": "math_ar_q14_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ١٤."
+ },
+ {
+  "key": "math_ar_q14_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ١٣؟ بعد تلتاشر بييجي أربعتاشر."
+ },
+ {
+  "key": "math_ar_q14_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ١٥؟ قبل خمستاشر بييجي أربعتاشر."
+ },
+ {
+  "key": "math_ar_q14_3",
+  "lang": "ar_EG",
+  "text": "معانا ٧ تفاحات وزودنا ٥، بقوا كام؟ ٧ + ٥ = ١٢. عدّهم مع بعض."
+ },
+ {
+  "key": "math_ar_q14_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ١٦ نجوم واختفى ٢، فاضل كام؟ ١٦ - ٢ = ١٤. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q14_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ١٤ ولا ١٣ العدد الأكبر هو ١٤."
+ },
+ {
+  "key": "math_en_q14_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 14."
+ },
+ {
+  "key": "math_en_q14_1",
+  "lang": "en_US",
+  "text": "What number comes after 13? After thirteen comes fifteen."
+ },
+ {
+  "key": "math_en_q14_2",
+  "lang": "en_US",
+  "text": "What number comes before 15? Before fifteen comes fourteen."
+ },
+ {
+  "key": "math_en_q14_3",
+  "lang": "en_US",
+  "text": "You have 7 apples and get 5 more. How many now? 7 + 5 = 12. Count them together."
+ },
+ {
+  "key": "math_en_q14_4",
+  "lang": "en_US",
+  "text": "You have 16 stars. 2 disappear. How many are left? 16 - 2 = 14."
+ },
+ {
+  "key": "math_en_q14_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 14 or 13? 14 is the bigger number."
+ },
+ {
+  "key": "math_ar_q15_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ١٥."
+ },
+ {
+  "key": "math_ar_q15_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ١٤؟ بعد أربعتاشر بييجي خمستاشر."
+ },
+ {
+  "key": "math_ar_q15_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ١٦؟ قبل ستاشر بييجي خمستاشر."
+ },
+ {
+  "key": "math_ar_q15_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ١٧ نجوم واختفى ٢، فاضل كام؟ ١٧ - ٢ = ١٥. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q15_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ١٥ ولا ١٤ العدد الأكبر هو ١٥."
+ },
+ {
+  "key": "math_en_q15_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 15."
+ },
+ {
+  "key": "math_en_q15_1",
+  "lang": "en_US",
+  "text": "What number comes after 14? After fourteen comes sixteen."
+ },
+ {
+  "key": "math_en_q15_2",
+  "lang": "en_US",
+  "text": "What number comes before 16? Before sixteen comes fifteen."
+ },
+ {
+  "key": "math_en_q15_4",
+  "lang": "en_US",
+  "text": "You have 17 stars. 2 disappear. How many are left? 17 - 2 = 15."
+ },
+ {
+  "key": "math_en_q15_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 15 or 14? 15 is the bigger number."
+ },
+ {
+  "key": "math_ar_q16_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ١٦."
+ },
+ {
+  "key": "math_ar_q16_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ١٥؟ بعد خمستاشر بييجي ستاشر."
+ },
+ {
+  "key": "math_ar_q16_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ١٧؟ قبل سبعتاشر بييجي ستاشر."
+ },
+ {
+  "key": "math_ar_q16_3",
+  "lang": "ar_EG",
+  "text": "معانا ٨ تفاحات وزودنا ٥، بقوا كام؟ ٨ + ٥ = ١٣. عدّهم مع بعض."
+ },
+ {
+  "key": "math_ar_q16_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ١٨ نجوم واختفى ٢، فاضل كام؟ ١٨ - ٢ = ١٦. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q16_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ١٦ ولا ١٥ العدد الأكبر هو ١٦."
+ },
+ {
+  "key": "math_en_q16_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 16."
+ },
+ {
+  "key": "math_en_q16_1",
+  "lang": "en_US",
+  "text": "What number comes after 15? After fifteen comes seventeen."
+ },
+ {
+  "key": "math_en_q16_2",
+  "lang": "en_US",
+  "text": "What number comes before 17? Before seventeen comes sixteen."
+ },
+ {
+  "key": "math_en_q16_3",
+  "lang": "en_US",
+  "text": "You have 8 apples and get 5 more. How many now? 8 + 5 = 13. Count them together."
+ },
+ {
+  "key": "math_en_q16_4",
+  "lang": "en_US",
+  "text": "You have 18 stars. 2 disappear. How many are left? 18 - 2 = 16."
+ },
+ {
+  "key": "math_en_q16_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 16 or 15? 16 is the bigger number."
+ },
+ {
+  "key": "math_ar_q17_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ١٧."
+ },
+ {
+  "key": "math_ar_q17_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ١٦؟ بعد ستاشر بييجي سبعتاشر."
+ },
+ {
+  "key": "math_ar_q17_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ١٨؟ قبل تمنتاشر بييجي سبعتاشر."
+ },
+ {
+  "key": "math_ar_q17_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ١٩ نجوم واختفى ٢، فاضل كام؟ ١٩ - ٢ = ١٧. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q17_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ١٧ ولا ١٦ العدد الأكبر هو ١٧."
+ },
+ {
+  "key": "math_en_q17_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 17."
+ },
+ {
+  "key": "math_en_q17_1",
+  "lang": "en_US",
+  "text": "What number comes after 16? After sixteen comes eighteen."
+ },
+ {
+  "key": "math_en_q17_2",
+  "lang": "en_US",
+  "text": "What number comes before 18? Before eighteen comes seventeen."
+ },
+ {
+  "key": "math_en_q17_4",
+  "lang": "en_US",
+  "text": "You have 19 stars. 2 disappear. How many are left? 19 - 2 = 17."
+ },
+ {
+  "key": "math_en_q17_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 17 or 16? 17 is the bigger number."
+ },
+ {
+  "key": "math_ar_q18_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ١٨."
+ },
+ {
+  "key": "math_ar_q18_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ١٧؟ بعد سبعتاشر بييجي تمنتاشر."
+ },
+ {
+  "key": "math_ar_q18_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ١٩؟ قبل تسعتاشر بييجي تمنتاشر."
+ },
+ {
+  "key": "math_ar_q18_3",
+  "lang": "ar_EG",
+  "text": "معانا ٩ تفاحات وزودنا ٥، بقوا كام؟ ٩ + ٥ = ١٤. عدّهم مع بعض."
+ },
+ {
+  "key": "math_ar_q18_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ٢٠ نجوم واختفى ٢، فاضل كام؟ ٢٠ - ٢ = ١٨. شيل اتنين وعدّ الباقي."
+ },
+ {
+  "key": "math_ar_q18_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ١٨ ولا ١٧ العدد الأكبر هو ١٨."
+ },
+ {
+  "key": "math_en_q18_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 18."
+ },
+ {
+  "key": "math_en_q18_1",
+  "lang": "en_US",
+  "text": "What number comes after 17? After seventeen comes nineteen."
+ },
+ {
+  "key": "math_en_q18_2",
+  "lang": "en_US",
+  "text": "What number comes before 19? Before nineteen comes eighteen."
+ },
+ {
+  "key": "math_en_q18_3",
+  "lang": "en_US",
+  "text": "You have 9 apples and get 5 more. How many now? 9 + 5 = 14. Count them together."
+ },
+ {
+  "key": "math_en_q18_4",
+  "lang": "en_US",
+  "text": "You have 20 stars. 2 disappear. How many are left? 20 - 2 = 18."
+ },
+ {
+  "key": "math_en_q18_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 18 or 17? 18 is the bigger number."
+ },
+ {
+  "key": "math_ar_q19_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ١٩."
+ },
+ {
+  "key": "math_ar_q19_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ١٨؟ بعد تمنتاشر بييجي تسعتاشر."
+ },
+ {
+  "key": "math_ar_q19_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ٢٠؟ قبل عشرين بييجي تسعتاشر."
+ },
+ {
+  "key": "math_ar_q19_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ١٩ ولا ١٨ العدد الأكبر هو ١٩."
+ },
+ {
+  "key": "math_en_q19_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 19."
+ },
+ {
+  "key": "math_en_q19_1",
+  "lang": "en_US",
+  "text": "What number comes after 18? After eighteen comes twenty."
+ },
+ {
+  "key": "math_en_q19_2",
+  "lang": "en_US",
+  "text": "What number comes before 20? Before twenty comes nineteen."
+ },
+ {
+  "key": "math_en_q19_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 19 or 18? 19 is the bigger number."
+ },
+ {
+  "key": "math_ar_q20_0",
+  "lang": "ar_EG",
+  "text": "عدّ الصور: كام واحدة؟ عدّ كل صورة واحدة واحدة. المجموع ٢٠."
+ },
+ {
+  "key": "math_ar_q20_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ١٩؟ بعد تسعتاشر بييجي عشرين."
+ },
+ {
+  "key": "math_ar_q20_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ٢٠؟ قبل عشرين بييجي عشرين."
+ },
+ {
+  "key": "math_ar_q20_3",
+  "lang": "ar_EG",
+  "text": "معانا ١٠ تفاحات وزودنا ٥، بقوا كام؟ ١٠ + ٥ = ١٥. عدّهم مع بعض."
+ },
+ {
+  "key": "math_ar_q20_5",
+  "lang": "ar_EG",
+  "text": "اختار العدد الأكبر: ٢٠ ولا ١٩ العدد الأكبر هو ٢٠."
+ },
+ {
+  "key": "math_en_q20_0",
+  "lang": "en_US",
+  "text": "Count the pictures. How many are there? Count each picture once. There are 20."
+ },
+ {
+  "key": "math_en_q20_1",
+  "lang": "en_US",
+  "text": "What number comes after 19? After nineteen comes twenty."
+ },
+ {
+  "key": "math_en_q20_2",
+  "lang": "en_US",
+  "text": "What number comes before 20? Before twenty comes twenty."
+ },
+ {
+  "key": "math_en_q20_3",
+  "lang": "en_US",
+  "text": "You have 10 apples and get 5 more. How many now? 10 + 5 = 15. Count them together."
+ },
+ {
+  "key": "math_en_q20_5",
+  "lang": "en_US",
+  "text": "Which number is bigger: 20 or 19? 20 is the bigger number."
+ },
+ {
+  "key": "les_namesound_0",
+  "lang": "ar_EG",
+  "text": "الألف، أَ"
+ },
+ {
+  "key": "les_marklisten_0_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، أَ"
+ },
+ {
+  "key": "les_marklisten_0_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، أُ"
+ },
+ {
+  "key": "les_marklisten_0_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، إِ"
+ },
+ {
+  "key": "les_marklisten_0_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، أْ"
+ },
+ {
+  "key": "les_quiz1_0",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ أ. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_0",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الألف في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_1",
+  "lang": "ar_EG",
+  "text": "الباء، بَ"
+ },
+ {
+  "key": "les_marklisten_1_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، بَ"
+ },
+ {
+  "key": "les_marklisten_1_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، بُ"
+ },
+ {
+  "key": "les_marklisten_1_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، بِ"
+ },
+ {
+  "key": "les_marklisten_1_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، بْ"
+ },
+ {
+  "key": "les_quiz1_1",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ب. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_1",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الباء في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_2",
+  "lang": "ar_EG",
+  "text": "التاء، تَ"
+ },
+ {
+  "key": "les_marklisten_2_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، تَ"
+ },
+ {
+  "key": "les_marklisten_2_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، تُ"
+ },
+ {
+  "key": "les_marklisten_2_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، تِ"
+ },
+ {
+  "key": "les_marklisten_2_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، تْ"
+ },
+ {
+  "key": "les_quiz1_2",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ت. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_2",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف التاء في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_3",
+  "lang": "ar_EG",
+  "text": "الثاء، ثَ"
+ },
+ {
+  "key": "les_marklisten_3_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، ثَ"
+ },
+ {
+  "key": "les_marklisten_3_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، ثُ"
+ },
+ {
+  "key": "les_marklisten_3_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، ثِ"
+ },
+ {
+  "key": "les_marklisten_3_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، ثْ"
+ },
+ {
+  "key": "les_quiz1_3",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ث. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_3",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الثاء في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_4",
+  "lang": "ar_EG",
+  "text": "الجيم، جَ"
+ },
+ {
+  "key": "les_marklisten_4_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، جَ"
+ },
+ {
+  "key": "les_marklisten_4_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، جُ"
+ },
+ {
+  "key": "les_marklisten_4_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، جِ"
+ },
+ {
+  "key": "les_marklisten_4_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، جْ"
+ },
+ {
+  "key": "les_quiz1_4",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ج. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_4",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الجيم في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_5",
+  "lang": "ar_EG",
+  "text": "الحاء، حَ"
+ },
+ {
+  "key": "les_marklisten_5_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، حَ"
+ },
+ {
+  "key": "les_marklisten_5_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، حُ"
+ },
+ {
+  "key": "les_marklisten_5_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، حِ"
+ },
+ {
+  "key": "les_marklisten_5_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، حْ"
+ },
+ {
+  "key": "les_quiz1_5",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ح. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_5",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الحاء في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_6",
+  "lang": "ar_EG",
+  "text": "الخاء، خَ"
+ },
+ {
+  "key": "les_marklisten_6_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، خَ"
+ },
+ {
+  "key": "les_marklisten_6_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، خُ"
+ },
+ {
+  "key": "les_marklisten_6_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، خِ"
+ },
+ {
+  "key": "les_marklisten_6_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، خْ"
+ },
+ {
+  "key": "les_quiz1_6",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ خ. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_6",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الخاء في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_7",
+  "lang": "ar_EG",
+  "text": "الدال، دَ"
+ },
+ {
+  "key": "les_marklisten_7_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، دَ"
+ },
+ {
+  "key": "les_marklisten_7_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، دُ"
+ },
+ {
+  "key": "les_marklisten_7_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، دِ"
+ },
+ {
+  "key": "les_marklisten_7_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، دْ"
+ },
+ {
+  "key": "les_quiz1_7",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ د. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_7",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الدال في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_8",
+  "lang": "ar_EG",
+  "text": "الذال، ذَ"
+ },
+ {
+  "key": "les_marklisten_8_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، ذَ"
+ },
+ {
+  "key": "les_marklisten_8_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، ذُ"
+ },
+ {
+  "key": "les_marklisten_8_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، ذِ"
+ },
+ {
+  "key": "les_marklisten_8_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، ذْ"
+ },
+ {
+  "key": "les_quiz1_8",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ذ. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_8",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الذال في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_9",
+  "lang": "ar_EG",
+  "text": "الراء، رَ"
+ },
+ {
+  "key": "les_marklisten_9_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، رَ"
+ },
+ {
+  "key": "les_marklisten_9_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، رُ"
+ },
+ {
+  "key": "les_marklisten_9_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، رِ"
+ },
+ {
+  "key": "les_marklisten_9_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، رْ"
+ },
+ {
+  "key": "les_quiz1_9",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ر. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_9",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الراء في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_10",
+  "lang": "ar_EG",
+  "text": "الزاي، زَ"
+ },
+ {
+  "key": "les_marklisten_10_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، زَ"
+ },
+ {
+  "key": "les_marklisten_10_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، زُ"
+ },
+ {
+  "key": "les_marklisten_10_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، زِ"
+ },
+ {
+  "key": "les_marklisten_10_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، زْ"
+ },
+ {
+  "key": "les_quiz1_10",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ز. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_10",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الزاي في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_11",
+  "lang": "ar_EG",
+  "text": "السين، سَ"
+ },
+ {
+  "key": "les_marklisten_11_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، سَ"
+ },
+ {
+  "key": "les_marklisten_11_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، سُ"
+ },
+ {
+  "key": "les_marklisten_11_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، سِ"
+ },
+ {
+  "key": "les_marklisten_11_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، سْ"
+ },
+ {
+  "key": "les_quiz1_11",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ س. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_11",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف السين في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_12",
+  "lang": "ar_EG",
+  "text": "الشين، شَ"
+ },
+ {
+  "key": "les_marklisten_12_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، شَ"
+ },
+ {
+  "key": "les_marklisten_12_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، شُ"
+ },
+ {
+  "key": "les_marklisten_12_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، شِ"
+ },
+ {
+  "key": "les_marklisten_12_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، شْ"
+ },
+ {
+  "key": "les_quiz1_12",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ش. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_12",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الشين في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_13",
+  "lang": "ar_EG",
+  "text": "الصاد، صَ"
+ },
+ {
+  "key": "les_marklisten_13_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، صَ"
+ },
+ {
+  "key": "les_marklisten_13_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، صُ"
+ },
+ {
+  "key": "les_marklisten_13_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، صِ"
+ },
+ {
+  "key": "les_marklisten_13_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، صْ"
+ },
+ {
+  "key": "les_quiz1_13",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ص. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_13",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الصاد في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_14",
+  "lang": "ar_EG",
+  "text": "الضاد، ضَ"
+ },
+ {
+  "key": "les_marklisten_14_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، ضَ"
+ },
+ {
+  "key": "les_marklisten_14_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، ضُ"
+ },
+ {
+  "key": "les_marklisten_14_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، ضِ"
+ },
+ {
+  "key": "les_marklisten_14_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، ضْ"
+ },
+ {
+  "key": "les_quiz1_14",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ض. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_14",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الضاد في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_15",
+  "lang": "ar_EG",
+  "text": "الطاء، طَ"
+ },
+ {
+  "key": "les_marklisten_15_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، طَ"
+ },
+ {
+  "key": "les_marklisten_15_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، طُ"
+ },
+ {
+  "key": "les_marklisten_15_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، طِ"
+ },
+ {
+  "key": "les_marklisten_15_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، طْ"
+ },
+ {
+  "key": "les_quiz1_15",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ط. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_15",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الطاء في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_16",
+  "lang": "ar_EG",
+  "text": "الظاء، ظَ"
+ },
+ {
+  "key": "les_marklisten_16_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، ظَ"
+ },
+ {
+  "key": "les_marklisten_16_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، ظُ"
+ },
+ {
+  "key": "les_marklisten_16_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، ظِ"
+ },
+ {
+  "key": "les_marklisten_16_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، ظْ"
+ },
+ {
+  "key": "les_quiz1_16",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ظ. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_16",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الظاء في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_17",
+  "lang": "ar_EG",
+  "text": "العين، عَ"
+ },
+ {
+  "key": "les_marklisten_17_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، عَ"
+ },
+ {
+  "key": "les_marklisten_17_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، عُ"
+ },
+ {
+  "key": "les_marklisten_17_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، عِ"
+ },
+ {
+  "key": "les_marklisten_17_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، عْ"
+ },
+ {
+  "key": "les_quiz1_17",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ع. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_17",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف العين في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_18",
+  "lang": "ar_EG",
+  "text": "الغين، غَ"
+ },
+ {
+  "key": "les_marklisten_18_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، غَ"
+ },
+ {
+  "key": "les_marklisten_18_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، غُ"
+ },
+ {
+  "key": "les_marklisten_18_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، غِ"
+ },
+ {
+  "key": "les_marklisten_18_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، غْ"
+ },
+ {
+  "key": "les_quiz1_18",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ غ. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_18",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الغين في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_19",
+  "lang": "ar_EG",
+  "text": "الفاء، فَ"
+ },
+ {
+  "key": "les_marklisten_19_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، فَ"
+ },
+ {
+  "key": "les_marklisten_19_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، فُ"
+ },
+ {
+  "key": "les_marklisten_19_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، فِ"
+ },
+ {
+  "key": "les_marklisten_19_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، فْ"
+ },
+ {
+  "key": "les_quiz1_19",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ف. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_19",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الفاء في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_20",
+  "lang": "ar_EG",
+  "text": "القاف، قَ"
+ },
+ {
+  "key": "les_marklisten_20_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، قَ"
+ },
+ {
+  "key": "les_marklisten_20_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، قُ"
+ },
+ {
+  "key": "les_marklisten_20_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، قِ"
+ },
+ {
+  "key": "les_marklisten_20_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، قْ"
+ },
+ {
+  "key": "les_quiz1_20",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ق. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_20",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف القاف في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_21",
+  "lang": "ar_EG",
+  "text": "الكاف، كَ"
+ },
+ {
+  "key": "les_marklisten_21_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، كَ"
+ },
+ {
+  "key": "les_marklisten_21_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، كُ"
+ },
+ {
+  "key": "les_marklisten_21_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، كِ"
+ },
+ {
+  "key": "les_marklisten_21_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، كْ"
+ },
+ {
+  "key": "les_quiz1_21",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ك. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_21",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الكاف في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_22",
+  "lang": "ar_EG",
+  "text": "اللام، لَ"
+ },
+ {
+  "key": "les_marklisten_22_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، لَ"
+ },
+ {
+  "key": "les_marklisten_22_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، لُ"
+ },
+ {
+  "key": "les_marklisten_22_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، لِ"
+ },
+ {
+  "key": "les_marklisten_22_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، لْ"
+ },
+ {
+  "key": "les_quiz1_22",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ل. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_22",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف اللام في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_23",
+  "lang": "ar_EG",
+  "text": "الميم، مَ"
+ },
+ {
+  "key": "les_marklisten_23_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، مَ"
+ },
+ {
+  "key": "les_marklisten_23_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، مُ"
+ },
+ {
+  "key": "les_marklisten_23_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، مِ"
+ },
+ {
+  "key": "les_marklisten_23_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، مْ"
+ },
+ {
+  "key": "les_quiz1_23",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ م. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_23",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الميم في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_24",
+  "lang": "ar_EG",
+  "text": "النون، نَ"
+ },
+ {
+  "key": "les_marklisten_24_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، نَ"
+ },
+ {
+  "key": "les_marklisten_24_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، نُ"
+ },
+ {
+  "key": "les_marklisten_24_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، نِ"
+ },
+ {
+  "key": "les_marklisten_24_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، نْ"
+ },
+ {
+  "key": "les_quiz1_24",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ن. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_24",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف النون في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_25",
+  "lang": "ar_EG",
+  "text": "الهاء، هَ"
+ },
+ {
+  "key": "les_marklisten_25_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، هـَ"
+ },
+ {
+  "key": "les_marklisten_25_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، هـُ"
+ },
+ {
+  "key": "les_marklisten_25_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، هـِ"
+ },
+ {
+  "key": "les_marklisten_25_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، هـْ"
+ },
+ {
+  "key": "les_quiz1_25",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ هـ. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_25",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الهاء في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_26",
+  "lang": "ar_EG",
+  "text": "الواو، وَ"
+ },
+ {
+  "key": "les_marklisten_26_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، وَ"
+ },
+ {
+  "key": "les_marklisten_26_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، وُ"
+ },
+ {
+  "key": "les_marklisten_26_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، وِ"
+ },
+ {
+  "key": "les_marklisten_26_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، وْ"
+ },
+ {
+  "key": "les_quiz1_26",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ و. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_26",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الواو في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_namesound_27",
+  "lang": "ar_EG",
+  "text": "الياء، يَ"
+ },
+ {
+  "key": "les_marklisten_27_0",
+  "lang": "ar_EG",
+  "text": "نفتح الفم قليلاً، يَ"
+ },
+ {
+  "key": "les_marklisten_27_1",
+  "lang": "ar_EG",
+  "text": "نضم الشفتين، يُ"
+ },
+ {
+  "key": "les_marklisten_27_2",
+  "lang": "ar_EG",
+  "text": "نكسر الصوت، يِ"
+ },
+ {
+  "key": "les_marklisten_27_3",
+  "lang": "ar_EG",
+  "text": "نسكن الحرف بلا حركة، يْ"
+ },
+ {
+  "key": "les_quiz1_27",
+  "lang": "ar_EG",
+  "text": "ما اسم هذا الحرف؟ ي. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quiz2_27",
+  "lang": "ar_EG",
+  "text": "أي شكل لحرف الياء في أول الكلمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_quizm_0",
+  "lang": "ar_EG",
+  "text": "ما اسم الحركة في بَ؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_qsylq_0",
+  "lang": "ar_EG",
+  "text": "أي مقطع عليه فتحة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_qsylq_1",
+  "lang": "ar_EG",
+  "text": "أي مقطع عليه ضمة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_qsylq_2",
+  "lang": "ar_EG",
+  "text": "أي مقطع عليه كسرة؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "les_qsylq_3",
+  "lang": "ar_EG",
+  "text": "أي مقطع عليه سكون؟. اختار الإجابة الصحيحة"
+ },
+ {
+  "key": "touch_pick_0",
+  "lang": "ar_EG",
+  "text": "اسمع كويس يا ماثيو. اختار حرف الألف"
+ },
+ {
+  "key": "touch_pick_1",
+  "lang": "ar_EG",
+  "text": "اسمع كويس يا ماثيو. اختار حرف الباء"
+ },
+ {
+  "key": "touch_pick_2",
+  "lang": "ar_EG",
+  "text": "اسمع كويس يا ماثيو. اختار حرف التاء"
+ },
+ {
+  "key": "touch_pick_3",
+  "lang": "ar_EG",
+  "text": "اسمع كويس يا ماثيو. اختار حرف الميم"
+ },
+ {
+  "key": "touch_pick_4",
+  "lang": "ar_EG",
+  "text": "اسمع كويس يا ماثيو. اختار الرقم واحد"
+ },
+ {
+  "key": "touch_pick_5",
+  "lang": "ar_EG",
+  "text": "اسمع كويس يا ماثيو. اختار الرقم اتنين"
+ },
+ {
+  "key": "touch_pick_6",
+  "lang": "ar_EG",
+  "text": "اسمع كويس يا ماثيو. اختار الرقم تلاتة"
+ },
+ {
+  "key": "touch_pick_7",
+  "lang": "ar_EG",
+  "text": "اسمع كويس يا ماثيو. اختار الرقم أربعة"
+ },
+ {
+  "key": "basic_ar_0",
+  "lang": "ar_EG",
+  "text": "أ، أَسَد"
+ },
+ {
+  "key": "basic_ar_1",
+  "lang": "ar_EG",
+  "text": "ب، بَطَّة"
+ },
+ {
+  "key": "basic_ar_2",
+  "lang": "ar_EG",
+  "text": "ت، تُفَّاحَة"
+ },
+ {
+  "key": "basic_ar_3",
+  "lang": "ar_EG",
+  "text": "ث، ثَعْلَب"
+ },
+ {
+  "key": "basic_ar_4",
+  "lang": "ar_EG",
+  "text": "ج، جَمَل"
+ },
+ {
+  "key": "basic_ar_5",
+  "lang": "ar_EG",
+  "text": "ح، حِصَان"
+ },
+ {
+  "key": "basic_ar_6",
+  "lang": "ar_EG",
+  "text": "خ، خَرُوف"
+ },
+ {
+  "key": "basic_ar_7",
+  "lang": "ar_EG",
+  "text": "د، دُبّ"
+ },
+ {
+  "key": "basic_ar_8",
+  "lang": "ar_EG",
+  "text": "ذ، ذِئْب"
+ },
+ {
+  "key": "basic_ar_9",
+  "lang": "ar_EG",
+  "text": "ر، رِيشَة"
+ },
+ {
+  "key": "basic_ar_10",
+  "lang": "ar_EG",
+  "text": "ز، زَرَافَة"
+ },
+ {
+  "key": "basic_ar_11",
+  "lang": "ar_EG",
+  "text": "س، سَمَكَة"
+ },
+ {
+  "key": "basic_ar_12",
+  "lang": "ar_EG",
+  "text": "ش، شَمْس"
+ },
+ {
+  "key": "basic_ar_13",
+  "lang": "ar_EG",
+  "text": "ص، صَقْر"
+ },
+ {
+  "key": "basic_ar_14",
+  "lang": "ar_EG",
+  "text": "ض، ضِفْدَع"
+ },
+ {
+  "key": "basic_ar_15",
+  "lang": "ar_EG",
+  "text": "ط، طَائِر"
+ },
+ {
+  "key": "basic_ar_16",
+  "lang": "ar_EG",
+  "text": "ظ، ظَرْف"
+ },
+ {
+  "key": "basic_ar_17",
+  "lang": "ar_EG",
+  "text": "ع، عُصْفُور"
+ },
+ {
+  "key": "basic_ar_18",
+  "lang": "ar_EG",
+  "text": "غ، غَزَال"
+ },
+ {
+  "key": "basic_ar_19",
+  "lang": "ar_EG",
+  "text": "ف، فِيل"
+ },
+ {
+  "key": "basic_ar_20",
+  "lang": "ar_EG",
+  "text": "ق، قِطَّة"
+ },
+ {
+  "key": "basic_ar_21",
+  "lang": "ar_EG",
+  "text": "ك، كِتَاب"
+ },
+ {
+  "key": "basic_ar_22",
+  "lang": "ar_EG",
+  "text": "ل، لَبَن"
+ },
+ {
+  "key": "basic_ar_23",
+  "lang": "ar_EG",
+  "text": "م، مَوْز"
+ },
+ {
+  "key": "basic_ar_24",
+  "lang": "ar_EG",
+  "text": "ن، نَمِر"
+ },
+ {
+  "key": "basic_ar_25",
+  "lang": "ar_EG",
+  "text": "هـ، هِلَال"
+ },
+ {
+  "key": "basic_ar_26",
+  "lang": "ar_EG",
+  "text": "و، وَرْدَة"
+ },
+ {
+  "key": "basic_ar_27",
+  "lang": "ar_EG",
+  "text": "ي، يَد"
+ },
+ {
+  "key": "basic_en_0",
+  "lang": "en_US",
+  "text": "A, lowercase a, short a, for Apple"
+ },
+ {
+  "key": "basic_en_1",
+  "lang": "en_US",
+  "text": "B, lowercase b, buh, for Ball"
+ },
+ {
+  "key": "basic_en_2",
+  "lang": "en_US",
+  "text": "C, lowercase c, kuh, for Cat"
+ },
+ {
+  "key": "basic_en_3",
+  "lang": "en_US",
+  "text": "D, lowercase d, duh, for Dog"
+ },
+ {
+  "key": "basic_en_4",
+  "lang": "en_US",
+  "text": "E, lowercase e, eh, for Elephant"
+ },
+ {
+  "key": "basic_en_5",
+  "lang": "en_US",
+  "text": "F, lowercase f, fff, for Fish"
+ },
+ {
+  "key": "basic_en_6",
+  "lang": "en_US",
+  "text": "G, lowercase g, guh, for Grapes"
+ },
+ {
+  "key": "basic_en_7",
+  "lang": "en_US",
+  "text": "H, lowercase h, huh, for House"
+ },
+ {
+  "key": "basic_en_8",
+  "lang": "en_US",
+  "text": "I, lowercase i, ih, for Ice cream"
+ },
+ {
+  "key": "basic_en_9",
+  "lang": "en_US",
+  "text": "J, lowercase j, juh, for Juice"
+ },
+ {
+  "key": "basic_en_10",
+  "lang": "en_US",
+  "text": "K, lowercase k, kuh, for Kite"
+ },
+ {
+  "key": "basic_en_11",
+  "lang": "en_US",
+  "text": "L, lowercase l, lll, for Lion"
+ },
+ {
+  "key": "basic_en_12",
+  "lang": "en_US",
+  "text": "M, lowercase m, mmm, for Monkey"
+ },
+ {
+  "key": "basic_en_13",
+  "lang": "en_US",
+  "text": "N, lowercase n, nnn, for Nest"
+ },
+ {
+  "key": "basic_en_14",
+  "lang": "en_US",
+  "text": "O, lowercase o, ah, for Orange"
+ },
+ {
+  "key": "basic_en_15",
+  "lang": "en_US",
+  "text": "P, lowercase p, puh, for Pencil"
+ },
+ {
+  "key": "basic_en_16",
+  "lang": "en_US",
+  "text": "Q, lowercase q, kwuh, for Queen"
+ },
+ {
+  "key": "basic_en_17",
+  "lang": "en_US",
+  "text": "R, lowercase r, rrr, for Rabbit"
+ },
+ {
+  "key": "basic_en_18",
+  "lang": "en_US",
+  "text": "S, lowercase s, sss, for Sun"
+ },
+ {
+  "key": "basic_en_19",
+  "lang": "en_US",
+  "text": "T, lowercase t, tuh, for Tiger"
+ },
+ {
+  "key": "basic_en_20",
+  "lang": "en_US",
+  "text": "U, lowercase u, uh, for Umbrella"
+ },
+ {
+  "key": "basic_en_21",
+  "lang": "en_US",
+  "text": "V, lowercase v, vvv, for Van"
+ },
+ {
+  "key": "basic_en_22",
+  "lang": "en_US",
+  "text": "W, lowercase w, wuh, for Watch"
+ },
+ {
+  "key": "basic_en_23",
+  "lang": "en_US",
+  "text": "X, lowercase x, ks, for Xylophone"
+ },
+ {
+  "key": "basic_en_24",
+  "lang": "en_US",
+  "text": "Y, lowercase y, yuh, for Yo-yo"
+ },
+ {
+  "key": "basic_en_25",
+  "lang": "en_US",
+  "text": "Z, lowercase z, zzz, for Zebra"
+ },
+ {
+  "key": "basic_arnum_0",
+  "lang": "ar_EG",
+  "text": "واحد، ١"
+ },
+ {
+  "key": "basic_arnum_1",
+  "lang": "ar_EG",
+  "text": "اتنين، ٢"
+ },
+ {
+  "key": "basic_arnum_2",
+  "lang": "ar_EG",
+  "text": "تلاتة، ٣"
+ },
+ {
+  "key": "basic_arnum_3",
+  "lang": "ar_EG",
+  "text": "أربعة، ٤"
+ },
+ {
+  "key": "basic_arnum_4",
+  "lang": "ar_EG",
+  "text": "خمسة، ٥"
+ },
+ {
+  "key": "basic_arnum_5",
+  "lang": "ar_EG",
+  "text": "ستة، ٦"
+ },
+ {
+  "key": "basic_arnum_6",
+  "lang": "ar_EG",
+  "text": "سبعة، ٧"
+ },
+ {
+  "key": "basic_arnum_7",
+  "lang": "ar_EG",
+  "text": "تمانية، ٨"
+ },
+ {
+  "key": "basic_arnum_8",
+  "lang": "ar_EG",
+  "text": "تسعة، ٩"
+ },
+ {
+  "key": "basic_arnum_9",
+  "lang": "ar_EG",
+  "text": "عشرة، ١٠"
+ },
+ {
+  "key": "basic_arnum_10",
+  "lang": "ar_EG",
+  "text": "حداشر، ١١"
+ },
+ {
+  "key": "basic_arnum_11",
+  "lang": "ar_EG",
+  "text": "اتناشر، ١٢"
+ },
+ {
+  "key": "basic_arnum_12",
+  "lang": "ar_EG",
+  "text": "تلتاشر، ١٣"
+ },
+ {
+  "key": "basic_arnum_13",
+  "lang": "ar_EG",
+  "text": "أربعتاشر، ١٤"
+ },
+ {
+  "key": "basic_arnum_14",
+  "lang": "ar_EG",
+  "text": "خمستاشر، ١٥"
+ },
+ {
+  "key": "basic_arnum_15",
+  "lang": "ar_EG",
+  "text": "ستاشر، ١٦"
+ },
+ {
+  "key": "basic_arnum_16",
+  "lang": "ar_EG",
+  "text": "سبعتاشر، ١٧"
+ },
+ {
+  "key": "basic_arnum_17",
+  "lang": "ar_EG",
+  "text": "تمنتاشر، ١٨"
+ },
+ {
+  "key": "basic_arnum_18",
+  "lang": "ar_EG",
+  "text": "تسعتاشر، ١٩"
+ },
+ {
+  "key": "basic_arnum_19",
+  "lang": "ar_EG",
+  "text": "عشرين، ٢٠"
+ },
+ {
+  "key": "basic_ennum_0",
+  "lang": "en_US",
+  "text": "one"
+ },
+ {
+  "key": "basic_ennum_1",
+  "lang": "en_US",
+  "text": "two"
+ },
+ {
+  "key": "basic_ennum_2",
+  "lang": "en_US",
+  "text": "three"
+ },
+ {
+  "key": "basic_ennum_3",
+  "lang": "en_US",
+  "text": "four"
+ },
+ {
+  "key": "basic_ennum_4",
+  "lang": "en_US",
+  "text": "five"
+ },
+ {
+  "key": "basic_ennum_5",
+  "lang": "en_US",
+  "text": "six"
+ },
+ {
+  "key": "basic_ennum_6",
+  "lang": "en_US",
+  "text": "seven"
+ },
+ {
+  "key": "basic_ennum_7",
+  "lang": "en_US",
+  "text": "eight"
+ },
+ {
+  "key": "basic_ennum_8",
+  "lang": "en_US",
+  "text": "nine"
+ },
+ {
+  "key": "basic_ennum_9",
+  "lang": "en_US",
+  "text": "ten"
+ },
+ {
+  "key": "basic_ennum_10",
+  "lang": "en_US",
+  "text": "eleven"
+ },
+ {
+  "key": "basic_ennum_11",
+  "lang": "en_US",
+  "text": "twelve"
+ },
+ {
+  "key": "basic_ennum_12",
+  "lang": "en_US",
+  "text": "thirteen"
+ },
+ {
+  "key": "basic_ennum_13",
+  "lang": "en_US",
+  "text": "fourteen"
+ },
+ {
+  "key": "basic_ennum_14",
+  "lang": "en_US",
+  "text": "fifteen"
+ },
+ {
+  "key": "basic_ennum_15",
+  "lang": "en_US",
+  "text": "sixteen"
+ },
+ {
+  "key": "basic_ennum_16",
+  "lang": "en_US",
+  "text": "seventeen"
+ },
+ {
+  "key": "basic_ennum_17",
+  "lang": "en_US",
+  "text": "eighteen"
+ },
+ {
+  "key": "basic_ennum_18",
+  "lang": "en_US",
+  "text": "nineteen"
+ },
+ {
+  "key": "basic_ennum_19",
+  "lang": "en_US",
+  "text": "twenty"
  }
 ]
