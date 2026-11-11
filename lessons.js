@@ -9,7 +9,7 @@
     {letter:"خ",name:"الخاء",forms:["خـ","ـخـ","ـخ"],words:["خَرُوف","نَخْلَة","بَطِيخ"],emoji:["🐑","🌴","🍉"],sound:"خَ"},
     {letter:"د",name:"الدال",forms:["د","ـد","ـد"],words:["دُبّ","مَدْرَسَة","وَرْد"],emoji:["🐻","🏫","🌹"],sound:"دَ"},
     {letter:"ذ",name:"الذال",forms:["ذ","ـذ","ـذ"],words:["ذِئْب","أُذُن","لَذِيذ"],emoji:["🐺","👂","😋"],sound:"ذَ"},
-    {letter:"ر",name:"الراء",forms:["ر","ـر","ـر"],words:["رُمَّان","فَرَاشَة","قَمَر"],emoji:["🍎","🦋","🌙"],sound:"رَ"},
+    {letter:"ر",name:"الراء",forms:["ر","ـر","ـر"],words:["رِيشَة","فَرَاشَة","قَمَر"],emoji:["🪶","🦋","🌙"],sound:"رَ"},
     {letter:"ز",name:"الزاي",forms:["ز","ـز","ـز"],words:["زَرَافَة","مَوْز","خُبْز"],emoji:["🦒","🍌","🍞"],sound:"زَ"},
     {letter:"س",name:"السين",forms:["سـ","ـسـ","ـس"],words:["سَمَكَة","مَسْجِد","شَمْس"],emoji:["🐟","🕌","☀️"],sound:"سَ"},
     {letter:"ش",name:"الشين",forms:["شـ","ـشـ","ـش"],words:["شَمْس","فَرَاشَة","عُشّ"],emoji:["☀️","🦋","🪺"],sound:"شَ"},
@@ -125,7 +125,7 @@
     $("lessonProgress").style.width=(quizIndex/quiz.length*100)+"%";
     $("lessonBody").innerHTML=`<div class="lesson-title">اختبار الملك ماثيو 👑</div><h2>${q.q}</h2><div class="lesson-answers">${q.a.map((a,i)=>`<button data-answer="${i}"><span class="answer-picture" aria-hidden="true">${({ "أ":"🦁","ب":"🦆","ت":"🍎","ث":"🦊","ج":"🐪","ح":"🐎","خ":"🐑","د":"🐻","ذ":"🐺","ر":"🍎","ز":"🦒","س":"🐟","ش":"☀️","ص":"🦅","ض":"🐸","ط":"🐦","ظ":"✉️","ع":"🐤","غ":"🦌","ف":"🐘","ق":"🐱","ك":"📘","ل":"🥛","م":"🍌","ن":"🐅","ه":"🐦","هـ":"🐦","و":"🌹","ي":"✋"}[a]||"🔤")}</span><span class="answer-label">${a}</span></button>`).join("")}</div>`;
     const questionSpeak=document.createElement("button");questionSpeak.type="button";questionSpeak.className="voice-button question-speak";questionSpeak.textContent="🔊 اسمع السؤال";questionSpeak.onclick=()=>say(q.q+" اختار الإجابة الصحيحة","ar-EG");const questionHeading=panel.querySelector("#lessonBody .lesson-title");if(questionHeading)questionHeading.after(questionSpeak);
-    panel.querySelectorAll("[data-answer]").forEach(b=>b.onclick=()=>{if(panel.dataset.done==="1")return;panel.dataset.done="1";const ok=Number(b.dataset.answer)===q.c;if(ok)score++;panel.querySelectorAll("[data-answer]").forEach(x=>{x.disabled=true;if(Number(x.dataset.answer)===q.c)x.classList.add("correct")});if(!ok)b.classList.add("wrong");$("lessonStatus").textContent=ok?"برافو يا بطل! إجابة صحيحة ⭐":"محاولة جميلة! ركز في الحركة وجرب السؤال التالي";$("lessonNext").textContent=quizIndex===quiz.length-1?"النتيجة 🏆":"السؤال التالي ←"});
+    panel.querySelectorAll("[data-answer]").forEach(b=>b.onclick=()=>{if(panel.dataset.done==="1")return;panel.dataset.done="1";const ok=Number(b.dataset.answer)===q.c;try{window.MatthewMastery?.record("arabic-letters",ok);window.MatthewMastery?.record("arabic-letter:"+lessons[letterIndex].letter,ok)}catch(_){}if(ok)score++;panel.querySelectorAll("[data-answer]").forEach(x=>{x.disabled=true;if(Number(x.dataset.answer)===q.c)x.classList.add("correct")});if(!ok)b.classList.add("wrong");$("lessonStatus").textContent=ok?"برافو يا بطل! إجابة صحيحة ⭐":"محاولة جميلة! ركز في الحركة وجرب السؤال التالي";$("lessonNext").textContent=quizIndex===quiz.length-1?"النتيجة 🏆":"السؤال التالي ←"});
     panel.dataset.done="0";$("lessonNext").textContent="اختار الإجابة";
     setTimeout(()=>say(q.q+". اختار الإجابة الصحيحة"),120);
   }
