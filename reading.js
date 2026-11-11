@@ -134,7 +134,7 @@
     const letter = LETTERS[letterIndex];
     const syllables = syllablesFor(letter);
     panel.innerHTML = header("📖 مقاطع حرف " + letter.name) +
-      '<p class="touch-game-instruction">اضغط على كل مقطع واسمع صوته. الحرف بيغيّر صوته مع الفتحة والكسرة والضمة والمد.</p>' +
+      '<p class="touch-game-instruction">من الصفر يا بطل: الحرف لوحده ليه صوت، ولما بنحط عليه فتحة أو كسرة أو ضمة صوته بيتغيّر شوية صغيرة. اضغط على كل مقطع واسمع صوته كويس وقوله ورايا، وبعد شوية هنركّب المقاطع على بعض ونعمل منها كلمة كاملة نقراها سوا!</p>' +
       '<div class="read-syllables">' + syllables.map((s, i) => '<button type="button" class="read-syllable" data-syl="' + i + '"><b>' + s.text + '</b><small>' + s.label + '</small></button>').join("") + '</div>' +
       '<div class="basic-nav"><button id="readPrevLetter" class="secondary" type="button">الحرف السابق</button>' +
       '<button id="readNextLetter" class="primary" type="button">الحرف التالي ←</button></div>';

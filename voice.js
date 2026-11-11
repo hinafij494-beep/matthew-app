@@ -117,12 +117,13 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
       if (id !== requestId) return false;
       const prefix = lang.slice(0, 2).toLowerCase();
       const matches = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
-      const exact = matches.find(v => v.lang.toLowerCase() === lang.toLowerCase());
+      const female = matches.find(v => /female|woman|زينة|سلمى|أميرة|ليلى|salma|zeina|amira|laila|aria/i.test(v.name || ""));
+      const exact = female || matches.find(v => v.lang.toLowerCase() === lang.toLowerCase());
       const fallback = matches[0];
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = exact?.lang || fallback?.lang || lang;
-      utterance.rate = prefix === "ar" ? 0.82 : 0.85;
-      utterance.pitch = 1.04;
+      utterance.rate = prefix === "ar" ? 0.92 : 0.92;
+      utterance.pitch = 1.12;
       utterance.volume = 1;
       if (exact || fallback) utterance.voice = exact || fallback;
       utterance.onstart = () => { if (id === requestId) setStatus("🔊 اسمع كويس يا بطل"); };
@@ -148,6 +149,15 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     setStatus("⏳ جاري تشغيل الصوت...");
     try { window.speechSynthesis?.cancel(); } catch (_) {}
 
+    // صوت الميس المسجل: لو الجملة عندنا كمقطع طبيعي نشغّله بدل صوت الجهاز الآلي.
+    try {
+      if (window.MatthewClips && window.MatthewClips.play(text)) {
+        if (isAndroidNative()) { try { await TextToSpeech.stop(); } catch (_) {} }
+        if (id === requestId) setStatus("🔊 اسمع صوت الميس يا بطل");
+        return true;
+      }
+    } catch (_) {}
+
     if (isAndroidNative()) {
       try {
         try { await TextToSpeech.stop(); } catch (_) {}
@@ -155,8 +165,8 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
         const options = {
           text,
           lang: language,
-          rate: prefix === "ar" ? 0.9 : 0.92,
-          pitch: 1.0,
+          rate: prefix === "ar" ? 0.95 : 0.92,
+          pitch: 1.15,
           volume: 1,
           queueStrategy: 0
         };
@@ -174,6 +184,7 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
 
   const stop = async () => {
     requestId++;
+    try { window.MatthewClips?.stop(); } catch (_) {}
     try { await TextToSpeech.stop(); } catch (_) {}
     try { window.speechSynthesis?.cancel(); } catch (_) {}
   };
@@ -181,7 +192,25 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
   const test = async () => {
     unlockAudio();
     sound("correct");
-    return speak("أهلاً يا ملك ماثيو! يلا نتعلم ونلعب. برافو يا بطل!", "ar-EG");
+    return speak("أهلاً يا ماثيو يا بطل! أنا الميس بتاعتك، يلا بينا نتعلّم ونلعب مع بعض.", "ar-EG");
+  };
+
+  const praiseKeys = ["praise1", "praise2", "praise3", "praise4", "praise5"];
+  const tryKeys = ["try1", "try2", "try3"];
+  let praiseIndex = 0, tryIndex = 0;
+  const feedback = kind => {
+    sound(kind);
+    try {
+      const clips = window.MatthewClips;
+      if (!clips) return;
+      if (kind === "correct") {
+        const key = praiseKeys[praiseIndex++ % praiseKeys.length];
+        setTimeout(() => clips.playKey(key), 280);
+      } else if (kind === "wrong") {
+        const key = tryKeys[tryIndex++ % tryKeys.length];
+        setTimeout(() => clips.playKey(key), 280);
+      }
+    } catch (_) {}
   };
 
   window.MatthewVoice = {
@@ -189,7 +218,7 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     stop,
     test,
     unlock: unlockAudio,
-    feedback: sound,
+    feedback,
     installVoiceData: async () => {
       try { await TextToSpeech.openInstall(); return true; }
       catch (_) {

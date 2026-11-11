@@ -37,11 +37,16 @@
     } catch (_) {}
   };
 
+  const praiseKeys = ["praise1", "praise2", "praise3", "praise4", "praise5"];
+  const tryKeys = ["try1", "try2", "try3"];
+  let praiseIndex = 0, tryIndex = 0;
   const feedback = type => {
     if (type === "correct") {
       tone(660, 0.13); tone(880, 0.17, 0.13); tone(1046, 0.2, 0.29);
+      try { const c = window.MatthewClips; if (c) setTimeout(() => c.playKey(praiseKeys[praiseIndex++ % praiseKeys.length]), 280); } catch (_) {}
     } else if (type === "wrong") {
       tone(330, 0.16); tone(260, 0.19, 0.14);
+      try { const c = window.MatthewClips; if (c) setTimeout(() => c.playKey(tryKeys[tryIndex++ % tryKeys.length]), 280); } catch (_) {}
     } else tone(520, 0.055, 0, 0.03);
   };
 
@@ -69,17 +74,19 @@
       return false;
     }
     sayStatus("⏳ جاري تشغيل الصوت...");
+    try { if (window.MatthewClips && window.MatthewClips.play(text)) { sayStatus("🔊 اسمع صوت الميس يا بطل"); return true; } } catch (_) {}
     try {
       synth.cancel();
       const voices = await waitVoices(synth);
       if (id !== request) return false;
       const prefix = lang.slice(0, 2).toLowerCase();
-      const selected = voices.find(v => v.lang?.toLowerCase() === lang.toLowerCase()) ||
+      const selected = voices.find(v => v.lang?.toLowerCase().startsWith(prefix) && /female|woman|زينة|سلمى|أميرة|ليلى|salma|zeina|amira|laila/i.test(v.name || "")) ||
+        voices.find(v => v.lang?.toLowerCase() === lang.toLowerCase()) ||
         voices.find(v => v.lang?.toLowerCase().startsWith(prefix));
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = selected?.lang || lang;
-      utterance.rate = prefix === "ar" ? 0.82 : 0.85;
-      utterance.pitch = 1.04;
+      utterance.rate = 0.92;
+      utterance.pitch = 1.12;
       utterance.volume = 1;
       if (selected) utterance.voice = selected;
       utterance.onstart = () => { if (id === request) sayStatus("🔊 اسمع كويس يا بطل"); };
@@ -96,6 +103,7 @@
 
   const stop = () => {
     request++;
+    try { window.MatthewClips?.stop(); } catch (_) {}
     try { window.speechSynthesis?.cancel(); } catch (_) {}
   };
 
@@ -103,7 +111,7 @@
     const ctx = getAudio();
     if (ctx?.state === "suspended") ctx.resume();
     feedback("correct");
-    return speak("أهلاً يا ملك ماثيو! يلا نتعلم ونلعب. برافو يا بطل!", "ar-EG");
+    return speak("أهلاً يا ماثيو يا بطل! أنا الميس بتاعتك، يلا بينا نتعلّم ونلعب مع بعض.", "ar-EG");
   };
 
   window.MatthewVoice = { speak, stop, test, feedback, unlock: () => getAudio()?.resume(), installVoiceData: async () => false };

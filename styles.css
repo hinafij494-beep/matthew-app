@@ -106,3 +106,15 @@
 .read-choice.correct{border-color:#30b978;background:#e5f8ef}
 .read-choice.wrong{border-color:#e97878;background:#fff0f0}
 @media(max-width:360px){.read-syllables{grid-template-columns:repeat(2,minmax(0,1fr))}.read-part{font-size:24px}}
+
+/* --- جولة تحسينات: واجهة أبسط ورسوم وشرح --- */
+.king-art{background:transparent;width:185px;height:160px;border-radius:0}
+.king-art svg{width:100%;height:auto}
+.games{gap:14px}
+.game-card{min-height:138px;border-radius:24px}
+.game-card .game-icon{font-size:34px}
+.rescue-hero-card{outline:3px solid #ff9ec4;outline-offset:-3px}
+.explain-box{background:#fff8e1;border:2px dashed #f0b429;border-radius:18px;padding:14px 16px;margin:14px 0;text-align:right}
+.explain-box strong{color:#9a6a00}
+.explain-box p{line-height:2.05;margin:6px 0 0;color:#5b4a1f}
+@media(max-width:360px){.king-art{width:130px;height:112px}}

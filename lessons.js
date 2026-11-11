@@ -29,6 +29,50 @@
     {letter:"و",name:"الواو",forms:["و","ـو","ـو"],words:["وَرْدَة","حَوْت","لَوْن"],emoji:["🌹","🐳","🎨"],sound:"وَ"},
     {letter:"ي",name:"الياء",forms:["يـ","ـيـ","ـي"],words:["يَد","بَيْت","كُرْسِيّ"],emoji:["✋","🏠","🪑"],sound:"يَ"}
   ];
+  const HINTS = {
+    "أ":"بنفتح بُقنا على الآخر وبنقول آ بصوت واضح من حلقنا.",
+    "ب":"بنقفل شفايفنا على بعض وبنفتحها بسرعة واحنا بنقول بَ.",
+    "ت":"طرف لساننا بيلمس سناننا اللي فوق من ورا وبنقول تَ.",
+    "ث":"بنطلّع طرف لساننا بره شوية صغيرة بين سناننا وبننفخ هوا خفيف.",
+    "ج":"الصوت بيطلع من نص اللسان وبيبقى صوت قوي وجميل: جَ.",
+    "ح":"صوت دافي بيطلع من نص حلقنا، زي ما بننفخ على إيدينا عشان ندفيها.",
+    "خ":"صوت بيطلع من آخر الحلق وبنحس بيه بيهز حلقنا، زي الشخير الخفيف.",
+    "د":"لساننا بيلمس سناننا اللي فوق وبنقول دَ بصوت قوي.",
+    "ذ":"بنطلّع طرف لساننا بره شوية زي الثاء بالظبط وبنقول ذَ.",
+    "ر":"لساننا بيهتز وبيتكرر بسرعة: رررر، زي صوت العربية وهي ماشية.",
+    "ز":"صوت زنّان بيهز سناننا، زي صوت النحلة وهي طايرة: زززز.",
+    "س":"هوا خفيف بيعدي بين سناننا المقفولين ويعمل صفارة صغيرة: سسس.",
+    "ش":"بنقول شششش بهدوء، زي ما بنسكّت حد عشان يسمع.",
+    "ص":"صوت تقيل ومفخّم أتقل من السين، بنحس بيه بيملأ بُقنا.",
+    "ض":"صوت تقيل مميز، بيطلع لما نضغط جنب لساننا على ضروسنا. الحرف ده مشهور إنه حرف اللغة العربية نفسه!",
+    "ط":"أتقل وأقوى من التاء، صوت مفخّم بنحس بيه في بُقنا كله.",
+    "ظ":"أتقل من الذال، بنطلّع طرف لساننا بره شوية والصوت بيطلع تقيل.",
+    "ع":"صوت بيطلع من نص الحلق ومحتاج تدريب شوية، جرب تقول عَ ببطء.",
+    "غ":"صوت بيطلع من آخر الحلق، زي صوت الغرغرة بالماء الخفيفة.",
+    "ف":"شفايفنا اللي تحت بتلمس سناننا اللي فوق وبننفخ هوا خفيف: فَ.",
+    "ق":"صوت تقيل بيطلع من آخر الحلق خالص ورا خالص، أتقل من الكاف.",
+    "ك":"الصوت بيطلع من آخر اللسان مع نفخة هوا: كَ.",
+    "ل":"طرف لساننا بيلمس سقف البُق من قدام وبنقول لَ.",
+    "م":"بنقفل شفايفنا خالص والصوت بيطلع من المناخير: مممم، زي ما بنقول على حاجة لذيذة.",
+    "ن":"لساننا بيلمس سقف البُق والصوت بيطلع من المناخير خفيف: نَ.",
+    "ه":"هوا هادي بيطلع من صدرنا على مهله: هَ.",
+    "هـ":"هوا هادي بيطلع من صدرنا على مهله: هَ.",
+    "و":"بنقوّر شفايفنا ونضمها على بعض وبنقول وَ.",
+    "ي":"بنبتسم ابتسامة صغيرة وبنقول يَ بصوت ناعم."
+  };
+  const explainFor = l => {
+    const hint = HINTS[l.letter] || "اسمع صوته كويس وقوله ورايا بصوت عالي.";
+    const spoken = "ده حرف " + l.name + "، وصوته " + l.sound + ". " + hint +
+      " شكله بيتغير حسب مكانه في الكلمة: في أول الكلمة بيبقى " + l.forms[0] + "، وفي نص الكلمة " + l.forms[1] + "، وفي آخر الكلمة " + l.forms[2] + "." +
+      " بنشوفه في كلمات بنعرفها زي " + l.words[0] + " و" + l.words[1] + " و" + l.words[2] + "." +
+      " يلا نقول صوته مع بعض بصوت عالي: " + l.sound + "، " + l.sound + "، " + l.sound + "!";
+    const shown = "ده حرف <b>" + l.name + "</b>، وصوته <b>" + l.sound + "</b>. " + hint +
+      "<br>شكله بيتغيّر حسب مكانه في الكلمة: في الأول <b>" + l.forms[0] + "</b>، وفي النص <b>" + l.forms[1] + "</b>، وفي الآخر <b>" + l.forms[2] + "</b>." +
+      "<br>بنشوفه في كلمات بنعرفها: " + l.words.map((w, i) => l.emoji[i] + " " + w).join("، ") + "." +
+      "<br>يلا نقول صوته مع بعض بصوت عالي: <b>" + l.sound + "، " + l.sound + "، " + l.sound + "</b>!";
+    const short = "ده حرف " + l.name + "، وصوته " + l.sound + ". " + hint;
+    return { spoken, shown, short };
+  };
   const marks = [
     {name:"الفتحة",mark:"َ",sample:"بَ",hint:"نفتح الفم قليلاً: بَ",emoji:"☀️"},
     {name:"الضمة",mark:"ُ",sample:"بُ",hint:"نضم الشفتين: بُ",emoji:"⭕"},
@@ -80,16 +124,18 @@
     if(step===3) renderQuizIntro();
     $("lessonNext").textContent=step===3?"ابدأ الاختبار ⭐":"التالي ←";
     const current=lessons[letterIndex];
-    if(step===0)setTimeout(()=>say(current.name+"، صوت الحرف "+current.sound),120);
+    if(step===0)setTimeout(()=>say(explainFor(current).short),120);
     if(step===1)setTimeout(()=>say("أشكال حرف "+current.name+". "+current.words.join("، ")),120);
     if(step===2){const mark=marks[markIndex];const sample=current.letter==="أ"?["أَ","أُ","إِ","أْ"][markIndex]:current.letter+mark.mark;setTimeout(()=>say(mark.name+"، "+sample+". "+mark.hint),120)}
     if(step===3)setTimeout(()=>say("أحسنت يا ماثيو. يلا نبدأ الاختبار"),120);
   }
   function renderLetter(){
     const l=lessons[letterIndex];
-    $("lessonBody").innerHTML=`<div class="lesson-title">أهلاً يا ماثيو الملك 👑</div><p>النهارده هنتعلم حرف جديد</p><div class="big-letter">${l.letter}</div><h2>${l.name}</h2><p class="lesson-example">صوت الحرف: <b>${l.sound}</b></p><p>بص للحرف واسمع صوته كويس</p><div class="lesson-pager"><button id="prevLetter" class="secondary" ${letterIndex===0?"disabled":""}>الحرف السابق</button><button id="nextLetter" class="secondary">${letterIndex===lessons.length-1?"ابدأ من الأول":"الحرف التالي"}</button></div>`;
+    const ex=explainFor(l);
+    $("lessonBody").innerHTML=`<div class="lesson-title">أهلاً يا ماثيو الملك 👑</div><p>النهارده هنتعلم حرف جديد</p><div class="big-letter">${l.letter}</div><h2>${l.name}</h2><p class="lesson-example">صوت الحرف: <b>${l.sound}</b></p><div class="explain-box"><strong>🧕 الميس بتشرح لك من الصفر</strong><p>${ex.shown}</p></div><div class="lesson-pager"><button id="prevLetter" class="secondary" ${letterIndex===0?"disabled":""}>الحرف السابق</button><button id="nextLetter" class="secondary">${letterIndex===lessons.length-1?"ابدأ من الأول":"الحرف التالي"}</button></div>`;
     $("prevLetter").onclick=()=>{letterIndex=(letterIndex+lessons.length-1)%lessons.length;render()};
     $("nextLetter").onclick=()=>{letterIndex=(letterIndex+1)%lessons.length;render()};
+    $("lessonListen").onclick=()=>say(ex.spoken);
   }
   function renderForms(){
     const l=lessons[letterIndex];
