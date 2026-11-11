@@ -24,7 +24,7 @@ test("phase 1-2 modules ship inside the interactive-games bundle", () => {
   const html = read("index.html");
   const sw = read("sw.js");
   const partFiles = ["mastery.js", "parent.js", "tracing.js", "reading.js", "voice-clips.js", "rescue.js",
-    ...fs.readdirSync(root).filter(f => /^voice-clips-(data|text)-\d+\.js$/.test(f)).sort()];
+    ...fs.readdirSync(root).filter(f => /^voice-clips-(pack|text)-\d+\.js$/.test(f)).sort()];
   for (const file of partFiles) {
     assert.ok(fs.existsSync(path.join(root, file)), "missing source " + file);
     const source = read(file).trim();
@@ -67,7 +67,7 @@ test("recorded teacher voice clips exist and the rescue game uses real clip keys
   const voiceClips = read("voice-clips.js");
   assert.match(voiceClips, /window\.MatthewClips/);
   const fsx = require("node:fs");
-  const chunkText = fsx.readdirSync(__dirname + "/..").filter(f => /^voice-clips-data-\d+\.js$/.test(f)).map(f => read(f)).join("\n");
+  const chunkText = fsx.readdirSync(__dirname + "/..").filter(f => /^voice-clips-pack-\d+\.js$/.test(f)).map(f => read(f)).join("\n");
   for (const key of keys) assert.ok(chunkText.includes('"' + key + '":'), "clip data chunks missing clip " + key);
   const rescue = read("rescue.js");
   const used = [...rescue.matchAll(/(?:clip:\s*|introClip:\s*|winClip:\s*|playKey\(|speak\([^)]*?,\s*)"((?:rescue|story)(?:Stage|Closer|Intro|Win|Ask|Animals|Trip|Treasure|Lion|Fox|Bear|Tiger)[A-Za-z0-9]*)"/g)].map(m => m[1])

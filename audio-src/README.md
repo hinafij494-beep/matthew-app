@@ -10,3 +10,13 @@
   and rejoined by the runtime) plus `voice-clips-text-1.js` (text -> key map).
 - `../build_bundle.py` inlines the chunks into `interactive-games.js` for the
   APK; the Android workflow runs it before copying web assets.
+
+## TTS generation rules (learned 2026-11-11)
+
+- Heavy Arabic diacritics (tashkeel) in the TTS input make the voice drawl:
+  the same ~270-char letter lesson rendered at 90-380s instead of ~30s.
+  Generate letter/sentence clips from a diacritics-stripped copy of the text
+  (the corpus text itself stays vocalized — only the synthesis input is
+  cleaned). Repeated letters like "رررر" must be spaced ("ر ر ر ر").
+- Reject any clip whose duration is slower than 5 chars/sec; regenerate
+  (with the cleaned input) until it lands near the natural ~10 chars/sec.
