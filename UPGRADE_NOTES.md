@@ -75,3 +75,32 @@ Owner feedback implemented:
   bundle is intentionally stale; the tests rebuild it in memory.
 - Push ceiling learned: a single GitHub push_files argument caps at ~128KB,
   so clips ship as many small pack files.
+
+## Round 3.1 (owner feedback after tablet trial)
+
+- **Tablet silence fixed**: speech that is generated at runtime (math-journey
+  questions in both languages, letter-school combinations, basic-learning
+  lines, touch-game targets) had no recorded clips and fell back to the
+  device TTS, which is silent on the owner's tablet. The corpus now covers
+  every string the app can speak (1,478 entries); build-corpus.js sections
+  8-11 mirror the generators.
+- **Reading vowels fixed**: بَ / بِ / بُ sounded identical. Root cause:
+  build-corpus deduped by diacritic-stripped text, collapsing the three
+  syllables into one clip. Short vocalised texts now dedupe by exact text,
+  and the clip runtime tries an exact (diacritic-preserving) match first
+  for them (window.__matthewClipExact).
+- **Auto-narration**: quizzes and stories now speak the question and then
+  the choices in order, automatically. Per-answer speaker buttons and the
+  listen-all button are gone.
+- **Question pictures never reveal the answer**: 31 question emojis that
+  matched (or depicted) the correct answer were replaced with neutral
+  ones; a test audits the whole bank.
+- **Letter-school quiz shuffles its answers** (the correct one was always
+  first); the other quizzes already shuffled.
+- **Tracing**: strokes are confined inside the letter outline (full-res
+  glyph mask + destination-in clip), with a six-colour palette the child
+  picks from.
+- **Home**: four big doors (الدروس / الأسئلة والاختبارات / الألعاب /
+  الألوان والتلوين) replace the long card list; the hero shows only on
+  the doors screen as an intro; the parent card lives in its own corner;
+  back/primary buttons are bigger with stronger colours.
