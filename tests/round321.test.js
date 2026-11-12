@@ -72,7 +72,7 @@ test("Cairo font is bundled offline so ٢ renders in the Egyptian schoolbook for
 });
 
 test("every lesson's spoken strings resolve to recorded clips (round 3.2.1, note 14)", () => {
-  // science: 47 lessons (7 subjects), spoken string = title + short + long
+  // science: 48 lessons (7 subjects), spoken string = title + short + long
   const sci = read("science.js");
   const subjects = vm.runInNewContext(extractDecl(sci, "subjects") + "\nsubjects;", Object.create(null));
   assert.equal(subjects.length, 7, "7 science subjects");
@@ -86,8 +86,8 @@ test("every lesson's spoken strings resolve to recorded clips (round 3.2.1, note
     assert.ok(e.text.length > 100, key + " lesson text looks truncated");
     assert.ok(e.text.includes(l[0]), key + " text must contain its title");
   }));
-  assert.equal(lessons, 47, "47 science lessons in total");
-  for (let i = 0; i <= 6; i++) assert.ok(byKey.get("sci_5_" + i), "universe lesson sci_5_" + i + " must resolve (note 13)");
+  assert.equal(lessons, 48, "48 science lessons in total");
+  for (let i = 0; i <= 7; i++) assert.ok(byKey.get("sci_5_" + i), "universe lesson sci_5_" + i + " must resolve (note 13)");
   // letter school: 28 full explanations
   for (let i = 0; i < 28; i++) {
     const e = byKey.get("let_full_" + i);

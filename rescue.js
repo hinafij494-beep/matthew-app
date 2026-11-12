@@ -29,7 +29,7 @@
     {
       id: "animals", title: "تحدي حيوانات الغابة", icon: "🦁", hero: "🤴🐴", goal: "👑", cats: ["world", "science"],
       desc: "واجه الأسد والثعلب والدب والنمر وكسبهم بذكائك",
-      introClip: "storyAnimalsIntro",
+      introClip: "rescueAnimalsIntro",
       intro: "الملك ماثيو دخل الغابة، وحيوانات الغابة عايزة تتحداه بأسئلة! جاوب صح يا بطل وعدّي كل حيوان!",
       stages: [
         { name: "تحدي الأسد", icon: "🦁", clip: "storyLion", line: "الأسد ملك الغابة بيقولك: جاوب على أسئلتي وعدّي يا شجاع!" },
@@ -38,7 +38,7 @@
         { name: "تحدي النمر السريع", icon: "🐯", clip: "storyTiger", line: "آخر تحدي: النمر السريع! جاوب وخلّص المغامرة يا بطل!" }
       ],
       closers: ["storyAnimalsCloser1", "storyAnimalsCloser2", "rescueCloser3"],
-      winClip: "storyAnimalsWin", winTitle: "كسبت كل الحيوانات! 👑",
+      winClip: "rescueAnimalsWin", winTitle: "كسبت تحدي الحيوانات! 👑",
       win: "برافو يا ملك ماثيو! كسبت كل حيوانات الغابة بذكائك وبقيت ملك الغابة الحقيقي!",
       winStory: "كل حيوانات الغابة بتحييك! الأسد نفسه قال: ده أذكى ملك شفته!"
     },
@@ -88,7 +88,7 @@
   // من غير ما تعتمد على ترتيب تحميل app.js؛ والاختبار بيتأكد إن النسختين
   // متطابقتين على كل أسئلة البنك والقصص.
   const PIC_MEANS={"🌞":["الشمس"],"🌙":["القمر","قمر"],"🦊":["الثعلب","ثعلب","برتقالي"],"🐯":["النمر","نمر"],"🦋":["الفراشة","فراشة","جناحيها","الأجنحة"],"🌿":["الورقة","ورقة","العشب","أخضر"],"🌦":["بعد المطر","المطر"],"🏃":["نزقها برجلينا"],"🏖":["هتطفو فوق المية","هتطفو فوق","الماء","البحر"],"🌌":["بالليل","الليل","النجوم"],"❄":["بطريق","الثلج"],"🍌":["الموز","موز","أصفر"],"🍅":["الطماطم","طماطم","أحمر"],"🌱":["أخضر","العشب"],"🩺":["القلب"],"🟪":["مربع"],"🔺":["مثلث"]};
-  const safeQuestionEmoji=q=>{if(!q||!q.e)return "🤔";if(/شكل|ضلع/.test(q.q||""))return "🤔";const strip=s=>String(s).replace(/\uFE0F/g,"");const shown=q.e;const clean=strip(shown);const pics=(typeof window!=="undefined"&&window.AnswerPics)||{};const depicts=word=>{if(!word)return false;if(strip(pics[word])===clean)return true;for(const key of Object.keys(PIC_MEANS)){if(clean.includes(strip(key))&&PIC_MEANS[key].includes(word))return true}return false};if(!q.a)return shown;for(let i=0;i<q.a.length;i++)if(depicts(q.a[i]))return "🤔";return shown};
+  const safeQuestionEmoji=q=>{if(!q||!q.e)return "🤔";if(/شكل|ضلع/.test(q.q||""))return "🤔";const strip=s=>String(s).replace(/\uFE0F/g,"");const shown=q.e;const clean=strip(shown);const pics=(typeof window!=="undefined"&&window.AnswerPics)||{};const depicts=word=>{if(!word)return false;if(String(word).length<=1)return false;/* single-letter answers: their AnswerPics entry is the mnemonic word-picture of the letter (ت→🍎), not a depiction of the glyph — it cannot reveal which letter is first. */if(strip(pics[word])===clean)return true;for(const key of Object.keys(PIC_MEANS)){if(clean.includes(strip(key))&&PIC_MEANS[key].includes(word))return true}return false};if(!q.a)return shown;for(let i=0;i<q.a.length;i++)if(depicts(q.a[i]))return "🤔";return shown};
   const shuffle = arr => { const b = [...arr]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 
   const panel = document.createElement("section");
@@ -141,15 +141,30 @@
     $("rescueGoal").textContent = "🏰";
     $("rescueProgress").textContent = "";
     $("rescueTitle").textContent = "اختار مغامرتك يا ملك! 📖";
-    $("rescueStory").textContent = "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!";
-    speak("أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!", "storyPickerIntro");
+    $("rescueStory").textContent = "أهلاً يا ملك ماثيو! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!";
+    speak("أهلاً يا ملك ماثيو! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!", "storyPickerIntro");
     const play = $("rescuePlay");
+    const brave = window.MatthewBraveStories;
+    let braveCards = "";
+    if (brave && Array.isArray(brave.STORIES)) {
+      const total = brave.starTotal ? brave.starTotal() : 0;
+      braveCards = brave.STORIES.map(bs => {
+        const open = brave.isUnlocked ? brave.isUnlocked(bs, total) : true;
+        return '<button type="button" class="science-card story-card brave s' + bs.id + '" data-brave="' + bs.id + '"><span>' + bs.icon + '</span><b>' + bs.title + '</b><small>' + (open ? 'قصة شجاعة عن مارك ومريم' : '🔒 محتاج ' + bs.stars + ' نجوم — معاك ' + total) + '</small></button>';
+      }).join("");
+    }
     play.innerHTML = '<div class="science-grid story-grid">' + STORIES.map((s, i) => {
       let best = 0;
       try { best = Number(localStorage.getItem("matthewStoryBest:" + s.id) || 0); } catch (_) {}
       return '<button type="button" class="science-card story-card s' + s.id + '" data-story="' + i + '"><span>' + s.icon + '</span><b>' + s.title + '</b><small>' + s.desc + (best ? ' — ⭐'.repeat(Math.min(5, best)) : '') + '</small></button>';
-    }).join("") + '</div>';
+    }).join("") + braveCards + '</div>';
     play.querySelectorAll("[data-story]").forEach(b => b.addEventListener("click", () => startStory(STORIES[Number(b.dataset.story)])));
+    if (brave) play.querySelectorAll("[data-brave]").forEach(b => b.addEventListener("click", () => {
+      const bs = brave.STORIES.find(x => x.id === b.dataset.brave);
+      if (!bs) return;
+      if (brave.isUnlocked && !brave.isUnlocked(bs)) { window.MatthewVoice?.speak(brave.LOCKED_LINE || "القصة دي مقفولة لسه، اجمع نجوم أكتر!", "ar-EG"); return; }
+      if (brave.openStory) brave.openStory(bs.id);
+    }));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -201,7 +216,9 @@
       '<div class="answers" id="rescueAnswers"></div>' +
       '<p class="feedback" id="rescueFeedback"></p>' +
       '<button type="button" class="primary hidden" id="rescueNext">كمّل المغامرة <span class="pager-arrow">←</span></button>';
+    const tk = qToken;
     setTimeout(() => {
+      if (qToken !== tk) return;
       if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence([current.q, ...lastChoices], "ar-EG");
       else window.MatthewVoice?.speak(current.q, "ar-EG");
     }, 350);
@@ -249,8 +266,12 @@
     const tk = qToken, cq = current;
     setTimeout(() => {
       if (qToken !== tk || !answered || !cq) return;
-      if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(["الإجابة الصحيحة هي", cq.a[cq.c]], "ar-EG");
-      else window.MatthewVoice?.speak("الإجابة الصحيحة هي " + cq.a[cq.c], "ar-EG");
+      // Numbers-once F3: a digit answer was already spoken in the options —
+      // speak the prefix alone, never the digit a 2nd time in one turn.
+      const ans = cq.a[cq.c];
+      const isNum = /^[0-9٠-٩]+$/.test(String(ans).trim());
+      if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(isNum ? ["الإجابة الصحيحة هي"] : ["الإجابة الصحيحة هي", ans], "ar-EG");
+      else window.MatthewVoice?.speak(isNum ? "الإجابة الصحيحة هي" : "الإجابة الصحيحة هي " + ans, "ar-EG");
     }, 2600);
   };
 
@@ -302,9 +323,11 @@
   };
 
   const close = () => {
+    qToken++;
     focusMode(false);
     panel.classList.add("hidden");
     gameList.classList.remove("hidden");
+    document.getElementById("learningList")?.classList.remove("hidden");
     try { window.MatthewVoice?.stop(); } catch (_) {}
     if (typeof updateStats === "function") { try { updateStats(); } catch (_) {} }
   };

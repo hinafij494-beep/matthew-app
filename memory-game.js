@@ -59,12 +59,12 @@
   const THEMES = [ANIMALS, NUMBERS, LETTERS];
   const POOL = ANIMALS;
   const PAIRS_PER_GAME = 6;
-  const MEM_INTRO = "لعبة الذاكرة يا ملك ماثيو! أنا مس نانسي وبحبك أوي! اقلب الكروت ولاقي الصورتين اللي شبه بعض يا بطل!";
+  const MEM_INTRO = "لعبة الذاكرة يا ملك ماثيو! بحبك أوي! اقلب الكروت ولاقي الصورتين اللي شبه بعض يا بطل!";
   // Round 3.2.1 note 25b (Miss Nancy draft): second intro, rotated with
   // MEM_INTRO so the game opening varies. nancy_intro_memory (the draft's
   // first variant) is a near-duplicate of MEM_INTRO (78% overlap) and is
   // deliberately NOT a separate clip.
-  const MEM_INTRO_2 = "يلا يا بطل ماثيو! أنا مس نانسي، افتح كارتين، لو شبه بعض يبقوا بتوعك! افتكر كويس!";
+  const MEM_INTRO_2 = "يلا يا بطل ماثيو! افتح كارتين، لو شبه بعض يبقوا بتوعك! افتكر كويس!";
   const MEM_WIN = "برافو يا ملك ماثيو! لقيت كل الصور! أنت بطل الذاكرة! خدت ألماسة جديدة لتاجك!";
   // جمل التشجيع الدوّارة — بلا اسم صورة داخلها: الاسم يُنطق أولاً
   // بمقطعه الخاص، ثم تتبعه الجملة (انظر praiseMatch).
@@ -151,7 +151,8 @@
     try {
       if (window.MatthewVoice?.speakSequence) { window.MatthewVoice.speakSequence(texts, "ar-EG"); return; }
     } catch (_) {}
-    texts.forEach((t, i) => setTimeout(() => speak(t), i * 1500));
+    const tk = praiseToken;
+    texts.forEach((t, i) => setTimeout(() => { if (tk !== praiseToken) return; speak(t); }, i * 1500));
   };
   const arDigits = value => String(value).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[Number(d)]);
 
@@ -168,6 +169,7 @@
   gameList.append(card);
 
   let deck = [], flipped = [], matched = new Set(), lock = false, found = 0;
+  let moveShown = false;
   let round = 0, matchIndex = 0, tryIndex = 0;
   // Round 3.2.1 note 25b: intro rotation — the replay button re-speaks
   // whichever intro opened this round (lastMemIntro), not always MEM_INTRO.
@@ -176,14 +178,16 @@
   // Praise, delayed a beat so it never cuts the card name that just
   // played (MatthewVoice serialises speech; the token drops stale praise
   // when the child flips again quickly). Same pattern as color-games.js.
-  // The praise is the picture's name clip FIRST, then the rotating praise
-  // line in sequence — the name is never baked into the praise clip.
+  // Numbers-once F4: the praise is the rotating praise line ALONE — the
+  // matched name was already spoken on both flips (the game mechanic),
+  // so speaking it again here would say it a 3rd time. The name is never
+  // baked into the praise clip.
   // At the halfway mark (3/6) the half-way cheer replaces the rotation.
   let praiseToken = 0;
   function praiseMatch(name) {
     const token = ++praiseToken;
     const line = found === PAIRS_PER_GAME / 2 ? MEM_HALF : MEM_MATCH[matchIndex++ % MEM_MATCH.length];
-    setTimeout(() => { if (token === praiseToken) speakSeq([name, line]); }, 900);
+    setTimeout(() => { if (token === praiseToken) speakSeq([line]); }, 900);
   }
 
   function openGame() {
@@ -198,6 +202,7 @@
   }
 
   function back() {
+    praiseToken++;
     panel.classList.add("hidden");
     gameList.classList.remove("hidden");
     try { window.MatthewVoice?.stop(); } catch (_) {}
@@ -213,6 +218,7 @@
     matched = new Set();
     lock = false;
     found = 0;
+    moveShown = false;
     panel.innerHTML = header() +
       '<button id="memListen" class="voice-button" type="button">🔊 اسمع السؤال</button>' +
       '<div class="mem-board anim-enter">' + deck.map((c, i) =>
@@ -254,14 +260,27 @@
       if (head) head.textContent = "⭐ " + arDigits(found) + " / " + arDigits(PAIRS_PER_GAME);
       const msg = panel.querySelector("#memMsg");
       if (msg) msg.textContent = "برافو يا ملك ماثيو! لقيت " + ca.name + " ⭐";
-      if (found >= PAIRS_PER_GAME) setTimeout(win, 900);
+      // Round 3.2.2 P1-5: binding movement break at the halfway mark (3/6
+      // pairs), once per game — same 25s timer as the main quiz. The board
+      // stays visible but locked until the break is done.
+      const MB = (typeof window !== "undefined") ? window.MatthewMoveBreak : null;
+      if (found === PAIRS_PER_GAME / 2 && !moveShown && MB) {
+        moveShown = true; lock = true;
+        const host = document.createElement("div");
+        host.className = "move-break"; host.id = "memMoveBreak";
+        panel.appendChild(host);
+        MB.show(host, () => { host.remove(); lock = false; });
+      }
+      if (found >= PAIRS_PER_GAME) { const tk = praiseToken; setTimeout(() => { if (tk === praiseToken) win(); }, 900); }
     } else {
       lock = true;
       const msg = panel.querySelector("#memMsg");
       if (msg) msg.textContent = "محاولة جميلة! جرّب تاني 💜";
       const tryLine = MEM_TRY[tryIndex++ % MEM_TRY.length];
-      setTimeout(() => speak(tryLine), 700);
+      const tk = praiseToken;
+      setTimeout(() => { if (tk !== praiseToken) return; speak(tryLine); }, 700);
       setTimeout(() => {
+        if (tk !== praiseToken) return;
         a.classList.remove("flipped");
         b.classList.remove("flipped");
         lock = false;

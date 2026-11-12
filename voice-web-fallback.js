@@ -58,56 +58,17 @@
     } else tone(520, 0.055, 0, 0.03);
   };
 
-  const waitVoices = synth => new Promise(resolve => {
-    const voices = synth.getVoices();
-    if (voices.length) return resolve(voices);
-    let done = false;
-    const finish = () => {
-      if (done) return;
-      done = true;
-      try { synth.removeEventListener("voiceschanged", finish); } catch (_) {}
-      resolve(synth.getVoices() || []);
-    };
-    try { synth.addEventListener("voiceschanged", finish); } catch (_) {}
-    setTimeout(finish, 900);
-  });
-
+  // Round 3.2.2 P0-4: recorded clips ONLY — the web fallback must never
+  // speak in the device voice either. No recorded clip = silence.
   const speak = async (value, lang = "ar-EG") => {
     const text = String(value || "").trim();
     if (!text) return false;
     const id = ++request;
-    const synth = window.speechSynthesis;
-    if (!synth || !window.SpeechSynthesisUtterance) {
-      sayStatus("الصوت غير مدعوم على هذا الجهاز. راجع إعدادات تحويل النص إلى كلام.");
-      return false;
-    }
     sayStatus("⏳ جاري تشغيل الصوت...");
-    try { if (window.MatthewClips && window.MatthewClips.play(text)) { sayStatus("🔊 اسمع صوت الميس يا بطل"); return true; } } catch (_) {}
+    try { if (window.MatthewClips && window.MatthewClips.play(text, lang)) { sayStatus("🔊 اسمع صوت الميس يا بطل"); return true; } } catch (_) {}
     try { window.MatthewClips?.stop(); } catch (_) {}
-    try {
-      synth.cancel();
-      const voices = await waitVoices(synth);
-      if (id !== request) return false;
-      const prefix = lang.slice(0, 2).toLowerCase();
-      const selected = voices.find(v => v.lang?.toLowerCase().startsWith(prefix) && /female|woman|زينة|سلمى|أميرة|ليلى|salma|zeina|amira|laila/i.test(v.name || "")) ||
-        voices.find(v => v.lang?.toLowerCase() === lang.toLowerCase()) ||
-        voices.find(v => v.lang?.toLowerCase().startsWith(prefix));
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = selected?.lang || lang;
-      utterance.rate = 0.92;
-      utterance.pitch = 1.12;
-      utterance.volume = 1;
-      if (selected) utterance.voice = selected;
-      utterance.onstart = () => { if (id === request) sayStatus("🔊 اسمع كويس يا بطل"); };
-      utterance.onend = () => { if (id === request) sayStatus("👏 برافو يا بطل!"); };
-      utterance.onerror = () => { if (id === request) sayStatus("تعذر تشغيل الصوت. تأكد من تثبيت صوت اللغة على الهاتف."); };
-      synth.resume();
-      synth.speak(utterance);
-      return true;
-    } catch (_) {
-      sayStatus("تعذر تشغيل الصوت. راجع إعدادات الهاتف.");
-      return false;
-    }
+    if (id === request) sayStatus("🎧 اسمع من الميس — المقطع ده لسه بيتسجّل");
+    return false;
   };
 
   const stop = () => {
@@ -126,8 +87,8 @@
   const speakSequence = (texts, lang = "ar-EG") => {
     const list = (texts || []).map(x => String(x || "").trim()).filter(Boolean);
     if (!list.length) return false;
-    try { if (window.MatthewClips && window.MatthewClips.playSequence(list)) { sayStatus("🔊 اسمع صوت الميس يا بطل"); return true; } } catch (_) {}
-    return speak(list.join("، "), lang);
+    try { if (window.MatthewClips && window.MatthewClips.playSequence(list, lang)) { sayStatus("🔊 اسمع صوت الميس يا بطل"); return true; } } catch (_) {}
+    return false;
   };
 
   window.MatthewVoice = { speak, speakSequence, stop, test, feedback, unlock: () => getAudio()?.resume(), installVoiceData: async () => false };

@@ -25,18 +25,18 @@
     <section class="games" id="learningList"></section>
     <section class="section-head"><div><span class="eyebrow">اختبر شطارتك</span><h2>🏆 تحديات الملك ماثيو</h2></div></section>
     <section class="games" id="gameList">
-      <button class="game-card pink rescue-hero-card" data-stories="1"><span class="game-icon">📖</span><strong>قصص ومغامرات الملك</strong><small>٤ مغامرات: إنقاذ، حيوانات الغابة، رحلة مع مارك، وكنز الملك</small><span class="play">اختار مغامرتك ←</span></button>
-      <button class="game-card pink brave-stories-card" data-brave-stories="1"><span class="game-icon">📖</span><strong>قصص الملك ماثيو الشجاع</strong><small>٣ قصص جديدة بصوت مس نانسي: أنقذ مارك، حيوانات الغابة، ورحلة مع مارك ومريم — اجمع النجوم وافتحها!</small><span class="play">اختار قصتك ←</span></button>
+      <button class="game-card pink rescue-hero-card" data-stories="1"><span class="game-icon">📖</span><strong>قصص ومغامرات الملك</strong><small>٧ قصص: ٤ مغامرات + ٣ قصص شجاعة عن مارك ومريم</small><span class="play">اختار مغامرتك ←</span></button>
       <button class="game-card purple" data-category="numbers"><span class="game-icon">🔢</span><strong>عالم الأرقام</strong><small>عدّ وتعلّم الحساب</small><span class="play">يلا نلعب ←</span></button>
       <button class="game-card orange" data-category="letters"><span class="game-icon">🔤</span><strong>حروف وكلمات</strong><small>اكتشف الحروف</small><span class="play">يلا نلعب ←</span></button>
       <button class="game-card green" data-category="colors"><span class="game-icon">🎨</span><strong>الألوان والأشكال</strong><small>شوف واختار الصح</small><span class="play">يلا نلعب ←</span></button>
       <button class="game-card blue" data-category="world"><span class="game-icon">🌍</span><strong>معلومات ممتعة</strong><small>حيوانات وأشياء حولنا</small><span class="play">يلا نلعب ←</span></button>
       <button class="game-card green" data-category="science"><span class="game-icon">🔬</span><strong>اختبار العلوم والكون</strong><small>حيوانات ونباتات وألوان وفضاء</small><span class="play">اختبر معلوماتك ←</span></button>
+      <button class="game-card pink" data-category="mixed"><span class="game-icon">🎲</span><strong>اختبار المفاجآت</strong><small>أسئلة مختلفة كل مرة</small><span class="play">فاجئني ←</span></button>
     </section>
     <section id="quiz" class="quiz-panel hidden" aria-live="polite">
       <div class="quiz-top"><button id="backBtn" class="back" type="button">→ رجوع</button><span id="categoryName"></span><span id="questionCount"></span></div>
       <div class="progress"><div id="progressBar"></div></div>
-      <div class="question-area"><div class="question-emoji" id="questionEmoji">🌟</div><h2 id="questionText"></h2><p id="voiceStatus" class="voice-note" aria-live="polite"></p><div id="answers" class="answers"></div><p id="feedback" class="feedback" aria-live="polite"></p></div>
+      <div class="question-area"><div class="question-sticky"><div class="question-emoji" id="questionEmoji">🌟</div><h2 id="questionText"></h2><p id="voiceStatus" class="voice-note" aria-live="polite"></p><button id="replayBtn" class="voice-button" type="button">🔊 اسمع السؤال</button></div><div id="answers" class="answers"></div><p id="feedback" class="feedback" aria-live="polite"></p></div>
       <button id="nextBtn" class="primary hidden" type="button">السؤال التالي</button>
     </section>
     <section id="result" class="result-panel hidden">

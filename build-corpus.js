@@ -45,6 +45,19 @@ const add = (key, text, lang = "ar_EG") => {
 const keyed = JSON.parse(read("audio-src/clips.json"));
 for (const [key, v] of Object.entries(keyed)) add(key, v.text, v.lang);
 
+// F7 (numbers-once): English bare-digit clips 11–20 (tr_ennum_11..20,
+// staged in audio-src/opus/). FORCE-added (corpus keyed by clip key,
+// bypassing the norm dedupe in add()) like §13's tr_ennum_1..10 — and
+// placed BEFORE §2b on purpose: build-voice-clips.py builds BY_TEXT
+// last-wins, so the later ans_* Arabic digit entries (١١/١٢/…) must win
+// BY_TEXT for Arabic callers, while English callers reach these via the
+// EXACT map (exact text "11" ≠ "١١" — the norms collide, so both land in
+// EXACT) and via the voice-clips.js keyFor override.
+["11", "12", "13", "14", "15", "16", "17", "18", "19", "20"].forEach((t, i) => {
+  const k = "tr_ennum_" + (11 + i);
+  corpus.set("key:" + k, { key: k, lang: "en_US", text: t });
+});
+
 // 2) quiz bank questions
 {
   const src = read("app.js");
@@ -140,14 +153,20 @@ for (const [key, v] of Object.entries(keyed)) add(key, v.text, v.lang);
   const arNames = ev(ar.slice(ar.indexOf("const names=") + "const names=".length, ar.indexOf("];", ar.indexOf("const names=")) + 1));
   arNames.forEach((n, i) => {
     add("num_ar_" + i, "ده رقم " + n + ". يلا نعدّ الصور سوا");
-    add("num_ar_l_" + i, "ده رقم " + n + ". " + n);
+    add("num_ar_l_" + i, "ده رقم " + n + ".");
   });
   const en = read("math-english.js");
   const enNames = ev(en.slice(en.indexOf("const names=") + "const names=".length, en.indexOf("];", en.indexOf("const names=")) + 1));
   enNames.forEach((n, i) => {
     add("num_en_" + i, "ده رقم " + n + ". يلا نعد مع بعض!");
-    add("num_en_l_" + i, "Number " + n + ". " + (i + 1), "en_US");
+    add("num_en_l_" + i, "Number " + n + ".", "en_US");
   });
+  // Round 3.2.2 P0-5: bare-digit clips that did not exist at all.
+  add("num_digit_0", "٠");
+  add("num_digit_15", "١٥");
+  add("num_digit_18", "١٨");
+  add("num_digit_19", "١٩");
+  add("num_digit_20", "٢٠");
   add("num_ar_tip", "كل صورة بنعدّها مرة واحدة. آخر رقم بنقوله هو عدد الصور كلها.");
   add("num_en_tip", "عدّ كل صورة مرة واحدة. آخر رقم تقوله هو المجموع.");
 }
@@ -156,7 +175,12 @@ for (const [key, v] of Object.entries(keyed)) add(key, v.text, v.lang);
 add("ig_pickword", "اختار الكلمة المناسبة للصورة");
 add("voice_test_line", "أهلاً يا ملك ماثيو! يلا نتعلم ونلعب. برافو يا بطل!");
 // Round 3.2.1 note 25b: مس نانسي joins the praise rotation (voice.js feedback).
-add("praise_nancy", "أنا مس نانسي وبحبك يا ماثيو، برافو يا بطل!");
+add("praise_nancy", "بحبك يا ماثيو، برافو يا بطل!");
+// Round 3.2.2 P1-7: calm medal + movement breaks (texts mirror app.js).
+add("calm_medal", "برافو يا ملك ماثيو! خدت وسام الهدوء والدقة عشان جاوبت صح على مهلك!");
+add("move_break_1", "نطّ ٥ مرات زي الأرنب");
+add("move_break_2", "امشي زي الأسد ١٠ خطوات");
+add("move_break_3", "ارفع إيديك لفوق ونزّلهم ٥ مرات");
 // Round 3.2.1: math journey picker + finish lines (shared by both journeys).
 add("num_picker", "اختار رقم يا ملك ماثيو");
 for (let s = 0; s <= 4; s++) add("num_score_" + s, "جاوبت صح على " + "٠١٢٣٤"[s] + " من ٤.");
@@ -167,14 +191,15 @@ add("num_fail_tip", "راجع الشرح وجرب تاني، إنت تقدر!");
 add("sci_picker_subjects", "اختار عالم يا ملك ماثيو");
 add("sci_picker_lessons", "اختار درس يا ملك ماثيو");
 add("rescueInterstitial", "عدّيت مرحلة! كمّل كده وانت هتوصل…");
-// Round 3.2.1: game intros (notes 19a/25b) — مس نانسي introduces herself
-// and cheers Matthew by name; memory game + touch-game intros.
-add("storyPickerIntro", "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!");
-add("touch_menu_intro", "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! دي ألعاب اللمس والصوت، اختار اللعبة اللي تعجبك يا بطل!");
-add("touch_match_intro", "لعبة التوصيل يا ملك ماثيو! أنا مس نانسي، اضغط الصورة واسمع اسمها، وبعدين اضغط الكلمة اللي بتناسبها يا بطل!");
-add("touch_listen_intro", "لعبة اسمع واختار يا ملك ماثيو! أنا مس نانسي، اسمع كويس واختار الصح يا بطل!");
+// Round 3.2.1: game intros (notes 19a/25b) — memory game + touch-game
+// intros. Rule (2): the self-introduction belongs only in the opening
+// greeting (nancy_greet_*), never in section intros.
+add("storyPickerIntro", "أهلاً يا ملك ماثيو! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!");
+add("touch_menu_intro", "أهلاً يا ملك ماثيو! بحبك أوي! دي ألعاب اللمس والصوت، اختار اللعبة اللي تعجبك يا بطل!");
+add("touch_match_intro", "لعبة التوصيل يا ملك ماثيو! اضغط الصورة واسمع اسمها، وبعدين اضغط الكلمة اللي بتناسبها يا بطل!");
+add("touch_listen_intro", "لعبة اسمع واختار يا ملك ماثيو! اسمع كويس واختار الصح يا بطل!");
 add("touch_pic_apple", "تفاحة");
-add("mem_intro", "لعبة الذاكرة يا ملك ماثيو! أنا مس نانسي وبحبك أوي! اقلب الكروت ولاقي الصورتين اللي شبه بعض يا بطل!");
+add("mem_intro", "لعبة الذاكرة يا ملك ماثيو! بحبك أوي! اقلب الكروت ولاقي الصورتين اللي شبه بعض يا بطل!");
 add("mem_win", "برافو يا ملك ماثيو! لقيت كل الصور! أنت بطل الذاكرة! خدت ألماسة جديدة لتاجك!");
 // Round 3.2.1 memory-game upgrade (spec §7): rotating match praises (the
 // picture name is spoken first by its own clip, then the praise follows),
@@ -187,12 +212,16 @@ add("mem_half", "برافو يا ملك ماثيو! لقيت نص الصور! ك
 add("mem_try_1", "حاول تاني يا بطل");
 add("mem_try_2", "قربت يا ملك ماثيو! افتكر مكان الصور وحاول تاني!");
 add("mem_again", "يلا نلعب تاني يا ملك ماثيو! كروت جديدة مستنياك!");
+// Round 3.2.2 (audit §2 gap): bare memory-game letter names — 8 cards had
+// no clip at all and fell through to device TTS. Texts are the bare names
+// the game speaks (memory-game.js card.name).
+["ألف", "باء", "تاء", "ثاء", "جيم", "حاء", "خاء", "دال"].forEach((n, i) => add("mem_letter_" + i, n));
 // Round 3.2.1 Nancy lines (note 25b — Miss Nancy draft §4, exact keys/texts).
 // Game intros — texts mirror the modules: tracing.js NANCY_TRACE_INTRO,
 // color-games.js NANCY_INTRO_COLOR[_NUM].
-add("nancy_intro_trace", "يلا نتتبع الحرف يا ملك ماثيو! أنا مس نانسي، امشي على الخط بصوابعك على مهلك، أنت بطل!");
-add("nancy_intro_color", "يلا نلوّن يا ملك ماثيو! أنا مس نانسي، اختار لون حلو ولوّن معايا!");
-add("nancy_intro_color_num", "لعبة لوني العدد يا بطلي ماثيو! أنا مس نانسي، شوف الرقم على التاج ودوس على نفس الرقم في الزر!");
+add("nancy_intro_trace", "يلا نتتبع الحرف يا ملك ماثيو! امشي على الخط بصوابعك على مهلك، أنت بطل!");
+add("nancy_intro_color", "يلا نلوّن يا ملك ماثيو! اختار لون حلو ولوّن معايا!");
+add("nancy_intro_color_num", "لعبة لوني العدد يا بطلي ماثيو! شوف الرقم على التاج ودوس على نفس الرقم في الزر!");
 // Home greetings (app.js NANCY_GREETS, spoken by text) + quiz intros
 // (app.js NANCY_QUIZ_INTROS, first question only) + memory second intro
 // (memory-game.js MEM_INTRO_2, rotated with MEM_INTRO) + the praise /
@@ -205,16 +234,16 @@ add("nancy_intro_color_num", "لعبة لوني العدد يا بطلي ماث�
 add("nancy_greet_1", "أهلاً يا ملك ماثيو! أنا مس نانسي، وبحبك أوي! يلا نلعب ونتعلم مع بعض!");
 add("nancy_greet_2", "أنا مس نانسي وبحبك يا ماثيو! وحشتني أوي، يلا نبدأ يوم جميل مع بعض!");
 add("nancy_greet_3", "أهلاً يا بطلي ماثيو! أنا مس نانسي، أنا فخورة بيك أوي! يلا نشوف هنلعب إيه النهارده!");
-add("nancy_intro_memory_2", "يلا يا بطل ماثيو! أنا مس نانسي، افتح كارتين، لو شبه بعض يبقوا بتوعك! افتكر كويس!");
-add("nancy_intro_quiz", "يلا يا ملك ماثيو! أنا مس نانسي، اسمع السؤال كويس واختار الإجابة الصح، أنا واثقة فيك يا بطل!");
-add("nancy_intro_quiz_2", "اختبار جديد يا بطلي ماثيو! أنا مس نانسي، ركّز معايا وجاوب، وكل إجابة صح ليها نجمة!");
+add("nancy_intro_memory_2", "يلا يا بطل ماثيو! افتح كارتين، لو شبه بعض يبقوا بتوعك! افتكر كويس!");
+add("nancy_intro_quiz", "يلا يا ملك ماثيو! اسمع السؤال كويس واختار الإجابة الصح، أنا واثقة فيك يا بطل!");
+add("nancy_intro_quiz_2", "اختبار جديد يا بطلي ماثيو! ركّز معايا وجاوب، وكل إجابة صح ليها نجمة!");
 add("nancy_praise_1", "برافو يا ملك ماثيو! أنت شاطر أوي!");
-add("nancy_praise_2", "أحسنت يا ماثيو! أنا مس نانسي وفخورة بيك!");
+add("nancy_praise_2", "أحسنت يا ماثيو! أنا فخورة بيك أوي!");
 add("nancy_praise_3", "يا سلام يا ملك ماثيو! إجابة صح، أنت بطل!");
 add("nancy_praise_4", "برافو يا بطلي ماثيو! أنا بحبك، أنت ذكي أوي!");
 add("nancy_praise_5", "ممتاز يا ماثيو! كده صح، كمّل يا بطل!");
 add("nancy_praise_6", "أنت أحلى ملك يا ماثيو! برافو عليك!");
-add("nancy_praise_7", "برافو يا ملك ماثيو! أنا مس نانسي، وفرحانة بيك أوي!");
+add("nancy_praise_7", "برافو يا ملك ماثيو! أنا فرحانة بيك أوي!");
 add("nancy_praise_8", "شاطر شاطر يا ماثيو! أنت بتعمل حاجات جميلة!");
 add("nancy_praise_9", "يا بطل يا ماثيو! أنت كسبت نجمة جديدة!");
 add("nancy_praise_10", "أحسنت يا ملك ماثيو! أنت بتتعلم بسرعة، أنا بحبك!");
@@ -231,14 +260,27 @@ add("pron_apple", "Apple", "en_US");
 add("pron_book", "Book", "en_US");
 add("pron_ball", "Ball", "en_US");
 add("pron_milk", "Milk", "en_US");
+add("pron_cat", "Cat", "en_US");
+add("pron_sun", "Sun", "en_US");
+add("pron_dog", "Dog", "en_US");
+add("pron_fish", "Fish", "en_US");
 for (let s = 0; s <= 10; s++) add("result_score_" + s, "جاوبت صح على " + ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "١٠"][s] + " من ١٠ أسئلة");
+// G1 (numbers-once): half scores 0.5..9.5 — app.js fmtScore renders them
+// as "٠ ونص".."٩ ونص", so the result line is a full sentence in exactly
+// the result_score_* frame; one clip each, no code change in finish()
+// (it already speaks the result line as a single full-sentence lookup).
+for (let s = 0; s <= 9; s++) add("result_score_half_" + s, "جاوبت صح على " + ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"][s] + " ونص من ١٠ أسئلة");
 add("result_tip_pass", "برافو يا ملك ماثيو! انت بطل شاطر أوي!");
 add("result_tip_retry", "محاولة جميلة يا بطل ماثيو! العب تاني وهتجيب نجوم أكتر!");
 
 
-// 8) math journey question lines — questions(n) is a deterministic function of the
-// level in both journeys, and say() speaks q + " " + ex as one string. Mirror the
-// generators exactly so every journey question has a recorded clip.
+// 8) math journey question lines — the count/before/after/bigger templates
+// are a deterministic function of the level, and the add/sub templates draw
+// their operands from a neighbouring level's recorded variant (P2: m in
+// [n-2, n+2] in both journeys). Every variant is one of the 20 levels'
+// lines below, so say() speaking q + " " + ex as one string always has a
+// recorded clip. Mirror the generators exactly so every journey question
+// has a recorded clip.
 {
   const digits = n => String(n).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[+d]);
   const arSrc = read("math-journey.js");
@@ -248,29 +290,35 @@ add("result_tip_retry", "محاولة جميلة يا بطل ماثيو! الع�
   for (let n = 1; n <= 20; n++) {
     const prev = n === 1 ? 2 : n - 1, next = Math.min(20, n + 1), afterQ = n === 20 ? 19 : n, afterA = n === 20 ? 20 : next;
     const addA = Math.max(1, Math.floor(n / 2)), addB = Math.max(1, Math.min(5, n - addA));
-    const subA = Math.min(20, n + 2), subB = 2;
+    const subA = Math.min(20, n + 3), subB = 1 + (n % 2); // Round 3.2.2 P1-6: result is never n
     const apples = a => a === 1 ? "تفاحة واحدة" : digits(a) + " تفاحات";
     const aq = [
       ["عدّ الصور: كام واحدة؟", "عدّ كل صورة واحدة واحدة. المجموع " + digits(n) + "."],
       ["إيه الرقم اللي بعد " + digits(afterQ) + "؟", "بعد " + arNames[afterQ - 1] + " بييجي " + arNames[afterA - 1] + "."],
       ["إيه الرقم اللي قبل " + digits(next) + "؟", "قبل " + arNames[next - 1] + " بييجي " + arNames[next - 2] + "."],
       ["معانا " + apples(addA) + " وزودنا " + (addB === 1 ? "واحدة" : digits(addB)) + "، بقوا كام؟", arNames[addA - 1] + " زائد " + arNames[addB - 1] + " يساوي " + arNames[addA + addB - 1] + ". عدّهم مع بعض."],
-      ["كان معانا " + digits(subA) + " نجوم واختفى " + digits(subB) + "، فاضل كام؟", arNames[subA - 1] + " ناقص " + arNames[subB - 1] + " يساوي " + arNames[subA - subB - 1] + ". شيل اتنين وعدّ الباقي."],
+      ["كان معانا " + digits(subA) + " نجوم واختفى " + digits(subB) + "، فاضل كام؟", arNames[subA - 1] + " ناقص " + arNames[subB - 1] + " يساوي " + arNames[subA - subB - 1] + ". شيل " + arNames[subB - 1] + " وعدّ الباقي."],
       ["اختار العدد الأكبر: " + digits(n) + " ولا " + digits(prev), "العدد الأكبر هو " + digits(Math.max(n, prev)) + "."]
     ];
     aq.forEach(([q, ex], i) => add("math_ar_q" + n + "_" + i, q + " " + ex));
     aq.forEach(([q], i) => add("math_ar_qq" + n + "_" + i, q));
-    // Round 3.2.1: the English journey explains in Egyptian Arabic; only
-    // the taught number names stay English (recorded in ar_EG, like the
-    // Arabic-framed enLetters lines).
-    const applesEn = a => a === 1 ? "تفاحة واحدة" : a + " تفاحات";
+    // Numbers-once F5 (CORRECTED rule): the English journey explains in
+    // Egyptian Arabic, but the NUMBERS are single-language now — Latin digits
+    // become English number names in BOTH the question part AND the
+    // explanation part ("كان معانا five نجوم واختفى one، فاضل كام؟" ...
+    // "فيه ten." / "الرقم الأكبر هو ten."), so a value is never heard as
+    // an Arabic digit AND an English name in one clip. The Arabic frame and
+    // the explanation wording stay exactly as they were, only the digits
+    // become English names. The runtime math-english.js questions() mirrors
+    // this template word for word.
+    const applesEn = a => a === 1 ? "تفاحة واحدة" : enNames[a - 1] + " تفاحات";
     const eq = [
-      ["عدّ الصور، فيه كام واحدة؟", "عدّ كل صورة مرة واحدة. فيه " + n + "."],
-      ["إيه الرقم اللي بعد " + afterQ + "؟", "بعد " + enNames[afterQ - 1] + " بييجي " + enNames[afterA - 1] + "."],
-      ["إيه الرقم اللي قبل " + next + "؟", "قبل " + enNames[next - 1] + " بييجي " + enNames[next - 2] + "."],
-      ["معانا " + applesEn(addA) + " وزودنا " + (addB === 1 ? "واحدة" : addB) + "، بقوا كام؟", enNames[addA - 1] + " زائد " + enNames[addB - 1] + " يساوي " + enNames[addA + addB - 1] + ". عدّهم مع بعض."],
-      ["كان معانا " + subA + " نجوم واختفى " + subB + "، فاضل كام؟", enNames[subA - 1] + " ناقص " + enNames[subB - 1] + " يساوي " + enNames[subA - subB - 1] + ". شيل " + enNames[subB - 1] + " وعدّ الباقي."],
-      ["إيه الرقم الأكبر: " + n + " ولا " + prev + "؟", "الرقم الأكبر هو " + Math.max(n, prev) + "."]
+      ["عدّ الصور، فيه كام واحدة؟", "عدّ كل صورة مرة واحدة. فيه " + enNames[n - 1] + "."],
+      ["إيه الرقم اللي بعد " + enNames[afterQ - 1] + "؟", "بعد " + enNames[afterQ - 1] + " بييجي " + enNames[afterA - 1] + "."],
+      ["إيه الرقم اللي قبل " + enNames[next - 1] + "؟", "قبل " + enNames[next - 1] + " بييجي " + enNames[next - 2] + "."],
+      ["معانا " + applesEn(addA) + " وزودنا " + (addB === 1 ? "واحدة" : enNames[addB - 1]) + "، بقوا كام؟", enNames[addA - 1] + " زائد " + enNames[addB - 1] + " يساوي " + enNames[addA + addB - 1] + ". عدّهم مع بعض."],
+      ["كان معانا " + enNames[subA - 1] + " نجوم واختفى " + enNames[subB - 1] + "، فاضل كام؟", enNames[subA - 1] + " ناقص " + enNames[subB - 1] + " يساوي " + enNames[subA - subB - 1] + ". شيل " + enNames[subB - 1] + " وعدّ الباقي."],
+      ["إيه الرقم الأكبر: " + enNames[n - 1] + " ولا " + enNames[prev - 1] + "؟", "الرقم الأكبر هو " + enNames[Math.max(n, prev) - 1] + "."]
     ];
     eq.forEach(([q, ex], i) => add("math_en_q" + n + "_" + i, q + " " + ex));
     eq.forEach(([q], i) => add("math_en_qq" + n + "_" + i, q));

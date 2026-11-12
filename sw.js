@@ -1,4 +1,4 @@
-const CACHE = "king-matthew-v22";
+const CACHE = "king-matthew-v23";
 const FILES = [
   "./", "./index.html", "./styles.css", "./app.js", "./voice-web-fallback.js",
   "./lessons.js", "./learning.js", "./math-journey.js", "./math-english.js",
@@ -15,7 +15,7 @@ const FILES = [
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE)
-      .then(cache => cache.addAll(FILES))
+      .then(cache => Promise.allSettled(FILES.map(f => cache.add(f).catch(e => { console.warn("[sw] failed to cache", f, e); }))))
       .then(() => self.skipWaiting())
   );
 });

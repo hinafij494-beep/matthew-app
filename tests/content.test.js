@@ -56,7 +56,7 @@ test("code modules ship inside the interactive-games bundle; voice packs load as
   }
   assert.ok(html.includes("interactive-games.js"), "page does not load the bundle file");
   assert.ok(sw.includes("./interactive-games.js"), "offline cache missing the bundle file");
-  assert.match(sw, /king-matthew-v22/);
+  assert.match(sw, /king-matthew-v23/);
   assert.ok(sw.includes("./voice.bundle.js"), "offline cache must precache voice.bundle.js (round 3.2)");
   // The whole point of the restructure: the bundle must fit GitHub's
   // 25 MB per-file web-UI limit, with headroom.
@@ -104,10 +104,14 @@ test("recorded teacher voice clips exist and the rescue game uses real clip keys
   assert.match(read("voice.js"), /MatthewClips/);
 });
 
-test("story adventures replace the plain surprise quiz on the home screen", () => {
+test("story adventures and the mixed surprise quiz are both on the home screen", () => {
   const html = read("index.html");
   assert.ok(html.includes('data-stories="1"'), "home is missing the stories card");
-  assert.ok(!html.includes('data-category="mixed"'), "plain surprise quiz card still on home");
+  // Round 3.2.2 P2: the mixed quiz is reachable again (6th card) — it was
+  // removed when stories took its slot, leaving start("mixed") with no
+  // entry point; both cards share the home screen now.
+  assert.ok(html.includes('data-category="mixed"'), "home is missing the mixed surprise quiz card");
+  assert.match(html, /data-category="mixed"[^<]*<span class="game-icon">🎲<\/span><strong>اختبار المفاجآت<\/strong>/);
   const rescue = read("rescue.js");
   for (const title of ["مغامرة الإنقاذ", "تحدي حيوانات الغابة", "رحلة الغابة مع مارك", "كنز الملك"]) {
     assert.ok(rescue.includes(title), "missing story: " + title);
@@ -307,7 +311,14 @@ test("question pictures never reveal the answer (round 3.1)", () => {
   const pics = JSON.parse(m[1]);
   const bank = vm.runInNewContext("(" + src.slice(src.indexOf("const bank=") + 11, src.indexOf("\nconst names=")).replace(/;\s*$/, "") + ")", Object.create(null));
   for (const qs of Object.values(bank)) for (const q of qs) {
-    const correctPic = pics[q.a[q.c]];
+    const correct = q.a[q.c];
+    // Round 3.2.2 §8 P1-6 (review §7): letter-bank questions show the question
+    // word's picture for a child who cannot read (e.g. تفاحة 🍎). A single-letter
+    // answer's AnswerPics entry is the letter's mnemonic word-picture (ت→🍎),
+    // not a depiction of the glyph, so it cannot reveal which letter is first.
+    // The questionEmojiSafe guard encodes the same rule; skip those here.
+    if (String(correct).length === 1) continue;
+    const correctPic = pics[correct];
     assert.notStrictEqual(q.e, correctPic, "question picture reveals its answer: " + q.q);
   }
   const hear = Object.values(bank).flat().find(q => q.q.startsWith("بماذا نسمع"));
@@ -352,7 +363,7 @@ test("science swaps the two removed lessons for lightning and soap bubbles (roun
   }
   assert.ok(src.includes("الفيل أكبر حيوان على اليابسة"), "mammals lesson must say the elephant is the biggest LAND animal");
   const lessons = [...src.matchAll(/\["([^"]+)","([^"]+)","([^"]+)","([^"]+)"\]/g)];
-  assert.equal(lessons.length, 47, "expected 47 science lessons after the swap, got " + lessons.length);
+  assert.equal(lessons.length, 48, "expected 48 science lessons after adding أيام الأسبوع, got " + lessons.length);
 });
 
 test("question bank has no duplicates and covers the new science lessons (round 3.2)", () => {
@@ -370,7 +381,8 @@ test("question bank has no duplicates and covers the new science lessons (round 
   const all = Object.values(bank).flat();
   assert.ok(all.some(q => q.q.includes("برق") && q.a[q.c].includes("رعد")), "missing the new lightning question");
   assert.ok(all.some(q => q.q.includes("فقاعات")), "missing the new soap-bubble question");
-  assert.equal(all.filter(q => q.q.includes("قوس قزح")).length, 1, "the rainbow bank question stays exactly once");
+  assert.equal(all.filter(q => q.q.includes("قوس قزح")).length, 0, "Round 3.2.2 P0-7: no rainbow question anywhere in the bank");
+  assert.ok(all.some(q => q.q.includes("الشمس بتطلع منين الصبح؟")), "missing the sunrise question that replaces the rainbow question");
   for (const q of all.filter(q => q.q.startsWith("ما ناتج"))) {
     assert.ok(!/[0-9٠-٩+−]/.test(q.q), "operation question must be fully spoken, no digits or symbols: " + q.q);
   }
@@ -550,8 +562,8 @@ test("math in English and the English alphabet explain in Arabic (round 3.2.1)",
     assert.ok(me.includes(s), "missing Arabic string in math-english.js: " + s);
   for (const s of ["Count the pictures", "What number comes after", "What number comes before", "Which number is bigger", "You have", "Listen to the question", "I understand! Start practice", "Great job!", "Amazing work!", "Try again", "See your result", "You finished Math", "Next level", "Continue to next lesson", "King Matthew Math", "Math in English"])
     assert.ok(!me.includes(s), "English instruction remains in math-english.js: " + s);
-  assert.match(me, /speak\(t,"ar-EG"\)/, "math-english say() must speak explanations in ar-EG");
-  assert.match(me, /u\.lang="ar-EG"/, "math-english TTS fallback must be ar-EG");
+  assert.match(me, /speak\(t,"en-US"\)/, "math-english say() must speak in en-US (numbers-once F2-lang: English numbers under ar-EG resolve to Arabic clips)");
+  assert.ok(!me.includes("SpeechSynthesisUtterance") && !me.includes("speechSynthesis.speak"), "math-english must not fall back to device TTS (round 3.2.2 P0-4: clips only)");
   const learning = read("learning.js");
   assert.ok(learning.includes("arabicMeanings"), "enLetters needs the Arabic meanings array");
   assert.ok(learning.includes("شكله الصغير"), "enLetters spoken line must use Arabic framing");

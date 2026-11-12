@@ -110,7 +110,10 @@ function collect(questions, n, sweeps = 300) {
       if (!byQ.has(q.q)) byQ.set(q.q, q);
     }
   }
-  assert.equal(byQ.size, 6, `level ${n}: all 6 templates reachable`);
+  // Round 3.2.2 P2: the add/sub templates each draw operands from a
+  // neighbouring level's recorded variant, so one level can emit up to 5
+  // add and 5 sub wordings on top of the 4 fixed templates (6..14 distinct).
+  assert.ok(byQ.size >= 6 && byQ.size <= 14, `level ${n}: 6-14 distinct questions, got ${byQ.size}`);
   return byQ;
 }
 
@@ -158,18 +161,18 @@ test("English journey: degenerate questions fixed (L1 T5, L20 T1/T2)", () => {
   const { questions } = EN();
   const l1 = collect(questions, 1);
   const t5 = [...l1.values()].find((q) => q.q.startsWith("إيه الرقم الأكبر"));
-  assert.equal(t5.q, "إيه الرقم الأكبر: 1 ولا 2؟");
+  assert.equal(t5.q, "إيه الرقم الأكبر: one ولا two؟");
   assert.equal(t5.correct, 2);
-  assert.equal(t5.ex, "الرقم الأكبر هو 2.");
-  assert.ok(![...l1.keys()].some((q) => q.includes("1 ولا 1")), "no 1-vs-1 question");
+  assert.equal(t5.ex, "الرقم الأكبر هو two.");
+  assert.ok(![...l1.keys()].some((q) => q.includes("one ولا one")), "no one-vs-one question");
 
   const l20 = collect(questions, 20);
   const after = [...l20.values()].find((q) => q.q.startsWith("إيه الرقم اللي بعد"));
-  assert.equal(after.q, "إيه الرقم اللي بعد 19؟");
+  assert.equal(after.q, "إيه الرقم اللي بعد nineteen؟");
   assert.equal(after.correct, 20);
   assert.equal(after.ex, "بعد nineteen بييجي twenty.");
   const before = [...l20.values()].find((q) => q.q.startsWith("إيه الرقم اللي قبل"));
-  assert.equal(before.q, "إيه الرقم اللي قبل 20؟");
+  assert.equal(before.q, "إيه الرقم اللي قبل twenty؟");
   assert.equal(before.correct, 19);
   assert.equal(before.ex, "قبل twenty بييجي nineteen.");
 });
@@ -191,6 +194,34 @@ test("Arabic journey: degenerate questions fixed (L1 T5, L20 T1/T2)", () => {
   assert.equal(before.q, "إيه الرقم اللي قبل ٢٠؟");
   assert.equal(before.correct, 19);
   assert.equal(before.ex, "قبل عشرين بييجي تسعتاشر.");
+});
+
+test("P2: add/sub operations vary across rounds of the same level (no single memorised operation)", () => {
+  for (const load of [EN, AR]) {
+    const { questions } = load();
+    const subs = new Set(), adds = new Set();
+    for (let i = 0; i < 300; i++) {
+      for (const q of questions(5)) {
+        if (q.q.startsWith("كان معانا")) subs.add(q.q);
+        else if (q.q.startsWith("معانا")) adds.add(q.q);
+      }
+    }
+    assert.ok(subs.size >= 2, "level 5 subtraction must vary across rounds, got: " + [...subs].join(" | "));
+    assert.ok(adds.size >= 2, "level 5 addition must vary across rounds, got: " + [...adds].join(" | "));
+    // ...but only within neighbouring recorded variants: the RESULTS stay
+    // small and positive (level 5: additions 3-7, subtractions 4-8).
+    const addResults = new Set(), subResults = new Set();
+    for (let i = 0; i < 300; i++) {
+      for (const q of questions(5)) {
+        if (q.q.startsWith("كان معانا")) subResults.add(q.correct);
+        else if (q.q.startsWith("معانا")) addResults.add(q.correct);
+      }
+    }
+    assert.ok(addResults.size >= 2, "level 5 addition results must vary, got: " + [...addResults].join(", "));
+    assert.ok(subResults.size >= 2, "level 5 subtraction results must vary, got: " + [...subResults].join(", "));
+    for (const r of addResults) assert.ok(r >= 2 && r <= 8, "addition result out of range: " + r);
+    for (const r of subResults) assert.ok(r >= 2 && r <= 10, "subtraction result out of range: " + r);
+  }
 });
 
 test("math questions are well-formed at every level, both journeys", () => {
@@ -223,12 +254,12 @@ test("q-alone runtime strings are covered by corpus entries in build-corpus.js",
   // §6: English number lines are now the Arabic hint; listen lines unchanged
   assert.equal(byKey.get("num_en_0").text, "ده رقم one. يلا نعد مع بعض!");
   assert.equal(byKey.get("num_en_0").lang, "ar_EG");
-  assert.equal(byKey.get("num_en_l_0").text, "Number one. 1");
+  assert.equal(byKey.get("num_en_l_0").text, "Number one.");
   assert.equal(byKey.get("num_en_tip").text, "عدّ كل صورة مرة واحدة. آخر رقم تقوله هو المجموع.");
   assert.equal(byKey.get("num_ar_tip").text, "كل صورة بنعدّها مرة واحدة. آخر رقم بنقوله هو عدد الصور كلها.");
   // §8: every runtime question string (q alone) and every composed
   // q + " " + ex string has a corpus entry, both journeys, all levels.
-  assert.equal(byKey.get("math_en_q1_5").text, "إيه الرقم الأكبر: 1 ولا 2؟ الرقم الأكبر هو 2.");
+  assert.equal(byKey.get("math_en_q1_5").text, "إيه الرقم الأكبر: one ولا two؟ الرقم الأكبر هو two.");
   for (const load of [EN, AR]) {
     const { questions } = load();
     for (let n = 1; n <= 20; n++) {

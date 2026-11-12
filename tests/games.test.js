@@ -55,12 +55,12 @@ const COMMITTED_NORMS = new Set(COMMITTED.map(e => norm(e.text)));
 // build-corpus.js / audio-src/clips.json); until then this manifest is the
 // coverage record. Every entry here must match the runtime string exactly.
 const NEW_CLIPS = [
-  { key: "touch_menu_intro", text: "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! دي ألعاب اللمس والصوت، اختار اللعبة اللي تعجبك يا بطل!", lang: "ar_EG" },
-  { key: "touch_match_intro", text: "لعبة التوصيل يا ملك ماثيو! أنا مس نانسي، اضغط الصورة واسمع اسمها، وبعدين اضغط الكلمة اللي بتناسبها يا بطل!", lang: "ar_EG" },
-  { key: "touch_listen_intro", text: "لعبة اسمع واختار يا ملك ماثيو! أنا مس نانسي، اسمع كويس واختار الصح يا بطل!", lang: "ar_EG" },
+  { key: "touch_menu_intro", text: "أهلاً يا ملك ماثيو! بحبك أوي! دي ألعاب اللمس والصوت، اختار اللعبة اللي تعجبك يا بطل!", lang: "ar_EG" },
+  { key: "touch_match_intro", text: "لعبة التوصيل يا ملك ماثيو! اضغط الصورة واسمع اسمها، وبعدين اضغط الكلمة اللي بتناسبها يا بطل!", lang: "ar_EG" },
+  { key: "touch_listen_intro", text: "لعبة اسمع واختار يا ملك ماثيو! اسمع كويس واختار الصح يا بطل!", lang: "ar_EG" },
   { key: "touch_pic_apple", text: "تفاحة", lang: "ar_EG" },
-  { key: "storyPickerIntro", text: "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!", lang: "ar_EG" },
-  { key: "mem_intro", text: "لعبة الذاكرة يا ملك ماثيو! أنا مس نانسي وبحبك أوي! اقلب الكروت ولاقي الصورتين اللي شبه بعض يا بطل!", lang: "ar_EG" },
+  { key: "storyPickerIntro", text: "أهلاً يا ملك ماثيو! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!", lang: "ar_EG" },
+  { key: "mem_intro", text: "لعبة الذاكرة يا ملك ماثيو! بحبك أوي! اقلب الكروت ولاقي الصورتين اللي شبه بعض يا بطل!", lang: "ar_EG" },
   { key: "mem_match_1", text: "برافو يا ملك ماثيو! شاطر خالص!", lang: "ar_EG" },
   { key: "mem_match_2", text: "يا سلام يا بطل ماثيو! الصورتين شبه بعض! عينك قوية أوي!", lang: "ar_EG" },
   { key: "mem_match_3", text: "أحسنت يا ملك ماثيو! أنت ذكي أوي يا بطل!", lang: "ar_EG" },
@@ -153,18 +153,19 @@ test("every game intro resolves to a recorded clip", () => {
   for (const tab of ["nature", "patterns"]) {
     assert.ok([...DERIVED_NORMS].some(t => t.startsWith(norm(instructions[tab]))),
       tab + " intro not the prefix of any derived tab speech: " + instructions[tab]);
-    assert.match(instructions[tab], /مس نانسي/, tab + " intro must introduce مس نانسي");
+    assert.ok(!instructions[tab].includes("أنا مس نانسي"), tab + " intro must NOT introduce مس نانسي by name (round 3.2.2 P1-1)");
     assert.match(instructions[tab], /يا ملك ماثيو/, tab + " intro must cheer Matthew by name");
   }
   assert.match(instructions.numbers, /اختار لون وبعدين دوس على الجزء اللي رقمه نفس اللون/, "numbers intro must carry the prescribed sentence");
-  assert.match(instructions.numbers, /مس نانسي/, "numbers intro must introduce مس نانسي");
+  assert.ok(!instructions.numbers.includes("أنا مس نانسي"), "numbers intro must NOT introduce مس نانسي by name (round 3.2.2 P1-1)");
 
   // Touch games: the intro constants in the bundle core.
   for (const name of ["MENU_INTRO", "MATCH_INTRO", "LISTEN_INTRO"]) {
     const hit = TOUCH_CORE.match(new RegExp("const " + name + '="([^"]+)"'));
     assert.ok(hit, name + " not found in the touch-games core");
     assert.ok(covered(hit[1]), name + " intro has no recorded clip: " + hit[1]);
-    assert.match(hit[1], /مس نانسي/, name + " must introduce مس نانسي");
+    assert.ok(!hit[1].includes("أنا مس نانسي"), name + " must NOT introduce مس نانسي by name (rule 2: only the opening greeting does)");
+    assert.match(hit[1], /يا ملك ماثيو/, name + " must still cheer Matthew by name");
   }
 
   // Memory game: intro + win lines + rotating praise / half / try-again /
@@ -179,7 +180,7 @@ test("every game intro resolves to a recorded clip", () => {
   // Stories picker: the spoken intro (مس نانسي version from the report) is
   // in the manifest, and rescue.js already speaks an intro on open.
   assert.ok(covered(NEW_CLIPS.find(e => e.key === "storyPickerIntro").text), "story picker intro has no recorded clip");
-  assert.match(RESCUE, /speak\("أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!", "storyPickerIntro"\)/, "story picker must speak its intro on open");
+  assert.match(RESCUE, /speak\("أهلاً يا ملك ماثيو! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!", "storyPickerIntro"\)/, "story picker must speak its intro on open");
 });
 
 test("matching-game picture names resolve to recorded clips, and tapping a picture speaks its name", () => {
@@ -220,13 +221,13 @@ test("game intros are spoken on open (auto-narration, not tap-to-listen)", () =>
   // Round 3.2.1 note 25b: the memory intro rotates between two Nancy
   // lines (MEM_INTRO / MEM_INTRO_2); the replay button re-speaks
   // whichever one opened this round (lastMemIntro).
-  assert.ok(MEMORY.includes('const MEM_INTRO_2 = "يلا يا بطل ماثيو! أنا مس نانسي، افتح كارتين، لو شبه بعض يبقوا بتوعك! افتكر كويس!"'), "memory game needs a second rotating intro");
+  assert.ok(MEMORY.includes('const MEM_INTRO_2 = "يلا يا بطل ماثيو! افتح كارتين، لو شبه بعض يبقوا بتوعك! افتكر كويس!"'), "memory game needs a second rotating intro");
   assert.match(MEMORY, /lastMemIntro = memIntroIndex\+\+ % 2 === 0 \? MEM_INTRO : MEM_INTRO_2/, "memory intro must rotate between the two Nancy lines");
 });
 
 test("color games: Nancy opens the workshop + the numbers game (note 25b)", () => {
-  assert.ok(COLOR_GAMES.includes('const NANCY_INTRO_COLOR = "يلا نلوّن يا ملك ماثيو! أنا مس نانسي، اختار لون حلو ولوّن معايا!"'), "workshop opener line missing");
-  assert.ok(COLOR_GAMES.includes('const NANCY_INTRO_COLOR_NUM = "لعبة لوني العدد يا بطلي ماثيو! أنا مس نانسي، شوف الرقم على التاج ودوس على نفس الرقم في الزر!"'), "numbers-game opener line missing");
+  assert.ok(COLOR_GAMES.includes('const NANCY_INTRO_COLOR = "يلا نلوّن يا ملك ماثيو! اختار لون حلو ولوّن معايا!"'), "workshop opener line missing");
+  assert.ok(COLOR_GAMES.includes('const NANCY_INTRO_COLOR_NUM = "لعبة لوني العدد يا بطلي ماثيو! شوف الرقم على التاج ودوس على نفس الرقم في الزر!"'), "numbers-game opener line missing");
   assert.match(COLOR_GAMES, /function tabSpeechItems\(\)[\s\S]*?NANCY_INTRO_COLOR_NUM/, "numbers tab speech must open with Nancy's numbers line");
   assert.match(COLOR_GAMES, /function speakTabSpeech\(\) \{ speakSeq\(tabSpeechItems\(\)\); \}/, "tab speech must go through the clip sequence");
   // The match-game draft line is a duplicate of the existing MATCH_INTRO /
@@ -336,9 +337,12 @@ test("memory game (§7–§8): 6 pairs, 3 rotating themes, no negative language,
   for (const theme of api.themes) {
     for (const p of theme) assert.ok(coveredCommitted(p.name), "picture name has no recorded clip: " + p.name);
   }
-  // [الاسم] slot: the picture's name clip is spoken FIRST, then the
-  // rotating praise line in sequence — never baked into the praise clip.
-  assert.match(MEMORY, /speakSeq\(\[name, line\]\)/, "match praise must speak the picture name first, then the praise line");
+  // Numbers-once F4: the match praise is the rotating praise line ALONE —
+  // the picture name was already spoken on both flips, so speaking it
+  // again here would say it a 3rd time. The name is never baked into
+  // the praise clip.
+  assert.match(MEMORY, /speakSeq\(\[line\]\)/, "match praise must speak the praise line alone, never re-speak the picture name");
+  assert.ok(!/speakSeq\(\[name, line\]\)/.test(MEMORY), "match praise must not re-speak the picture name before the praise line");
   assert.match(MEMORY, /const line = found === PAIRS_PER_GAME \/ 2 \? MEM_HALF : MEM_MATCH\[matchIndex\+\+ % MEM_MATCH\.length\]/,
     "half-way cheer at 3/6 must replace the rotation");
   assert.ok(!MEMORY.includes("[الاسم]"), "no [name] placeholder may survive in a recorded praise clip");

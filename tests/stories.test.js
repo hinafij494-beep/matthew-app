@@ -53,12 +53,13 @@ test("3 draft stories exist, each with 4 stages and 2 questions per stage (8 tot
   assert.equal(allQuestions().length, 24, "24 story questions in total");
 });
 
-test("narrator is Miss Nancy (note 25b): she introduces herself and loves Matthew", () => {
-  assert.match(stories.PICKER_LINE, /مس نانسي/, "picker greeting must name Miss Nancy");
-  assert.match(stories.PICKER_LINE, /بحبك يا ماثيو/, "picker greeting must say she loves Matthew");
-  for (const s of stories.STORIES) {
-    assert.match(s.intro, /أنا مس نانسي وبحبك أوي/, s.id + ": intro must open with Miss Nancy introducing herself and loving Matthew");
-  }
+test("Nancy wording rule (round 3.2.2 P1-1): «أنا مس نانسي» only in the opening greeting, never in section intros", () => {
+  // The picker greeting and the reworded brave-animals intro must NOT
+  // introduce her by name — the user ruled the self-introduction belongs
+  // only in the opening greeting (nancy_greet_*).
+  assert.ok(!stories.PICKER_LINE.includes("أنا مس نانسي"), "picker greeting must NOT introduce Miss Nancy by name");
+  const animals = stories.STORIES.find(s => s.id === "brave-animals");
+  assert.ok(animals && !animals.intro.includes("أنا مس نانسي"), "brave-animals intro must NOT introduce Miss Nancy by name");
   assert.match(stories.LOCKED_LINE, /مس نانسي/, "locked-story line speaks as Miss Nancy too");
 });
 
@@ -77,12 +78,12 @@ test("protector-king arc: jealousy turns into love and protection, no fear/shame
   assert.ok(!/عقاب|هعاقبك|وحش|غبي|هزعق|هضرب/.test(allText), "stories must never use punishment, shame or hurt language");
 });
 
-test("star-gating: thresholds 5 / 10 / 15 (story 1 ≈ one good quiz session)", () => {
+test("star-gating: thresholds 0 / 10 / 15 (first protection story opens free, round 3.2.2 P1-7)", () => {
   const [s1, s2, s3] = stories.STORIES;
-  assert.equal(s1.stars, 5);
+  assert.equal(s1.stars, 0, "the first protection story opens with zero stars so Matthew can start as protector-king at once");
   assert.equal(s2.stars, 10);
   assert.equal(s3.stars, 15);
-  assert.ok(!stories.isUnlocked(s1, 0) && stories.isUnlocked(s1, 5));
+  assert.ok(stories.isUnlocked(s1, 0));
   assert.ok(!stories.isUnlocked(s2, 9) && stories.isUnlocked(s2, 10));
   assert.ok(!stories.isUnlocked(s3, 14) && stories.isUnlocked(s3, 15));
   assert.ok(stories.isUnlocked(s3, 100));
@@ -281,4 +282,10 @@ test("stories.js is wired for the bundle (coordinator check)", () => {
   assert.match(src, /MatthewBraveStories/, "module exposes window.MatthewBraveStories");
   assert.match(src, /data-brave-stories/, "home card hook data-brave-stories exists");
   assert.match(src, /sceneFor/, "per-stage scene mapping exists");
+  // Round 3.2.2 P1-2: merged picker — rescue.js opens brave stories via
+  // the exported openStory, and index.html has ONE stories card.
+  assert.match(src, /openStory/, "stories module must export openStory for the merged picker");
+  const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  assert.ok(html.includes('data-stories="1"'), "merged stories card must exist in index.html");
+  assert.ok(!html.includes("data-brave-stories"), "the old separate brave-stories card must be gone from index.html");
 });

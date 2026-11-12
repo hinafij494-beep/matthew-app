@@ -65,12 +65,9 @@
   ];
   let traceColor = COLORS[1].c, strokeCtx = null;
 
+  // Round 3.2.2 P0-4: recorded clips ONLY — no device speechSynthesis.
   const speak = (text, lang) => {
     if (window.MatthewVoice && window.MatthewVoice.speak) window.MatthewVoice.speak(text, lang);
-    else if ("speechSynthesis" in window) {
-      speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text); u.lang = lang; speechSynthesis.speak(u);
-    }
   };
 
   const TRACE_INSTR = "لوّن الحرف من جوّه بس بإصبعك، واختار اللون اللي يعجبك";
@@ -78,7 +75,7 @@
   // activity herself (nancy_intro_trace) before the instruction + glyph.
   // Spoken as the first item of the first-open sequence, with the same
   // ~5s gap as the instruction (it is a full sentence, not a bare glyph).
-  const NANCY_TRACE_INTRO = "يلا نتتبع الحرف يا ملك ماثيو! أنا مس نانسي، امشي على الخط بصوابعك على مهلك، أنت بطل!";
+  const NANCY_TRACE_INTRO = "يلا نتتبع الحرف يا ملك ماثيو! امشي على الخط بصوابعك على مهلك، أنت بطل!";
   // Rescue.js pattern: a clip KEY plays first (exact clip, no text-map
   // collision); the spoken text is only the device-TTS fallback.
   const speakKey = (text, key, lang) => {
