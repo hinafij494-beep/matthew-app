@@ -87,6 +87,13 @@ const INPUT_OVERRIDES = {
   // Audit-confirmed re-records: bare letter / digit glyphs need the spoken name.
   ans_87: "ألف",
   ans_34: "حداشر",
+  // Round 3.2.2 (user-approved 2026-11-12 12:02 EET): bare «١٣/١٤/١٦/١٧»
+  // read as English digits ("1 3 3" / "1 4" / "116" / "17") — force the
+  // Egyptian words, same precedent as ans_34 «حداشر» / ans_51 «اتناشر».
+  ans_59: "تلتاشر",
+  ans_56: "أربعتاشر",
+  ans_57: "ستاشر",
+  ans_58: "سبعتاشر",
   // ans_260: Egyptian "مَيَّا" (water) — the shadda forces the Egyptian
   // reading; verify the result does not sound like "مئة" (100).
   ans_260: "ميّا"
