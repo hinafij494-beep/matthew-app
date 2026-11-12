@@ -117,7 +117,9 @@ test("English alphabet and Arabic/English numbers are available", () => {
   assert.match(learning, /englishWords/);
   assert.match(learning, /arabicDigits/);
   assert.match(learning, /englishNames/);
-  assert.match(learning, /English Alphabet/);
+  // Round 3.2.1 note 3: the section title is Arabic now, but it still
+  // teaches the English alphabet (A–Z with a word per letter).
+  assert.match(learning, /الحروف الإنجليزية/);
   assert.match(learning, /الأرقام العربية/);
 });
 

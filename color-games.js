@@ -58,7 +58,19 @@
       ".cg-slot.empty{border-style:dashed;background:#fff;color:#b9a8e8}" +
       ".cg-slot.cg-pop{animation:cgPop .45s ease}" +
       ".cg-msg{min-height:24px;font-weight:800;font-size:14px;text-align:center}" +
-      ".cg-next{max-width:420px;margin-left:auto;margin-right:auto}";
+      ".cg-next{max-width:420px;margin-left:auto;margin-right:auto}" +
+      // Round 3.2.1 note 24(a): split color buttons — colour NAME on the
+      // right half, NUMBER in a white circle on the left half (mockup:
+      // name right, number-circle left; RTL puts the first half right).
+      ".cg-color-btn.cg-split{display:inline-flex;align-items:center;min-width:150px;padding:10px 12px}" +
+      ".cg-split-name{flex:1;text-align:center;font-size:18px}" +
+      ".cg-split-div{width:2px;align-self:stretch;background:#ffffff66;margin-inline:10px}" +
+      ".cg-split-num{width:46px;height:46px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:26px;font-weight:900;flex-shrink:0}" +
+      // Round 3.2.1 note 20: the crown gently floats; a finished crown
+      // bursts with the shared star-burst keyframe (styles.css).
+      ".cg-crown-wrap svg{animation:matthewFloat 2.8s ease-in-out infinite}" +
+      ".cg-crown-wrap.cg-celebrate{animation:matthewStarBurst .6s ease both}" +
+      ".cg-nature-emoji.cg-grey{animation:matthewFloat 2.6s ease-in-out infinite}";
     document.head.appendChild(style);
   }
 
@@ -109,14 +121,25 @@
   ];
 
   const INSTRUCTIONS = {
-    numbers: "أهلاً يا ملك ماثيو! لعبة لوني العدد! اختار لون من اللوحة، وبعدين دوس على جزء التاج اللي رقمه نفس اللون. وكل ما تدوس على جزء هقولك رقمه!",
-    nature: "لعبة سحب لون الطبيعة! شوف الصورة الرمادي، واختار لونها الحقيقي من اللوحة!",
-    patterns: "لعبة أكمل تلوين النمط! بص على الألوان اللي في الصف، وخمّن اللون اللي ناقص في الآخر واختاره!"
+    numbers: "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! اختار لون وبعدين دوس على الجزء اللي رقمه نفس اللون!",
+    nature: "لعبة سحب لون الطبيعة يا ملك ماثيو! أنا مس نانسي، شوف الصورة الرمادي واختار لونها الحقيقي من اللوحة!",
+    patterns: "لعبة أكمل تلوين النمط يا ملك ماثيو! أنا مس نانسي، بص على الألوان اللي في الصف وخمّن اللون اللي ناقص في الآخر!"
   };
+
+  // Round 3.2.1 note 25b (Nancy-lines draft): مس نانسي opens the workshop
+  // herself (nancy_intro_color) and introduces the numbers game with its
+  // split-button mechanic (nancy_intro_color_num — the crown number and
+  // the same number on the button). Spoken via speakSequence so each line
+  // resolves to its own recorded clip; before generation the sequence
+  // falls back to one joined TTS utterance, never silence. Clip keys are
+  // stable: her real recordings will replace these TTS clips as-is.
+  const NANCY_INTRO_COLOR = "يلا نلوّن يا ملك ماثيو! أنا مس نانسي، اختار لون حلو ولوّن معايا!";
+  const NANCY_INTRO_COLOR_NUM = "لعبة لوني العدد يا بطلي ماثيو! أنا مس نانسي، شوف الرقم على التاج ودوس على نفس الرقم في الزر!";
 
   // ---------- helpers ----------
   const arDigits = value => String(value).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[Number(d)]);
   const speak = text => window.MatthewVoice?.speak(text, "ar-EG");
+  const speakSeq = texts => window.MatthewVoice?.speakSequence?.(texts, "ar-EG");
   const shuffle = arr => { const b = [...arr]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
   const $ = id => panel.querySelector("#" + id);
 
@@ -216,14 +239,13 @@
     panel.classList.remove("hidden");
     renderPanel();
     refreshCrowns();
-    speak(tabSpeech());
+    speakSeq([NANCY_INTRO_COLOR, ...tabSpeechItems()]);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function close() {
     panel.classList.add("hidden");
     gameList.classList.remove("hidden");
-    if (learningList) learningList.classList.remove("hidden");
     try { window.MatthewVoice?.stop(); } catch (_) {}
     refreshCrowns();
   }
@@ -236,13 +258,13 @@
       '<button type="button" class="cg-tab' + (activeTab === "numbers" ? " active" : "") + '" data-tab="numbers">🔢 لوني العدد</button>' +
       '<button type="button" class="cg-tab' + (activeTab === "nature" ? " active" : "") + '" data-tab="nature">🌿 سحب لون الطبيعة</button>' +
       '<button type="button" class="cg-tab' + (activeTab === "patterns" ? " active" : "") + '" data-tab="patterns">🎨 أكمل تلوين النمط</button></div>' +
-      '<div id="cgGame"></div>';
+      '<div id="cgGame" class="anim-enter"></div>';
     $("cgBack").onclick = close;
     panel.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => {
       activeTab = b.dataset.tab;
       renderPanel();
       refreshCrowns();
-      speak(tabSpeech());
+      speakTabSpeech();
     });
     renderGame();
   }
@@ -262,6 +284,15 @@
     }
     return INSTRUCTIONS.numbers;
   }
+
+  // Spoken items for the active tab: the numbers tab is opened by مس نانسي
+  // herself (nancy_intro_color_num), the other tabs speak their composed
+  // intro (each resolves to one recorded cg_*_tab clip).
+  function tabSpeechItems() {
+    if (activeTab === "numbers") return [NANCY_INTRO_COLOR_NUM, INSTRUCTIONS.numbers];
+    return [tabSpeech()];
+  }
+  function speakTabSpeech() { speakSeq(tabSpeechItems()); }
 
   function renderGame() {
     if (activeTab === "numbers") renderNumbers();
@@ -292,18 +323,15 @@
           '<text x="' + p.cx + '" y="' + (p.cy + 11) + '" font-size="30" font-weight="900" text-anchor="middle" fill="' + textFill + '">' + arDigits(n) + "</text></g>";
       }).join("") + "</svg>";
     area.innerHTML =
-      '<p class="cg-instruction">اختار لون من اللوحة، وبعدين دوس على جزء التاج اللي رقمه نفس اللون</p>' +
-      '<p class="cg-round">الجولة ' + arDigits(numbersState.round) + ' • الأرقام من ' + arDigits(win[0]) + ' لـ ' + arDigits(win[5]) + "</p>" +
-      '<div class="cg-legend">' + win.map(n => {
-        const col = legendColorFor(n);
-        return '<span class="cg-legend-chip"><span class="cg-dot" style="background:' + col.hex + '"></span>' + arDigits(n) + " = " + col.name + "</span>";
-      }).join("") + "</div>" +
-      '<div class="cg-crown-wrap">' + crownSvg + "</div>" +
+      '<p class="cg-round">الجولة ' + arDigits(numbersState.round) + "</p>" +
+      '<div class="cg-crown-wrap' + (allDone ? " cg-celebrate" : "") + '">' + crownSvg + "</div>" +
+      '<button id="cgListenNumbers" class="voice-button" type="button">🔊 اسمع السؤال</button>' +
       '<div class="cg-palette">' + COLORS.slice(0, 6).map((col, i) =>
-        '<button type="button" class="cg-color-btn' + (numbersState.selected === i ? " selected" : "") + '" data-color="' + i + '" style="background:' + col.hex + ";color:" + col.text + '">' + col.name + "</button>"
+        '<button type="button" class="cg-color-btn cg-split' + (numbersState.selected === i ? " selected" : "") + '" data-color="' + i + '" style="background:' + col.hex + ";color:" + col.text + '"><span class="cg-split-name">' + col.name + '</span><span class="cg-split-div" aria-hidden="true"></span><span class="cg-split-num" style="color:' + col.hex + '">' + arDigits(win.find(n => (n - 1) % 6 === i)) + "</span></button>"
       ).join("") + "</div>" +
       '<p id="cgMsg" class="cg-msg" aria-live="polite"></p>' +
-      (allDone ? '<button id="cgNextRound" class="primary cg-next" type="button">الجولة اللي بعدها ←</button>' : "");
+      (allDone ? '<button id="cgNextRound" class="primary cg-next" type="button">الجولة اللي بعدها <span class="pager-arrow">←</span></button>' : "");
+    $("cgListenNumbers").onclick = () => speakTabSpeech();
     area.querySelectorAll("[data-color]").forEach(b => b.onclick = () => {
       numbersState.selected = Number(b.dataset.color);
       area.querySelectorAll("[data-color]").forEach(x => x.classList.toggle("selected", x === b));
@@ -389,14 +417,14 @@
       '<p class="cg-round">' + arDigits(natureState.index + 1) + " / " + arDigits(total) + "</p>" +
       '<div class="cg-nature"><div class="cg-nature-emoji' + (natureState.answered ? " cg-pop" : " cg-grey") + '" aria-hidden="true">' + item.emoji + '</div>' +
       '<div class="cg-nature-name">' + item.name + "</div>" +
-      '<button id="cgListenNature" class="voice-button" type="button">🔊 اسمع تاني</button></div>' +
+      '<button id="cgListenNature" class="voice-button" type="button">🔊 اسمع السؤال</button></div>' +
       '<div class="cg-palette">' + NATURE_PALETTE.map(id => {
         const col = colorById(id);
         return '<button type="button" class="cg-color-btn" data-color="' + id + '" style="background:' + col.hex + ";color:" + col.text + (id === "white" ? ";border-color:#d9d2f0" : "") + '">' + col.name + "</button>";
       }).join("") + "</div>" +
       '<p id="cgMsg" class="cg-msg" aria-live="polite"></p>' +
       (natureState.answered
-        ? '<button id="cgNatureNext" class="primary cg-next" type="button">' + (natureState.roundDone ? "جولة جديدة ←" : "الحاجة اللي بعدها ←") + "</button>"
+        ? '<button id="cgNatureNext" class="primary cg-next" type="button">' + (natureState.roundDone ? 'جولة جديدة <span class="pager-arrow">←</span>' : 'الحاجة اللي بعدها <span class="pager-arrow">←</span>') + "</button>"
         : "");
     $("cgListenNature").onclick = speakNatureQuestion;
     area.querySelectorAll("[data-color]").forEach(b => b.onclick = () => onNatureColor(b.dataset.color));
@@ -475,11 +503,13 @@
       (patternsState.answered
         ? '<span class="cg-slot cg-pop" style="background:' + p.target.hex + ";color:" + p.target.text + ";border-color:" + p.target.hex + '">✓</span>'
         : '<span class="cg-slot empty">؟</span>') + "</div>" +
+      '<button id="cgListenPatterns" class="voice-button" type="button">🔊 اسمع السؤال</button>' +
       '<div class="cg-palette">' + choices.map(c =>
         '<button type="button" class="cg-color-btn" data-color="' + c.id + '" style="background:' + c.hex + ";color:" + c.text + (c.id === "white" ? ";border-color:#d9d2f0" : "") + '">' + c.name + "</button>"
       ).join("") + "</div>" +
       '<p id="cgMsg" class="cg-msg" aria-live="polite">' + (patternsState.answered ? "برافو يا بطل! النمط كده صح ⭐" : "") + "</p>" +
-      (patternsState.answered ? '<button id="cgPatternNext" class="primary cg-next" type="button">النمط اللي بعده ←</button>' : "");
+      (patternsState.answered ? '<button id="cgPatternNext" class="primary cg-next" type="button">النمط اللي بعده <span class="pager-arrow">←</span></button>' : "");
+    $("cgListenPatterns").onclick = speakPatternIntro;
     area.querySelectorAll("[data-color]").forEach(b => b.onclick = () => onPatternColor(b.dataset.color));
     const next = $("cgPatternNext");
     if (next) next.onclick = () => {

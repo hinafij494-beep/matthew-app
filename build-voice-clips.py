@@ -16,6 +16,20 @@ def norm(s):
     return re.sub(r"\s+", " ", s).strip().lower()
 SEG_MAX = 55000  # max base64 chars per entry (GitHub push arg limit); long clips split into key~N segments
 by_key, by_text, exact, missing = {}, {}, {}, []
+# Round 3.2.1: 71 normed texts are shared by 2+ DISTINCT exact texts (bare
+# glyph vs vocalised syllable: 'ب' vs 'بَ'/'بُ'/'بِ'; long vs vocalised
+# syllable: 'با' vs 'بَا'; Latin vs Arabic-Indic digit: '1' vs '١'; upper
+# vs lower letter: 'A' vs 'a'; plain vs vocalised word: 'أسد' vs 'أَسَد').
+# BY_TEXT (normalised) cannot tell them apart — the last corpus entry wins
+# the norm, so a bare glyph resolves to a syllable clip (the note-1 bug) and
+# 'با' resolves to rd_part_0_0 instead of rd_syl_1_3. The EXACT map
+# (diacritic-preserving, consulted first by keyFor) MUST therefore contain
+# every text whose norm collides with another distinct text, so the exact
+# spoken string always wins over the normalised guess.
+from collections import defaultdict as _dd
+_norm_texts = _dd(set)
+for _e in corpus:
+    _norm_texts[norm(_e["text"])].add(_e["text"].strip())
 for e in corpus:
     p = os.path.join(root, "audio-src/opus", e["key"] + ".ogg")
     if not os.path.exists(p):
@@ -30,6 +44,8 @@ for e in corpus:
     _t = e["text"].strip()
     _bare = re.sub(r"[ً-ٰٟـ]", "", _t).strip()
     if re.search(r"[ً-ٟ]", _t) and len(_bare) <= 3:
+        exact[_t] = e["key"]
+    if len(_norm_texts[norm(e["text"])]) > 1:
         exact[_t] = e["key"]
 if missing:
     print("MISSING audio for", len(missing), "entries, e.g.", missing[:8]); sys.exit(1)

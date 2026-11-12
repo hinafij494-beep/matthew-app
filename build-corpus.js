@@ -20,9 +20,18 @@ const add = (key, text, lang = "ar_EG") => {
   // Round 3.2: taught letter names/sounds/syllables are recorded in Fusha
   // (ar_SA) — the Egyptian dialect renders ج/ق/ث/ذ/ظ non-scholastically.
   // The override keys off the clip key, so it survives regeneration.
-  if (/^(les_namesound|basic_ar|rd_syl)_/.test(key)) lang = "ar_SA";
+  // Round 3.2.1 (phonetics expert): rd_intro_* (reading intro: letter name
+  // + syllables) and lsq_name_* (spoken letter names as quiz choices) are
+  // letter names/sounds too — they were ar_EG, so ج was taught as [g] on
+  // the first reading screen, contradicting the Fusha les_namesound/rd_syl.
+  if (/^(les_namesound|rd_syl|tr_ar|rd_intro|lsq_name)_/.test(key)) lang = "ar_SA";
   const n = norm(text);
   if (!n) return;
+  // Round 3.2.1: bare single-letter quiz answers are letter sounds too —
+  // the same dialect defect (ج as "g") reaches tracing through them, so
+  // they are recorded in Fusha as well. (Digits stay ar_EG: numbers are
+  // spoken in Egyptian dialect by design.)
+  if (key.startsWith("ans_") && /^[ء-ي]$/.test(n)) lang = "ar_SA";
   // Short vocalised texts (syllables like بَ بِ بُ) differ ONLY by their
   // diacritics: dedupe them by their exact text or the vowels collapse
   // into a single clip and every haraka sounds the same.
@@ -78,11 +87,13 @@ for (const [key, v] of Object.entries(keyed)) add(key, v.text, v.lang);
   lessons.forEach((l, i) => {
     const ex = explainFor(l);
     add("let_full_" + i, ex.spoken);
-    add("let_short_" + i, ex.short);
-    add("let_forms_" + i, "أشكال حرف " + l.name + ". " + l.words.join("، "));
+    // Round 3.2.1 note 6: the short text is no longer spoken anywhere
+    // (step 0 now auto-speaks the full explanation), so it leaves the corpus.
+    // Step 1 narrates each letter form in its position with its example word.
+    add("let_forms_" + i, "شكل حرف " + l.name + " في أول الكلمة " + l.forms[0] + " زي كلمة " + l.words[0] + "، وفي نص الكلمة " + l.forms[1] + " زي كلمة " + l.words[1] + "، وفي آخر الكلمة " + l.forms[2] + " زي كلمة " + l.words[2] + ".");
     marks.forEach((m, mi) => {
       const sample = l.letter === "أ" ? ["أَ", "أُ", "إِ", "أْ"][mi] : l.letter + m.mark;
-      add("let_mark_" + i + "_" + mi, m.name + "، " + sample + ". " + m.hint);
+      add("let_mark_" + i + "_" + mi, m.name + "، " + sample + ". " + m.hint + ": " + sample);
     });
     add("let_q1_" + i, "ما اسم هذا الحرف؟ " + l.letter);
     add("let_q2_" + i, "أي شكل لحرف " + l.name + " في أول الكلمة؟");
@@ -93,7 +104,9 @@ for (const [key, v] of Object.entries(keyed)) add(key, v.text, v.lang);
   add("let_qsyl_2", "أي مقطع عليه ضمة؟");
   add("let_qsyl_3", "أي مقطع عليه كسرة؟");
   add("let_qsyl_4", "أي مقطع عليه سكون؟");
-  add("let_quizintro", "أحسنت يا ماثيو. يلا نبدأ الاختبار");
+  add("let_picker", "اختار حرف يا ملك ماثيو"); // round 3.2.1 note 7: picker greeting
+  // let_quizintro is gone with the quiz-intro screen (notes 10–11: the
+  // quiz starts straight from the lesson or the picker).
 }
 
 // 5) reading
@@ -132,14 +145,95 @@ for (const [key, v] of Object.entries(keyed)) add(key, v.text, v.lang);
   const en = read("math-english.js");
   const enNames = ev(en.slice(en.indexOf("const names=") + "const names=".length, en.indexOf("];", en.indexOf("const names=")) + 1));
   enNames.forEach((n, i) => {
-    add("num_en_" + i, "Number " + n + ". Let us count together", "en_US");
+    add("num_en_" + i, "ده رقم " + n + ". يلا نعد مع بعض!");
     add("num_en_l_" + i, "Number " + n + ". " + (i + 1), "en_US");
   });
+  add("num_ar_tip", "كل صورة بنعدّها مرة واحدة. آخر رقم بنقوله هو عدد الصور كلها.");
+  add("num_en_tip", "عدّ كل صورة مرة واحدة. آخر رقم تقوله هو المجموع.");
 }
 
 // 7) a few fixed lines from other modules
 add("ig_pickword", "اختار الكلمة المناسبة للصورة");
 add("voice_test_line", "أهلاً يا ملك ماثيو! يلا نتعلم ونلعب. برافو يا بطل!");
+// Round 3.2.1 note 25b: مس نانسي joins the praise rotation (voice.js feedback).
+add("praise_nancy", "أنا مس نانسي وبحبك يا ماثيو، برافو يا بطل!");
+// Round 3.2.1: math journey picker + finish lines (shared by both journeys).
+add("num_picker", "اختار رقم يا ملك ماثيو");
+for (let s = 0; s <= 4; s++) add("num_score_" + s, "جاوبت صح على " + "٠١٢٣٤"[s] + " من ٤.");
+add("num_pass_tip", "عدّيت المرحلة! نروح للي بعدها.");
+add("num_fail_tip", "راجع الشرح وجرب تاني، إنت تقدر!");
+// Round 3.2.1: science picker lines + rescue narration + pronunciation
+// words + quiz result lines (all spoken by the modules that use them).
+add("sci_picker_subjects", "اختار عالم يا ملك ماثيو");
+add("sci_picker_lessons", "اختار درس يا ملك ماثيو");
+add("rescueInterstitial", "عدّيت مرحلة! كمّل كده وانت هتوصل…");
+// Round 3.2.1: game intros (notes 19a/25b) — مس نانسي introduces herself
+// and cheers Matthew by name; memory game + touch-game intros.
+add("storyPickerIntro", "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!");
+add("touch_menu_intro", "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! دي ألعاب اللمس والصوت، اختار اللعبة اللي تعجبك يا بطل!");
+add("touch_match_intro", "لعبة التوصيل يا ملك ماثيو! أنا مس نانسي، اضغط الصورة واسمع اسمها، وبعدين اضغط الكلمة اللي بتناسبها يا بطل!");
+add("touch_listen_intro", "لعبة اسمع واختار يا ملك ماثيو! أنا مس نانسي، اسمع كويس واختار الصح يا بطل!");
+add("touch_pic_apple", "تفاحة");
+add("mem_intro", "لعبة الذاكرة يا ملك ماثيو! أنا مس نانسي وبحبك أوي! اقلب الكروت ولاقي الصورتين اللي شبه بعض يا بطل!");
+add("mem_win", "برافو يا ملك ماثيو! لقيت كل الصور! أنت بطل الذاكرة! خدت ألماسة جديدة لتاجك!");
+// Round 3.2.1 memory-game upgrade (spec §7): rotating match praises (the
+// picture name is spoken first by its own clip, then the praise follows),
+// half-way line, try-again lines, play-again line — texts mirror
+// memory-game.js MEM_MATCH / MEM_HALF / MEM_TRY / MEM_AGAIN exactly.
+add("mem_match_1", "برافو يا ملك ماثيو! شاطر خالص!");
+add("mem_match_2", "يا سلام يا بطل ماثيو! الصورتين شبه بعض! عينك قوية أوي!");
+add("mem_match_3", "أحسنت يا ملك ماثيو! أنت ذكي أوي يا بطل!");
+add("mem_half", "برافو يا ملك ماثيو! لقيت نص الصور! كمّل يا بطل، فاضل شوية صغيرين!");
+add("mem_try_1", "حاول تاني يا بطل");
+add("mem_try_2", "قربت يا ملك ماثيو! افتكر مكان الصور وحاول تاني!");
+add("mem_again", "يلا نلعب تاني يا ملك ماثيو! كروت جديدة مستنياك!");
+// Round 3.2.1 Nancy lines (note 25b — Miss Nancy draft §4, exact keys/texts).
+// Game intros — texts mirror the modules: tracing.js NANCY_TRACE_INTRO,
+// color-games.js NANCY_INTRO_COLOR[_NUM].
+add("nancy_intro_trace", "يلا نتتبع الحرف يا ملك ماثيو! أنا مس نانسي، امشي على الخط بصوابعك على مهلك، أنت بطل!");
+add("nancy_intro_color", "يلا نلوّن يا ملك ماثيو! أنا مس نانسي، اختار لون حلو ولوّن معايا!");
+add("nancy_intro_color_num", "لعبة لوني العدد يا بطلي ماثيو! أنا مس نانسي، شوف الرقم على التاج ودوس على نفس الرقم في الزر!");
+// Home greetings (app.js NANCY_GREETS, spoken by text) + quiz intros
+// (app.js NANCY_QUIZ_INTROS, first question only) + memory second intro
+// (memory-game.js MEM_INTRO_2, rotated with MEM_INTRO) + the praise /
+// try-again rotations (voice.js nancyPraiseKeys / nancyRetryKeys, played
+// BY KEY — these keys must stay exactly as the draft wrote them, so Miss
+// Nancy's real recordings drop in as direct replacements later).
+// NOT added: nancy_intro_match (duplicate of touch_match_intro),
+// nancy_intro_memory (near-duplicate of mem_intro, 78% overlap — SKIP).
+// nancy_intro_story/_2 come via §14 (stories.js CORPUS), not here.
+add("nancy_greet_1", "أهلاً يا ملك ماثيو! أنا مس نانسي، وبحبك أوي! يلا نلعب ونتعلم مع بعض!");
+add("nancy_greet_2", "أنا مس نانسي وبحبك يا ماثيو! وحشتني أوي، يلا نبدأ يوم جميل مع بعض!");
+add("nancy_greet_3", "أهلاً يا بطلي ماثيو! أنا مس نانسي، أنا فخورة بيك أوي! يلا نشوف هنلعب إيه النهارده!");
+add("nancy_intro_memory_2", "يلا يا بطل ماثيو! أنا مس نانسي، افتح كارتين، لو شبه بعض يبقوا بتوعك! افتكر كويس!");
+add("nancy_intro_quiz", "يلا يا ملك ماثيو! أنا مس نانسي، اسمع السؤال كويس واختار الإجابة الصح، أنا واثقة فيك يا بطل!");
+add("nancy_intro_quiz_2", "اختبار جديد يا بطلي ماثيو! أنا مس نانسي، ركّز معايا وجاوب، وكل إجابة صح ليها نجمة!");
+add("nancy_praise_1", "برافو يا ملك ماثيو! أنت شاطر أوي!");
+add("nancy_praise_2", "أحسنت يا ماثيو! أنا مس نانسي وفخورة بيك!");
+add("nancy_praise_3", "يا سلام يا ملك ماثيو! إجابة صح، أنت بطل!");
+add("nancy_praise_4", "برافو يا بطلي ماثيو! أنا بحبك، أنت ذكي أوي!");
+add("nancy_praise_5", "ممتاز يا ماثيو! كده صح، كمّل يا بطل!");
+add("nancy_praise_6", "أنت أحلى ملك يا ماثيو! برافو عليك!");
+add("nancy_praise_7", "برافو يا ملك ماثيو! أنا مس نانسي، وفرحانة بيك أوي!");
+add("nancy_praise_8", "شاطر شاطر يا ماثيو! أنت بتعمل حاجات جميلة!");
+add("nancy_praise_9", "يا بطل يا ماثيو! أنت كسبت نجمة جديدة!");
+add("nancy_praise_10", "أحسنت يا ملك ماثيو! أنت بتتعلم بسرعة، أنا بحبك!");
+add("nancy_retry_1", "ولا يهمك يا ملك ماثيو! جرّب تاني، أنت هتعرفها!");
+add("nancy_retry_2", "قرّبت أوي يا بطلي! فكّر تاني على مهلك، أنا معاك!");
+add("nancy_retry_3", "مش مشكلة يا ماثيو! الغلط بيعلّمنا، يلا نحاول تاني!");
+add("nancy_retry_4", "أنت بطل يا ماثيو، حاول مرة تانية وهتطلع صح!");
+add("nancy_retry_5", "اسمع كويس يا ملك ماثيو، وفكّر تاني، أنا واثقة إنك هتعرفها!");
+add("rescueWinStory", "أنقذت مارك ومريم! هما بخير وفرحانين بيك أوي يا أحلى أخ في الدنيا!");
+add("storyAnimalsWinStory", "كل حيوانات الغابة بتحييك! الأسد نفسه قال: ده أذكى ملك شفته!");
+add("storyTripWinStory", "ماما فرحانة بيكو أوي! مارك بيضحك وبيقول: عايز رحلة تانية مع أخويا الملك!");
+add("storyTreasureWinStory", "جوه الكنز لقيت تاج دهب ونجوم كتير، وورقة مكتوب عليها: لأشطر ملك في الدنيا!");
+add("pron_apple", "Apple", "en_US");
+add("pron_book", "Book", "en_US");
+add("pron_ball", "Ball", "en_US");
+add("pron_milk", "Milk", "en_US");
+for (let s = 0; s <= 10; s++) add("result_score_" + s, "جاوبت صح على " + ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "١٠"][s] + " من ١٠ أسئلة");
+add("result_tip_pass", "برافو يا ملك ماثيو! انت بطل شاطر أوي!");
+add("result_tip_retry", "محاولة جميلة يا بطل ماثيو! العب تاني وهتجيب نجوم أكتر!");
 
 
 // 8) math journey question lines — questions(n) is a deterministic function of the
@@ -152,32 +246,44 @@ add("voice_test_line", "أهلاً يا ملك ماثيو! يلا نتعلم و�
   const enSrc = read("math-english.js");
   const enNames = ev(enSrc.slice(enSrc.indexOf("const names=") + "const names=".length, enSrc.indexOf("];", enSrc.indexOf("const names=")) + 1));
   for (let n = 1; n <= 20; n++) {
-    const prev = Math.max(0, n - 1), next = Math.min(20, n + 1);
+    const prev = n === 1 ? 2 : n - 1, next = Math.min(20, n + 1), afterQ = n === 20 ? 19 : n, afterA = n === 20 ? 20 : next;
     const addA = Math.max(1, Math.floor(n / 2)), addB = Math.max(1, Math.min(5, n - addA));
     const subA = Math.min(20, n + 2), subB = 2;
     const apples = a => a === 1 ? "تفاحة واحدة" : digits(a) + " تفاحات";
     const aq = [
       ["عدّ الصور: كام واحدة؟", "عدّ كل صورة واحدة واحدة. المجموع " + digits(n) + "."],
-      ["إيه الرقم اللي بعد " + digits(n) + "؟", "بعد " + arNames[n - 1] + " بييجي " + arNames[next - 1] + "."],
-      ["إيه الرقم اللي قبل " + digits(next) + "؟", "قبل " + arNames[next - 1] + " بييجي " + arNames[n - 1] + "."],
+      ["إيه الرقم اللي بعد " + digits(afterQ) + "؟", "بعد " + arNames[afterQ - 1] + " بييجي " + arNames[afterA - 1] + "."],
+      ["إيه الرقم اللي قبل " + digits(next) + "؟", "قبل " + arNames[next - 1] + " بييجي " + arNames[next - 2] + "."],
       ["معانا " + apples(addA) + " وزودنا " + (addB === 1 ? "واحدة" : digits(addB)) + "، بقوا كام؟", arNames[addA - 1] + " زائد " + arNames[addB - 1] + " يساوي " + arNames[addA + addB - 1] + ". عدّهم مع بعض."],
       ["كان معانا " + digits(subA) + " نجوم واختفى " + digits(subB) + "، فاضل كام؟", arNames[subA - 1] + " ناقص " + arNames[subB - 1] + " يساوي " + arNames[subA - subB - 1] + ". شيل اتنين وعدّ الباقي."],
       ["اختار العدد الأكبر: " + digits(n) + " ولا " + digits(prev), "العدد الأكبر هو " + digits(Math.max(n, prev)) + "."]
     ];
     aq.forEach(([q, ex], i) => add("math_ar_q" + n + "_" + i, q + " " + ex));
+    aq.forEach(([q], i) => add("math_ar_qq" + n + "_" + i, q));
+    // Round 3.2.1: the English journey explains in Egyptian Arabic; only
+    // the taught number names stay English (recorded in ar_EG, like the
+    // Arabic-framed enLetters lines).
+    const applesEn = a => a === 1 ? "تفاحة واحدة" : a + " تفاحات";
     const eq = [
-      ["Count the pictures. How many are there?", "Count each picture once. There are " + n + "."],
-      ["What number comes after " + n + "?", "After " + enNames[n - 1] + " comes " + enNames[next - 1] + "."],
-      ["What number comes before " + next + "?", "Before " + enNames[next - 1] + " comes " + enNames[n - 1] + "."],
-      ["You have " + addA + " apples and get " + addB + " more. How many now?", addA + " + " + addB + " = " + (addA + addB) + ". Count them together."],
-      ["You have " + subA + " stars. " + subB + " disappear. How many are left?", subA + " - " + subB + " = " + (subA - subB) + "."],
-      ["Which number is bigger: " + n + " or " + prev + "?", Math.max(n, prev) + " is the bigger number."]
+      ["عدّ الصور، فيه كام واحدة؟", "عدّ كل صورة مرة واحدة. فيه " + n + "."],
+      ["إيه الرقم اللي بعد " + afterQ + "؟", "بعد " + enNames[afterQ - 1] + " بييجي " + enNames[afterA - 1] + "."],
+      ["إيه الرقم اللي قبل " + next + "؟", "قبل " + enNames[next - 1] + " بييجي " + enNames[next - 2] + "."],
+      ["معانا " + applesEn(addA) + " وزودنا " + (addB === 1 ? "واحدة" : addB) + "، بقوا كام؟", enNames[addA - 1] + " زائد " + enNames[addB - 1] + " يساوي " + enNames[addA + addB - 1] + ". عدّهم مع بعض."],
+      ["كان معانا " + subA + " نجوم واختفى " + subB + "، فاضل كام؟", enNames[subA - 1] + " ناقص " + enNames[subB - 1] + " يساوي " + enNames[subA - subB - 1] + ". شيل " + enNames[subB - 1] + " وعدّ الباقي."],
+      ["إيه الرقم الأكبر: " + n + " ولا " + prev + "؟", "الرقم الأكبر هو " + Math.max(n, prev) + "."]
     ];
-    eq.forEach(([q, ex], i) => add("math_en_q" + n + "_" + i, q + " " + ex, "en_US"));
+    eq.forEach(([q, ex], i) => add("math_en_q" + n + "_" + i, q + " " + ex));
+    eq.forEach(([q], i) => add("math_en_qq" + n + "_" + i, q));
   }
 }
 
 // 9) letter-school spoken combinations (steps, mark tab, quiz narration)
+// Round 3.2.1 note 4: the spoken quiz question never names its own
+// answer — the glyph/sample is shown visually only (q.show), and the
+// spoken string is q.q + " اختار الإجابة الصحيحة" (no period). The
+// auto-narration then speaks the choices in order, so the choice strings
+// (letter names, haraka names, haraka distractors) need clips too; form
+// glyphs and syllables resolve to the bare-glyph / reading-syllable clips.
 {
   const src = read("lessons.js");
   const grabArr = decl => { const i = src.indexOf(decl); let depth = 0; const j = src.indexOf("[", i); for (let k = j; k < src.length; k++) { if (src[k] === "[") depth++; if (src[k] === "]") { depth--; if (!depth) return ev(src.slice(j, k + 1)); } } };
@@ -187,17 +293,22 @@ add("voice_test_line", "أهلاً يا ملك ماثيو! يلا نتعلم و�
   L.forEach((l, li) => {
     add("les_namesound_" + li, l.name + "، " + l.sound);
     M.forEach((m, mi) => add("les_marklisten_" + li + "_" + mi, HINTS[mi] + "، " + sampleFor(l, mi)));
-    const q1 = "ما اسم هذا الحرف؟ " + l.letter, q2 = "أي شكل لحرف " + l.name + " في أول الكلمة؟";
-    add("les_quiz1_" + li, q1 + ". اختار الإجابة الصحيحة"); add("les_quiz1b_" + li, q1 + " اختار الإجابة الصحيحة");
-    add("les_quiz2_" + li, q2 + ". اختار الإجابة الصحيحة"); add("les_quiz2b_" + li, q2 + " اختار الإجابة الصحيحة");
+    add("lsq_q_form_" + li, "أي شكل لحرف " + l.name + " في أول الكلمة؟ اختار الإجابة الصحيحة");
   });
-  M.forEach((m, mi) => {
-    const q = "ما اسم الحركة في " + m.sample + "؟";
-    add("les_quizm_" + mi, q + ". اختار الإجابة الصحيحة"); add("les_quizmb_" + mi, q + " اختار الإجابة الصحيحة");
-  });
+  // the letter-name and haraka-name questions are one fixed string each
+  add("lsq_q_letter", "ما اسم هذا الحرف؟ اختار الإجابة الصحيحة");
+  add("lsq_q_haraka", "ما اسم الحركة في المقطع ده؟ اختار الإجابة الصحيحة");
   ["أي مقطع عليه فتحة؟", "أي مقطع عليه ضمة؟", "أي مقطع عليه كسرة؟", "أي مقطع عليه سكون؟"].forEach((q, i) => {
-    add("les_qsylq_" + i, q + ". اختار الإجابة الصحيحة"); add("les_qsylqb_" + i, q + " اختار الإجابة الصحيحة");
+    add("lsq_q_syl_" + i, q + " اختار الإجابة الصحيحة");
   });
+  // quiz choice strings (spoken after the question, in order)
+  L.forEach((l, li) => add("lsq_name_" + li, l.name));
+  M.forEach((m, mi) => add("lsq_haraka_" + mi, m.name));
+  ["حركة أخرى", "الشدة", "التنوين"].forEach((n, i) => add("lsq_dist_" + i, n));
+  // Round 3.2.1 note 14: the sukun choices (بْ تْ مْ سْ) had no corpus entry
+  // at all and fell through to the damma clip. Short vocalised texts dedupe
+  // by exact text (see add()), so each lands in the EXACT map like rd_syl_*.
+  ["بْ", "تْ", "مْ", "سْ"].forEach((s, i) => add("lsq_syl_sukun_" + i, s, "ar_SA"));
 }
 
 // 10) touch-game target lines
@@ -208,14 +319,16 @@ add("voice_test_line", "أهلاً يا ملك ماثيو! يلا نتعلم و�
 {
   const src = read("learning.js");
   const grabLit = decl => { const i = src.indexOf(decl); let depth = 0; const j = src.indexOf("[", i); for (let k = j; k < src.length; k++) { if (src[k] === "[") depth++; if (src[k] === "]") { depth--; if (!depth) return ev(src.slice(j, k + 1)); } } };
-  const arPairs = grabLit("const arabicLetters = [");
-  arPairs.forEach((x, i) => add("basic_ar_" + i, x[0] + "، " + x[1]));
+  // Round 3.2.1 note 9: basic_ar_* is gone with the Arabic-letters card
+  // (the letter school covers those letters now).
   const words = grabLit("const englishWords = [");
   const phon = grabLit("const phonicsSounds=[");
-  words.forEach((w, i) => { const L = String.fromCharCode(65 + i); add("basic_en_" + i, L + ", lowercase " + L.toLowerCase() + ", " + phon[i] + ", for " + w, "en_US"); });
+  const meanings = grabLit("const arabicMeanings = [");
+  // Round 3.2.1: Arabic framing, English letter/sound/word kept (ar_EG).
+  words.forEach((w, i) => { const L = String.fromCharCode(65 + i); add("basic_en_" + i, "حرف " + L + "، شكله الصغير " + L.toLowerCase() + "، صوته " + phon[i] + "، زي كلمة " + w + " يعني " + meanings[i]); });
   const arNames = grabLit("const arabicNames=[");
   const arDigits = grabLit("const arabicDigits=[");
-  arDigits.forEach((d, i) => add("basic_arnum_" + i, arNames[i] + "، " + d));
+  arDigits.forEach((d, i) => add("basic_arnum_" + i, arNames[i]));
   const enNames = grabLit("const englishNames=[");
   enNames.forEach((n, i) => add("basic_ennum_" + i, n, "en_US"));
 }
@@ -269,6 +382,56 @@ add("voice_test_line", "أهلاً يا ملك ماثيو! يلا نتعلم و�
     add("cg_pat_ok_" + r, "برافو يا بطل! النمط كده صح! اللون الناقص هو " + target.name + "!");
     if (r % 3 === 0) add("cg_pat_all_" + r, "برافو يا بطل! النمط كده صح! اللون الناقص هو " + target.name + "! برافو يا ملك ماثيو! خلّصت ٣ أنماط! خدت ألماسة جديدة لتاجك!");
   }
+}
+
+// 13) tracing glyphs — tracing.js speaks each glyph by EXPLICIT clip key
+// (MatthewClips.playKey), never by bare-text lookup: the text map cannot
+// distinguish en "1" from ar "١" (same norm "1"), and bare Arabic glyphs
+// collide with damma syllables (rd_syl_*_2) under last-wins, so the text
+// map alone can never fix tracing. These entries are FORCE-added, bypassing
+// the norm dedupe in add() (the corpus Map is keyed by clip key here, so
+// colliding norms coexist and every key gets its own recorded clip).
+// Order inside §13: tr_ennum_* before tr_num_*, so BY_TEXT for bare digits
+// stays Arabic (as before — Arabic quiz answers saying "1" must stay
+// Arabic); the English-numbers set is unaffected because it plays by key.
+// tr_ar_* runs last among the letter entries, so it also wins BY_TEXT for
+// bare Arabic glyphs looked up from other modules.
+{
+  const src = read("tracing.js");
+  const grabItems = setId => {
+    const i = src.indexOf(setId + ": {");
+    const line = src.slice(src.indexOf("items:", i)).split("\n")[0];
+    return ev(line.slice("items:".length).replace(/,\s*$/, "").trim());
+  };
+  const addForce = (key, text, lang = "ar_EG") => {
+    // Same Fusha override as add() for tr_ar_* (ج/ق/ث/ذ/ظ must sound scholastic).
+    if (/^tr_ar_/.test(key)) lang = "ar_SA";
+    if (!norm(text)) return;
+    corpus.set("key:" + key, { key, lang, text });
+  };
+  grabItems("arLetters").forEach((g, i) => addForce("tr_ar_" + i, g, "ar_SA"));
+  grabItems("enLetters").forEach((g, i) => addForce("tr_en_" + i, g, "en_US"));
+  grabItems("enNumbers").forEach((g, i) => addForce("tr_ennum_" + (i + 1), g, "en_US"));
+  grabItems("arNumbers").forEach((g, i) => addForce("tr_num_" + (i + 1), g, "ar_EG"));
+  addForce("trace_done", "برافو يا بطل", "ar_EG");
+  addForce("trace_picker", "اختار حرف أو رقم يا ملك ماثيو", "ar_EG");
+  addForce("trace_instr", "لوّن الحرف من جوّه بس بإصبعك، واختار اللون اللي يعجبك", "ar_EG");
+}
+
+// 14) brave stories (stories.js — CORPUS is generated from the story data
+// there, so it is the single source of truth; no text is duplicated here)
+{
+  const stories = require("./stories.js");
+  stories.CORPUS.forEach(e => add(e.key, e.text, e.lang));
+}
+
+// 15) chess (note 31 — chess.js CORPUS is generated from the lesson data
+// there, so it is the single source of truth; no text is duplicated here.
+// Aria render now; pending re-render in Nancy's cloned voice (Habibi-TTS)
+// by the voice-swap workstream — same keys, drop-in replacement.)
+{
+  const chess = require("./chess.js");
+  chess.CORPUS.forEach(e => add(e.key, e.text, e.lang));
 }
 
 const out = [...corpus.values()];

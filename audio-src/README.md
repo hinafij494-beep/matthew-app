@@ -30,3 +30,63 @@
 - Math operation explanations are recorded with fully spoken text
   ("اتنين زائد اتنين يساوي أربعة") — no `+`/`-`/`=` symbols, and the
   math-journey generators mirror the corpus exactly.
+- Round 3.2.1: tracing speaks every glyph bare. Bare-glyph clips
+  (`tr_ar_*` in Fusha, `tr_en_*` in en_US, `tr_num_10` for "١٠") cover
+  the gaps; single-letter quiz answers (`ans_*` with a bare-letter text)
+  are also recorded in Fusha, because tracing resolves through them. A
+  bare glyph must never resolve to a reading syllable clip: the
+  syllables خَ/خِ/خُ all normalise to "خ" and the damma one wins the
+  text map, so tracing would say "خُ" for the letter خ.
+- Round 3.2.1: the tatweel (ـ U+0640) is stripped from the synthesis
+  input (`gen6.js`): it is a visual stretch character, not a sound —
+  letter-form glyphs like "ـبـ" in `let_forms_*` made the TTS drawl the
+  sentence to ~39s for 113 chars. The corpus/display text keeps the
+  tatweel (the form is shown on screen); only the spoken input drops it.
+- Round 3.2.1: the bare word "خبز" returns empty audio from the TTS
+  backend (26 bytes, in every form: "خبز", "خبزا", "خبزاً", "خبز." —
+  while "تفاحة"/"عسل"/"موز" render fine and "الخبز" renders fine).
+  `gen6.js` INPUT_OVERRIDES maps `ans_198` ("خبز") and `ans_326`
+  ("خبزاً") to the synthesis input "الخبز" (same word with ال); corpus
+  text and clip keys are unchanged.
+- Round 3.2.1: the backend drops a lone "و" (returns empty audio), so
+  `tr_ar_26` (bare و) is overridden to "واو، واو." (the letter name,
+  drilled twice — same override as `ans_113`).
+- Round 3.2.1: the backend rejects an input that is only repetitions of
+  one short syllable ("با", "با، با", "با با با" all return empty audio,
+  while "با بو بي" renders). `rd_syl_1_3` ("با") is overridden to
+  "با بو بي" (the three long ب syllables); the clip's opus was also
+  recovered from the voice pack (the earlier "با، با" drill, 0.65s).
+- Round 3.2.1: a bare long-vowel ر syllable kills the synthesis — "را"
+  alone, "را رو ري", "الراء. را" and "الراء. رَ. را" all return empty
+  audio (26 bytes), while "الراء", "الراء. ر" and "رَ رُ رِ" render fine.
+  `rd_intro_9` ("الراء. رَ. را") is overridden to "الراء. رَ. ريشة"
+  (name + fatha + the ر lesson's own first example word, رِيشَة);
+  corpus text and clip key are unchanged.
+- Round 3.2.1 (Arabic phonetics expert): the ت+ط cluster — plain /t/
+  immediately followed by emphatic /ṭ/ in بتطير / بتطلع / هتطفو — is
+  mis-segmented by the TTS G2P as an extra ت ("بتتطير"). A straight
+  re-record of the same text reproduces a systematic G2P error, so
+  these get LEXICAL overrides in `gen6.js` INPUT_OVERRIDES (synthesis
+  input only; corpus text unchanged): participle (طايرة / طالعة),
+  ي-prefix (بيطيروا), or a safe synonym (بتعمل / هتفضل فوق). Keys:
+  sci_0_1, sci_0_6, sci_4_2, sci_1_0, sci_1_1, sci_4_0, sci_5_1,
+  sci_5_4, sciSun, sci_3_7, qb_world_9, cg_nat_ok_4, cg_nat_all_4,
+  ans_254, ans_248, ans_253, sci_3_5. The تت sequence (two identical
+  phonemes, e.g. تتدحرج / بتتغير) is different — it renders as a
+  geminate, not a wrong word — so those clips are KEPT and verified
+  first (sci_3_2, sci_3_6, sci_4_4, sci_5_6, sci_6_2, sciBall,
+  qb_science_12, sci_2_4, storyAnimalsIntro, story_locked).
+- Round 3.2.1 (phonetics expert): 7 pace defects — a lone letter /
+  syllable held ~4.7s by the TTS (fricatives ش/ظ, nasal م, kasra إِ
+  tripled). All get drill overrides (same pattern as rd_syl_1_3):
+  rd_syl_0_1 → "إِ أَ أُ.", rd_syl_3_5 → "ثو ثا ثي.", rd_syl_9_0 →
+  "رَ رِ رُ.", rd_syl_18_0 → "غَ غِ غُ.", tr_ar_12 → "شين، شين.",
+  tr_ar_16 → "ظاء، ظاء.", ans_67 → "ميم، ميم.". No ض override:
+  a fresh reference for "الضاد، ضَ" garbles identically under
+  Whisper, so ض is a human-ear check, not a proven defect.
+- Round 3.2.1 (phonetics expert): rd_intro_* (28) and lsq_name_*
+  (27) are re-recorded in Fusha (ar_SA) — they were ar_EG, so ج was
+  taught as [g] on the first reading screen, contradicting the Fusha
+  les_namesound/rd_syl. build-corpus.js forces ar_SA for both
+  families by key regex. lsq_name_17 has no dedicated clip: its text
+  "العين" is owned by ans_216 (same word, ar_EG) — no action.

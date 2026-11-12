@@ -23,6 +23,23 @@ on:
       - "sw.js"
       - "icon.svg"
       - "manifest.webmanifest"
+      - "voice-clips-pack-1.js"
+      - "voice-clips-pack-2.js"
+      - "voice-clips-pack-3.js"
+      - "voice-clips-pack-4.js"
+      - "voice-clips-pack-5.js"
+      - "voice-clips-pack-6.js"
+      - "voice-clips-pack-7.js"
+      - "voice-clips-pack-8.js"
+      - "voice-clips-pack-9.js"
+      - "voice-clips-pack-10.js"
+      - "voice-clips-pack-11.js"
+      - "voice-clips-pack-12.js"
+      - "voice-clips-pack-13.js"
+      - "voice-clips-pack-14.js"
+      - "voice-clips-pack-15.js"
+      - "voice-clips-pack-16.js"
+      - "voice-clips-text-1.js"
       - "capacitor.config.json"
       - "package.json"
       - ".github/workflows/android-apk.yml"
@@ -46,7 +63,7 @@ jobs:
       - name: Prepare web assets
         run: |
           mkdir -p www
-          cp index.html styles.css app.js voice.js voice-web-fallback.js lessons.js learning.js math-journey.js math-english.js science.js interactive-games.js sw.js icon.svg manifest.webmanifest www/
+          cp index.html styles.css app.js voice.js voice-web-fallback.js lessons.js learning.js math-journey.js math-english.js science.js interactive-games.js sw.js icon.svg manifest.webmanifest voice-clips-pack-1.js voice-clips-pack-2.js voice-clips-pack-3.js voice-clips-pack-4.js voice-clips-pack-5.js voice-clips-pack-6.js voice-clips-pack-7.js voice-clips-pack-8.js voice-clips-pack-9.js voice-clips-pack-10.js voice-clips-pack-11.js voice-clips-pack-12.js voice-clips-pack-13.js voice-clips-pack-14.js voice-clips-pack-15.js voice-clips-pack-16.js voice-clips-text-1.js www/
       - name: Install compatible Capacitor toolchain
         run: |
           # Keep Capacitor 7 paired with Android SDK 35 and the TTS 6.x plugin.
@@ -59,36 +76,6 @@ jobs:
             @capacitor-community/text-to-speech@^6.1.0 \
             esbuild sharp
       - name: Validate JavaScript sources
-        run: npx esbuild app.js lessons.js learning.js math-journey.js math-english.js science.js interactive-games.js --outdir=/tmp/matthew-js-check --format=iife
+        run: npx esbuild app.js lessons.js learning.js math-journey.js math-english.js science.js interactive-games.js voice-clips-pack-1.js voice-clips-pack-2.js voice-clips-pack-3.js voice-clips-pack-4.js voice-clips-pack-5.js voice-clips-pack-6.js voice-clips-pack-7.js voice-clips-pack-8.js voice-clips-pack-9.js voice-clips-pack-10.js voice-clips-pack-11.js voice-clips-pack-12.js voice-clips-pack-13.js voice-clips-pack-14.js voice-clips-pack-15.js voice-clips-pack-16.js voice-clips-text-1.js --outdir=/tmp/matthew-js-check --format=iife
       - name: Bundle native text-to-speech support
         run: npx esbuild voice.js --bundle --platform=browser --format=iife --outfile=www/voice.bundle.js
-      - name: Generate Android project
-        run: npx cap add android
-      - name: Sync web app
-        run: npx cap sync android
-      - name: Apply Matthew launcher icon
-        run: |
-          node <<'NODE'
-          const sharp = require('sharp');
-          const fs = require('fs');
-          const path = require('path');
-          const root = 'android/app/src/main/res';
-          const sizes = {'mipmap-mdpi':48,'mipmap-hdpi':72,'mipmap-xhdpi':96,'mipmap-xxhdpi':144,'mipmap-xxxhdpi':192};
-          (async () => {
-            for (const [folder,size] of Object.entries(sizes)) {
-              const dir = path.join(root,folder); fs.mkdirSync(dir,{recursive:true});
-              for (const name of ['ic_launcher.png','ic_launcher_round.png','ic_launcher_foreground.png']) await sharp('icon.svg').resize(size,size).png().toFile(path.join(dir,name));
-            }
-          })().catch(e => { console.error(e); process.exit(1); });
-          NODE
-      - name: Build debug APK
-        working-directory: android
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: king-matthew-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error

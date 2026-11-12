@@ -14,26 +14,33 @@
   const gameList = document.getElementById("gameList");
   if (!main || !learningList) return;
 
+  // Every glyph maps to an EXPLICIT recorded clip key (tr_ar_* / tr_en_* /
+  // tr_num_* / tr_ennum_*): the text map structurally cannot tell en "1"
+  // from ar "١" (same norm "1"), and bare Arabic glyphs collide with damma
+  // syllables there, so tracing never speaks by bare-text lookup. Keys are
+  // played with MatthewClips.playKey via speakKey below (rescue.js
+  // pattern); MatthewVoice.speak(text, lang) takes a LANGUAGE as 2nd arg,
+  // not a key. Corpus §13 force-adds every key below.
   const SETS = {
     arLetters: {
       title: "حروف عربية", lang: "ar-EG", dir: "rtl",
       items: ["أ", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م", "ن", "هـ", "و", "ي"],
-      speak: item => item
+      key: i => "tr_ar_" + i
     },
     enLetters: {
-      title: "English Letters", lang: "en-US", dir: "ltr",
+      title: "الحروف الإنجليزية", lang: "en-US", dir: "ltr",
       items: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
-      speak: item => item
+      key: i => "tr_en_" + i
     },
     arNumbers: {
       title: "أرقام عربية", lang: "ar-EG", dir: "rtl",
       items: ["١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "١٠"],
-      speak: item => item
+      key: i => "tr_num_" + (i + 1)
     },
     enNumbers: {
-      title: "English Numbers", lang: "en-US", dir: "ltr",
+      title: "الأرقام الإنجليزية", lang: "en-US", dir: "ltr",
       items: "123456789".split("").concat(["10"]),
-      speak: item => item
+      key: i => "tr_ennum_" + (i + 1)
     }
   };
   const GOAL = 0.40; // 40% of the guide must be traced — easier for a 5-year-old
@@ -51,6 +58,7 @@
   learningList.append(card);
 
   let setId = "arLetters", index = 0, mask = null, covered = null, guideCells = 0, hitCells = 0, drawing = false, done = false;
+  let justOpened = false, narrationToken = 0;
   const COLORS = [
     { c: "#e53935", n: "أحمر" }, { c: "#fb8c00", n: "برتقالي" }, { c: "#f9a825", n: "أصفر" },
     { c: "#43a047", n: "أخضر" }, { c: "#1e88e5", n: "أزرق" }, { c: "#8e24aa", n: "بنفسجي" }
@@ -65,6 +73,37 @@
     }
   };
 
+  const TRACE_INSTR = "لوّن الحرف من جوّه بس بإصبعك، واختار اللون اللي يعجبك";
+  // Round 3.2.1 note 25b (Nancy-lines draft): مس نانسي opens the tracing
+  // activity herself (nancy_intro_trace) before the instruction + glyph.
+  // Spoken as the first item of the first-open sequence, with the same
+  // ~5s gap as the instruction (it is a full sentence, not a bare glyph).
+  const NANCY_TRACE_INTRO = "يلا نتتبع الحرف يا ملك ماثيو! أنا مس نانسي، امشي على الخط بصوابعك على مهلك، أنت بطل!";
+  // Rescue.js pattern: a clip KEY plays first (exact clip, no text-map
+  // collision); the spoken text is only the device-TTS fallback.
+  const speakKey = (text, key, lang) => {
+    try { if (key && window.MatthewClips && window.MatthewClips.playKey(key)) return; } catch (_) {}
+    speak(text, lang);
+  };
+  // Ordered keyed playback (instruction then glyph on first open). The clip
+  // runtime exposes no end-of-clip callback, so keyed items are chained
+  // with timed gaps: ~5s after the spoken instruction, ~1.3s after a
+  // single glyph. playKey pauses the shared audio first, so a late item
+  // can only cut the tail of the previous one, never overlap it. The token
+  // silences items scheduled by a render the child has already left.
+  const speakSequence = (items, tk) => {
+    const list = (items || []).filter(Boolean);
+    if (!list.length) return;
+    let delay = 0;
+    list.forEach(it => {
+      const text = typeof it === "string" ? it : it.text;
+      const key = typeof it === "string" ? null : it.key;
+      const lang = typeof it === "string" ? "ar-EG" : (it.lang || "ar-EG");
+      setTimeout(() => { if (tk === undefined || tk === narrationToken) speakKey(text, key, lang); }, delay);
+      delay += (key === "trace_instr" || key === "nancy_intro_trace") ? 5000 : 1300;
+    });
+  };
+
   function open() {
     gameList.classList.add("hidden");
     learningList.classList.add("hidden");
@@ -72,11 +111,13 @@
     document.getElementById("result")?.classList.add("hidden");
     document.getElementById("parentPanel")?.classList.add("hidden");
     panel.classList.remove("hidden");
-    render();
+    justOpened = true;
+    renderPicker();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function close() {
+    narrationToken++;
     panel.classList.add("hidden");
     gameList.classList.remove("hidden");
     learningList.classList.remove("hidden");
@@ -89,7 +130,7 @@
     const ctx = off.getContext("2d", { willReadFrequently: true });
     if (!ctx) { mask = new Uint8Array(GRID * GRID); covered = new Uint8Array(GRID * GRID); guideCells = 0; return; }
     ctx.fillStyle = "#000";
-    ctx.font = "bold 56px system-ui, sans-serif";
+    ctx.font = "bold 56px Cairo, system-ui, sans-serif";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.fillText(glyph, GRID / 2, GRID / 2 + 2);
     const data = ctx.getImageData(0, 0, GRID, GRID).data;
@@ -112,26 +153,46 @@
     hitCells = 0;
   }
 
+  // Picker-first flow (note 16): open() lands on the glyph picker; tapping
+  // a glyph opens its trace screen; back from a trace screen returns to the
+  // picker, and only the picker's back goes home.
+  function renderPicker() {
+    const set = SETS[setId];
+    const tk = ++narrationToken;
+    panel.innerHTML =
+      '<div class="quiz-top"><button id="traceBack" class="back" type="button">🏠 الرئيسية</button><strong>✏️ اكتب بإصبعك</strong><span>👑</span></div>' +
+      '<div class="trace-sets">' + Object.entries(SETS).map(([id, s]) => '<button type="button" class="trace-set' + (id === setId ? " active" : "") + '" data-set="' + id + '">' + s.title + '</button>').join("") + '</div>' +
+      '<div class="lesson-title">اختار حرف أو رقم يا ملك ماثيو 👑</div><p>اضغط على أي حرف أو رقم عشان تكتبه بإصبعك</p>' +
+      '<div class="basic-grid letter-picker" dir="' + set.dir + '">' + set.items.map((g, i) => '<button type="button" class="basic-tile" data-glyph="' + i + '"><b>' + g + '</b></button>').join("") + '</div>';
+    panel.querySelector("#traceBack").onclick = close;
+    panel.querySelectorAll("[data-set]").forEach(b => b.onclick = () => { setId = b.dataset.set; renderPicker(); });
+    panel.querySelectorAll("[data-glyph]").forEach(b => b.onclick = () => { index = Number(b.dataset.glyph); render(); });
+    setTimeout(() => { if (tk === narrationToken) speakKey("اختار حرف أو رقم يا ملك ماثيو", "trace_picker", "ar-EG"); }, 150);
+  }
+
   function render() {
     const set = SETS[setId];
     const glyph = set.items[index];
+    const tk = ++narrationToken;
     done = false;
     panel.innerHTML =
-      '<div class="quiz-top"><button id="traceBack" class="back" type="button">🏠 الرئيسية</button><strong>✏️ اكتب بإصبعك</strong><span>' +
+      '<div class="quiz-top"><button id="traceBack" class="back" type="button">→ رجوع</button><strong>✏️ اكتب بإصبعك</strong><span>' +
       String(index + 1).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[+d]) + ' / ' + String(set.items.length).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[+d]) + '</span></div>' +
       '<div class="trace-sets">' + Object.entries(SETS).map(([id, s]) => '<button type="button" class="trace-set' + (id === setId ? " active" : "") + '" data-set="' + id + '">' + s.title + '</button>').join("") + '</div>' +
-      '<p class="touch-game-instruction">لوّن الحرف من جوّه بس بإصبعك، واختار اللون اللي يعجبك</p>' +
+      '<p class="touch-game-instruction">' + TRACE_INSTR + '</p>' +
       '<div class="trace-colors" role="group" aria-label="اختار لون التلوين">' + COLORS.map(col => '<button type="button" class="trace-color' + (col.c === traceColor ? " active" : "") + '" data-color="' + col.c + '" style="background:' + col.c + '" aria-label="لون ' + col.n + '"></button>').join("") + '</div>' +
       '<div class="trace-wrap" dir="' + set.dir + '"><canvas id="traceGuide" width="320" height="320" aria-hidden="true"></canvas><canvas id="traceCanvas" width="320" height="320" aria-label="لوحة تتبع ' + glyph + '"></canvas></div>' +
       '<div class="progress"><div id="traceProgress" style="width:0%"></div></div>' +
       '<p id="traceMsg" class="feedback" aria-live="polite"></p>' +
-      '<div class="basic-nav"><button id="traceListen" class="voice-button" type="button">🔊 اسمع</button>' +
-      '<button id="traceClear" class="secondary" type="button">امسح وابدأ تاني</button>' +
-      '<button id="traceNext" class="primary" type="button">اللي بعده ←</button></div>';
-    panel.querySelector("#traceBack").onclick = close;
+      '<div class="basic-nav"><button id="tracePrev" class="secondary" type="button">اللي قبله<span class="pager-arrow">→</span></button>' +
+      '<button id="traceNext" class="primary" type="button">اللي بعده<span class="pager-arrow">←</span></button>' +
+      '<button id="traceListen" class="voice-button" type="button">🔊 اسمع</button>' +
+      '<button id="traceClear" class="secondary" type="button">امسح وابدأ تاني</button></div>';
+    panel.querySelector("#traceBack").onclick = renderPicker;
     panel.querySelectorAll("[data-set]").forEach(b => b.onclick = () => { setId = b.dataset.set; index = 0; render(); });
-    panel.querySelector("#traceListen").onclick = () => speak(set.speak(glyph), set.lang);
+    panel.querySelector("#traceListen").onclick = () => speakKey(glyph, set.key(index), set.lang);
     panel.querySelector("#traceClear").onclick = render;
+    panel.querySelector("#tracePrev").onclick = () => { index = (index + set.items.length - 1) % set.items.length; render(); };
     panel.querySelector("#traceNext").onclick = () => { index = (index + 1) % set.items.length; render(); };
     setupCanvas(glyph, set);
     panel.querySelectorAll(".trace-color").forEach(b => b.onclick = () => {
@@ -139,7 +200,15 @@
       panel.querySelectorAll(".trace-color").forEach(x => x.classList.toggle("active", x === b));
       if (strokeCtx) { strokeCtx.strokeStyle = traceColor; strokeCtx.fillStyle = traceColor; }
     });
-    setTimeout(() => speak(set.speak(glyph), set.lang), 150);
+    // Instruction narration: on the first render after open, مس نانسي
+    // opens the activity, then the instruction, then the glyph; later
+    // renders speak the glyph only.
+    if (justOpened) {
+      justOpened = false;
+      speakSequence([{ text: NANCY_TRACE_INTRO, key: "nancy_intro_trace", lang: "ar-EG" }, { text: TRACE_INSTR, key: "trace_instr", lang: "ar-EG" }, { text: glyph, key: set.key(index), lang: set.lang }], tk);
+    } else {
+      setTimeout(() => { if (tk === narrationToken) speakKey(glyph, set.key(index), set.lang); }, 150);
+    }
   }
 
   function setupCanvas(glyph, set) {
@@ -156,7 +225,7 @@
     let maskData = null;
     if (mctx) {
       mctx.fillStyle = "#000";
-      mctx.font = "bold 230px system-ui, sans-serif";
+      mctx.font = "bold 230px Cairo, system-ui, sans-serif";
       mctx.textAlign = "center"; mctx.textBaseline = "middle";
       mctx.fillText(glyph, 160, 172);
       // Dilate the full-resolution mask by ~3px so strokes just outside
@@ -184,7 +253,7 @@
     };
     // Draw the guide glyph on the bottom canvas.
     gtx.clearRect(0, 0, 320, 320);
-    gtx.font = "bold 230px system-ui, sans-serif";
+    gtx.font = "bold 230px Cairo, system-ui, sans-serif";
     gtx.textAlign = "center"; gtx.textBaseline = "middle";
     gtx.fillStyle = "rgba(91,60,196,0.18)";
     gtx.fillText(glyph, 160, 172);
@@ -261,7 +330,11 @@
   function finishTracing(glyph, set) {
     done = true;
     panel.querySelector("#traceMsg").textContent = "برافو يا بطل! كتبت " + glyph + " صح ⭐";
-    window.MatthewVoice?.feedback("correct");
+    // No feedback("correct") here: it bumps MatthewVoice's requestId and
+    // its delayed (+280ms) praise clip is suppressed by any speak() after
+    // it — so completion was effectively silent — while calling it after
+    // the clip would stop the clip. The recorded trace_done clip IS the
+    // celebration, played by explicit key.
     try {
       window.MatthewMastery?.record("tracing", true);
       window.MatthewMastery?.record("trace:" + glyph, true);
@@ -269,7 +342,7 @@
       localStorage.setItem("matthewStars", Number(localStorage.getItem("matthewStars") || 0) + 1);
     } catch (_) { /* storage unavailable */ }
     window.updateStats?.();
-    speak("برافو يا بطل", set.lang === "en-US" ? "en-US" : "ar-EG");
+    speakKey("برافو يا بطل", "trace_done", "ar-EG");
   }
 
   card.addEventListener("click", open);
