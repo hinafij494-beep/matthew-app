@@ -101,7 +101,7 @@ window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEven
   fab.id = "homeFab"; fab.type = "button"; fab.className = "home-fab"; fab.style.display = "none";
   fab.textContent = "🏠"; fab.setAttribute("aria-label", "العودة للمملكة");
   main.appendChild(fab);
-  const goHome = () => { window.__qToken = (window.__qToken || 0) + 1; try { window.MatthewVoice?.stop(); } catch (_) {} saveQuizProgress(); document.querySelectorAll("main > section.quiz-panel, main > section.academy-panel, main > section.result-panel").forEach(x => x.classList.add("hidden")); current = null; apply(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const goHome = () => { window.__qToken = (window.__qToken || 0) + 1; try { window.MatthewVoice?.stop(); } catch (_) {} saveQuizProgress(); document.querySelectorAll("main > section.quiz-panel, main > section.academy-panel, main > section.result-panel").forEach(x => { if (!x.classList.contains("hidden")) x.classList.add("hidden"); }); current = null; apply(); window.scrollTo({ top: 0, behavior: "smooth" }); };
   fab.addEventListener("click", goHome);
   const updateHomeFab = open => { fab.style.display = open ? "" : "none"; };
   document.addEventListener("backbutton", () => { if (activityOpen()) goHome(); else if (current) { current = null; apply(); } else { try { window.Capacitor?.Plugins?.App?.exitApp?.(); } catch (_) {} } }, false);
@@ -143,12 +143,19 @@ window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEven
     bar.style.display = (!open && current) ? "" : "none";
     heads.forEach(h => { h.style.display = "none"; });
     parentCorner.style.display = (!open && !current) ? "" : "none";
+    // Round 3.2.2 P0 freeze fix: in Chromium a no-op classList.add/remove
+    // on an observed element STILL fires a MutationObserver record, and the
+    // observer below calls apply() — so an unguarded write here looped
+    // forever and the page never loaded. Only write the class when the
+    // value actually changes (toggle() already no-ops silently, but the
+    // explicit contains-guarded add/remove below states the rule plainly).
     [learnList, gameList].forEach(list => {
-      if (open || !current) { list.style.display = "none"; list.classList.add("hidden"); return; }
+      if (open || !current) { list.style.display = "none"; if (!list.classList.contains("hidden")) list.classList.add("hidden"); return; }
       let any = false;
       [...list.children].forEach(c => { const show = classify(c) === current; c.style.display = show ? "" : "none"; if (show) any = true; });
       list.style.display = any ? "" : "none";
-      list.classList.toggle("hidden", !any);
+      if (any) { if (list.classList.contains("hidden")) list.classList.remove("hidden"); }
+      else if (!list.classList.contains("hidden")) list.classList.add("hidden");
     });
     updateHomeFab(open);
   }
