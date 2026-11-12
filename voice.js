@@ -89,6 +89,15 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     }
   }, { capture: true, passive: true });
 
+  // Round 3.2.2 P0-4: recorded clips ONLY — no device speechSynthesis
+  // and no Capacitor TextToSpeech fallback. A text with no recorded clip
+  // stays silent (the UI shows a listen prompt) instead of speaking in a
+  // mismatched device voice ("عربي في إنجليزي مشقلب").
+  // EXCEPTION — the pronunciation challenge below: hearing a single word
+  // and repeating it IS the feature, and most practice words have no
+  // recorded clip. It gets its own scoped device-TTS path (challengeSpeak),
+  // clip-first, with a voice matched to the word's language, so an English
+  // word is never spoken by an Arabic voice or vice versa.
   const waitForBrowserVoices = synth => new Promise(resolve => {
     let finished = false;
     const done = () => {
@@ -102,8 +111,10 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     try { synth.addEventListener("voiceschanged", done); } catch (_) {}
     setTimeout(done, 900);
   });
-
-  const browserSpeak = async (text, lang, id) => {
+  const challengeSpeak = async (text, lang, id) => {
+    // Clip first (the teacher's voice where a clip exists), device voice
+    // only for practice words with no clip — never for narration.
+    try { if (window.MatthewClips && window.MatthewClips.play(text, lang)) return true; } catch (_) {}
     const synth = window.speechSynthesis;
     if (!synth || !window.SpeechSynthesisUtterance) {
       setStatus("الصوت غير متاح في هذا المتصفح. جرّب محرك تحويل النص إلى كلام في إعدادات أندرويد.");
@@ -113,14 +124,14 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
       synth.cancel();
       const voices = await waitForBrowserVoices(synth);
       if (id !== requestId) return false;
-      const prefix = lang.slice(0, 2).toLowerCase();
+      const prefix = String(lang || "ar-EG").slice(0, 2).toLowerCase();
       const matches = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
       const female = matches.find(v => /female|woman|زينة|سلمى|أميرة|ليلى|salma|zeina|amira|laila|aria/i.test(v.name || ""));
-      const exact = female || matches.find(v => v.lang.toLowerCase() === lang.toLowerCase());
+      const exact = female || matches.find(v => v.lang.toLowerCase() === String(lang).toLowerCase());
       const fallback = matches[0];
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = exact?.lang || fallback?.lang || lang;
-      utterance.rate = prefix === "ar" ? 0.92 : 0.92;
+      utterance.rate = 0.92;
       utterance.pitch = 1.12;
       utterance.volume = 1;
       if (exact || fallback) utterance.voice = exact || fallback;
@@ -132,66 +143,55 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
       synth.resume();
       synth.speak(utterance);
       return true;
-    } catch (_) {
-      setStatus("تعذر تشغيل صوت المتصفح. راجع إعدادات تحويل النص إلى كلام.");
-      return false;
-    }
+    } catch (_) { return false; }
   };
-
+  let lastSpokenText = "", lastSpokenAt = 0;
   const speak = async (rawText, lang = "ar-EG") => {
     const text = String(rawText || "").trim();
     if (!text) return false;
     const id = ++requestId;
     const language = String(lang || "ar-EG");
-    const prefix = language.toLowerCase().startsWith("ar") ? "ar" : "en";
+    // 300ms debounce (review P4): a repeated tap of the same listen
+    // button while the clip is starting is ignored, never double-spoken.
+    const now = Date.now();
+    if (text === lastSpokenText && now - lastSpokenAt < 300) return true;
+    lastSpokenText = text; lastSpokenAt = now;
     setStatus("⏳ جاري تشغيل الصوت...");
     try { window.speechSynthesis?.cancel(); } catch (_) {}
     try { window.MatthewClips?.stop(); } catch (_) {}
 
-    // صوت الميس المسجل: لو الجملة عندنا كمقطع طبيعي نشغّله بدل صوت الجهاز الآلي.
+    // صوت الميس المسجل: لو الجملة عندنا كمقطع طبيعي نشغّله.
     try {
-      if (window.MatthewClips && window.MatthewClips.play(text)) {
-        if (isAndroidNative()) { try { await TextToSpeech.stop(); } catch (_) {} }
+      if (window.MatthewClips && window.MatthewClips.play(text, language)) {
         if (id === requestId) setStatus("🔊 اسمع صوت الميس يا بطل");
         return true;
       }
     } catch (_) {}
 
-    if (isAndroidNative()) {
-      try {
-        try { await TextToSpeech.stop(); } catch (_) {}
-        if (id !== requestId) return false;
-        const options = {
-          text,
-          lang: language,
-          rate: prefix === "ar" ? 0.95 : 0.92,
-          pitch: 1.15,
-          volume: 1,
-          queueStrategy: 0
-        };
-        if (id !== requestId) return false;
-        await TextToSpeech.speak(options);
-        if (id === requestId) setStatus("🔊 الصوت الأصلي شغال");
-        return true;
-      } catch (_) {
-        if (id !== requestId) return false;
-        setStatus("جاري تجربة محرك الصوت البديل...");
-      }
-    }
-    return browserSpeak(text, language, id);
+    // No recorded clip: stay silent (clips-only by design).
+    if (id === requestId) setStatus("🎧 اسمع من الميس — المقطع ده لسه بيتسجّل");
+    return false;
   };
 
   const speakSequence = (texts, lang = "ar-EG") => {
     const list = (texts || []).map(x => String(x || "").trim()).filter(Boolean);
     if (!list.length) return false;
+    // 300ms debounce on the whole sequence (review P4).
+    const now = Date.now();
+    const joined = list.join(" | ");
+    if (joined === lastSpokenText && now - lastSpokenAt < 300) return true;
+    lastSpokenText = joined; lastSpokenAt = now;
     try {
-      if (window.MatthewClips && window.MatthewClips.playSequence(list)) {
+      // The clip runtime plays element-by-element and skips any item with
+      // no recorded clip, so one missing key never drops the whole
+      // question (review 2.5).
+      if (window.MatthewClips && window.MatthewClips.playSequence(list, lang)) {
         requestId++;
         setStatus("🔊 اسمع صوت الميس يا بطل");
         return true;
       }
     } catch (_) {}
-    return speak(list.join("، "), lang);
+    return false;
   };
 
   const stop = async () => {
@@ -315,7 +315,8 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
       ]
     };
     let language = "en", current = null, recognition = null, score = 0, attempts = 0;
-    const showScore = () => { panel.querySelector("#pronounceScore").textContent = score + " / " + attempts; };
+    const arDigits = v => String(v).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[+d]);
+    const showScore = () => { panel.querySelector("#pronounceScore").textContent = arDigits(score) + " / " + arDigits(attempts); };
     const nextWord = () => {
       const list = lists[language];
       let candidate = list[Math.floor(Math.random() * list.length)];
@@ -356,7 +357,7 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     panel.querySelector("#pronounceArabic").addEventListener("click", () => setLanguage("ar"));
     panel.querySelector("#pronounceEnglish").addEventListener("click", () => setLanguage("en"));
     panel.querySelector("#pronounceListen").addEventListener("click", () => {
-      if (current) speak(current.word, language === "ar" ? "ar-EG" : "en-US");
+      if (current) challengeSpeak(current.word, language === "ar" ? "ar-EG" : "en-US", ++requestId);
     });
     panel.querySelector("#pronounceNext").addEventListener("click", nextWord);
     panel.querySelector("#pronounceRecord").addEventListener("click", () => {

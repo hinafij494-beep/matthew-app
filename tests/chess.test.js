@@ -207,7 +207,7 @@ test("curriculum: 11 steps, board first, full game last, generous star gates", (
   assert.deepEqual(chess.LESSONS.map(l => l.stars), [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20]);
   for (const l of chess.LESSONS) {
     assert.ok(l.title && l.desc && l.intro && l.lesson && l.question && l.win, l.id + ": lesson text missing");
-    assert.match(l.intro, /مس نانسي/, l.id + ": intro must speak as Miss Nancy");
+    assert.ok(!l.intro.includes("أنا مس نانسي"), l.id + ": section intros must NOT introduce Miss Nancy by name (round 3.2.2 P1-1: only the opening greeting does)");
     assert.match(l.intro, /ماثيو/, l.id + ": intro must name Matthew");
     assert.ok(l.lesson.length >= 200, l.id + ": explanation must stay full and thorough, not a summary");
   }
@@ -294,7 +294,10 @@ test("board HTML: 64 big tap targets with legal-move dots", () => {
 
 test("chess.js is wired for the bundle (coordinator check)", () => {
   assert.match(src, /window\.MatthewChess|root\.MatthewChess/, "module exposes MatthewChess");
-  assert.match(src, /data-chess="1"/, "games-door card hook data-chess exists");
+  // Round 3.2.2 P0-1/P1-9: the hook must be a REAL setAttribute call, not a
+  // comment — in 3.2.1 this test matched the string inside a comment while
+  // the card was misclassified into the Questions door.
+  assert.match(src, /card\.setAttribute\("data-chess", "1"\)/, "card must set data-chess via a real setAttribute call");
   assert.match(src, /#gameList|getElementById\("gameList"\)/, "card is appended to the Games door list");
   assert.match(src, /chessStyle/, "chess CSS is injected from inside chess.js (styles.css untouched)");
   assert.ok(!/styles\.css/.test(src), "chess.js must not touch styles.css");

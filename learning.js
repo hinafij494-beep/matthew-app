@@ -4,7 +4,7 @@
   // picker and unified lesson. arNumbers, enLetters, enNumbers stay.
   const englishWords = ["Apple","Ball","Cat","Dog","Elephant","Fish","Grapes","House","Ice cream","Juice","Kite","Lion","Monkey","Nest","Orange","Pencil","Queen","Rabbit","Sun","Tiger","Umbrella","Van","Watch","Xylophone","Yo-yo","Zebra"];
   const arabicMeanings = ["تفاحة","كورة","قطة","كلب","فيل","سمكة","عنب","بيت","آيس كريم","عصير","طيارة ورق","أسد","قرد","عش","برتقالة","قلم رصاص","ملكة","أرنب","شمس","نمر","شمسية","عربية","ساعة","إكسيليفون","يويو","حمار وحشي"];
-  const phonicsSounds=["short a","buh","kuh","duh","eh","fff","guh","huh","ih","juh","kuh","lll","mmm","nnn","ah","puh","kwuh","rrr","sss","tuh","uh","vvv","wuh","ks","yuh","zzz"];
+  const phonicsSounds=["short a","buh","kuh","duh","eh","fff","guh","huh","eye","juh","kuh","lll","mmm","nnn","o","puh","kwuh","rrr","sss","tuh","uh","vvv","wuh","zuh","yuh","zzz"];
   const englishLetters = englishWords.map((word,i) => {
     const letter=String.fromCharCode(65+i);
     return {value:letter,lowercase:letter.toLowerCase(),phonics:phonicsSounds[i],word,emoji:["🍎","⚽","🐱","🐶","🐘","🐟","🍇","🏠","🍦","🧃","🪁","🦁","🐵","🪺","🍊","✏️","👑","🐰","☀️","🐯","☂️","🚐","⌚","<svg viewBox='0 0 64 64' aria-hidden='true'><g stroke='#5b6067' stroke-width='1.5'><rect x='10' y='10' width='44' height='6' rx='3' fill='#e14b6d'/><rect x='12' y='18' width='40' height='6' rx='3' fill='#ff9d45'/><rect x='14' y='26' width='36' height='6' rx='3' fill='#ffd94d'/><rect x='16' y='34' width='32' height='6' rx='3' fill='#8bd9a7'/><rect x='18' y='42' width='28' height='6' rx='3' fill='#69b7ff'/></g><path d='M14 52 L26 34 M50 52 L40 30' stroke='#8a5a24' stroke-width='3' stroke-linecap='round'/><circle cx='26' cy='32' r='4' fill='#e14b6d'/><circle cx='40' cy='28' r='4' fill='#2169a8'/></svg>","🪀","🦓"][i],speak:"حرف "+letter+"، شكله الصغير "+letter.toLowerCase()+"، صوته "+phonicsSounds[i]+"، زي كلمة "+word+" يعني "+arabicMeanings[i]};
@@ -24,7 +24,8 @@
   const panel=document.createElement("section");
   panel.id="basicLearning";panel.className="academy-panel hidden";panel.dir="rtl";
   main.insertBefore(panel,document.querySelector("footer"));
-  const speak=(text,lang)=>{if(window.MatthewVoice&&window.MatthewVoice.speak)window.MatthewVoice.speak(text,lang);else if("speechSynthesis"in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang;speechSynthesis.speak(u)}};
+  // Round 3.2.2 P0-4: recorded clips ONLY — no device speechSynthesis.
+  const speak=(text,lang)=>{if(window.MatthewVoice&&window.MatthewVoice.speak)window.MatthewVoice.speak(text,lang)};
   let active=null,index=0;
   categories.forEach((cat,i)=>{
     const card=document.createElement("button");card.type="button";card.className="game-card "+["orange","blue","green","purple"][i];
@@ -41,7 +42,8 @@
     panel.querySelector("#basicPrev").onclick=()=>{index=Math.max(0,index-1);render()};
     panel.querySelector("#basicNext").onclick=()=>{index=index===active.items.length-1?0:index+1;render()};
     panel.querySelectorAll("[data-index]").forEach(b=>b.onclick=()=>{index=Number(b.dataset.index);render()});
-    setTimeout(()=>speak(item.speak,active.lang),120);
+    const tk=++speakToken;setTimeout(()=>{if(tk!==speakToken)return;speak(item.speak,active.lang)},120);
   }
-  function close(){panel.classList.add("hidden");gameList.classList.remove("hidden");learningList.classList.remove("hidden");window.MatthewVoice?.stop()}
+  let speakToken=0;
+  function close(){speakToken++;panel.classList.add("hidden");gameList.classList.remove("hidden");learningList.classList.remove("hidden");window.MatthewVoice?.stop()}
 })();

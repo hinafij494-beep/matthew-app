@@ -59,7 +59,7 @@ const NEW_CLIPS = [
   { key: "touch_match_intro", text: "لعبة التوصيل يا ملك ماثيو! أنا مس نانسي، اضغط الصورة واسمع اسمها، وبعدين اضغط الكلمة اللي بتناسبها يا بطل!", lang: "ar_EG" },
   { key: "touch_listen_intro", text: "لعبة اسمع واختار يا ملك ماثيو! أنا مس نانسي، اسمع كويس واختار الصح يا بطل!", lang: "ar_EG" },
   { key: "touch_pic_apple", text: "تفاحة", lang: "ar_EG" },
-  { key: "storyPickerIntro", text: "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!", lang: "ar_EG" },
+  { key: "storyPickerIntro", text: "أهلاً يا ملك ماثيو! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!", lang: "ar_EG" },
   { key: "mem_intro", text: "لعبة الذاكرة يا ملك ماثيو! أنا مس نانسي وبحبك أوي! اقلب الكروت ولاقي الصورتين اللي شبه بعض يا بطل!", lang: "ar_EG" },
   { key: "mem_match_1", text: "برافو يا ملك ماثيو! شاطر خالص!", lang: "ar_EG" },
   { key: "mem_match_2", text: "يا سلام يا بطل ماثيو! الصورتين شبه بعض! عينك قوية أوي!", lang: "ar_EG" },
@@ -153,11 +153,11 @@ test("every game intro resolves to a recorded clip", () => {
   for (const tab of ["nature", "patterns"]) {
     assert.ok([...DERIVED_NORMS].some(t => t.startsWith(norm(instructions[tab]))),
       tab + " intro not the prefix of any derived tab speech: " + instructions[tab]);
-    assert.match(instructions[tab], /مس نانسي/, tab + " intro must introduce مس نانسي");
+    assert.ok(!instructions[tab].includes("أنا مس نانسي"), tab + " intro must NOT introduce مس نانسي by name (round 3.2.2 P1-1)");
     assert.match(instructions[tab], /يا ملك ماثيو/, tab + " intro must cheer Matthew by name");
   }
   assert.match(instructions.numbers, /اختار لون وبعدين دوس على الجزء اللي رقمه نفس اللون/, "numbers intro must carry the prescribed sentence");
-  assert.match(instructions.numbers, /مس نانسي/, "numbers intro must introduce مس نانسي");
+  assert.ok(!instructions.numbers.includes("أنا مس نانسي"), "numbers intro must NOT introduce مس نانسي by name (round 3.2.2 P1-1)");
 
   // Touch games: the intro constants in the bundle core.
   for (const name of ["MENU_INTRO", "MATCH_INTRO", "LISTEN_INTRO"]) {
@@ -179,7 +179,7 @@ test("every game intro resolves to a recorded clip", () => {
   // Stories picker: the spoken intro (مس نانسي version from the report) is
   // in the manifest, and rescue.js already speaks an intro on open.
   assert.ok(covered(NEW_CLIPS.find(e => e.key === "storyPickerIntro").text), "story picker intro has no recorded clip");
-  assert.match(RESCUE, /speak\("أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!", "storyPickerIntro"\)/, "story picker must speak its intro on open");
+  assert.match(RESCUE, /speak\("أهلاً يا ملك ماثيو! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!", "storyPickerIntro"\)/, "story picker must speak its intro on open");
 });
 
 test("matching-game picture names resolve to recorded clips, and tapping a picture speaks its name", () => {

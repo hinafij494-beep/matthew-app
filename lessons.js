@@ -10,11 +10,11 @@
     {letter:"د",name:"الدال",forms:["د","ـد","ـد"],words:["دُبّ","مَدْرَسَة","وَرْد"],emoji:["🐻","🏫","🌹"],sound:"دَ"},
     {letter:"ذ",name:"الذال",forms:["ذ","ـذ","ـذ"],words:["ذِئْب","أُذُن","لَذِيذ"],emoji:["🐺","👂","😋"],sound:"ذَ"},
     {letter:"ر",name:"الراء",forms:["ر","ـر","ـر"],words:["رِيشَة","فَرَاشَة","قَمَر"],emoji:["🪶","🦋","🌙"],sound:"رَ"},
-    {letter:"ز",name:"الزاي",forms:["ز","ـز","ـز"],words:["زَرَافَة","مَوْز","خُبْز"],emoji:["🦒","🍌","🍞"],sound:"زَ"},
+    {letter:"ز",name:"الزاي",forms:["ز","ـز","ـز"],words:["زَرَافَة","وَزَّة","خُبْز"],emoji:["🦒","🪿","🍞"],sound:"زَ"},
     {letter:"س",name:"السين",forms:["سـ","ـسـ","ـس"],words:["سَمَكَة","مَسْجِد","شَمْس"],emoji:["🐟","🕌","☀️"],sound:"سَ"},
     {letter:"ش",name:"الشين",forms:["شـ","ـشـ","ـش"],words:["شَمْس","فَرَاشَة","عُشّ"],emoji:["☀️","🦋","🪺"],sound:"شَ"},
     {letter:"ص",name:"الصاد",forms:["صـ","ـصـ","ـص"],words:["صَقْر","عَصِير","قَفَص"],emoji:["🦅","🧃","<svg viewBox='0 0 64 64' aria-hidden='true'><circle cx='32' cy='10' r='3.5' fill='none' stroke='#8a8f96' stroke-width='3'/><path d='M14 54 V30 q0 -16 18 -16 q18 0 18 16 V54 Z' fill='#fdf6e3' stroke='#8a8f96' stroke-width='3'/><path d='M22 20 V54 M32 15 V54 M42 20 V54' stroke='#8a8f96' stroke-width='2.5'/><path d='M14 40 h36 M14 28 q18 -6 36 0' stroke='#8a8f96' stroke-width='2.5' fill='none'/><rect x='10' y='54' width='44' height='5' rx='2.5' fill='#c89b4e' stroke='#8f6a1e' stroke-width='2'/></svg>"],sound:"صَ"},
-    {letter:"ض",name:"الضاد",forms:["ضـ","ـضـ","ـض"],words:["ضِفْدَع","بَيْض","مِضْرَب"],emoji:["🐸","🥚","🏏"],sound:"ضَ"},
+    {letter:"ض",name:"الضاد",forms:["ضـ","ـضـ","ـض"],words:["ضِفْدَع","مِضْرَب","بَيْض"],emoji:["🐸","🏏","🥚"],sound:"ضَ"},
     {letter:"ط",name:"الطاء",forms:["طـ","ـطـ","ـط"],words:["طَائِر","بَطَّة","خَيْط"],emoji:["🐦","🦆","🧵"],sound:"طَ"},
     {letter:"ظ",name:"الظاء",forms:["ظـ","ـظـ","ـظ"],words:["ظَرْف","نَظِيف","حَظّ"],emoji:["✉️","🧼","🍀"],sound:"ظَ"},
     {letter:"ع",name:"العين",forms:["عـ","ـعـ","ـع"],words:["عُصْفُور","لُعْبَة","شَارِع"],emoji:["🐤","🧸","🛣️"],sound:"عَ"},
@@ -82,21 +82,14 @@
   const $ = id => document.getElementById(id);
   const learningList = $("learningList") || $("gameList");
   let letterIndex=0, step=0, markIndex=0, quiz=[], quizIndex=0, score=0;
+  // Round 3.2.2 P0-4: recorded clips ONLY — no device speechSynthesis.
   const say = text => {
     if(window.MatthewVoice&&typeof window.MatthewVoice.speak==="function"){
       window.MatthewVoice.speak(text,"ar-EG");
       return;
     }
-    const synth=window.speechSynthesis;
-    if(!synth||!window.SpeechSynthesisUtterance){
-      const status=document.getElementById("lessonStatus");
-      if(status)status.textContent="الصوت غير متاح. افتح التطبيق من كروم وفعّل خدمات تحويل النص إلى كلام.";
-      return;
-    }
-    synth.cancel();
-    const u=new SpeechSynthesisUtterance(text);
-    u.lang="ar-EG";u.rate=.78;u.volume=1;
-    synth.resume();synth.speak(u);
+    const status=document.getElementById("lessonStatus");
+    if(status)status.textContent="🎧 اسمع من الميس — المقطع ده لسه بيتسجّل";
   };
   const card=document.createElement("button");
   card.className="game-card pink"; card.type="button"; card.dataset.lessonEntry="true";
@@ -113,7 +106,7 @@
   `;
   document.querySelector("main").insertBefore(panel,document.querySelector("footer"));
   function open(){ $("gameList").classList.add("hidden");learningList.classList.add("hidden");$("quiz").classList.add("hidden");$("result").classList.add("hidden");panel.classList.remove("hidden");letterIndex=0;step=-1;quiz=[];quizIndex=0;score=0;render();}
-  function back(){panel.classList.add("hidden");$("gameList").classList.remove("hidden");learningList.classList.remove("hidden");window.MatthewVoice?.stop();}
+  function back(){window.__qToken=(window.__qToken||0)+1;panel.classList.add("hidden");$("gameList").classList.remove("hidden");learningList.classList.remove("hidden");window.MatthewVoice?.stop();}
   // Round 3.2.1 notes 9–11: no step wizard any more — one scrollable
   // lesson screen holds everything about the letter (explanation, forms,
   // words, marks, quiz button). step: -1 = picker, 0 = lesson, 3 = quiz.
@@ -133,7 +126,7 @@
     $("lessonBody").innerHTML=`<div class="lesson-title">اختار حرف يا ملك ماثيو 👑</div><p>اضغط على أي حرف عشان تتعلمه</p><div class="basic-grid letter-picker">${lessons.map((l,i)=>`<button type="button" class="basic-tile" data-letter="${i}"><span>${l.emoji[0]}</span><b>${l.letter}</b><small>${l.name}</small></button>`).join("")}</div><button id="letterQuizBtn" class="primary" type="button">🏆 اختبر نفسك</button>`;
     panel.querySelectorAll("[data-letter]").forEach(b=>b.onclick=()=>{letterIndex=Number(b.dataset.letter);step=0;render()});
     $("letterQuizBtn").onclick=()=>makeQuiz();
-    setTimeout(()=>say("اختار حرف يا ملك ماثيو"),120);
+    const tkP=window.__qToken=(window.__qToken||0)+1;setTimeout(()=>{if(window.__qToken!==tkP)return;say("اختار حرف يا ملك ماثيو")},120);
   }
   // The unified lesson (notes 9–11): everything about the letter on ONE
   // scrollable screen — big letter, name, sound, full explanation, forms
@@ -154,8 +147,8 @@
       `<div class="form-grid"><div><b>أول الكلمة</b><strong>${l.forms[0]}</strong></div><div><b>وسط الكلمة</b><strong>${l.forms[1]}</strong></div><div><b>آخر الكلمة</b><strong>${l.forms[2]}</strong></div></div>`+
       `<button id="formsListen" class="voice-button" type="button">🔊 اسمع أشكال الحرف</button>`+
       `<div class="word-examples">${l.words.map((w,i)=>`<div role="button" tabindex="0"><span>${l.emoji[i]}</span><b>${w}</b></div>`).join("")}</div>`+
-      `<p class="voice-note">ملحوظة: حرف الألف لا يتصل بما بعده، لذلك شكله يختلف عن باقي الحروف.</p>`+
-      `<h3 class="lesson-section">الحركات الأربع على حرف ${l.letter}</h3>`+
+      `${["أ","د","ذ","ر","ز","و"].includes(l.letter)?`<p class="voice-note">ملحوظة: حرف ${l.name} لا يتصل بما بعده، لذلك شكله يختلف عن باقي الحروف.</p>`:""}`+
+      `<h3 class="lesson-section">الحركات والسكون على حرف ${l.letter}</h3>`+
       `<div class="mark-tabs">${marks.map((x,i)=>`<button class="${i===markIndex?"active":""}" data-mark="${i}">${x.name}</button>`).join("")}</div>`+
       `<div class="mark-card" id="markCard"></div>`+
       `<p>اختار كل حركة واسمعها بصوت واضح</p>`;
@@ -167,7 +160,7 @@
     panel.querySelectorAll("[data-mark]").forEach(b=>b.onclick=()=>{markIndex=Number(b.dataset.mark);updateMark();const m=marks[markIndex];say(m.name+"، "+markSample()+". "+m.hint+": "+markSample())});
     $("lessonListen").textContent="🔊 اسمع الدرس";$("lessonListen").onclick=()=>say(ex.spoken);
     $("lessonNext").textContent="🏆 اختبر نفسك ⭐";
-    setTimeout(()=>say(ex.spoken),120);
+    const tkL=window.__qToken=(window.__qToken||0)+1;setTimeout(()=>{if(window.__qToken!==tkL)return;say(ex.spoken)},120);
   }
   function markSample(){
     const l=lessons[letterIndex];
@@ -187,20 +180,40 @@
     // Round 3.2.1 note 4: the spoken question must never contain its own
     // correct answer. The glyph/sample is shown VISUALLY only (q.show) and
     // stays out of the spoken question (q.q + " اختار الإجابة الصحيحة").
+    // Round 3.2.2 P0-6: distractors must be genuinely different — the old
+    // fixed lists duplicated the correct answer (e.g. س → ["السين","السين"...]
+    // and non-joining letters → ["د","ـد","ـد","د"]).
+    const allNames=lessons.map(x=>x.name);
+    const allForms=[...new Set(lessons.flatMap(x=>x.forms))];
     lessons.forEach(l=>{
-      qs.push({q:"ما اسم هذا الحرف؟",show:l.letter,a:[l.name,"السين","الراء","الفاء"],c:0});
-      qs.push({q:"أي شكل لحرف "+l.name+" في أول الكلمة؟",a:[l.forms[0],l.forms[1],l.forms[2],"د"],c:0});
+      const nameDist=allNames.filter(n=>n!==l.name).sort(()=>Math.random()-.5).slice(0,3);
+      qs.push({q:"ما اسم هذا الحرف؟",show:l.letter,a:[l.name,...nameDist],c:0});
+      const formDist=allForms.filter(f=>f!==l.forms[0]).sort(()=>Math.random()-.5).slice(0,3);
+      qs.push({q:"أي شكل لحرف "+l.name+" في أول الكلمة؟",a:[l.forms[0],...formDist],c:0});
     });
     marks.forEach(m=>qs.push({q:"ما اسم الحركة في المقطع ده؟",show:m.sample,a:[m.name,"حركة أخرى","الشدة","التنوين"],c:0}));
     qs.push({q:"أي مقطع عليه فتحة؟",a:["بَ","بُ","بِ","بْ"],c:0},{q:"أي مقطع عليه ضمة؟",a:["تِ","تُ","تَ","تْ"],c:1},{q:"أي مقطع عليه كسرة؟",a:["مَ","مْ","مِ","مُ"],c:2},{q:"أي مقطع عليه سكون؟",a:["سَ","سُ","سْ","سِ"],c:2});
     quiz=qs.sort(()=>Math.random()-.5).slice(0,10);quizIndex=0;score=0;showQuiz();
   }
+  // Round 3.2.2 P0-6 (audit): the old glyph-keyed picture map NEVER matched
+  // anything — quiz answers are letter NAMES ("الألف") and FORMS ("بـ"),
+  // not bare glyphs — so every answer picture fell back to 🔤. Re-key by
+  // answer text from the lessons data (each letter's own first-word picture);
+  // syllable answers fall back to their letter's picture, haraka names to 🔤.
+  const quizPicMap = {};
+  lessons.forEach(l => { quizPicMap[l.name] = l.emoji[0]; l.forms.forEach(f => { if (!(f in quizPicMap)) quizPicMap[f] = l.emoji[0]; }); });
+  const quizPic = a => {
+    if (quizPicMap[a]) return quizPicMap[a];
+    const base = String(a || "").replace(/[ً-ٰٟـ]/g, "").charAt(0);
+    const l = lessons.find(x => x.letter === base);
+    return l ? l.emoji[0] : "🔤";
+  };
   function showQuiz(){
     const q=quiz[quizIndex];
     if(!q._shuffled){const order=q.a.map((a,i)=>({a,ok:i===q.c})).sort(()=>Math.random()-.5);q.a=order.map(x=>x.a);q.c=order.findIndex(x=>x.ok);q._shuffled=true}$("lessonStep").textContent=(quizIndex+1).toLocaleString("ar-EG")+" / "+quiz.length.toLocaleString("ar-EG");
     $("lessonProgress").style.width=(quizIndex/quiz.length*100)+"%";
     const spoken=q.q+" اختار الإجابة الصحيحة";
-    $("lessonBody").innerHTML=`<div class="lesson-title">اختبار الملك ماثيو 👑</div>${q.show?`<div class="big-letter sticky-panel">${q.show}</div>`:""}<h2>${q.q}</h2><div class="lesson-answers">${q.a.map((a,i)=>`<button data-answer="${i}"><span class="answer-picture" aria-hidden="true">${({ "أ":"🦁","ب":"🦆","ت":"🍎","ث":"🦊","ج":"🐪","ح":"🐎","خ":"🐑","د":"🐻","ذ":"🐺","ر":"🍎","ز":"🦒","س":"🐟","ش":"☀️","ص":"🦅","ض":"🐸","ط":"🐦","ظ":"✉️","ع":"🐤","غ":"🦌","ف":"🐘","ق":"🐱","ك":"📘","ل":"🥛","م":"🍌","ن":"🐅","ه":"🐦","هـ":"🐦","و":"🌹","ي":"✋"}[a]||"🔤")}</span><span class="answer-label">${a}</span></button>`).join("")}</div>`;
+    $("lessonBody").innerHTML=`<div class="lesson-title">اختبار الملك ماثيو 👑</div>${q.show?`<div class="big-letter sticky-panel">${q.show}</div>`:""}<h2>${q.q}</h2><div class="lesson-answers">${q.a.map((a,i)=>`<button data-answer="${i}"><span class="answer-picture" aria-hidden="true">${quizPic(a)}</span><span class="answer-label">${a}</span></button>`).join("")}</div>`;
     panel.querySelectorAll("[data-answer]").forEach(b=>b.onclick=()=>{if(panel.dataset.done==="1")return;panel.dataset.done="1";const ok=Number(b.dataset.answer)===q.c;try{window.MatthewMastery?.record("arabic-letters",ok);window.MatthewMastery?.record("arabic-letter:"+lessons[letterIndex].letter,ok)}catch(_){}if(ok)score++;panel.querySelectorAll("[data-answer]").forEach(x=>{x.disabled=true;if(Number(x.dataset.answer)===q.c)x.classList.add("correct")});if(!ok)b.classList.add("wrong");$("lessonStatus").textContent=ok?"برافو يا بطل! إجابة صحيحة ⭐":"محاولة جميلة! ركز في الحركة وجرب السؤال التالي";$("lessonNext").innerHTML=quizIndex===quiz.length-1?"النتيجة 🏆":"السؤال التالي<span class=\"pager-arrow\">←</span>"});
     panel.dataset.done="0";$("lessonNext").textContent="اختار الإجابة";
     $("lessonListen").textContent="🔊 اسمع السؤال";$("lessonListen").onclick=()=>{if(window.MatthewVoice?.speakSequence)window.MatthewVoice.speakSequence([spoken,...q.a],"ar-EG");else say(spoken)};

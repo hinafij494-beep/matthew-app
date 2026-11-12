@@ -56,7 +56,7 @@ test("code modules ship inside the interactive-games bundle; voice packs load as
   }
   assert.ok(html.includes("interactive-games.js"), "page does not load the bundle file");
   assert.ok(sw.includes("./interactive-games.js"), "offline cache missing the bundle file");
-  assert.match(sw, /king-matthew-v22/);
+  assert.match(sw, /king-matthew-v23/);
   assert.ok(sw.includes("./voice.bundle.js"), "offline cache must precache voice.bundle.js (round 3.2)");
   // The whole point of the restructure: the bundle must fit GitHub's
   // 25 MB per-file web-UI limit, with headroom.
@@ -352,7 +352,7 @@ test("science swaps the two removed lessons for lightning and soap bubbles (roun
   }
   assert.ok(src.includes("الفيل أكبر حيوان على اليابسة"), "mammals lesson must say the elephant is the biggest LAND animal");
   const lessons = [...src.matchAll(/\["([^"]+)","([^"]+)","([^"]+)","([^"]+)"\]/g)];
-  assert.equal(lessons.length, 47, "expected 47 science lessons after the swap, got " + lessons.length);
+  assert.equal(lessons.length, 48, "expected 48 science lessons after adding أيام الأسبوع, got " + lessons.length);
 });
 
 test("question bank has no duplicates and covers the new science lessons (round 3.2)", () => {
@@ -370,7 +370,8 @@ test("question bank has no duplicates and covers the new science lessons (round 
   const all = Object.values(bank).flat();
   assert.ok(all.some(q => q.q.includes("برق") && q.a[q.c].includes("رعد")), "missing the new lightning question");
   assert.ok(all.some(q => q.q.includes("فقاعات")), "missing the new soap-bubble question");
-  assert.equal(all.filter(q => q.q.includes("قوس قزح")).length, 1, "the rainbow bank question stays exactly once");
+  assert.equal(all.filter(q => q.q.includes("قوس قزح")).length, 0, "Round 3.2.2 P0-7: no rainbow question anywhere in the bank");
+  assert.ok(all.some(q => q.q.includes("الشمس بتطلع منين الصبح؟")), "missing the sunrise question that replaces the rainbow question");
   for (const q of all.filter(q => q.q.startsWith("ما ناتج"))) {
     assert.ok(!/[0-9٠-٩+−]/.test(q.q), "operation question must be fully spoken, no digits or symbols: " + q.q);
   }
@@ -551,7 +552,7 @@ test("math in English and the English alphabet explain in Arabic (round 3.2.1)",
   for (const s of ["Count the pictures", "What number comes after", "What number comes before", "Which number is bigger", "You have", "Listen to the question", "I understand! Start practice", "Great job!", "Amazing work!", "Try again", "See your result", "You finished Math", "Next level", "Continue to next lesson", "King Matthew Math", "Math in English"])
     assert.ok(!me.includes(s), "English instruction remains in math-english.js: " + s);
   assert.match(me, /speak\(t,"ar-EG"\)/, "math-english say() must speak explanations in ar-EG");
-  assert.match(me, /u\.lang="ar-EG"/, "math-english TTS fallback must be ar-EG");
+  assert.ok(!me.includes("SpeechSynthesisUtterance") && !me.includes("speechSynthesis.speak"), "math-english must not fall back to device TTS (round 3.2.2 P0-4: clips only)");
   const learning = read("learning.js");
   assert.ok(learning.includes("arabicMeanings"), "enLetters needs the Arabic meanings array");
   assert.ok(learning.includes("شكله الصغير"), "enLetters spoken line must use Arabic framing");

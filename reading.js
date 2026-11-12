@@ -72,15 +72,15 @@
   // Words built from parts the child can already say: [parts, whole, meaning, emoji]
   const AR_WORDS = [
     { parts: ["بَا", "ب"], word: "بَاب", meaning: "باب البيت", emoji: "🚪" },
-    { parts: ["بَ", "طَّة"], word: "بَطَّة", meaning: "بطة بتعوم", emoji: "🦆" },
+    { parts: ["بَ", "قَرَة"], word: "بَقَرَة", meaning: "بقرة بتقول مو", emoji: "🐄" },
     { parts: ["أَ", "سَد"], word: "أَسَد", meaning: "أسد قوي", emoji: "🦁" },
     { parts: ["قَ", "مَر"], word: "قَمَر", meaning: "قمر في السما", emoji: "🌙" },
-    { parts: ["شَ", "مْس"], word: "شَمْس", meaning: "شمس منوّرة", emoji: "☀️" },
+    { parts: ["سَ", "مَكَة"], word: "سَمَكَة", meaning: "سمكة بتعوم", emoji: "🐟" },
     { parts: ["كَ", "لْب"], word: "كَلْب", meaning: "كلب صديق", emoji: "🐶" },
-    { parts: ["قِ", "طَّة"], word: "قِطَّة", meaning: "قطة صغيرة", emoji: "🐱" },
+    { parts: ["قَ", "لَم"], word: "قَلَم", meaning: "قلم بنكتب بيه", emoji: "✏️" },
     { parts: ["بَ", "حْر"], word: "بَحْر", meaning: "بحر كبير", emoji: "🌊" },
     { parts: ["نَ", "جْم"], word: "نَجْم", meaning: "نجم بيلمع", emoji: "⭐" },
-    { parts: ["تُ", "فَّاح"], word: "تُفَّاح", meaning: "تفاح حلو", emoji: "🍎" }
+    { parts: ["تَا", "ج"], word: "تَاج", meaning: "تاج الملك", emoji: "👑" }
   ];
 
   const CVC_WORDS = [
@@ -89,7 +89,7 @@
     { sounds: ["p", "i", "g"], word: "pig", emoji: "🐷" },
     { sounds: ["s", "u", "n"], word: "sun", emoji: "☀️" },
     { sounds: ["b", "u", "s"], word: "bus", emoji: "🚌" },
-    { sounds: ["e", "g", "g"], word: "egg", emoji: "🥚" },
+    { sounds: ["e", "g"], word: "egg", emoji: "🥚" },
     { sounds: ["h", "a", "t"], word: "hat", emoji: "🎩" },
     { sounds: ["b", "e", "d"], word: "bed", emoji: "🛏️" },
     { sounds: ["f", "i", "sh"], word: "fish", emoji: "🐟" },
@@ -107,12 +107,9 @@
   card.innerHTML = '<span class="game-icon">📖</span><strong>يلا نقرأ</strong><small>مقاطع وكلمات عربي وإنجليزي</small><span class="play">ابدأ القراءة ←</span>';
   learningList.append(card);
 
+  // Round 3.2.2 P0-4: recorded clips ONLY — no device speechSynthesis.
   const speak = (text, lang) => {
     if (window.MatthewVoice && window.MatthewVoice.speak) window.MatthewVoice.speak(text, lang);
-    else if ("speechSynthesis" in window) {
-      speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text); u.lang = lang; u.rate = 0.85; speechSynthesis.speak(u);
-    }
   };
   // Rescue.js pattern: a clip KEY plays first (exact clip, no text-map
   // collision); the spoken text is only the device-TTS fallback. NOTE:
@@ -127,13 +124,12 @@
   const speakSequence = (texts, lang) => {
     const list = (texts || []).map(t => String(t || "").trim()).filter(Boolean);
     if (!list.length) return;
-    try { if (window.MatthewClips && window.MatthewClips.playSequence(list)) return; } catch (_) {}
+    try { if (window.MatthewClips && window.MatthewClips.playSequence(list, lang)) return; } catch (_) {}
     if (window.MatthewVoice && window.MatthewVoice.speakSequence) window.MatthewVoice.speakSequence(list, lang);
-    else speak(list.join("، "), lang);
   };
   const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 
-  let mode = "ar-syllables", letterIndex = 0, wordIndex = 0, picker = true;
+  let mode = "ar-syllables", letterIndex = 0, wordIndex = 0, picker = true, readToken = 0;
 
   function open() {
     gameList.classList.add("hidden");
@@ -148,6 +144,7 @@
   }
 
   function close() {
+    readToken++;
     panel.classList.add("hidden");
     gameList.classList.remove("hidden");
     learningList.classList.remove("hidden");
@@ -187,6 +184,7 @@
   }
 
   function renderSyllables() {
+    const tk = ++readToken;
     const letter = LETTERS[letterIndex];
     const syllables = syllablesFor(letter);
     panel.innerHTML = header("📖 مقاطع حرف " + letter.name, true) +
@@ -201,7 +199,7 @@
     panel.querySelector("#readNextLetter").onclick = () => { letterIndex = (letterIndex + 1) % LETTERS.length; renderSyllables(); };
     // Full narration on open: the letter name (lsq_name_*) then ALL 6
     // syllables in order (rd_syl_* via the EXACT map) — not a short version.
-    setTimeout(() => speakSequence([letter.name].concat(syllables.map(s => s.say)), "ar-EG"), 150);
+    setTimeout(() => { if (tk !== readToken) return; speakSequence([letter.name].concat(syllables.map(s => s.say)), "ar-EG"); }, 150);
   }
 
   function renderArWordPicker() {
@@ -213,6 +211,7 @@
   }
 
   function renderArWord() {
+    const tk = ++readToken;
     const wi = wordIndex % AR_WORDS.length;
     const item = AR_WORDS[wi];
     const blend = item.parts.join("، ") + ". " + item.word;
@@ -231,7 +230,7 @@
     panel.querySelector("#readPrevWord").onclick = () => { wordIndex = (wordIndex + AR_WORDS.length - 1) % AR_WORDS.length; renderArWord(); };
     panel.querySelector("#readNextWord").onclick = () => { wordIndex = (wordIndex + 1) % AR_WORDS.length; renderArWord(); };
     // Full narration on open: the whole blend line (rd_blend_*).
-    setTimeout(() => speakKey(blend, "rd_blend_" + wi, "ar-EG"), 150);
+    setTimeout(() => { if (tk !== readToken) return; speakKey(blend, "rd_blend_" + wi, "ar-EG"); }, 150);
   }
 
   function renderCvcPicker() {
@@ -243,6 +242,7 @@
   }
 
   function renderCvc() {
+    const tk = ++readToken;
     const wi = wordIndex % CVC_WORDS.length;
     const item = CVC_WORDS[wi];
     const blend = item.sounds.join(", ") + ". " + item.word;
@@ -261,10 +261,11 @@
     panel.querySelector("#readPrevCvc").onclick = () => { wordIndex = (wordIndex + CVC_WORDS.length - 1) % CVC_WORDS.length; renderCvc(); };
     panel.querySelector("#readNextCvc").onclick = () => { wordIndex = (wordIndex + 1) % CVC_WORDS.length; renderCvc(); };
     // Full narration on open: the whole blend line (rd_cvc_blend_*).
-    setTimeout(() => speakKey(blend, "rd_cvc_blend_" + wi, "en-US"), 150);
+    setTimeout(() => { if (tk !== readToken) return; speakKey(blend, "rd_cvc_blend_" + wi, "en-US"); }, 150);
   }
 
   function renderQuiz() {
+    const tk = ++readToken;
     const useArabic = Math.random() < 0.5;
     let prompt, spoken, lang, skill, choices;
     if (useArabic) {
@@ -283,7 +284,7 @@
       // Note 22: the replay button re-speaks the prompt word ONLY — never
       // the choices (this is a listening-identification quiz).
       panel.querySelector("#readQuizListen").onclick = () => speakKey(spoken, "rd_word_" + itemIdx, lang);
-      setTimeout(() => speakKey(spoken, "rd_word_" + itemIdx, lang), 200);
+      setTimeout(() => { if (tk !== readToken) return; speakKey(spoken, "rd_word_" + itemIdx, lang); }, 200);
       let answered = false;
       panel.querySelectorAll("[data-word]").forEach(b => b.onclick = () => {
         if (answered) return; answered = true;
@@ -311,7 +312,7 @@
       // Note 22: the replay button re-speaks the prompt word ONLY — never
       // the choices (this is a listening-identification quiz).
       panel.querySelector("#readQuizListen").onclick = () => speakKey(spoken, "rd_cvc_" + itemIdx, lang);
-      setTimeout(() => speakKey(spoken, "rd_cvc_" + itemIdx, lang), 200);
+      setTimeout(() => { if (tk !== readToken) return; speakKey(spoken, "rd_cvc_" + itemIdx, lang); }, 200);
       let answered = false;
       panel.querySelectorAll("[data-word]").forEach(b => b.onclick = () => {
         if (answered) return; answered = true;

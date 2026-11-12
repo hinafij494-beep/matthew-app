@@ -148,6 +148,12 @@ for (const [key, v] of Object.entries(keyed)) add(key, v.text, v.lang);
     add("num_en_" + i, "ده رقم " + n + ". يلا نعد مع بعض!");
     add("num_en_l_" + i, "Number " + n + ". " + (i + 1), "en_US");
   });
+  // Round 3.2.2 P0-5: bare-digit clips that did not exist at all.
+  add("num_digit_0", "٠");
+  add("num_digit_15", "١٥");
+  add("num_digit_18", "١٨");
+  add("num_digit_19", "١٩");
+  add("num_digit_20", "٢٠");
   add("num_ar_tip", "كل صورة بنعدّها مرة واحدة. آخر رقم بنقوله هو عدد الصور كلها.");
   add("num_en_tip", "عدّ كل صورة مرة واحدة. آخر رقم تقوله هو المجموع.");
 }
@@ -157,6 +163,11 @@ add("ig_pickword", "اختار الكلمة المناسبة للصورة");
 add("voice_test_line", "أهلاً يا ملك ماثيو! يلا نتعلم ونلعب. برافو يا بطل!");
 // Round 3.2.1 note 25b: مس نانسي joins the praise rotation (voice.js feedback).
 add("praise_nancy", "أنا مس نانسي وبحبك يا ماثيو، برافو يا بطل!");
+// Round 3.2.2 P1-7: calm medal + movement breaks (texts mirror app.js).
+add("calm_medal", "برافو يا ملك ماثيو! خدت وسام الهدوء والدقة عشان جاوبت صح على مهلك!");
+add("move_break_1", "اقفز ٥ مرات زي الأرنب");
+add("move_break_2", "امشِ زي الأسد ١٠ خطوات");
+add("move_break_3", "ارفع إيديك لفوق ونزّلهم ٥ مرات");
 // Round 3.2.1: math journey picker + finish lines (shared by both journeys).
 add("num_picker", "اختار رقم يا ملك ماثيو");
 for (let s = 0; s <= 4; s++) add("num_score_" + s, "جاوبت صح على " + "٠١٢٣٤"[s] + " من ٤.");
@@ -169,7 +180,7 @@ add("sci_picker_lessons", "اختار درس يا ملك ماثيو");
 add("rescueInterstitial", "عدّيت مرحلة! كمّل كده وانت هتوصل…");
 // Round 3.2.1: game intros (notes 19a/25b) — مس نانسي introduces herself
 // and cheers Matthew by name; memory game + touch-game intros.
-add("storyPickerIntro", "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!");
+add("storyPickerIntro", "أهلاً يا ملك ماثيو! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!");
 add("touch_menu_intro", "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! دي ألعاب اللمس والصوت، اختار اللعبة اللي تعجبك يا بطل!");
 add("touch_match_intro", "لعبة التوصيل يا ملك ماثيو! أنا مس نانسي، اضغط الصورة واسمع اسمها، وبعدين اضغط الكلمة اللي بتناسبها يا بطل!");
 add("touch_listen_intro", "لعبة اسمع واختار يا ملك ماثيو! أنا مس نانسي، اسمع كويس واختار الصح يا بطل!");
@@ -187,6 +198,10 @@ add("mem_half", "برافو يا ملك ماثيو! لقيت نص الصور! ك
 add("mem_try_1", "حاول تاني يا بطل");
 add("mem_try_2", "قربت يا ملك ماثيو! افتكر مكان الصور وحاول تاني!");
 add("mem_again", "يلا نلعب تاني يا ملك ماثيو! كروت جديدة مستنياك!");
+// Round 3.2.2 (audit §2 gap): bare memory-game letter names — 8 cards had
+// no clip at all and fell through to device TTS. Texts are the bare names
+// the game speaks (memory-game.js card.name).
+["ألف", "باء", "تاء", "ثاء", "جيم", "حاء", "خاء", "دال"].forEach((n, i) => add("mem_letter_" + i, n));
 // Round 3.2.1 Nancy lines (note 25b — Miss Nancy draft §4, exact keys/texts).
 // Game intros — texts mirror the modules: tracing.js NANCY_TRACE_INTRO,
 // color-games.js NANCY_INTRO_COLOR[_NUM].
@@ -231,6 +246,10 @@ add("pron_apple", "Apple", "en_US");
 add("pron_book", "Book", "en_US");
 add("pron_ball", "Ball", "en_US");
 add("pron_milk", "Milk", "en_US");
+add("pron_cat", "Cat", "en_US");
+add("pron_sun", "Sun", "en_US");
+add("pron_dog", "Dog", "en_US");
+add("pron_fish", "Fish", "en_US");
 for (let s = 0; s <= 10; s++) add("result_score_" + s, "جاوبت صح على " + ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "١٠"][s] + " من ١٠ أسئلة");
 add("result_tip_pass", "برافو يا ملك ماثيو! انت بطل شاطر أوي!");
 add("result_tip_retry", "محاولة جميلة يا بطل ماثيو! العب تاني وهتجيب نجوم أكتر!");
@@ -248,14 +267,14 @@ add("result_tip_retry", "محاولة جميلة يا بطل ماثيو! الع�
   for (let n = 1; n <= 20; n++) {
     const prev = n === 1 ? 2 : n - 1, next = Math.min(20, n + 1), afterQ = n === 20 ? 19 : n, afterA = n === 20 ? 20 : next;
     const addA = Math.max(1, Math.floor(n / 2)), addB = Math.max(1, Math.min(5, n - addA));
-    const subA = Math.min(20, n + 2), subB = 2;
+    const subA = Math.min(20, n + 3), subB = 1 + (n % 2); // Round 3.2.2 P1-6: result is never n
     const apples = a => a === 1 ? "تفاحة واحدة" : digits(a) + " تفاحات";
     const aq = [
       ["عدّ الصور: كام واحدة؟", "عدّ كل صورة واحدة واحدة. المجموع " + digits(n) + "."],
       ["إيه الرقم اللي بعد " + digits(afterQ) + "؟", "بعد " + arNames[afterQ - 1] + " بييجي " + arNames[afterA - 1] + "."],
       ["إيه الرقم اللي قبل " + digits(next) + "؟", "قبل " + arNames[next - 1] + " بييجي " + arNames[next - 2] + "."],
       ["معانا " + apples(addA) + " وزودنا " + (addB === 1 ? "واحدة" : digits(addB)) + "، بقوا كام؟", arNames[addA - 1] + " زائد " + arNames[addB - 1] + " يساوي " + arNames[addA + addB - 1] + ". عدّهم مع بعض."],
-      ["كان معانا " + digits(subA) + " نجوم واختفى " + digits(subB) + "، فاضل كام؟", arNames[subA - 1] + " ناقص " + arNames[subB - 1] + " يساوي " + arNames[subA - subB - 1] + ". شيل اتنين وعدّ الباقي."],
+      ["كان معانا " + digits(subA) + " نجوم واختفى " + digits(subB) + "، فاضل كام؟", arNames[subA - 1] + " ناقص " + arNames[subB - 1] + " يساوي " + arNames[subA - subB - 1] + ". شيل " + arNames[subB - 1] + " وعدّ الباقي."],
       ["اختار العدد الأكبر: " + digits(n) + " ولا " + digits(prev), "العدد الأكبر هو " + digits(Math.max(n, prev)) + "."]
     ];
     aq.forEach(([q, ex], i) => add("math_ar_q" + n + "_" + i, q + " " + ex));

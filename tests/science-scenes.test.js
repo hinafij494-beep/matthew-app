@@ -18,8 +18,8 @@ function sceneClasses(html) {
   return [...out];
 }
 
-test("every one of the 47 science lessons has an animated drawn scene (zero emoji fallbacks)", () => {
-  assert.equal(api.lessonTitles.length, 47, "expected 47 lessons, got " + api.lessonTitles.length);
+test("every one of the 48 science lessons has an animated drawn scene (zero emoji fallbacks)", () => {
+  assert.equal(api.lessonTitles.length, 48, "expected 48 lessons, got " + api.lessonTitles.length);
   assert.equal(api.subjectLessons.length, 7, "expected 7 subjects");
   const missing = [];
   for (const s of api.subjectLessons) {
@@ -32,7 +32,7 @@ test("every one of the 47 science lessons has an animated drawn scene (zero emoj
   assert.deepEqual(missing, [], "lessons with no scene: " + missing.join(", "));
   // sceneFor is keyed by lesson title, so a title typo cannot silently
   // fall back to the emoji in renderLesson.
-  assert.equal(Object.keys(api.SCENES).length, 47, "SCENES map must cover all 47 titles");
+  assert.equal(Object.keys(api.SCENES).length, 48, "SCENES map must cover all 48 titles");
   for (const t of api.lessonTitles) assert.ok(api.SCENES[t], "no scene for title: " + t);
   assert.equal(api.sceneFor("nope", 0), null, "unknown subject returns null");
   assert.equal(api.sceneFor("physics", 99), null, "out-of-range index returns null");
@@ -55,18 +55,20 @@ test("Magnet scene: magnet pulls metal in, non-metal stays still", () => {
   assert.match(css, /\.sci-pull\{[^}]*animation:sciPullTo/, "pull class uses the pull keyframes");
 });
 
-test("Rain scene: cloud fills, drops fall, plant grows, rainbow appears last", () => {
+test("Rain scene: cloud fills, drops fall, plant grows, sun comes out last", () => {
   const html = api.sceneFor("physics", 6);
   assert.match(html, /sci-cloud-heavy/, "cloud element missing");
   assert.match(html, /sci-drop/, "falling drops missing");
   assert.match(html, /sci-grow-late/, "growing plant missing");
-  assert.match(html, /sci-rainbow/, "rainbow missing");
+  // Round 3.2.2 P0-7: the sun replaces the rainbow at the end of the rain.
+  assert.match(html, /sci-sun-late/, "sun missing");
+  assert.ok(!html.includes("sci-rainbow"), "rainbow must be gone from the rain scene");
   // phase order in the CSS timeline: cloud darkens first (0-30%),
-  // drops fall (25-60%), plant grows (50-85%), rainbow last (75-95%)
+  // drops fall (25-60%), plant grows (50-85%), sun comes out last (75-95%)
   assert.ok(css.includes("85%{fill:#93a9c2}"), "cloud-heavy keyframes must hold the dark fill late");
-  assert.ok(css.includes("0%,70%{opacity:0}"), "rainbow must stay invisible until late in the cycle");
+  assert.ok(css.includes("0%,75%{opacity:0}"), "sun must stay invisible until late in the cycle");
   assert.ok(css.includes("0%,48%{transform:scaleY(.12)"), "plant must stay small until after the drops");
-  assert.ok(/sciCloudHeavy 16s/.test(css) && /sciRainbowLate 16s/.test(css) && /sciGrowLate 16s/.test(css),
+  assert.ok(/sciCloudHeavy 16s/.test(css) && /sciSunLate 16s/.test(css) && /sciGrowLate 16s/.test(css),
     "rain phases must share one 16s timeline");
 });
 
@@ -109,7 +111,7 @@ test("renderLesson uses the scene container, not the bare emoji", () => {
 
 test("lesson texts are untouched (they map to recorded sci_* voice clips)", () => {
   const lessons = [...src.matchAll(/\["([^"]+)","([^"]+)","([^"]+)","([^"]+)"\]/g)];
-  assert.equal(lessons.length, 47, "expected 47 lesson text arrays, got " + lessons.length);
+  assert.equal(lessons.length, 48, "expected 48 lesson text arrays, got " + lessons.length);
   const byTitle = new Map(lessons.map(l => [l[1], l]));
   assert.equal(byTitle.get("المغناطيس العجيب")[3], "المغناطيس بيلزق في حاجات معدن زي المشابك والمفاتيح.");
   assert.equal(byTitle.get("المطر")[3], "المطر مية بتنزل من السحاب.");

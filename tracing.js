@@ -65,12 +65,9 @@
   ];
   let traceColor = COLORS[1].c, strokeCtx = null;
 
+  // Round 3.2.2 P0-4: recorded clips ONLY — no device speechSynthesis.
   const speak = (text, lang) => {
     if (window.MatthewVoice && window.MatthewVoice.speak) window.MatthewVoice.speak(text, lang);
-    else if ("speechSynthesis" in window) {
-      speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text); u.lang = lang; speechSynthesis.speak(u);
-    }
   };
 
   const TRACE_INSTR = "لوّن الحرف من جوّه بس بإصبعك، واختار اللون اللي يعجبك";

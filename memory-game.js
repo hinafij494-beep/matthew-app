@@ -151,7 +151,8 @@
     try {
       if (window.MatthewVoice?.speakSequence) { window.MatthewVoice.speakSequence(texts, "ar-EG"); return; }
     } catch (_) {}
-    texts.forEach((t, i) => setTimeout(() => speak(t), i * 1500));
+    const tk = praiseToken;
+    texts.forEach((t, i) => setTimeout(() => { if (tk !== praiseToken) return; speak(t); }, i * 1500));
   };
   const arDigits = value => String(value).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[Number(d)]);
 
@@ -198,6 +199,7 @@
   }
 
   function back() {
+    praiseToken++;
     panel.classList.add("hidden");
     gameList.classList.remove("hidden");
     try { window.MatthewVoice?.stop(); } catch (_) {}
@@ -254,14 +256,16 @@
       if (head) head.textContent = "⭐ " + arDigits(found) + " / " + arDigits(PAIRS_PER_GAME);
       const msg = panel.querySelector("#memMsg");
       if (msg) msg.textContent = "برافو يا ملك ماثيو! لقيت " + ca.name + " ⭐";
-      if (found >= PAIRS_PER_GAME) setTimeout(win, 900);
+      if (found >= PAIRS_PER_GAME) { const tk = praiseToken; setTimeout(() => { if (tk === praiseToken) win(); }, 900); }
     } else {
       lock = true;
       const msg = panel.querySelector("#memMsg");
       if (msg) msg.textContent = "محاولة جميلة! جرّب تاني 💜";
       const tryLine = MEM_TRY[tryIndex++ % MEM_TRY.length];
-      setTimeout(() => speak(tryLine), 700);
+      const tk = praiseToken;
+      setTimeout(() => { if (tk !== praiseToken) return; speak(tryLine); }, 700);
       setTimeout(() => {
+        if (tk !== praiseToken) return;
         a.classList.remove("flipped");
         b.classList.remove("flipped");
         lock = false;

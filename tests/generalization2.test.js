@@ -68,7 +68,7 @@ test("universe lessons: every spoken string resolves to a recorded clip", () => 
   const science = read("science.js");
   const block = sliceFn(science, '{ id:"universe"', '{ id:"coding"');
   const lessons = [...block.matchAll(/\["(.*?)","(.*?)","(.*?)","(.*?)"\]/g)].map(m => m.slice(1));
-  assert.equal(lessons.length, 7, "universe has 7 lessons");
+  assert.equal(lessons.length, 8, "universe has 8 lessons (أيام الأسبوع added in 3.2.2)");
   lessons.forEach((lesson, i) => {
     const spoken = lesson[0] + ". " + lesson[2] + " " + lesson[3];
     assert.ok(corpusKeys.has("sci_5_" + i), "corpus key sci_5_" + i + " exists");
@@ -97,7 +97,7 @@ test("rescue advance(): the spoken line matches the displayed interstitial", () 
 
 test("rescue speaks the picker greeting and the displayed win story", () => {
   const rescue = read("rescue.js");
-  assert.ok(rescue.includes('speak("أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!", "storyPickerIntro")'), "picker greeting is spoken on open (مس نانسي intro, keyed clip)");
+  assert.ok(rescue.includes('speak("أهلاً يا ملك ماثيو! كل قصة فيها مراحل وأسئلة جديدة كل مرة، اختار قصة وابدأ المغامرة يا بطل!", "storyPickerIntro")'), "picker greeting is spoken on open (reworded 3.2.2 P1-1, keyed clip)");
   const win = sliceFn(rescue, "const win", "const close");
   assert.ok(win.includes("speak(story.winStory)"), "win speaks the displayed winStory text");
   assert.ok(!win.includes("story.win,"), "win no longer speaks the (different) win text");
@@ -187,7 +187,10 @@ test("voice: pronunciation auto-speaks on open/new word, Arabic UI kept", () => 
 test("app finish(): result screen is narrated (score line + tip)", () => {
   const app = read("app.js");
   const finish = sliceFn(app, "function finish()", "function updateStats");
-  assert.ok(finish.includes('arabicDigits("جاوبت صح على "+score+" من "+questions.length+" أسئلة")'), "score line is built as displayed");
+  // Round 3.2.2 P1-7: second-try correct answers score +0.5, so the line
+  // uses fmtScore (Arabic digits + " ونص") — displayed and spoken are the
+  // same construction.
+  assert.ok(finish.includes('"جاوبت صح على "+fmtScore(score)+" من "+arabicDigits(questions.length)+" أسئلة"'), "score line is built as displayed");
   assert.ok(finish.includes("speakSequence([resultLine,resultTip]"), "score line + tip are narrated in order");
   assert.ok(finish.includes("برافو يا ملك ماثيو! انت بطل شاطر أوي!"), "pass tip present");
   assert.ok(finish.includes("محاولة جميلة يا بطل ماثيو! العب تاني وهتجيب نجوم أكتر!"), "encouraging retry tip present (no negative language)");

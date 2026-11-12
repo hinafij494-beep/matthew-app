@@ -54,7 +54,7 @@
 
   // ---------- story data (all Arabic; draft stories, verbatim except where
   // a fix is noted inline) ----------
-  const PICKER_LINE = "أنا مس نانسي وبحبك يا ماثيو! أهلاً بيك في قصصك الشجاعة! اختار قصة، واجمع نجوم عشان تفتح قصص جديدة! كل قصة هتعلّمك تحب أخوك وتحميه!";
+  const PICKER_LINE = "أهلاً بيك في قصصك الشجاعة يا ملك ماثيو! اختار قصة، واجمع نجوم عشان تفتح قصص جديدة! كل قصة هتعلّمك تحب أخوك وتحميه!";
   const LOCKED_LINE = "مس نانسي بتقولك: لسه شوية يا بطل! اجمع نجوم أكتر من الألعاب والأسئلة، والقصة دي هتتفتح لك قريب! أنت تقدر يا ملك ماثيو!";
   // Round 3.2.1 note 25b (Miss Nancy draft): short generic lead-ins spoken
   // BEFORE a story's own intro on the first stage — rotating, so each
@@ -67,7 +67,7 @@
 
   const STORIES = [
     {
-      id: "rescue-mark", title: "الملك ماثيو ينقذ أخوه مارك", icon: "🐴", scene: "forest", stars: 5, goal: "👶",
+      id: "rescue-mark", title: "الملك ماثيو ينقذ أخوه مارك", icon: "🐴", scene: "forest", stars: 0, goal: "👶",
       desc: "ماثيو الشجاع يركب حصانه وينقذ أخوه الصغير مارك التايه في الغابة",
       intro: "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! أخوك الصغير مارك تاه في الغابة لوحده، وانت البطل الوحيد اللي يقدر ينقذه! اركب حصانك، خد سيفك، ويلا بينا يا بطل!",
       stages: [
@@ -76,12 +76,12 @@
             { q: "ماثيو راكب إيه؟", e: "🤔", a: ["حصان", "عربية", "مركب"], c: 0 },
             { q: "كم شجرة قدام البوابة؟", e: "🤔", a: ["١", "٢", "٣"], c: 1 }
           ] },
-        { name: "النهر الصغير", icon: "🛶", scene: "river", line: "ماثيو وصل النهر. المية بتجري بسرعة. حصانه نط النهر نطة كبيرة! على الضفة التانية لقى جزمة مارك الصغيرة. ده معناه إن مارك قريب!",
+        { name: "النهر الصغير", icon: "🛶", scene: "river", line: "ماثيو وصل النهر. المية بتجري بسرعة. حصانه نط النهر نطة كبيرة! على الناحية التانية لقى جزمة مارك الصغيرة. ده معناه إن مارك قريب!",
           questions: [
             { q: "حصان ماثيو عمل إيه عند النهر؟", e: "🐴", a: ["نام", "رجع البيت", "نط النهر"], c: 2 },
             { q: "لون المية إيه؟", e: "🤔", a: ["أزرق", "أحمر", "أصفر"], c: 0 }
           ] },
-        { name: "الكهف المظلم", icon: "🕯️", scene: "forest", line: "ماثيو دخل الكهف المظلم. كان خايف شوية، بس قال: أنا شجاع ومش هسيب أخويا! ولّع الشمعة وشاف آثار رجلين صغيرة على الأرض. مارك كان هنا!",
+        { name: "الكهف المظلم", icon: "🕯️", scene: "forest", line: "ماثيو دخل الكهف المظلم. ولّع الشمعة وشاف رجلين صغيرة ماشية على الأرض. مارك كان هنا!",
           questions: [
             { q: "ماثيو ولّع إيه في الكهف؟", e: "🤔", a: ["كتاب", "شمعة", "كورة"], c: 1 },
             // FIX (note 4 — self-answering question): the draft asked
@@ -103,7 +103,7 @@
     {
       id: "brave-animals", title: "الملك ماثيو الشجاع وحيوانات الغابة", icon: "🦁", scene: "forest", stars: 10, goal: "👑",
       desc: "ماثيو الشجاع يواجه الأسد والثعلب والدب والنمر ويكسبهم بشجاعته وطيبته",
-      intro: "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! حيوانات الغابة مستنياك تتحداها! الأسد والثعلب والدب والنمر… جاوب صح وكسبهم بشجاعتك وطيبتك يا بطل!",
+      intro: "أهلاً يا ملك ماثيو! حيوانات الغابة مستنياك تتحداها! الأسد والثعلب والدب والنمر… جاوب صح وكسبهم بشجاعتك وطيبتك يا بطل!",
       stages: [
         { name: "تحدي الأسد", icon: "🦁", scene: "forest", line: "الأسد ملك الغابة واقف قدام ماثيو وزأر بصوت عالي! ماثيو مخافش، وقال: أنا الملك ماثيو الشجاع! الأسد ضحك وقال: شجاع فعلاً! جاوب على أسئلتي وعدّي.",
           questions: [
@@ -141,7 +141,7 @@
             { q: "مريم بتجري ورا إيه؟", e: "🤔", a: ["الكتاب", "السيارة", "الفراشات"], c: 2 },
             { q: "ماثيو الملك إيه؟", e: "🤔", a: ["الحامي", "النعسان", "الزعلان"], c: 0 }
           ] },
-        { name: "لعبة الكرة", icon: "⚽", scene: "forest", line: "مارك ومريم بيلعبوا بالكرة، والكرة طارت بعيد! ماثيو جري بسرعة وجاب الكرة ورجعها لهم. مارك ومريم صقفوا وقالوا: شكراً يا ماثيو!",
+        { name: "لعبة الكرة", icon: "⚽", scene: "forest", line: "مارك ومريم بيلعبوا بالكرة البيضا والسودا، والكرة طارت بعيد! ماثيو جري بسرعة وجاب الكرة ورجعها لهم. مارك ومريم صقفوا وقالوا: شكراً يا ماثيو!",
           questions: [
             { q: "ماثيو جاب الكرة لمين؟", e: "🤔", a: ["للأسد", "لمارك ومريم", "للثعلب"], c: 1 },
             { q: "لون الكرة إيه؟", e: "🤔", a: ["أحمر", "أزرق", "أبيض وأسود"], c: 2 }
@@ -315,6 +315,11 @@
   }
 
   // ---------- DOM wiring (browser only; mirrors rescue.js) ----------
+  // Round 3.2.2 P1-2: programmatic entry for the merged stories card.
+  // The runner (startStory) lives inside the DOM setup block below, so the
+  // exported openStory delegates through this binding the setup fills in.
+  let braveStartStory = null;
+  const openStory = id => { const st = STORIES.find(x => x.id === id); if (!st) return; if (!isUnlocked(st)) { try { window.MatthewVoice?.speak(LOCKED_LINE, "ar-EG"); } catch (_) {} return; } if (braveStartStory) braveStartStory(st); };
   if (typeof document !== "undefined") {
     const main = document.querySelector("main");
     const gameList = document.getElementById("gameList");
@@ -445,7 +450,7 @@
 
       const narrateQuestion = () => {
         if (!current) return;
-        setTimeout(() => speakSeq([current.q, ...currentChoices.map(c => c.text)]), 350);
+        const tk = qToken; setTimeout(() => { if (qToken !== tk) return; speakSeq([current.q, ...currentChoices.map(c => c.text)]); }, 350);
       };
 
       const nextQuestion = () => {
@@ -546,6 +551,7 @@
         try { window.MatthewVoice?.stop(); } catch (_) {}
         if (typeof updateStats === "function") { try { updateStats(); } catch (_) {} }
       };
+      braveStartStory = startStory;
       // Hierarchical back (note 16): inside a story → the story list;
       // on the list itself → home. Never jumps straight home from a story.
       $("braveBack").addEventListener("click", () => { if (story) openPicker(); else close(); });
@@ -557,6 +563,6 @@
 
   return {
     STORIES, CORPUS, PICKER_LINE, LOCKED_LINE, PER_STAGE, STORY_OPENERS,
-    starTotal, isUnlocked, buildRun, heroSVG, sceneHTML, sceneFor, pickerHTML, questionHTML, answerPic, shuffle, arabicDigits
+    starTotal, isUnlocked, buildRun, heroSVG, sceneHTML, sceneFor, pickerHTML, questionHTML, answerPic, shuffle, arabicDigits, openStory
   };
 });
