@@ -88,7 +88,7 @@
   // من غير ما تعتمد على ترتيب تحميل app.js؛ والاختبار بيتأكد إن النسختين
   // متطابقتين على كل أسئلة البنك والقصص.
   const PIC_MEANS={"🌞":["الشمس"],"🌙":["القمر","قمر"],"🦊":["الثعلب","ثعلب","برتقالي"],"🐯":["النمر","نمر"],"🦋":["الفراشة","فراشة","جناحيها","الأجنحة"],"🌿":["الورقة","ورقة","العشب","أخضر"],"🌦":["بعد المطر","المطر"],"🏃":["نزقها برجلينا"],"🏖":["هتطفو فوق المية","هتطفو فوق","الماء","البحر"],"🌌":["بالليل","الليل","النجوم"],"❄":["بطريق","الثلج"],"🍌":["الموز","موز","أصفر"],"🍅":["الطماطم","طماطم","أحمر"],"🌱":["أخضر","العشب"],"🩺":["القلب"],"🟪":["مربع"],"🔺":["مثلث"]};
-  const safeQuestionEmoji=q=>{if(!q||!q.e)return "🤔";if(/شكل|ضلع/.test(q.q||""))return "🤔";const strip=s=>String(s).replace(/\uFE0F/g,"");const shown=q.e;const clean=strip(shown);const pics=(typeof window!=="undefined"&&window.AnswerPics)||{};const depicts=word=>{if(!word)return false;if(strip(pics[word])===clean)return true;for(const key of Object.keys(PIC_MEANS)){if(clean.includes(strip(key))&&PIC_MEANS[key].includes(word))return true}return false};if(!q.a)return shown;for(let i=0;i<q.a.length;i++)if(depicts(q.a[i]))return "🤔";return shown};
+  const safeQuestionEmoji=q=>{if(!q||!q.e)return "🤔";if(/شكل|ضلع/.test(q.q||""))return "🤔";const strip=s=>String(s).replace(/\uFE0F/g,"");const shown=q.e;const clean=strip(shown);const pics=(typeof window!=="undefined"&&window.AnswerPics)||{};const depicts=word=>{if(!word)return false;if(String(word).length<=1)return false;/* single-letter answers: their AnswerPics entry is the mnemonic word-picture of the letter (ت→🍎), not a depiction of the glyph — it cannot reveal which letter is first. */if(strip(pics[word])===clean)return true;for(const key of Object.keys(PIC_MEANS)){if(clean.includes(strip(key))&&PIC_MEANS[key].includes(word))return true}return false};if(!q.a)return shown;for(let i=0;i<q.a.length;i++)if(depicts(q.a[i]))return "🤔";return shown};
   const shuffle = arr => { const b = [...arr]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 
   const panel = document.createElement("section");
@@ -266,8 +266,12 @@
     const tk = qToken, cq = current;
     setTimeout(() => {
       if (qToken !== tk || !answered || !cq) return;
-      if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(["الإجابة الصحيحة هي", cq.a[cq.c]], "ar-EG");
-      else window.MatthewVoice?.speak("الإجابة الصحيحة هي " + cq.a[cq.c], "ar-EG");
+      // Numbers-once F3: a digit answer was already spoken in the options —
+      // speak the prefix alone, never the digit a 2nd time in one turn.
+      const ans = cq.a[cq.c];
+      const isNum = /^[0-9٠-٩]+$/.test(String(ans).trim());
+      if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(isNum ? ["الإجابة الصحيحة هي"] : ["الإجابة الصحيحة هي", ans], "ar-EG");
+      else window.MatthewVoice?.speak(isNum ? "الإجابة الصحيحة هي" : "الإجابة الصحيحة هي " + ans, "ar-EG");
     }, 2600);
   };
 

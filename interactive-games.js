@@ -26,6 +26,11 @@
     const t = String(text || "").trim();
     const arabic = String(lang || "").toLowerCase().startsWith("ar");
     if (arabic && isBareDigit(t)) return BY_TEXT[norm(t)];
+    // Numbers-once F7: bare Latin digits 11–20 in English resolve to the
+    // English tracing clips (tr_ennum_11..20). The generated EXACT map
+    // points here too once the packs rebuild; this keeps the routing
+    // correct on the current maps as well.
+    if (!arabic && isBareDigit(t)) { const n = Number(t); if (n >= 11 && n <= 20) return "tr_ennum_" + n; }
     return EXACT[t] || BY_TEXT[norm(t)];
   };
   const play = (text, lang) => { const key = keyFor(text, lang); return key ? playKey(key) : false; };
@@ -495,7 +500,7 @@
   // activity herself (nancy_intro_trace) before the instruction + glyph.
   // Spoken as the first item of the first-open sequence, with the same
   // ~5s gap as the instruction (it is a full sentence, not a bare glyph).
-  const NANCY_TRACE_INTRO = "يلا نتتبع الحرف يا ملك ماثيو! أنا مس نانسي، امشي على الخط بصوابعك على مهلك، أنت بطل!";
+  const NANCY_TRACE_INTRO = "يلا نتتبع الحرف يا ملك ماثيو! امشي على الخط بصوابعك على مهلك، أنت بطل!";
   // Rescue.js pattern: a clip KEY plays first (exact clip, no text-map
   // collision); the spoken text is only the device-TTS fallback.
   const speakKey = (text, key, lang) => {
@@ -1190,7 +1195,7 @@
   // من غير ما تعتمد على ترتيب تحميل app.js؛ والاختبار بيتأكد إن النسختين
   // متطابقتين على كل أسئلة البنك والقصص.
   const PIC_MEANS={"🌞":["الشمس"],"🌙":["القمر","قمر"],"🦊":["الثعلب","ثعلب","برتقالي"],"🐯":["النمر","نمر"],"🦋":["الفراشة","فراشة","جناحيها","الأجنحة"],"🌿":["الورقة","ورقة","العشب","أخضر"],"🌦":["بعد المطر","المطر"],"🏃":["نزقها برجلينا"],"🏖":["هتطفو فوق المية","هتطفو فوق","الماء","البحر"],"🌌":["بالليل","الليل","النجوم"],"❄":["بطريق","الثلج"],"🍌":["الموز","موز","أصفر"],"🍅":["الطماطم","طماطم","أحمر"],"🌱":["أخضر","العشب"],"🩺":["القلب"],"🟪":["مربع"],"🔺":["مثلث"]};
-  const safeQuestionEmoji=q=>{if(!q||!q.e)return "🤔";if(/شكل|ضلع/.test(q.q||""))return "🤔";const strip=s=>String(s).replace(/\uFE0F/g,"");const shown=q.e;const clean=strip(shown);const pics=(typeof window!=="undefined"&&window.AnswerPics)||{};const depicts=word=>{if(!word)return false;if(strip(pics[word])===clean)return true;for(const key of Object.keys(PIC_MEANS)){if(clean.includes(strip(key))&&PIC_MEANS[key].includes(word))return true}return false};if(!q.a)return shown;for(let i=0;i<q.a.length;i++)if(depicts(q.a[i]))return "🤔";return shown};
+  const safeQuestionEmoji=q=>{if(!q||!q.e)return "🤔";if(/شكل|ضلع/.test(q.q||""))return "🤔";const strip=s=>String(s).replace(/\uFE0F/g,"");const shown=q.e;const clean=strip(shown);const pics=(typeof window!=="undefined"&&window.AnswerPics)||{};const depicts=word=>{if(!word)return false;if(String(word).length<=1)return false;/* single-letter answers: their AnswerPics entry is the mnemonic word-picture of the letter (ت→🍎), not a depiction of the glyph — it cannot reveal which letter is first. */if(strip(pics[word])===clean)return true;for(const key of Object.keys(PIC_MEANS)){if(clean.includes(strip(key))&&PIC_MEANS[key].includes(word))return true}return false};if(!q.a)return shown;for(let i=0;i<q.a.length;i++)if(depicts(q.a[i]))return "🤔";return shown};
   const shuffle = arr => { const b = [...arr]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 
   const panel = document.createElement("section");
@@ -1368,8 +1373,12 @@
     const tk = qToken, cq = current;
     setTimeout(() => {
       if (qToken !== tk || !answered || !cq) return;
-      if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(["الإجابة الصحيحة هي", cq.a[cq.c]], "ar-EG");
-      else window.MatthewVoice?.speak("الإجابة الصحيحة هي " + cq.a[cq.c], "ar-EG");
+      // Numbers-once F3: a digit answer was already spoken in the options —
+      // speak the prefix alone, never the digit a 2nd time in one turn.
+      const ans = cq.a[cq.c];
+      const isNum = /^[0-9٠-٩]+$/.test(String(ans).trim());
+      if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(isNum ? ["الإجابة الصحيحة هي"] : ["الإجابة الصحيحة هي", ans], "ar-EG");
+      else window.MatthewVoice?.speak(isNum ? "الإجابة الصحيحة هي" : "الإجابة الصحيحة هي " + ans, "ar-EG");
     }, 2600);
   };
 
@@ -1626,8 +1635,8 @@
   // resolves to its own recorded clip; before generation the sequence
   // falls back to one joined TTS utterance, never silence. Clip keys are
   // stable: her real recordings will replace these TTS clips as-is.
-  const NANCY_INTRO_COLOR = "يلا نلوّن يا ملك ماثيو! أنا مس نانسي، اختار لون حلو ولوّن معايا!";
-  const NANCY_INTRO_COLOR_NUM = "لعبة لوني العدد يا بطلي ماثيو! أنا مس نانسي، شوف الرقم على التاج ودوس على نفس الرقم في الزر!";
+  const NANCY_INTRO_COLOR = "يلا نلوّن يا ملك ماثيو! اختار لون حلو ولوّن معايا!";
+  const NANCY_INTRO_COLOR_NUM = "لعبة لوني العدد يا بطلي ماثيو! شوف الرقم على التاج ودوس على نفس الرقم في الزر!";
 
   // ---------- helpers ----------
   const arDigits = value => String(value).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[Number(d)]);
@@ -2101,17 +2110,17 @@
   // story opening feels fresh. Each story's intro already opens with
   // Nancy + horse/sword/rescue, so these are lead-ins, not replacements.
   const STORY_OPENERS = [
-    "قصة جديدة يا ملك ماثيو الشجاع! أنا مس نانسي، اركب حصانك وخد سيفك، ويلا ننقذ مارك ومريم مع بعض!",
-    "يلا يا ملك ماثيو! أنا مس نانسي، مغامرة جديدة في الغابة، أنت البطل اللي هينقذ أخوه مارك!"
+    "قصة جديدة يا ملك ماثيو الشجاع! اركب حصانك وخد سيفك، ويلا ننقذ مارك ومريم مع بعض!",
+    "يلا يا ملك ماثيو! مغامرة جديدة في الغابة، أنت البطل اللي هينقذ أخوه مارك!"
   ];
 
   const STORIES = [
     {
       id: "rescue-mark", title: "الملك ماثيو ينقذ أخوه مارك", icon: "🐴", scene: "forest", stars: 0, goal: "👶",
       desc: "ماثيو الشجاع يركب حصانه وينقذ أخوه الصغير مارك التايه في الغابة",
-      intro: "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! أخوك الصغير مارك تاه في الغابة لوحده، وانت البطل الوحيد اللي يقدر ينقذه! اركب حصانك، خد سيفك، ويلا بينا يا بطل!",
+      intro: "أهلاً يا ملك ماثيو! بحبك أوي! أخوك الصغير مارك تاه في الغابة لوحده، وانت البطل الوحيد اللي يقدر ينقذه! اركب حصانك، خد سيفك، ويلا بينا يا بطل!",
       stages: [
-        { name: "بوابة الغابة", icon: "🌲", scene: "forest", line: "ماثيو وصل بوابة الغابة على حصانه. الشجر طويل والدنيا هادية. فجأة سمع صوت صغير بيعيط: ده مارك! ماثيو قال: متخافش يا مارك، أخوك الكبير جاي!",
+        { name: "بوابة الغابة", icon: "🌲🌲", scene: "forest", line: "ماثيو وصل بوابة الغابة على حصانه. شجرتين طوال واقفين قدام البوابة، والدنيا هادية. فجأة سمع صوت صغير بيعيط: ده مارك! ماثيو قال: متخافش يا مارك، أخوك الكبير جاي!",
           questions: [
             { q: "ماثيو راكب إيه؟", e: "🤔", a: ["حصان", "عربية", "مركب"], c: 0 },
             { q: "كم شجرة قدام البوابة؟", e: "🤔", a: ["١", "٢", "٣"], c: 1 }
@@ -2174,7 +2183,7 @@
     {
       id: "love-family", title: "الملك ماثيو يحمي مارك ومريم", icon: "🤴👶👧", scene: "forest", stars: 15, goal: "🏠",
       desc: "ماثيو الملك الحامي ياخد مارك ومريم نزهة ويحميهم ويحبهم بدل الغيرة",
-      intro: "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! النهارده انت الملك الحامي! مارك ومريم صغيرين ومحتاجينك تحميهم وتحبهم. يلا نروح المغامرة سوا!",
+      intro: "أهلاً يا ملك ماثيو! بحبك أوي! النهارده انت الملك الحامي! مارك ومريم صغيرين ومحتاجينك تحميهم وتحبهم. يلا نروح المغامرة سوا!",
       stages: [
         { name: "نزهة في الحديقة", icon: "🌳", scene: "forest", line: "ماثيو خد مارك ومريم نزهة في الحديقة. مارك بيضحك ومريم بتجري ورا الفراشات. ماثيو قال: أنا الملك الحامي، هحافظ عليكم!",
           questions: [
@@ -2341,8 +2350,16 @@
           '</button>';
       }).join("") + '</div>';
   }
+  // ---------- question-picture guard (تدقيق الصور، الجولة ٣.٢.١) ----------
+  // Same guard as app.js questionEmojiSafe / rescue.js safeQuestionEmoji:
+  // the question picture must never depict an answer or a wrong choice —
+  // otherwise the child reads the picture, not the question. Local copy
+  // here so the stories work from the bundle without depending on the
+  // load order of app.js; the test checks the copies agree.
+  const PIC_MEANS = {"🌞":["الشمس"],"🌙":["القمر","قمر"],"🦊":["الثعلب","ثعلب","برتقالي"],"🐯":["النمر","نمر"],"🦋":["الفراشة","فراشة","جناحيها","الأجنحة"],"🌿":["الورقة","ورقة","العشب","أخضر"],"🌦":["بعد المطر","المطر"],"🏃":["نزقها برجلينا"],"🏖":["هتطفو فوق المية","هتطفو فوق","الماء","البحر"],"🌌":["بالليل","الليل","النجوم"],"❄":["بطريق","الثلج"],"🍌":["الموز","موز","أصفر"],"🍅":["الطماطم","طماطم","أحمر"],"🌱":["أخضر","العشب"],"🩺":["القلب"],"🟪":["مربع"],"🔺":["مثلث"]};
+  function questionEmojiSafe(q){if(!q||!q.e)return "🤔";if(/شكل|ضلع/.test(q.q||""))return "🤔";const strip=s=>String(s).replace(/\uFE0F/g,"");const shown=q.e;const clean=strip(shown);const pics=(typeof window!=="undefined"&&window.AnswerPics)||{};const depicts=word=>{if(!word)return false;if(String(word).length<=1)return false;/* single-letter answers: their AnswerPics entry is the mnemonic word-picture of the letter (ت→🍎), not a depiction of the glyph — it cannot reveal which letter is first. */if(strip(pics[word])===clean)return true;for(const key of Object.keys(PIC_MEANS)){if(clean.includes(strip(key))&&PIC_MEANS[key].includes(word))return true}return false};if(!q.a)return shown;for(let i=0;i<q.a.length;i++)if(depicts(q.a[i]))return "🤔";return shown}
   function questionHTML(q, choices) {
-    return '<div class="question-emoji">' + q.e + '</div>' +
+    return '<div class="question-emoji">' + questionEmojiSafe(q) + '</div>' +
       '<h3 class="brave-question">' + arabicDigits(q.q) + '</h3>' +
       '<button type="button" class="voice-button brave-replay" id="braveReplay">🔊 اسمع السؤال</button>' +
       '<div class="answers" id="braveAnswers">' + choices.map(item =>
@@ -2472,7 +2489,13 @@
         renderMap();
         $("braveTitle").textContent = s.icon + " " + s.name;
         if (first && stage === 0) {
-          $("braveStory").textContent = story.intro;
+          // Live re-test §5: stage 1 used to show + speak ONLY the intro,
+          // so the stage line — e.g. the P1 «شجرتين» sentence in the Mark
+          // story (storyMarkS1, already recorded) — never reached the
+          // child, who only counted 🌲🌲 from the icon + question. Show
+          // the intro AND the stage line, and speak them back-to-back
+          // (intro clip, then stage-line clip) — no re-record needed.
+          $("braveStory").textContent = story.intro + " " + s.line;
           // Round 3.2.1 note 25b: Nancy's opener first, then the story
           // intro after ~4.5s (the opener's length). Guarded by stage +
           // story identity, so leaving stage 0 early cancels the intro.
@@ -2480,7 +2503,7 @@
           const openerKey = opener === STORY_OPENERS[0] ? "nancy_intro_story" : "nancy_intro_story_2";
           speak(opener, openerKey);
           const st = stage, stStory = story;
-          setTimeout(() => { if (story !== stStory || stage !== st) return; speak(story.intro, clipKey("intro")); }, 4500);
+          setTimeout(() => { if (story !== stStory || stage !== st) return; speakSeq([story.intro, s.line]); }, 4500);
         } else {
           $("braveStory").textContent = s.line;
           speak(s.line, clipKey("stage", stage));
@@ -2528,7 +2551,11 @@
         const tk = qToken, cq = current;
         setTimeout(() => {
           if (qToken !== tk || !answered || !cq) return;
-          speakSeq(["الإجابة الصحيحة هي", cq.a[cq.c]]);
+          // Numbers-once F3: a digit answer was already spoken in the
+          // options — speak the prefix alone, never the digit a 2nd time.
+          const ans = cq.a[cq.c];
+          const isNum = /^[0-9٠-٩]+$/.test(String(ans).trim());
+          speakSeq(isNum ? ["الإجابة الصحيحة هي"] : ["الإجابة الصحيحة هي", ans]);
         }, 2600);
       };
 
@@ -2669,12 +2696,12 @@
   const THEMES = [ANIMALS, NUMBERS, LETTERS];
   const POOL = ANIMALS;
   const PAIRS_PER_GAME = 6;
-  const MEM_INTRO = "لعبة الذاكرة يا ملك ماثيو! أنا مس نانسي وبحبك أوي! اقلب الكروت ولاقي الصورتين اللي شبه بعض يا بطل!";
+  const MEM_INTRO = "لعبة الذاكرة يا ملك ماثيو! بحبك أوي! اقلب الكروت ولاقي الصورتين اللي شبه بعض يا بطل!";
   // Round 3.2.1 note 25b (Miss Nancy draft): second intro, rotated with
   // MEM_INTRO so the game opening varies. nancy_intro_memory (the draft's
   // first variant) is a near-duplicate of MEM_INTRO (78% overlap) and is
   // deliberately NOT a separate clip.
-  const MEM_INTRO_2 = "يلا يا بطل ماثيو! أنا مس نانسي، افتح كارتين، لو شبه بعض يبقوا بتوعك! افتكر كويس!";
+  const MEM_INTRO_2 = "يلا يا بطل ماثيو! افتح كارتين، لو شبه بعض يبقوا بتوعك! افتكر كويس!";
   const MEM_WIN = "برافو يا ملك ماثيو! لقيت كل الصور! أنت بطل الذاكرة! خدت ألماسة جديدة لتاجك!";
   // جمل التشجيع الدوّارة — بلا اسم صورة داخلها: الاسم يُنطق أولاً
   // بمقطعه الخاص، ثم تتبعه الجملة (انظر praiseMatch).
@@ -2779,6 +2806,7 @@
   gameList.append(card);
 
   let deck = [], flipped = [], matched = new Set(), lock = false, found = 0;
+  let moveShown = false;
   let round = 0, matchIndex = 0, tryIndex = 0;
   // Round 3.2.1 note 25b: intro rotation — the replay button re-speaks
   // whichever intro opened this round (lastMemIntro), not always MEM_INTRO.
@@ -2787,14 +2815,16 @@
   // Praise, delayed a beat so it never cuts the card name that just
   // played (MatthewVoice serialises speech; the token drops stale praise
   // when the child flips again quickly). Same pattern as color-games.js.
-  // The praise is the picture's name clip FIRST, then the rotating praise
-  // line in sequence — the name is never baked into the praise clip.
+  // Numbers-once F4: the praise is the rotating praise line ALONE — the
+  // matched name was already spoken on both flips (the game mechanic),
+  // so speaking it again here would say it a 3rd time. The name is never
+  // baked into the praise clip.
   // At the halfway mark (3/6) the half-way cheer replaces the rotation.
   let praiseToken = 0;
   function praiseMatch(name) {
     const token = ++praiseToken;
     const line = found === PAIRS_PER_GAME / 2 ? MEM_HALF : MEM_MATCH[matchIndex++ % MEM_MATCH.length];
-    setTimeout(() => { if (token === praiseToken) speakSeq([name, line]); }, 900);
+    setTimeout(() => { if (token === praiseToken) speakSeq([line]); }, 900);
   }
 
   function openGame() {
@@ -2825,6 +2855,7 @@
     matched = new Set();
     lock = false;
     found = 0;
+    moveShown = false;
     panel.innerHTML = header() +
       '<button id="memListen" class="voice-button" type="button">🔊 اسمع السؤال</button>' +
       '<div class="mem-board anim-enter">' + deck.map((c, i) =>
@@ -2866,6 +2897,17 @@
       if (head) head.textContent = "⭐ " + arDigits(found) + " / " + arDigits(PAIRS_PER_GAME);
       const msg = panel.querySelector("#memMsg");
       if (msg) msg.textContent = "برافو يا ملك ماثيو! لقيت " + ca.name + " ⭐";
+      // Round 3.2.2 P1-5: binding movement break at the halfway mark (3/6
+      // pairs), once per game — same 25s timer as the main quiz. The board
+      // stays visible but locked until the break is done.
+      const MB = (typeof window !== "undefined") ? window.MatthewMoveBreak : null;
+      if (found === PAIRS_PER_GAME / 2 && !moveShown && MB) {
+        moveShown = true; lock = true;
+        const host = document.createElement("div");
+        host.className = "move-break"; host.id = "memMoveBreak";
+        panel.appendChild(host);
+        MB.show(host, () => { host.remove(); lock = false; });
+      }
       if (found >= PAIRS_PER_GAME) { const tk = praiseToken; setTimeout(() => { if (tk === praiseToken) win(); }, 900); }
     } else {
       lock = true;
@@ -3214,11 +3256,11 @@
     {
       id: "queen", title: "الوزير", piece: "q", stars: 8, kind: "piece",
       icon: "queen",
-      desc: "أقوى قطعة: بتمشي مستقيم ومايل، في كل الاتجاهات",
-      intro: "دي الملكة! شايفة التاج الجميل اللي لابساه؟ الملكة دي أقوى قطعة في الشطرنج كله! هي اللي بتحمي الملك ماثيو وبتساعده! الوزير بتقدر تعمل كل حاجة: تمشي زي الطابية في خط مستقيم، وتمشي زي الفيل على الوتر! يعني بتتحرك في كل الاتجاهات! يلا نتعلّم بتمشي إزاي!",
-      lesson: "يا ملك ماثيو، الوزير أقوى قطعة في اللعبة، لأنها بتجمع قوة الطابية وقوة الفيل مع بعض! يعني الوزير تقدر تمشي قدّام وورا ويمين وشمال زي الطابية، وكمان تقدر تمشي على الوتر زي الفيل، في كل الاتجاهات، وكام مربع زي ما انت عايز! يعني الوزير تقدر توصل لأي مكان في الرقعة بسرعة أوي! بس خد بالك: الوزير قوية وغالية أوي، يعني لازم تحافظ عليها كويس، ومتحطهاش في مكان تقدر قطعة من العدو تاكلها ببلاش! والوزير برضه مش بتنط فوق القطع، لازم طريقها يكون فاضي! ليه الوزير مهمة؟ لأنها بتهاجم من بعيد ومن قريب، وبتحمي الملك، وبتاكل قطع العدو، ولو خسرتها هيبقى صعب تكسب! فالعب بيها بذكاء يا ملك ماثيو، واستخدم قوتها في الوقت الصح! يلا حرّك الوزير وكل الكوكيز!",
-      question: "حرّك الوزير يا بطل! دوس عليها وبعدين دوس على أي مربع في خط مستقيم أو على الوتر!",
-      win: "برافو يا ملك ماثيو! بقيت تعرف الوزير، أقوى قطعة في اللعبة! الملكة القوية بقت صاحبتك! خدت نجمة جديدة، ويلا نتعلّم الملك، وانت الملك نفسه!"
+      desc: "أقوى قطعة: بيمشي مستقيم ومايل، في كل الاتجاهات",
+      intro: "ده الوزير! شايف التاج الجميل اللي لابسه؟ الوزير ده أقوى قطعة في الشطرنج كله! هو اللي بيحمي الملك ماثيو وبيساعده! الوزير بيقدر يعمل كل حاجة: بيمشي زي الطابية في خط مستقيم، وبيمشي زي الفيل على الوتر! يعني بيتحرك في كل الاتجاهات! يلا نتعلّم بيمشي إزاي!",
+      lesson: "يا ملك ماثيو، الوزير أقوى قطعة في اللعبة، لأنه بيجمع قوة الطابية وقوة الفيل مع بعض! يعني الوزير يقدر يمشي قدّام وورا ويمين وشمال زي الطابية، وكمان يقدر يمشي على الوتر زي الفيل، في كل الاتجاهات، وكام مربع زي ما انت عايز! يعني الوزير يقدر يوصل لأي مكان في الرقعة بسرعة أوي! بس خد بالك: الوزير قوي وغالي أوي، يعني لازم تحافظ عليه كويس، ومتحطوش في مكان تقدر قطعة من العدو تاكله ببلاش! والوزير برضه مش بينط فوق القطع، لازم طريقه يكون فاضي! ليه الوزير مهم؟ لأنه بيهاجم من بعيد ومن قريب، وبيحمي الملك، وبياكل قطع العدو، ولو خسرته هيبقى صعب تكسب! فالعب بيه بذكاء يا ملك ماثيو، واستخدم قوته في الوقت الصح! يلا حرّك الوزير وكل الكوكيز!",
+      question: "حرّك الوزير يا بطل! دوس عليه وبعدين دوس على أي مربع في خط مستقيم أو على الوتر!",
+      win: "برافو يا ملك ماثيو! بقيت تعرف الوزير، أقوى قطعة في اللعبة! الوزير القوي بقى صاحبك! خدت نجمة جديدة، ويلا نتعلّم الملك، وانت الملك نفسه!"
     },
     {
       id: "king", title: "الملك ماثيو", piece: "k", stars: 10, kind: "piece",
@@ -3243,7 +3285,7 @@
       icon: "cookies",
       desc: "اختار القطعة الصح وكل كل الكوكيز اللي على الرقعة",
       intro: "يا ملك ماثيو، دي لعبة كُل الكوكيز! شايف الكوكيز اللذيذة اللي على الرقعة؟ كل كوكي واقف في مكان، وانت لازم تختار القطعة الصح اللي تقدر توصله وتاكله! كل قطعة بتتحرك بطريقة مختلفة، ففكّر كويس: مين اللي يقدر يوصل للكوكي ده؟ الطابية ولا الفيل ولا الحصان؟ دوس على القطعة وبعدين دوس على الكوكي، وكلهم يا بطل!",
-      lesson: "يا ملك ماثيو، في اللعبة دي هنلعب بكل القطع اللي اتعلّمناها سوا! الكوكيز واقفة على الرقعة، وكل كوكي محتاج قطعة معينة توصله! الطابية بتوصل في خط مستقيم، والفيل بيوصل على الوتر، والحصان بينط نطة حرف الإل، والوزير بتوصل من أي مكان، والبيدق بياكل من الجنب! فقبل ما تحرّك أي قطعة، بص على الكوكي واسأل نفسك: القطعة دي تقدر توصله ولا لأ؟ ولو اخترت القطعة الغلط، مفيش أي مشكلة، جرّب قطعة تانية! دي لعبة ذكاء وتفكير، وكل مرة هتبقى أذكى من اللي قبلها! وكل كوكي تاكله هتاخد نجمة، ولو كلت كل الكوكيز هتاخد ألماسة لتاجك!",
+      lesson: "يا ملك ماثيو، في اللعبة دي هنلعب بكل القطع اللي اتعلّمناها سوا! الكوكيز واقفة على الرقعة، وكل كوكي محتاج قطعة معينة توصله! الطابية بتوصل في خط مستقيم، والفيل بيوصل على الوتر، والحصان بينط نطة حرف الإل، والوزير بيوصل من أي مكان، والبيدق بياكل من الجنب! فقبل ما تحرّك أي قطعة، بص على الكوكي واسأل نفسك: القطعة دي تقدر توصله ولا لأ؟ ولو اخترت القطعة الغلط، مفيش أي مشكلة، جرّب قطعة تانية! دي لعبة ذكاء وتفكير، وكل مرة هتبقى أذكى من اللي قبلها! وكل كوكي تاكله هتاخد نجمة، ولو كلت كل الكوكيز هتاخد ألماسة لتاجك!",
       question: "اختار قطعة وكل الكوكي يا بطل! دوس على القطعة وبعدين دوس على الكوكي!",
       win: "برافو يا ملك ماثيو! كلت كل الكوكيز! بقيت تعرف كل قطعة بتوصل لفين! خدت ألماسة جديدة لتاجك، ويلا نلعب أول مباراة حقيقية: سباق البيادق!"
     },
@@ -3272,7 +3314,7 @@
       intro: "وصلنا للعبة الكاملة! دي لعبة شطرنج حقيقية بكل القطع: بيادق وطابيات وفيلة ووزير وحصانين والملك، يعني انت! هتلعب بالقطع البيضا، وصاحبك اللطيف هيلعب بالقطع السودا! اللي يعمل كش مات لملك التاني يكسب، ولو محدش قدر يعمل كش مات والملك اتحاصر من غير كش، يبقى تعادل يا بطل! يلا يا ملك ماثيو، دي مملكتك!",
       lesson: "يا ملك ماثيو، اللعبة الكاملة هي كل اللي اتعلّمناه سوا في لعبة واحدة! في الأول، حرّك البيادق عشان تفتح الطريق للقطع الكبيرة، وبعدين طلّع الفيلة والحصانين، وبعدين حرّك الوزير بحرص، وخلي الملك في مكان آمن ورا البيادق! وكل حركة فكّر فيها: القطعة دي هتروح فين؟ وهل فيه قطعة من العدو هتاكلها؟ وهل الملك بتاعي في أمان؟ ولو ملك صاحبك اتهدد، دي كش، ولو اتحاصر من غير أي حل، دي كش مات وانت تكسب! ولو اللعبة خلصت تعادل، دي برضه نتيجة جميلة، لأنك لعبت لعبة كاملة زي الملوك! أهم حاجة إنك تستمتع وتفكّر، ومس نانسي فخورة بيك أوي يا ملك ماثيو!",
       question: "دورك يا ملك ماثيو! حرّك قطعة من قطعك!",
-      win: "برافو يا ملك ماثيو! خلّصت لعبة شطرنج كاملة! انت بطل الشطرنج الحقيقي! خدت ألماسة جديدة لتاجك، ومس نانسي فخورة بيك أوي! العب تاني كل ما تحب يا ملك!"
+      win: "برافو يا ملك ماثيو! خلّصت لعبة شطرنج كاملة! انت بطل الشطرنج الحقيقي! خدت ألماسة جديدة لتاجك، وأنا فخورة بيك أوي! العب تاني كل ما تحب يا ملك!"
     }
   ];
 
@@ -3509,6 +3551,7 @@
       let target = null, round = 0, cookiesEaten = 0, lock = false;
       let praiseIndex = 0, tryIndex = 0, greatIndex = 0;
       let boardTargets = [];      // أهداف لعبة الرقعة (غامق/فاتح/نص)
+      const moveShownLessons = new Set(); // P1-5: lessons already broken before, this page load
 
       const hideOthers = () => {
         gameList.classList.add("hidden");
@@ -3533,6 +3576,18 @@
           const l = LESSONS.find(x => x.id === b.dataset.chessLesson);
           if (!l) return;
           if (!isUnlocked(l, starTotal())) { speak(LOCKED_LINE, "chess_locked"); return; }
+          // Round 3.2.2 P1-5: binding movement break before the 5th and 9th
+          // lessons (queen, race), once each per page load — same 25s timer
+          // as the main quiz. Chess lessons run long, so the break lands
+          // between lessons, never in the middle of one.
+          const MB = (typeof window !== "undefined") ? window.MatthewMoveBreak : null;
+          const li = LESSONS.indexOf(l);
+          if ((li === 4 || li === 8) && !moveShownLessons.has(l.id) && MB) {
+            moveShownLessons.add(l.id);
+            body().innerHTML = '<div class="move-break" id="chessMoveBreak"></div>';
+            MB.show(body().querySelector("#chessMoveBreak"), () => openLesson(l));
+            return;
+          }
           openLesson(l);
         }));
         speak(PICKER_LINE, "chess_intro");
@@ -3918,9 +3973,9 @@
   const shuffle=list=>[...list].sort(()=>Math.random()-.5);
   // Round 3.2.1 notes 19(a) + 25(b): every game intro is narrated by the
   // teacher, who introduces herself as مس نانسي and cheers Matthew by name.
-  const MENU_INTRO="أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! دي ألعاب اللمس والصوت، اختار اللعبة اللي تعجبك يا بطل!";
-  const MATCH_INTRO="لعبة التوصيل يا ملك ماثيو! أنا مس نانسي، اضغط الصورة واسمع اسمها، وبعدين اضغط الكلمة اللي بتناسبها يا بطل!";
-  const LISTEN_INTRO="لعبة اسمع واختار يا ملك ماثيو! أنا مس نانسي، اسمع كويس واختار الصح يا بطل!";
+  const MENU_INTRO="أهلاً يا ملك ماثيو! بحبك أوي! دي ألعاب اللمس والصوت، اختار اللعبة اللي تعجبك يا بطل!";
+  const MATCH_INTRO="لعبة التوصيل يا ملك ماثيو! اضغط الصورة واسمع اسمها، وبعدين اضغط الكلمة اللي بتناسبها يا بطل!";
+  const LISTEN_INTRO="لعبة اسمع واختار يا ملك ماثيو! اسمع كويس واختار الصح يا بطل!";
   const speak=text=>window.MatthewVoice?.speak(text,"ar-EG");
   // Round 3.2.1 note 28: every displayed number is an Arabic-Indic digit.
   const arDigits=v=>String(v).replace(/[0-9]/g,d=>"٠١٢٣٤٥٦٧٨٩"[Number(d)]);

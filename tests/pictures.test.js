@@ -116,6 +116,10 @@ const DEPICTS = {
 };
 function depictsChoice(shown, word, picMap) {
   if (!shown || !word) return false;
+  // Single-letter answers: their AnswerPics entry is the letter's mnemonic
+  // word-picture (ت→🍎), not a depiction of the glyph — it cannot reveal
+  // which letter is first, so it must not count as depicting the choice.
+  if (String(word).length <= 1) return false;
   const s = stripVS(shown);
   if (picMap && picMap[word] && stripVS(picMap[word]) === s) return true;
   for (const [emoji, words] of Object.entries(DEPICTS)) {

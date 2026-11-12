@@ -60,8 +60,6 @@ test("Nancy wording rule (round 3.2.2 P1-1): «أنا مس نانسي» only in 
   assert.ok(!stories.PICKER_LINE.includes("أنا مس نانسي"), "picker greeting must NOT introduce Miss Nancy by name");
   const animals = stories.STORIES.find(s => s.id === "brave-animals");
   assert.ok(animals && !animals.intro.includes("أنا مس نانسي"), "brave-animals intro must NOT introduce Miss Nancy by name");
-  // NOTE: rescue-mark and love-family intros still carry the old wording
-  // until the Nancy re-record round (deferred) — they are reworded there.
   assert.match(stories.LOCKED_LINE, /مس نانسي/, "locked-story line speaks as Miss Nancy too");
 });
 

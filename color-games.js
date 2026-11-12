@@ -133,8 +133,8 @@
   // resolves to its own recorded clip; before generation the sequence
   // falls back to one joined TTS utterance, never silence. Clip keys are
   // stable: her real recordings will replace these TTS clips as-is.
-  const NANCY_INTRO_COLOR = "يلا نلوّن يا ملك ماثيو! أنا مس نانسي، اختار لون حلو ولوّن معايا!";
-  const NANCY_INTRO_COLOR_NUM = "لعبة لوني العدد يا بطلي ماثيو! أنا مس نانسي، شوف الرقم على التاج ودوس على نفس الرقم في الزر!";
+  const NANCY_INTRO_COLOR = "يلا نلوّن يا ملك ماثيو! اختار لون حلو ولوّن معايا!";
+  const NANCY_INTRO_COLOR_NUM = "لعبة لوني العدد يا بطلي ماثيو! شوف الرقم على التاج ودوس على نفس الرقم في الزر!";
 
   // ---------- helpers ----------
   const arDigits = value => String(value).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[Number(d)]);

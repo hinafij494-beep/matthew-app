@@ -73,7 +73,7 @@ const INPUT_OVERRIDES = {
   tr_num_2: "اتنين",
   tr_num_3: "تلاتة",
   tr_num_4: "أربعة",
-  tr_num_5: "خمسة",
+  tr_num_5: "خمسة.", // Round 3.2.2 §8: bare "خمسة" deterministically returns the DEFECTIVE recording ("5 cigar", en 0.98 — TTS cached/deterministic for that input; regenerating it changed nothing). The trailing period yields a clean «خمسة» (AR pass, verified 2026-11-12). Do NOT drop the period — basic_arnum_4 derives from this same recording.
   tr_num_6: "ستة",
   tr_num_7: "سبعة",
   tr_num_8: "تمانية",

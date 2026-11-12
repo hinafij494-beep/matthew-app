@@ -10,7 +10,7 @@ test("main page includes Arabic layout and all game modes", () => {
   const html = read("index.html");
   assert.match(html, /lang="ar"/);
   assert.match(html, /dir="rtl"/);
-  for (const id of ["numbers", "letters", "colors", "world", "science"]) {
+  for (const id of ["numbers", "letters", "colors", "world", "science", "mixed"]) {
     assert.ok(html.includes('data-category="' + id + '"'), `missing game mode: ${id}`);
   }
   assert.ok(html.includes('data-stories="1"'), "missing stories adventure card");

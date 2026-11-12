@@ -104,10 +104,14 @@ test("recorded teacher voice clips exist and the rescue game uses real clip keys
   assert.match(read("voice.js"), /MatthewClips/);
 });
 
-test("story adventures replace the plain surprise quiz on the home screen", () => {
+test("story adventures and the mixed surprise quiz are both on the home screen", () => {
   const html = read("index.html");
   assert.ok(html.includes('data-stories="1"'), "home is missing the stories card");
-  assert.ok(!html.includes('data-category="mixed"'), "plain surprise quiz card still on home");
+  // Round 3.2.2 P2: the mixed quiz is reachable again (6th card) — it was
+  // removed when stories took its slot, leaving start("mixed") with no
+  // entry point; both cards share the home screen now.
+  assert.ok(html.includes('data-category="mixed"'), "home is missing the mixed surprise quiz card");
+  assert.match(html, /data-category="mixed"[^<]*<span class="game-icon">🎲<\/span><strong>اختبار المفاجآت<\/strong>/);
   const rescue = read("rescue.js");
   for (const title of ["مغامرة الإنقاذ", "تحدي حيوانات الغابة", "رحلة الغابة مع مارك", "كنز الملك"]) {
     assert.ok(rescue.includes(title), "missing story: " + title);
@@ -307,7 +311,14 @@ test("question pictures never reveal the answer (round 3.1)", () => {
   const pics = JSON.parse(m[1]);
   const bank = vm.runInNewContext("(" + src.slice(src.indexOf("const bank=") + 11, src.indexOf("\nconst names=")).replace(/;\s*$/, "") + ")", Object.create(null));
   for (const qs of Object.values(bank)) for (const q of qs) {
-    const correctPic = pics[q.a[q.c]];
+    const correct = q.a[q.c];
+    // Round 3.2.2 §8 P1-6 (review §7): letter-bank questions show the question
+    // word's picture for a child who cannot read (e.g. تفاحة 🍎). A single-letter
+    // answer's AnswerPics entry is the letter's mnemonic word-picture (ت→🍎),
+    // not a depiction of the glyph, so it cannot reveal which letter is first.
+    // The questionEmojiSafe guard encodes the same rule; skip those here.
+    if (String(correct).length === 1) continue;
+    const correctPic = pics[correct];
     assert.notStrictEqual(q.e, correctPic, "question picture reveals its answer: " + q.q);
   }
   const hear = Object.values(bank).flat().find(q => q.q.startsWith("بماذا نسمع"));
@@ -551,7 +562,7 @@ test("math in English and the English alphabet explain in Arabic (round 3.2.1)",
     assert.ok(me.includes(s), "missing Arabic string in math-english.js: " + s);
   for (const s of ["Count the pictures", "What number comes after", "What number comes before", "Which number is bigger", "You have", "Listen to the question", "I understand! Start practice", "Great job!", "Amazing work!", "Try again", "See your result", "You finished Math", "Next level", "Continue to next lesson", "King Matthew Math", "Math in English"])
     assert.ok(!me.includes(s), "English instruction remains in math-english.js: " + s);
-  assert.match(me, /speak\(t,"ar-EG"\)/, "math-english say() must speak explanations in ar-EG");
+  assert.match(me, /speak\(t,"en-US"\)/, "math-english say() must speak in en-US (numbers-once F2-lang: English numbers under ar-EG resolve to Arabic clips)");
   assert.ok(!me.includes("SpeechSynthesisUtterance") && !me.includes("speechSynthesis.speak"), "math-english must not fall back to device TTS (round 3.2.2 P0-4: clips only)");
   const learning = read("learning.js");
   assert.ok(learning.includes("arabicMeanings"), "enLetters needs the Arabic meanings array");

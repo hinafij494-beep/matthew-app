@@ -26,7 +26,7 @@
     {letter:"م",name:"الميم",forms:["مـ","ـمـ","ـم"],words:["مَوْز","سَمَك","قَلَم"],emoji:["🍌","🐟","✏️"],sound:"مَ"},
     {letter:"ن",name:"النون",forms:["نـ","ـنـ","ـن"],words:["نَمِر","عِنَب","لَبَن"],emoji:["🐅","🍇","🥛"],sound:"نَ"},
     {letter:"هـ",name:"الهاء",forms:["هـ","ـهـ","ـه"],words:["هَدِيَّة","مُهَنْدِس","وَجْه"],emoji:["🎁","👷","🙂"],sound:"هَ"},
-    {letter:"و",name:"الواو",forms:["و","ـو","ـو"],words:["وَرْدَة","حَوْت","لَوْن"],emoji:["🌹","🐳","🎨"],sound:"وَ"},
+    {letter:"و",name:"الواو",forms:["و","ـو","ـو"],words:["وَرْدَة","حَوْت","دَلْو"],emoji:["🌹","🐳","🪣"],sound:"وَ"},
     {letter:"ي",name:"الياء",forms:["يـ","ـيـ","ـي"],words:["يَد","بَيْت","كُرْسِيّ"],emoji:["✋","🏠","🪑"],sound:"يَ"}
   ];
   const HINTS = {
@@ -81,7 +81,7 @@
   ];
   const $ = id => document.getElementById(id);
   const learningList = $("learningList") || $("gameList");
-  let letterIndex=0, step=0, markIndex=0, quiz=[], quizIndex=0, score=0;
+  let letterIndex=0, step=0, markIndex=0, quiz=[], quizIndex=0, score=0, moveBreakShown=false;
   // Round 3.2.2 P0-4: recorded clips ONLY — no device speechSynthesis.
   const say = text => {
     if(window.MatthewVoice&&typeof window.MatthewVoice.speak==="function"){
@@ -193,7 +193,7 @@
     });
     marks.forEach(m=>qs.push({q:"ما اسم الحركة في المقطع ده؟",show:m.sample,a:[m.name,"حركة أخرى","الشدة","التنوين"],c:0}));
     qs.push({q:"أي مقطع عليه فتحة؟",a:["بَ","بُ","بِ","بْ"],c:0},{q:"أي مقطع عليه ضمة؟",a:["تِ","تُ","تَ","تْ"],c:1},{q:"أي مقطع عليه كسرة؟",a:["مَ","مْ","مِ","مُ"],c:2},{q:"أي مقطع عليه سكون؟",a:["سَ","سُ","سْ","سِ"],c:2});
-    quiz=qs.sort(()=>Math.random()-.5).slice(0,10);quizIndex=0;score=0;showQuiz();
+    quiz=qs.sort(()=>Math.random()-.5).slice(0,10);quizIndex=0;score=0;moveBreakShown=false;showQuiz();
   }
   // Round 3.2.2 P0-6 (audit): the old glyph-keyed picture map NEVER matched
   // anything — quiz answers are letter NAMES ("الألف") and FORMS ("بـ"),
@@ -210,6 +210,10 @@
   };
   function showQuiz(){
     const q=quiz[quizIndex];
+    // Round 3.2.2 P1-5: binding movement break before question 6 (mid-quiz),
+    // once per quiz — same 25s timer as the main quiz.
+    const MB=(typeof window!=="undefined")?window.MatthewMoveBreak:null;
+    if(quizIndex===5&&!moveBreakShown&&MB){moveBreakShown=true;$("lessonStep").textContent="وقت الحركة! 🏃";$("lessonProgress").style.width=(quizIndex/quiz.length*100)+"%";const host=document.createElement("div");host.className="move-break";host.id="lessonMoveBreak";$("lessonBody").innerHTML="";$("lessonBody").appendChild(host);const ln=$("lessonNext"),ll=$("lessonListen");if(ln)ln.disabled=true;if(ll)ll.disabled=true;MB.show(host,()=>{if(ln)ln.disabled=false;if(ll)ll.disabled=false;showQuiz()});return}
     if(!q._shuffled){const order=q.a.map((a,i)=>({a,ok:i===q.c})).sort(()=>Math.random()-.5);q.a=order.map(x=>x.a);q.c=order.findIndex(x=>x.ok);q._shuffled=true}$("lessonStep").textContent=(quizIndex+1).toLocaleString("ar-EG")+" / "+quiz.length.toLocaleString("ar-EG");
     $("lessonProgress").style.width=(quizIndex/quiz.length*100)+"%";
     const spoken=q.q+" اختار الإجابة الصحيحة";

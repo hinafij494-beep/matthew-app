@@ -7,6 +7,8 @@
 .question-sticky{position:sticky;top:0;z-index:5;background:#fff;border-radius:22px;box-shadow:0 6px 18px rgba(48,32,91,.10);padding:6px 4px 10px;margin-bottom:8px}
 .cg-sticky{position:sticky;top:0;z-index:5;background:#fff;border-radius:22px;box-shadow:0 6px 18px rgba(48,32,91,.10);padding:8px 4px;margin-bottom:8px}
 .move-break{background:#fff7e0;border:2px solid #ffd94d;border-radius:18px;padding:14px;text-align:center;margin:10px 0}
+.move-break-count{font-size:28px;font-weight:900;color:#5035b2;margin:10px 0}
+.move-break button:disabled{opacity:.55;cursor:not-allowed}
 .move-break-emoji{font-size:44px}
 .home-fab{position:fixed;right:14px;bottom:16px;z-index:50;width:56px;height:56px;border-radius:50%;border:0;background:#5b3cc4;color:#fff;font-size:26px;box-shadow:0 8px 20px rgba(48,32,91,.35);cursor:pointer}.back{border:0;background:#f0edfa;color:#5b3cc4;border-radius:15px;padding:7px 12px;font:inherit}.progress{height:8px;background:#eeeaf7;border-radius:20px;margin:16px 0 20px;overflow:hidden}.progress div{height:100%;width:0;background:#8a6be8;border-radius:20px;transition:width .2s}.question-area{text-align:center}.question-emoji{font-size:48px}.question-area h2{font-size:21px;margin:8px 0 18px}.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.answer{background:#f5f2ff;border:2px solid transparent;border-radius:17px;padding:13px 8px;font:700 15px inherit;color:#393052;cursor:pointer;min-height:52px}.answer:disabled{cursor:default}.answer.correct{border-color:#30b978;background:#e5f8ef}.answer.wrong{border-color:#f07878;background:#fff0f0}.feedback{min-height:24px;font-weight:800;font-size:14px}.primary,.secondary{width:100%;border:0;border-radius:17px;padding:13px;margin-top:9px;font:800 15px inherit;cursor:pointer}.primary{background:#5b3cc4;color:white}.secondary{background:#f0edfa;color:#5b3cc4}.result-panel{text-align:center;padding:28px 20px}.result-crown{font-size:65px}.result-panel h2{font-size:25px}.result-stars{font-size:27px;margin:16px}.result-panel p{color:#6e6880}footer{text-align:center;color:#8b859d;font-size:11px;padding:25px 0 5px}footer span{display:block;font-size:10px;margin-top:3px}@media(min-width:650px){.games{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{padding:30px 38px}}@media(max-width:360px){main{padding-inline:12px}.hero{padding:18px}.king-art{width:90px;height:90px}.king-art span{font-size:58px}.answers{gap:7px}.answer{font-size:13px}}
 .voice-button{display:block;width:100%;border:2px solid #ded5ff;background:#f1edff;color:#5035b2;border-radius:16px;padding:12px;margin:8px 0;font:800 14px inherit;cursor:pointer}.voice-button:disabled{opacity:.6}.language-switch{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.pronounce-card{text-align:center;padding:22px 12px;background:#faf8ff;border-radius:22px}.pronounce-card h2{font-size:32px;margin:8px}.pronounce-card p{color:#77718b}.pronounce-card .primary,.pronounce-card .secondary{max-width:420px;margin:9px auto}.voice-note{font-size:11px;color:#817b97;text-align:center;line-height:1.8}.answer{font-family:inherit}.primary,.secondary,.back,.install,.game-card{font-family:inherit}
@@ -65,6 +67,13 @@
 .science-summary{font-size:18px;font-weight:900;line-height:1.9;color:#33294f}
 .science-detail{font-size:14px;line-height:2;color:#716a84}
 .science-nav{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+/* Chunked science lessons (Round 3.2.2 §7): one step at a time for lessons
+   over 50 words. Big buttons like the lesson pager; the dots + "خطوة ١ من ٣"
+   tell the child where they are. */
+.science-step-indicator{font-size:16px;font-weight:900;color:#5035b2;margin-top:12px}
+.science-step-dots{letter-spacing:4px;color:#8a6be8}
+.science-steps{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.science-steps button:disabled{opacity:.45;cursor:default}
 @media(max-width:360px){.science-grid{gap:7px}.science-card{padding:10px 4px}}
 
 .lowercase-letter{font-size:30px;font-weight:900;color:#e28b35;margin-top:-8px;margin-bottom:8px}
@@ -265,6 +274,7 @@
 /* Round 3.2.1: science lesson pager — stacked arrows under the labels
    (previous = →, next = ←, following RTL), like the letter-school pager. */
 .science-nav button{display:flex;flex-direction:column;align-items:center;gap:0}
+.science-steps button{display:flex;flex-direction:column;align-items:center;gap:0}
 
 /* ===== «قصص الملك ماثيو الشجاع» (stories.js — Round 3.2.1 note 19) =====
    Illustrated animated scenes, one per story: forest / river / castle.

@@ -63,6 +63,60 @@
       ["حل المشكلات","🧩","نجرّب خطوة، ونلاحظ النتيجة، ثم نصلح الخطأ.","لو عملت خطوة وطلعت غلط، مش مشكلة خالص وده بيحصل لكل الناس حتى الشطار. الحل: نفكر بهدوء فين الغلطة، ونغير حاجة صغيرة واحدة، ونجرب تاني لحد ما تظبط. كده بنتعلم من غلطنا وبنكبر، والأبطال ما بيستسلموش أبداً."]
     ]}
   ];
+  // ---------- Science chunking (Round 3.2.2 §7 / P2): long lessons in steps ----------
+  // Review 3.2.2 §7: 7 lessons are over 50 words (longest 71) and show as one
+  // long wall of text/speech — too much for a KG1 child at once. The lesson
+  // TEXT is never changed here (full written explanation stays intact, and
+  // every sci_* clip still maps to title + short + long); only the
+  // PRESENTATION is sliced into steps at sentence boundaries, in order,
+  // nothing dropped. A lesson of 50 words or fewer stays a single step,
+  // exactly as today. The audio stays ONE clip per lesson (see renderLesson:
+  // it auto-plays once on the first step, and 🔊 اسمع الشرح replays the
+  // whole lesson from any step) — the clip is never split.
+  const SCIENCE_LONG_WORDS = 50; // a lesson longer than this is stepped
+  const SCIENCE_STEP_MAX_WORDS = 30; // target cap per step (one long sentence never splits)
+  const SCIENCE_MAX_STEPS = 3;
+  function scienceWordCount(text) {
+    return String(text).trim().split(/\s+/).filter(Boolean).length;
+  }
+  // Split a lesson explanation into sentence groups of at most
+  // SCIENCE_STEP_MAX_WORDS words each (a single sentence is never cut in
+  // half), merged down to at most SCIENCE_MAX_STEPS steps.
+  function chunkScienceSteps(text) {
+    const full = String(text).trim();
+    if (!full) return [full];
+    const sentences = full.split(/(?<=[.!؟])\s+/).filter(Boolean);
+    if (sentences.length <= 1) return [full];
+    const steps = [];
+    let cur = "", curWords = 0;
+    for (const s of sentences) {
+      const w = scienceWordCount(s);
+      if (cur && curWords + w > SCIENCE_STEP_MAX_WORDS) {
+        steps.push(cur);
+        cur = s; curWords = w;
+      } else {
+        cur = cur ? cur + " " + s : s;
+        curWords += w;
+      }
+    }
+    if (cur) steps.push(cur);
+    // Never more than SCIENCE_MAX_STEPS steps: merge the smallest adjacent pair.
+    while (steps.length > SCIENCE_MAX_STEPS) {
+      let bi = 0, bw = Infinity;
+      for (let i = 0; i < steps.length - 1; i++) {
+        const w = scienceWordCount(steps[i]) + scienceWordCount(steps[i + 1]);
+        if (w < bw) { bw = w; bi = i; }
+      }
+      steps.splice(bi, 2, steps[bi] + " " + steps[bi + 1]);
+    }
+    return steps;
+  }
+  // The steps a lesson is shown in: one step (the whole text) for lessons
+  // of 50 words or fewer, 2-3 sentence slices for the long ones.
+  function scienceStepsFor(text) {
+    if (scienceWordCount(text) <= SCIENCE_LONG_WORDS) return [String(text).trim()];
+    return chunkScienceSteps(text);
+  }
   // ---------- Round 3.2.1 note 30: animated drawn science scenes ----------
   // Flat drawn SVG in the same visual language as the horseback hero in
   // stories.js (big clear shapes, no emoji), animated with CSS keyframes
@@ -151,6 +205,8 @@
   }
   const scienceScenesApi = {
     SCENES, sceneFor,
+    chunkScienceSteps, scienceStepsFor, scienceWordCount,
+    SCIENCE_LONG_WORDS, SCIENCE_STEP_MAX_WORDS, SCIENCE_MAX_STEPS,
     lessonTitles: subjects.flatMap(s => s.lessons.map(l => l[0])),
     subjectLessons: subjects.map(s => ({ id: s.id, lessons: s.lessons.map(l => l[0]) }))
   };
@@ -167,6 +223,7 @@
   main.insertBefore(panel,document.querySelector("footer"));
   const speak=(text)=>window.MatthewVoice?.speak(text,"ar-EG");
   let subject=null, sciToken=0;
+  const moveShownLessons=new Set();
   const card=document.createElement("button");
   card.type="button";card.className="game-card green";
   card.innerHTML='<span class="game-icon">🔬</span><strong>عالم العلوم والكون والبرمجة</strong><small>حيوانات ونباتات ولعب وألوان وبرمجة بسيطة</small><span class="play">اكتشف العلوم ←</span>';
@@ -198,13 +255,34 @@
     panel.querySelectorAll("[data-lesson]").forEach(b=>b.onclick=()=>renderLesson(Number(b.dataset.lesson)));
     const tkL=++sciToken;setTimeout(()=>{if(tkL!==sciToken)return;speak("اختار درس يا ملك ماثيو")},120);
   }
-  function renderLesson(index){
+  function renderLesson(index, step, autoSpeak){
+    step=step||0;autoSpeak=autoSpeak!==false;
     const lesson=subject.lessons[index];
-    panel.innerHTML='<div class="quiz-top"><button id="scienceBack" class="back" type="button">→ الدروس</button><strong>'+subject.title+'</strong><span>'+(index+1).toLocaleString("ar-EG")+' / '+subject.lessons.length.toLocaleString("ar-EG")+'</span></div><div class="science-lesson"><div class="science-scene">'+(sceneFor(subject.id,index)||'<div class="science-emoji">'+lesson[1]+'</div>')+'</div><h2>'+lesson[0]+'</h2><p class="science-summary">'+lesson[2]+'</p><p class="science-detail">'+lesson[3]+'</p><button id="scienceListen" class="voice-button" type="button">🔊 اسمع الشرح</button><div class="science-nav"><button id="sciencePrev" class="secondary" type="button" '+(index===0?"disabled":"")+'>السابق<span class="pager-arrow">→</span></button><button id="scienceNext" class="primary" type="button">'+(index===subject.lessons.length-1?"→ اختار درساً آخر":"الدرس التالي"+'<span class="pager-arrow">←</span>')+'</button></div></div>';
+    // Chunked display: long lessons (>50 words) show one step at a time;
+    // short lessons are a single step, exactly as before.
+    const steps=scienceStepsFor(lesson[3]);
+    if(step<0)step=0;if(step>=steps.length)step=steps.length-1;
+    // Round 3.2.2 P1-5: binding movement break before every 4th lesson of
+    // a subject, once per lesson per page load — same 25s timer as the
+    // main quiz. Science lessons run long, so the break lands between
+    // lessons, never in the middle of one.
+    const MB=(typeof window!=="undefined")?window.MatthewMoveBreak:null;
+    const moveKey=subject.id+":"+index;
+    if(index%4===3&&!moveShownLessons.has(moveKey)&&MB){moveShownLessons.add(moveKey);panel.innerHTML='<div class="quiz-top"><button id="scienceBack" class="back" type="button">→ الدروس</button><strong>'+subject.icon+' '+subject.title+'</strong><span>'+(index+1).toLocaleString("ar-EG")+' / '+subject.lessons.length.toLocaleString("ar-EG")+'</span></div><div class="move-break" id="scienceMoveBreak"></div>';panel.querySelector("#scienceBack").onclick=renderLessons;MB.show(panel.querySelector("#scienceMoveBreak"),()=>renderLesson(index));return}
+    panel.innerHTML='<div class="quiz-top"><button id="scienceBack" class="back" type="button">→ الدروس</button><strong>'+subject.title+'</strong><span>'+(index+1).toLocaleString("ar-EG")+' / '+subject.lessons.length.toLocaleString("ar-EG")+'</span></div><div class="science-lesson"><div class="science-scene">'+(sceneFor(subject.id,index)||'<div class="science-emoji">'+lesson[1]+'</div>')+'</div><h2>'+lesson[0]+'</h2><p class="science-summary">'+lesson[2]+'</p><p class="science-detail">'+steps[step]+'</p>'+(steps.length>1?'<div class="science-step-indicator" aria-live="polite">خطوة '+(step+1).toLocaleString("ar-EG")+' من '+steps.length.toLocaleString("ar-EG")+' <span class="science-step-dots">'+steps.map((_,i)=>i===step?"●":"○").join("")+'</span></div><div class="science-steps"><button id="scienceStepPrev" class="secondary" type="button" '+(step===0?"disabled":"")+'>الخطوة اللي قبلها<span class="pager-arrow">→</span></button><button id="scienceStepNext" class="primary" type="button" '+(step===steps.length-1?"disabled":"")+'>'+(step===steps.length-1?"دي آخر خطوة ✅":"الخطوة اللي بعدها")+'<span class="pager-arrow">←</span></button></div>':"")+'<button id="scienceListen" class="voice-button" type="button">🔊 اسمع الشرح</button><div class="science-nav"><button id="sciencePrev" class="secondary" type="button" '+(index===0?"disabled":"")+'>السابق<span class="pager-arrow">→</span></button><button id="scienceNext" class="primary" type="button">'+(index===subject.lessons.length-1?"→ اختار درساً آخر":"الدرس التالي"+'<span class="pager-arrow">←</span>')+'</button></div></div>';
     panel.querySelector("#scienceBack").onclick=renderLessons;
     panel.querySelector("#scienceListen").onclick=()=>speak(lesson[0]+". "+lesson[2]+" "+lesson[3]);
+    if(steps.length>1){
+      panel.querySelector("#scienceStepPrev").onclick=()=>renderLesson(index,step-1,false);
+      panel.querySelector("#scienceStepNext").onclick=()=>renderLesson(index,step+1,false);
+    }
     panel.querySelector("#sciencePrev").onclick=()=>renderLesson(Math.max(0,index-1));
     panel.querySelector("#scienceNext").onclick=()=>index===subject.lessons.length-1?renderLessons():renderLesson(index+1);
-    const tkN=++sciToken;setTimeout(()=>{if(tkN!==sciToken)return;speak(lesson[0]+". "+lesson[2]+" "+lesson[3])},120);
+    // The lesson's ONE sci_* clip plays ONCE, on the first step only.
+    // Stepping never re-speaks (no echo); 🔊 اسمع الشرح above replays the
+    // whole lesson from any step. A step change bumps sciToken so a pending
+    // first-step timer from a fast tap cannot fire late.
+    if(autoSpeak&&step===0){const tkN=++sciToken;setTimeout(()=>{if(tkN!==sciToken)return;speak(lesson[0]+". "+lesson[2]+" "+lesson[3])},120);}
+    else sciToken++;
   }
 })();

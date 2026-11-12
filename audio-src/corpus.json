@@ -335,6 +335,56 @@
   "text": "فتحت باب الكنز يا بطل! والكنز الحقيقي هو شطارتك وعقلك الجميل!"
  },
  {
+  "key": "tr_ennum_11",
+  "lang": "en_US",
+  "text": "11"
+ },
+ {
+  "key": "tr_ennum_12",
+  "lang": "en_US",
+  "text": "12"
+ },
+ {
+  "key": "tr_ennum_13",
+  "lang": "en_US",
+  "text": "13"
+ },
+ {
+  "key": "tr_ennum_14",
+  "lang": "en_US",
+  "text": "14"
+ },
+ {
+  "key": "tr_ennum_15",
+  "lang": "en_US",
+  "text": "15"
+ },
+ {
+  "key": "tr_ennum_16",
+  "lang": "en_US",
+  "text": "16"
+ },
+ {
+  "key": "tr_ennum_17",
+  "lang": "en_US",
+  "text": "17"
+ },
+ {
+  "key": "tr_ennum_18",
+  "lang": "en_US",
+  "text": "18"
+ },
+ {
+  "key": "tr_ennum_19",
+  "lang": "en_US",
+  "text": "19"
+ },
+ {
+  "key": "tr_ennum_20",
+  "lang": "en_US",
+  "text": "20"
+ },
+ {
   "key": "qb_numbers_0",
   "lang": "ar_EG",
   "text": "كم عدد أصابع اليد الواحدة؟"
@@ -3407,12 +3457,12 @@
  {
   "key": "let_full_26",
   "lang": "ar_EG",
-  "text": "ده حرف الواو، وصوته وَ. بنقوّر شفايفنا ونضمها على بعض وبنقول وَ. شكله بيتغير حسب مكانه في الكلمة: في أول الكلمة بيبقى و، وفي نص الكلمة ـو، وفي آخر الكلمة ـو. بنشوفه في كلمات بنعرفها زي وَرْدَة وحَوْت ولَوْن. يلا نقول صوته مع بعض بصوت عالي: وَ، وَ، وَ!"
+  "text": "ده حرف الواو، وصوته وَ. بنقوّر شفايفنا ونضمها على بعض وبنقول وَ. شكله بيتغير حسب مكانه في الكلمة: في أول الكلمة بيبقى و، وفي نص الكلمة ـو، وفي آخر الكلمة ـو. بنشوفه في كلمات بنعرفها زي وَرْدَة وحَوْت ودَلْو. يلا نقول صوته مع بعض بصوت عالي: وَ، وَ، وَ!"
  },
  {
   "key": "let_forms_26",
   "lang": "ar_EG",
-  "text": "شكل حرف الواو في أول الكلمة و زي كلمة وَرْدَة، وفي نص الكلمة ـو زي كلمة حَوْت، وفي آخر الكلمة ـو زي كلمة لَوْن."
+  "text": "شكل حرف الواو في أول الكلمة و زي كلمة وَرْدَة، وفي نص الكلمة ـو زي كلمة حَوْت، وفي آخر الكلمة ـو زي كلمة دَلْو."
  },
  {
   "key": "let_mark_26_0",
@@ -3457,7 +3507,7 @@
  {
   "key": "let_word_26_2",
   "lang": "ar_EG",
-  "text": "لَوْن"
+  "text": "دَلْو"
  },
  {
   "key": "let_full_27",
@@ -4822,7 +4872,7 @@
  {
   "key": "num_ar_l_0",
   "lang": "ar_EG",
-  "text": "ده رقم واحد. واحد"
+  "text": "ده رقم واحد."
  },
  {
   "key": "num_ar_1",
@@ -4832,7 +4882,7 @@
  {
   "key": "num_ar_l_1",
   "lang": "ar_EG",
-  "text": "ده رقم اتنين. اتنين"
+  "text": "ده رقم اتنين."
  },
  {
   "key": "num_ar_2",
@@ -4842,7 +4892,7 @@
  {
   "key": "num_ar_l_2",
   "lang": "ar_EG",
-  "text": "ده رقم تلاتة. تلاتة"
+  "text": "ده رقم تلاتة."
  },
  {
   "key": "num_ar_3",
@@ -4852,7 +4902,7 @@
  {
   "key": "num_ar_l_3",
   "lang": "ar_EG",
-  "text": "ده رقم أربعة. أربعة"
+  "text": "ده رقم أربعة."
  },
  {
   "key": "num_ar_4",
@@ -4862,7 +4912,7 @@
  {
   "key": "num_ar_l_4",
   "lang": "ar_EG",
-  "text": "ده رقم خمسة. خمسة"
+  "text": "ده رقم خمسة."
  },
  {
   "key": "num_ar_5",
@@ -4872,7 +4922,7 @@
  {
   "key": "num_ar_l_5",
   "lang": "ar_EG",
-  "text": "ده رقم ستة. ستة"
+  "text": "ده رقم ستة."
  },
  {
   "key": "num_ar_6",
@@ -4882,7 +4932,7 @@
  {
   "key": "num_ar_l_6",
   "lang": "ar_EG",
-  "text": "ده رقم سبعة. سبعة"
+  "text": "ده رقم سبعة."
  },
  {
   "key": "num_ar_7",
@@ -4892,7 +4942,7 @@
  {
   "key": "num_ar_l_7",
   "lang": "ar_EG",
-  "text": "ده رقم تمانية. تمانية"
+  "text": "ده رقم تمانية."
  },
  {
   "key": "num_ar_8",
@@ -4902,7 +4952,7 @@
  {
   "key": "num_ar_l_8",
   "lang": "ar_EG",
-  "text": "ده رقم تسعة. تسعة"
+  "text": "ده رقم تسعة."
  },
  {
   "key": "num_ar_9",
@@ -4912,7 +4962,7 @@
  {
   "key": "num_ar_l_9",
   "lang": "ar_EG",
-  "text": "ده رقم عشرة. عشرة"
+  "text": "ده رقم عشرة."
  },
  {
   "key": "num_ar_10",
@@ -4922,7 +4972,7 @@
  {
   "key": "num_ar_l_10",
   "lang": "ar_EG",
-  "text": "ده رقم حداشر. حداشر"
+  "text": "ده رقم حداشر."
  },
  {
   "key": "num_ar_11",
@@ -4932,7 +4982,7 @@
  {
   "key": "num_ar_l_11",
   "lang": "ar_EG",
-  "text": "ده رقم اتناشر. اتناشر"
+  "text": "ده رقم اتناشر."
  },
  {
   "key": "num_ar_12",
@@ -4942,7 +4992,7 @@
  {
   "key": "num_ar_l_12",
   "lang": "ar_EG",
-  "text": "ده رقم تلتاشر. تلتاشر"
+  "text": "ده رقم تلتاشر."
  },
  {
   "key": "num_ar_13",
@@ -4952,7 +5002,7 @@
  {
   "key": "num_ar_l_13",
   "lang": "ar_EG",
-  "text": "ده رقم أربعتاشر. أربعتاشر"
+  "text": "ده رقم أربعتاشر."
  },
  {
   "key": "num_ar_14",
@@ -4962,7 +5012,7 @@
  {
   "key": "num_ar_l_14",
   "lang": "ar_EG",
-  "text": "ده رقم خمستاشر. خمستاشر"
+  "text": "ده رقم خمستاشر."
  },
  {
   "key": "num_ar_15",
@@ -4972,7 +5022,7 @@
  {
   "key": "num_ar_l_15",
   "lang": "ar_EG",
-  "text": "ده رقم ستاشر. ستاشر"
+  "text": "ده رقم ستاشر."
  },
  {
   "key": "num_ar_16",
@@ -4982,7 +5032,7 @@
  {
   "key": "num_ar_l_16",
   "lang": "ar_EG",
-  "text": "ده رقم سبعتاشر. سبعتاشر"
+  "text": "ده رقم سبعتاشر."
  },
  {
   "key": "num_ar_17",
@@ -4992,7 +5042,7 @@
  {
   "key": "num_ar_l_17",
   "lang": "ar_EG",
-  "text": "ده رقم تمنتاشر. تمنتاشر"
+  "text": "ده رقم تمنتاشر."
  },
  {
   "key": "num_ar_18",
@@ -5002,7 +5052,7 @@
  {
   "key": "num_ar_l_18",
   "lang": "ar_EG",
-  "text": "ده رقم تسعتاشر. تسعتاشر"
+  "text": "ده رقم تسعتاشر."
  },
  {
   "key": "num_ar_19",
@@ -5012,7 +5062,7 @@
  {
   "key": "num_ar_l_19",
   "lang": "ar_EG",
-  "text": "ده رقم عشرين. عشرين"
+  "text": "ده رقم عشرين."
  },
  {
   "key": "num_en_0",
@@ -5022,7 +5072,7 @@
  {
   "key": "num_en_l_0",
   "lang": "en_US",
-  "text": "Number one. 1"
+  "text": "Number one."
  },
  {
   "key": "num_en_1",
@@ -5032,7 +5082,7 @@
  {
   "key": "num_en_l_1",
   "lang": "en_US",
-  "text": "Number two. 2"
+  "text": "Number two."
  },
  {
   "key": "num_en_2",
@@ -5042,7 +5092,7 @@
  {
   "key": "num_en_l_2",
   "lang": "en_US",
-  "text": "Number three. 3"
+  "text": "Number three."
  },
  {
   "key": "num_en_3",
@@ -5052,7 +5102,7 @@
  {
   "key": "num_en_l_3",
   "lang": "en_US",
-  "text": "Number four. 4"
+  "text": "Number four."
  },
  {
   "key": "num_en_4",
@@ -5062,7 +5112,7 @@
  {
   "key": "num_en_l_4",
   "lang": "en_US",
-  "text": "Number five. 5"
+  "text": "Number five."
  },
  {
   "key": "num_en_5",
@@ -5072,7 +5122,7 @@
  {
   "key": "num_en_l_5",
   "lang": "en_US",
-  "text": "Number six. 6"
+  "text": "Number six."
  },
  {
   "key": "num_en_6",
@@ -5082,7 +5132,7 @@
  {
   "key": "num_en_l_6",
   "lang": "en_US",
-  "text": "Number seven. 7"
+  "text": "Number seven."
  },
  {
   "key": "num_en_7",
@@ -5092,7 +5142,7 @@
  {
   "key": "num_en_l_7",
   "lang": "en_US",
-  "text": "Number eight. 8"
+  "text": "Number eight."
  },
  {
   "key": "num_en_8",
@@ -5102,7 +5152,7 @@
  {
   "key": "num_en_l_8",
   "lang": "en_US",
-  "text": "Number nine. 9"
+  "text": "Number nine."
  },
  {
   "key": "num_en_9",
@@ -5112,7 +5162,7 @@
  {
   "key": "num_en_l_9",
   "lang": "en_US",
-  "text": "Number ten. 10"
+  "text": "Number ten."
  },
  {
   "key": "num_en_10",
@@ -5122,7 +5172,7 @@
  {
   "key": "num_en_l_10",
   "lang": "en_US",
-  "text": "Number eleven. 11"
+  "text": "Number eleven."
  },
  {
   "key": "num_en_11",
@@ -5132,7 +5182,7 @@
  {
   "key": "num_en_l_11",
   "lang": "en_US",
-  "text": "Number twelve. 12"
+  "text": "Number twelve."
  },
  {
   "key": "num_en_12",
@@ -5142,7 +5192,7 @@
  {
   "key": "num_en_l_12",
   "lang": "en_US",
-  "text": "Number thirteen. 13"
+  "text": "Number thirteen."
  },
  {
   "key": "num_en_13",
@@ -5152,7 +5202,7 @@
  {
   "key": "num_en_l_13",
   "lang": "en_US",
-  "text": "Number fourteen. 14"
+  "text": "Number fourteen."
  },
  {
   "key": "num_en_14",
@@ -5162,7 +5212,7 @@
  {
   "key": "num_en_l_14",
   "lang": "en_US",
-  "text": "Number fifteen. 15"
+  "text": "Number fifteen."
  },
  {
   "key": "num_en_15",
@@ -5172,7 +5222,7 @@
  {
   "key": "num_en_l_15",
   "lang": "en_US",
-  "text": "Number sixteen. 16"
+  "text": "Number sixteen."
  },
  {
   "key": "num_en_16",
@@ -5182,7 +5232,7 @@
  {
   "key": "num_en_l_16",
   "lang": "en_US",
-  "text": "Number seventeen. 17"
+  "text": "Number seventeen."
  },
  {
   "key": "num_en_17",
@@ -5192,7 +5242,7 @@
  {
   "key": "num_en_l_17",
   "lang": "en_US",
-  "text": "Number eighteen. 18"
+  "text": "Number eighteen."
  },
  {
   "key": "num_en_18",
@@ -5202,7 +5252,7 @@
  {
   "key": "num_en_l_18",
   "lang": "en_US",
-  "text": "Number nineteen. 19"
+  "text": "Number nineteen."
  },
  {
   "key": "num_en_19",
@@ -5212,7 +5262,7 @@
  {
   "key": "num_en_l_19",
   "lang": "en_US",
-  "text": "Number twenty. 20"
+  "text": "Number twenty."
  },
  {
   "key": "num_digit_0",
@@ -5262,7 +5312,7 @@
  {
   "key": "praise_nancy",
   "lang": "ar_EG",
-  "text": "أنا مس نانسي وبحبك يا ماثيو، برافو يا بطل!"
+  "text": "بحبك يا ماثيو، برافو يا بطل!"
  },
  {
   "key": "calm_medal",
@@ -5272,12 +5322,12 @@
  {
   "key": "move_break_1",
   "lang": "ar_EG",
-  "text": "اقفز ٥ مرات زي الأرنب"
+  "text": "نطّ ٥ مرات زي الأرنب"
  },
  {
   "key": "move_break_2",
   "lang": "ar_EG",
-  "text": "امشِ زي الأسد ١٠ خطوات"
+  "text": "امشي زي الأسد ١٠ خطوات"
  },
  {
   "key": "move_break_3",
@@ -5347,22 +5397,22 @@
  {
   "key": "touch_menu_intro",
   "lang": "ar_EG",
-  "text": "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! دي ألعاب اللمس والصوت، اختار اللعبة اللي تعجبك يا بطل!"
+  "text": "أهلاً يا ملك ماثيو! بحبك أوي! دي ألعاب اللمس والصوت، اختار اللعبة اللي تعجبك يا بطل!"
  },
  {
   "key": "touch_match_intro",
   "lang": "ar_EG",
-  "text": "لعبة التوصيل يا ملك ماثيو! أنا مس نانسي، اضغط الصورة واسمع اسمها، وبعدين اضغط الكلمة اللي بتناسبها يا بطل!"
+  "text": "لعبة التوصيل يا ملك ماثيو! اضغط الصورة واسمع اسمها، وبعدين اضغط الكلمة اللي بتناسبها يا بطل!"
  },
  {
   "key": "touch_listen_intro",
   "lang": "ar_EG",
-  "text": "لعبة اسمع واختار يا ملك ماثيو! أنا مس نانسي، اسمع كويس واختار الصح يا بطل!"
+  "text": "لعبة اسمع واختار يا ملك ماثيو! اسمع كويس واختار الصح يا بطل!"
  },
  {
   "key": "mem_intro",
   "lang": "ar_EG",
-  "text": "لعبة الذاكرة يا ملك ماثيو! أنا مس نانسي وبحبك أوي! اقلب الكروت ولاقي الصورتين اللي شبه بعض يا بطل!"
+  "text": "لعبة الذاكرة يا ملك ماثيو! بحبك أوي! اقلب الكروت ولاقي الصورتين اللي شبه بعض يا بطل!"
  },
  {
   "key": "mem_win",
@@ -5447,17 +5497,17 @@
  {
   "key": "nancy_intro_trace",
   "lang": "ar_EG",
-  "text": "يلا نتتبع الحرف يا ملك ماثيو! أنا مس نانسي، امشي على الخط بصوابعك على مهلك، أنت بطل!"
+  "text": "يلا نتتبع الحرف يا ملك ماثيو! امشي على الخط بصوابعك على مهلك، أنت بطل!"
  },
  {
   "key": "nancy_intro_color",
   "lang": "ar_EG",
-  "text": "يلا نلوّن يا ملك ماثيو! أنا مس نانسي، اختار لون حلو ولوّن معايا!"
+  "text": "يلا نلوّن يا ملك ماثيو! اختار لون حلو ولوّن معايا!"
  },
  {
   "key": "nancy_intro_color_num",
   "lang": "ar_EG",
-  "text": "لعبة لوني العدد يا بطلي ماثيو! أنا مس نانسي، شوف الرقم على التاج ودوس على نفس الرقم في الزر!"
+  "text": "لعبة لوني العدد يا بطلي ماثيو! شوف الرقم على التاج ودوس على نفس الرقم في الزر!"
  },
  {
   "key": "nancy_greet_1",
@@ -5477,17 +5527,17 @@
  {
   "key": "nancy_intro_memory_2",
   "lang": "ar_EG",
-  "text": "يلا يا بطل ماثيو! أنا مس نانسي، افتح كارتين، لو شبه بعض يبقوا بتوعك! افتكر كويس!"
+  "text": "يلا يا بطل ماثيو! افتح كارتين، لو شبه بعض يبقوا بتوعك! افتكر كويس!"
  },
  {
   "key": "nancy_intro_quiz",
   "lang": "ar_EG",
-  "text": "يلا يا ملك ماثيو! أنا مس نانسي، اسمع السؤال كويس واختار الإجابة الصح، أنا واثقة فيك يا بطل!"
+  "text": "يلا يا ملك ماثيو! اسمع السؤال كويس واختار الإجابة الصح، أنا واثقة فيك يا بطل!"
  },
  {
   "key": "nancy_intro_quiz_2",
   "lang": "ar_EG",
-  "text": "اختبار جديد يا بطلي ماثيو! أنا مس نانسي، ركّز معايا وجاوب، وكل إجابة صح ليها نجمة!"
+  "text": "اختبار جديد يا بطلي ماثيو! ركّز معايا وجاوب، وكل إجابة صح ليها نجمة!"
  },
  {
   "key": "nancy_praise_1",
@@ -5497,7 +5547,7 @@
  {
   "key": "nancy_praise_2",
   "lang": "ar_EG",
-  "text": "أحسنت يا ماثيو! أنا مس نانسي وفخورة بيك!"
+  "text": "أحسنت يا ماثيو! أنا فخورة بيك أوي!"
  },
  {
   "key": "nancy_praise_3",
@@ -5522,7 +5572,7 @@
  {
   "key": "nancy_praise_7",
   "lang": "ar_EG",
-  "text": "برافو يا ملك ماثيو! أنا مس نانسي، وفرحانة بيك أوي!"
+  "text": "برافو يا ملك ماثيو! أنا فرحانة بيك أوي!"
  },
  {
   "key": "nancy_praise_8",
@@ -5660,6 +5710,56 @@
   "text": "جاوبت صح على ١٠ من ١٠ أسئلة"
  },
  {
+  "key": "result_score_half_0",
+  "lang": "ar_EG",
+  "text": "جاوبت صح على ٠ ونص من ١٠ أسئلة"
+ },
+ {
+  "key": "result_score_half_1",
+  "lang": "ar_EG",
+  "text": "جاوبت صح على ١ ونص من ١٠ أسئلة"
+ },
+ {
+  "key": "result_score_half_2",
+  "lang": "ar_EG",
+  "text": "جاوبت صح على ٢ ونص من ١٠ أسئلة"
+ },
+ {
+  "key": "result_score_half_3",
+  "lang": "ar_EG",
+  "text": "جاوبت صح على ٣ ونص من ١٠ أسئلة"
+ },
+ {
+  "key": "result_score_half_4",
+  "lang": "ar_EG",
+  "text": "جاوبت صح على ٤ ونص من ١٠ أسئلة"
+ },
+ {
+  "key": "result_score_half_5",
+  "lang": "ar_EG",
+  "text": "جاوبت صح على ٥ ونص من ١٠ أسئلة"
+ },
+ {
+  "key": "result_score_half_6",
+  "lang": "ar_EG",
+  "text": "جاوبت صح على ٦ ونص من ١٠ أسئلة"
+ },
+ {
+  "key": "result_score_half_7",
+  "lang": "ar_EG",
+  "text": "جاوبت صح على ٧ ونص من ١٠ أسئلة"
+ },
+ {
+  "key": "result_score_half_8",
+  "lang": "ar_EG",
+  "text": "جاوبت صح على ٨ ونص من ١٠ أسئلة"
+ },
+ {
+  "key": "result_score_half_9",
+  "lang": "ar_EG",
+  "text": "جاوبت صح على ٩ ونص من ١٠ أسئلة"
+ },
+ {
   "key": "result_tip_pass",
   "lang": "ar_EG",
   "text": "برافو يا ملك ماثيو! انت بطل شاطر أوي!"
@@ -5732,17 +5832,17 @@
  {
   "key": "math_en_q1_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 1."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه one."
  },
  {
   "key": "math_en_q1_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 1؟ بعد one بييجي two."
+  "text": "إيه الرقم اللي بعد one؟ بعد one بييجي two."
  },
  {
   "key": "math_en_q1_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 2؟ قبل two بييجي one."
+  "text": "إيه الرقم اللي قبل two؟ قبل two بييجي one."
  },
  {
   "key": "math_en_q1_3",
@@ -5752,12 +5852,12 @@
  {
   "key": "math_en_q1_4",
   "lang": "ar_EG",
-  "text": "كان معانا 4 نجوم واختفى 2، فاضل كام؟ four ناقص two يساوي two. شيل two وعدّ الباقي."
+  "text": "كان معانا four نجوم واختفى two، فاضل كام؟ four ناقص two يساوي two. شيل two وعدّ الباقي."
  },
  {
   "key": "math_en_q1_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 1 ولا 2؟ الرقم الأكبر هو 2."
+  "text": "إيه الرقم الأكبر: one ولا two؟ الرقم الأكبر هو two."
  },
  {
   "key": "math_en_qq1_0",
@@ -5765,9 +5865,24 @@
   "text": "عدّ الصور، فيه كام واحدة؟"
  },
  {
+  "key": "math_en_qq1_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد one؟"
+ },
+ {
+  "key": "math_en_qq1_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل two؟"
+ },
+ {
+  "key": "math_en_qq1_4",
+  "lang": "ar_EG",
+  "text": "كان معانا four نجوم واختفى two، فاضل كام؟"
+ },
+ {
   "key": "math_en_qq1_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 1 ولا 2؟"
+  "text": "إيه الرقم الأكبر: one ولا two؟"
  },
  {
   "key": "math_ar_q2_0",
@@ -5817,32 +5932,47 @@
  {
   "key": "math_en_q2_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 2."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه two."
  },
  {
   "key": "math_en_q2_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 2؟ بعد two بييجي three."
+  "text": "إيه الرقم اللي بعد two؟ بعد two بييجي three."
  },
  {
   "key": "math_en_q2_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 3؟ قبل three بييجي two."
+  "text": "إيه الرقم اللي قبل three؟ قبل three بييجي two."
  },
  {
   "key": "math_en_q2_4",
   "lang": "ar_EG",
-  "text": "كان معانا 5 نجوم واختفى 1، فاضل كام؟ five ناقص one يساوي four. شيل one وعدّ الباقي."
+  "text": "كان معانا five نجوم واختفى one، فاضل كام؟ five ناقص one يساوي four. شيل one وعدّ الباقي."
  },
  {
   "key": "math_en_q2_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 2 ولا 1؟ الرقم الأكبر هو 2."
+  "text": "إيه الرقم الأكبر: two ولا one؟ الرقم الأكبر هو two."
+ },
+ {
+  "key": "math_en_qq2_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد two؟"
+ },
+ {
+  "key": "math_en_qq2_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل three؟"
+ },
+ {
+  "key": "math_en_qq2_4",
+  "lang": "ar_EG",
+  "text": "كان معانا five نجوم واختفى one، فاضل كام؟"
  },
  {
   "key": "math_en_qq2_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 2 ولا 1؟"
+  "text": "إيه الرقم الأكبر: two ولا one؟"
  },
  {
   "key": "math_ar_q3_0",
@@ -5902,37 +6032,57 @@
  {
   "key": "math_en_q3_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 3."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه three."
  },
  {
   "key": "math_en_q3_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 3؟ بعد three بييجي four."
+  "text": "إيه الرقم اللي بعد three؟ بعد three بييجي four."
  },
  {
   "key": "math_en_q3_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 4؟ قبل four بييجي three."
+  "text": "إيه الرقم اللي قبل four؟ قبل four بييجي three."
  },
  {
   "key": "math_en_q3_3",
   "lang": "ar_EG",
-  "text": "معانا تفاحة واحدة وزودنا 2، بقوا كام؟ one زائد two يساوي three. عدّهم مع بعض."
+  "text": "معانا تفاحة واحدة وزودنا two، بقوا كام؟ one زائد two يساوي three. عدّهم مع بعض."
  },
  {
   "key": "math_en_q3_4",
   "lang": "ar_EG",
-  "text": "كان معانا 6 نجوم واختفى 2، فاضل كام؟ six ناقص two يساوي four. شيل two وعدّ الباقي."
+  "text": "كان معانا six نجوم واختفى two، فاضل كام؟ six ناقص two يساوي four. شيل two وعدّ الباقي."
  },
  {
   "key": "math_en_q3_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 3 ولا 2؟ الرقم الأكبر هو 3."
+  "text": "إيه الرقم الأكبر: three ولا two؟ الرقم الأكبر هو three."
+ },
+ {
+  "key": "math_en_qq3_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد three؟"
+ },
+ {
+  "key": "math_en_qq3_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل four؟"
+ },
+ {
+  "key": "math_en_qq3_3",
+  "lang": "ar_EG",
+  "text": "معانا تفاحة واحدة وزودنا two، بقوا كام؟"
+ },
+ {
+  "key": "math_en_qq3_4",
+  "lang": "ar_EG",
+  "text": "كان معانا six نجوم واختفى two، فاضل كام؟"
  },
  {
   "key": "math_en_qq3_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 3 ولا 2؟"
+  "text": "إيه الرقم الأكبر: three ولا two؟"
  },
  {
   "key": "math_ar_q4_0",
@@ -5992,37 +6142,57 @@
  {
   "key": "math_en_q4_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 4."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه four."
  },
  {
   "key": "math_en_q4_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 4؟ بعد four بييجي five."
+  "text": "إيه الرقم اللي بعد four؟ بعد four بييجي five."
  },
  {
   "key": "math_en_q4_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 5؟ قبل five بييجي four."
+  "text": "إيه الرقم اللي قبل five؟ قبل five بييجي four."
  },
  {
   "key": "math_en_q4_3",
   "lang": "ar_EG",
-  "text": "معانا 2 تفاحات وزودنا 2، بقوا كام؟ two زائد two يساوي four. عدّهم مع بعض."
+  "text": "معانا two تفاحات وزودنا two، بقوا كام؟ two زائد two يساوي four. عدّهم مع بعض."
  },
  {
   "key": "math_en_q4_4",
   "lang": "ar_EG",
-  "text": "كان معانا 7 نجوم واختفى 1، فاضل كام؟ seven ناقص one يساوي six. شيل one وعدّ الباقي."
+  "text": "كان معانا seven نجوم واختفى one، فاضل كام؟ seven ناقص one يساوي six. شيل one وعدّ الباقي."
  },
  {
   "key": "math_en_q4_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 4 ولا 3؟ الرقم الأكبر هو 4."
+  "text": "إيه الرقم الأكبر: four ولا three؟ الرقم الأكبر هو four."
+ },
+ {
+  "key": "math_en_qq4_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد four؟"
+ },
+ {
+  "key": "math_en_qq4_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل five؟"
+ },
+ {
+  "key": "math_en_qq4_3",
+  "lang": "ar_EG",
+  "text": "معانا two تفاحات وزودنا two، بقوا كام؟"
+ },
+ {
+  "key": "math_en_qq4_4",
+  "lang": "ar_EG",
+  "text": "كان معانا seven نجوم واختفى one، فاضل كام؟"
  },
  {
   "key": "math_en_qq4_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 4 ولا 3؟"
+  "text": "إيه الرقم الأكبر: four ولا three؟"
  },
  {
   "key": "math_ar_q5_0",
@@ -6082,37 +6252,57 @@
  {
   "key": "math_en_q5_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 5."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه five."
  },
  {
   "key": "math_en_q5_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 5؟ بعد five بييجي six."
+  "text": "إيه الرقم اللي بعد five؟ بعد five بييجي six."
  },
  {
   "key": "math_en_q5_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 6؟ قبل six بييجي five."
+  "text": "إيه الرقم اللي قبل six؟ قبل six بييجي five."
  },
  {
   "key": "math_en_q5_3",
   "lang": "ar_EG",
-  "text": "معانا 2 تفاحات وزودنا 3، بقوا كام؟ two زائد three يساوي five. عدّهم مع بعض."
+  "text": "معانا two تفاحات وزودنا three، بقوا كام؟ two زائد three يساوي five. عدّهم مع بعض."
  },
  {
   "key": "math_en_q5_4",
   "lang": "ar_EG",
-  "text": "كان معانا 8 نجوم واختفى 2، فاضل كام؟ eight ناقص two يساوي six. شيل two وعدّ الباقي."
+  "text": "كان معانا eight نجوم واختفى two، فاضل كام؟ eight ناقص two يساوي six. شيل two وعدّ الباقي."
  },
  {
   "key": "math_en_q5_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 5 ولا 4؟ الرقم الأكبر هو 5."
+  "text": "إيه الرقم الأكبر: five ولا four؟ الرقم الأكبر هو five."
+ },
+ {
+  "key": "math_en_qq5_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد five؟"
+ },
+ {
+  "key": "math_en_qq5_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل six؟"
+ },
+ {
+  "key": "math_en_qq5_3",
+  "lang": "ar_EG",
+  "text": "معانا two تفاحات وزودنا three، بقوا كام؟"
+ },
+ {
+  "key": "math_en_qq5_4",
+  "lang": "ar_EG",
+  "text": "كان معانا eight نجوم واختفى two، فاضل كام؟"
  },
  {
   "key": "math_en_qq5_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 5 ولا 4؟"
+  "text": "إيه الرقم الأكبر: five ولا four؟"
  },
  {
   "key": "math_ar_q6_0",
@@ -6172,37 +6362,57 @@
  {
   "key": "math_en_q6_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 6."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه six."
  },
  {
   "key": "math_en_q6_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 6؟ بعد six بييجي seven."
+  "text": "إيه الرقم اللي بعد six؟ بعد six بييجي seven."
  },
  {
   "key": "math_en_q6_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 7؟ قبل seven بييجي six."
+  "text": "إيه الرقم اللي قبل seven؟ قبل seven بييجي six."
  },
  {
   "key": "math_en_q6_3",
   "lang": "ar_EG",
-  "text": "معانا 3 تفاحات وزودنا 3، بقوا كام؟ three زائد three يساوي six. عدّهم مع بعض."
+  "text": "معانا three تفاحات وزودنا three، بقوا كام؟ three زائد three يساوي six. عدّهم مع بعض."
  },
  {
   "key": "math_en_q6_4",
   "lang": "ar_EG",
-  "text": "كان معانا 9 نجوم واختفى 1، فاضل كام؟ nine ناقص one يساوي eight. شيل one وعدّ الباقي."
+  "text": "كان معانا nine نجوم واختفى one، فاضل كام؟ nine ناقص one يساوي eight. شيل one وعدّ الباقي."
  },
  {
   "key": "math_en_q6_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 6 ولا 5؟ الرقم الأكبر هو 6."
+  "text": "إيه الرقم الأكبر: six ولا five؟ الرقم الأكبر هو six."
+ },
+ {
+  "key": "math_en_qq6_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد six؟"
+ },
+ {
+  "key": "math_en_qq6_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل seven؟"
+ },
+ {
+  "key": "math_en_qq6_3",
+  "lang": "ar_EG",
+  "text": "معانا three تفاحات وزودنا three، بقوا كام؟"
+ },
+ {
+  "key": "math_en_qq6_4",
+  "lang": "ar_EG",
+  "text": "كان معانا nine نجوم واختفى one، فاضل كام؟"
  },
  {
   "key": "math_en_qq6_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 6 ولا 5؟"
+  "text": "إيه الرقم الأكبر: six ولا five؟"
  },
  {
   "key": "math_ar_q7_0",
@@ -6262,37 +6472,57 @@
  {
   "key": "math_en_q7_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 7."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه seven."
  },
  {
   "key": "math_en_q7_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 7؟ بعد seven بييجي eight."
+  "text": "إيه الرقم اللي بعد seven؟ بعد seven بييجي eight."
  },
  {
   "key": "math_en_q7_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 8؟ قبل eight بييجي seven."
+  "text": "إيه الرقم اللي قبل eight؟ قبل eight بييجي seven."
  },
  {
   "key": "math_en_q7_3",
   "lang": "ar_EG",
-  "text": "معانا 3 تفاحات وزودنا 4، بقوا كام؟ three زائد four يساوي seven. عدّهم مع بعض."
+  "text": "معانا three تفاحات وزودنا four، بقوا كام؟ three زائد four يساوي seven. عدّهم مع بعض."
  },
  {
   "key": "math_en_q7_4",
   "lang": "ar_EG",
-  "text": "كان معانا 10 نجوم واختفى 2، فاضل كام؟ ten ناقص two يساوي eight. شيل two وعدّ الباقي."
+  "text": "كان معانا ten نجوم واختفى two، فاضل كام؟ ten ناقص two يساوي eight. شيل two وعدّ الباقي."
  },
  {
   "key": "math_en_q7_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 7 ولا 6؟ الرقم الأكبر هو 7."
+  "text": "إيه الرقم الأكبر: seven ولا six؟ الرقم الأكبر هو seven."
+ },
+ {
+  "key": "math_en_qq7_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد seven؟"
+ },
+ {
+  "key": "math_en_qq7_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل eight؟"
+ },
+ {
+  "key": "math_en_qq7_3",
+  "lang": "ar_EG",
+  "text": "معانا three تفاحات وزودنا four، بقوا كام؟"
+ },
+ {
+  "key": "math_en_qq7_4",
+  "lang": "ar_EG",
+  "text": "كان معانا ten نجوم واختفى two، فاضل كام؟"
  },
  {
   "key": "math_en_qq7_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 7 ولا 6؟"
+  "text": "إيه الرقم الأكبر: seven ولا six؟"
  },
  {
   "key": "math_ar_q8_0",
@@ -6352,37 +6582,57 @@
  {
   "key": "math_en_q8_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 8."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه eight."
  },
  {
   "key": "math_en_q8_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 8؟ بعد eight بييجي nine."
+  "text": "إيه الرقم اللي بعد eight؟ بعد eight بييجي nine."
  },
  {
   "key": "math_en_q8_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 9؟ قبل nine بييجي eight."
+  "text": "إيه الرقم اللي قبل nine؟ قبل nine بييجي eight."
  },
  {
   "key": "math_en_q8_3",
   "lang": "ar_EG",
-  "text": "معانا 4 تفاحات وزودنا 4، بقوا كام؟ four زائد four يساوي eight. عدّهم مع بعض."
+  "text": "معانا four تفاحات وزودنا four، بقوا كام؟ four زائد four يساوي eight. عدّهم مع بعض."
  },
  {
   "key": "math_en_q8_4",
   "lang": "ar_EG",
-  "text": "كان معانا 11 نجوم واختفى 1، فاضل كام؟ eleven ناقص one يساوي ten. شيل one وعدّ الباقي."
+  "text": "كان معانا eleven نجوم واختفى one، فاضل كام؟ eleven ناقص one يساوي ten. شيل one وعدّ الباقي."
  },
  {
   "key": "math_en_q8_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 8 ولا 7؟ الرقم الأكبر هو 8."
+  "text": "إيه الرقم الأكبر: eight ولا seven؟ الرقم الأكبر هو eight."
+ },
+ {
+  "key": "math_en_qq8_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد eight؟"
+ },
+ {
+  "key": "math_en_qq8_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل nine؟"
+ },
+ {
+  "key": "math_en_qq8_3",
+  "lang": "ar_EG",
+  "text": "معانا four تفاحات وزودنا four، بقوا كام؟"
+ },
+ {
+  "key": "math_en_qq8_4",
+  "lang": "ar_EG",
+  "text": "كان معانا eleven نجوم واختفى one، فاضل كام؟"
  },
  {
   "key": "math_en_qq8_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 8 ولا 7؟"
+  "text": "إيه الرقم الأكبر: eight ولا seven؟"
  },
  {
   "key": "math_ar_q9_0",
@@ -6442,37 +6692,57 @@
  {
   "key": "math_en_q9_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 9."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه nine."
  },
  {
   "key": "math_en_q9_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 9؟ بعد nine بييجي ten."
+  "text": "إيه الرقم اللي بعد nine؟ بعد nine بييجي ten."
  },
  {
   "key": "math_en_q9_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 10؟ قبل ten بييجي nine."
+  "text": "إيه الرقم اللي قبل ten؟ قبل ten بييجي nine."
  },
  {
   "key": "math_en_q9_3",
   "lang": "ar_EG",
-  "text": "معانا 4 تفاحات وزودنا 5، بقوا كام؟ four زائد five يساوي nine. عدّهم مع بعض."
+  "text": "معانا four تفاحات وزودنا five، بقوا كام؟ four زائد five يساوي nine. عدّهم مع بعض."
  },
  {
   "key": "math_en_q9_4",
   "lang": "ar_EG",
-  "text": "كان معانا 12 نجوم واختفى 2، فاضل كام؟ twelve ناقص two يساوي ten. شيل two وعدّ الباقي."
+  "text": "كان معانا twelve نجوم واختفى two، فاضل كام؟ twelve ناقص two يساوي ten. شيل two وعدّ الباقي."
  },
  {
   "key": "math_en_q9_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 9 ولا 8؟ الرقم الأكبر هو 9."
+  "text": "إيه الرقم الأكبر: nine ولا eight؟ الرقم الأكبر هو nine."
+ },
+ {
+  "key": "math_en_qq9_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد nine؟"
+ },
+ {
+  "key": "math_en_qq9_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل ten؟"
+ },
+ {
+  "key": "math_en_qq9_3",
+  "lang": "ar_EG",
+  "text": "معانا four تفاحات وزودنا five، بقوا كام؟"
+ },
+ {
+  "key": "math_en_qq9_4",
+  "lang": "ar_EG",
+  "text": "كان معانا twelve نجوم واختفى two، فاضل كام؟"
  },
  {
   "key": "math_en_qq9_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 9 ولا 8؟"
+  "text": "إيه الرقم الأكبر: nine ولا eight؟"
  },
  {
   "key": "math_ar_q10_0",
@@ -6532,37 +6802,57 @@
  {
   "key": "math_en_q10_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 10."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه ten."
  },
  {
   "key": "math_en_q10_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 10؟ بعد ten بييجي eleven."
+  "text": "إيه الرقم اللي بعد ten؟ بعد ten بييجي eleven."
  },
  {
   "key": "math_en_q10_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 11؟ قبل eleven بييجي ten."
+  "text": "إيه الرقم اللي قبل eleven؟ قبل eleven بييجي ten."
  },
  {
   "key": "math_en_q10_3",
   "lang": "ar_EG",
-  "text": "معانا 5 تفاحات وزودنا 5، بقوا كام؟ five زائد five يساوي ten. عدّهم مع بعض."
+  "text": "معانا five تفاحات وزودنا five، بقوا كام؟ five زائد five يساوي ten. عدّهم مع بعض."
  },
  {
   "key": "math_en_q10_4",
   "lang": "ar_EG",
-  "text": "كان معانا 13 نجوم واختفى 1، فاضل كام؟ thirteen ناقص one يساوي twelve. شيل one وعدّ الباقي."
+  "text": "كان معانا thirteen نجوم واختفى one، فاضل كام؟ thirteen ناقص one يساوي twelve. شيل one وعدّ الباقي."
  },
  {
   "key": "math_en_q10_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 10 ولا 9؟ الرقم الأكبر هو 10."
+  "text": "إيه الرقم الأكبر: ten ولا nine؟ الرقم الأكبر هو ten."
+ },
+ {
+  "key": "math_en_qq10_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد ten؟"
+ },
+ {
+  "key": "math_en_qq10_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل eleven؟"
+ },
+ {
+  "key": "math_en_qq10_3",
+  "lang": "ar_EG",
+  "text": "معانا five تفاحات وزودنا five، بقوا كام؟"
+ },
+ {
+  "key": "math_en_qq10_4",
+  "lang": "ar_EG",
+  "text": "كان معانا thirteen نجوم واختفى one، فاضل كام؟"
  },
  {
   "key": "math_en_qq10_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 10 ولا 9؟"
+  "text": "إيه الرقم الأكبر: ten ولا nine؟"
  },
  {
   "key": "math_ar_q11_0",
@@ -6612,32 +6902,47 @@
  {
   "key": "math_en_q11_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 11."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه eleven."
  },
  {
   "key": "math_en_q11_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 11؟ بعد eleven بييجي twelve."
+  "text": "إيه الرقم اللي بعد eleven؟ بعد eleven بييجي twelve."
  },
  {
   "key": "math_en_q11_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 12؟ قبل twelve بييجي eleven."
+  "text": "إيه الرقم اللي قبل twelve؟ قبل twelve بييجي eleven."
  },
  {
   "key": "math_en_q11_4",
   "lang": "ar_EG",
-  "text": "كان معانا 14 نجوم واختفى 2، فاضل كام؟ fourteen ناقص two يساوي twelve. شيل two وعدّ الباقي."
+  "text": "كان معانا fourteen نجوم واختفى two، فاضل كام؟ fourteen ناقص two يساوي twelve. شيل two وعدّ الباقي."
  },
  {
   "key": "math_en_q11_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 11 ولا 10؟ الرقم الأكبر هو 11."
+  "text": "إيه الرقم الأكبر: eleven ولا ten؟ الرقم الأكبر هو eleven."
+ },
+ {
+  "key": "math_en_qq11_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد eleven؟"
+ },
+ {
+  "key": "math_en_qq11_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل twelve؟"
+ },
+ {
+  "key": "math_en_qq11_4",
+  "lang": "ar_EG",
+  "text": "كان معانا fourteen نجوم واختفى two، فاضل كام؟"
  },
  {
   "key": "math_en_qq11_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 11 ولا 10؟"
+  "text": "إيه الرقم الأكبر: eleven ولا ten؟"
  },
  {
   "key": "math_ar_q12_0",
@@ -6697,37 +7002,57 @@
  {
   "key": "math_en_q12_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 12."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه twelve."
  },
  {
   "key": "math_en_q12_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 12؟ بعد twelve بييجي thirteen."
+  "text": "إيه الرقم اللي بعد twelve؟ بعد twelve بييجي thirteen."
  },
  {
   "key": "math_en_q12_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 13؟ قبل thirteen بييجي twelve."
+  "text": "إيه الرقم اللي قبل thirteen؟ قبل thirteen بييجي twelve."
  },
  {
   "key": "math_en_q12_3",
   "lang": "ar_EG",
-  "text": "معانا 6 تفاحات وزودنا 5، بقوا كام؟ six زائد five يساوي eleven. عدّهم مع بعض."
+  "text": "معانا six تفاحات وزودنا five، بقوا كام؟ six زائد five يساوي eleven. عدّهم مع بعض."
  },
  {
   "key": "math_en_q12_4",
   "lang": "ar_EG",
-  "text": "كان معانا 15 نجوم واختفى 1، فاضل كام؟ fifteen ناقص one يساوي fourteen. شيل one وعدّ الباقي."
+  "text": "كان معانا fifteen نجوم واختفى one، فاضل كام؟ fifteen ناقص one يساوي fourteen. شيل one وعدّ الباقي."
  },
  {
   "key": "math_en_q12_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 12 ولا 11؟ الرقم الأكبر هو 12."
+  "text": "إيه الرقم الأكبر: twelve ولا eleven؟ الرقم الأكبر هو twelve."
+ },
+ {
+  "key": "math_en_qq12_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد twelve؟"
+ },
+ {
+  "key": "math_en_qq12_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل thirteen؟"
+ },
+ {
+  "key": "math_en_qq12_3",
+  "lang": "ar_EG",
+  "text": "معانا six تفاحات وزودنا five، بقوا كام؟"
+ },
+ {
+  "key": "math_en_qq12_4",
+  "lang": "ar_EG",
+  "text": "كان معانا fifteen نجوم واختفى one، فاضل كام؟"
  },
  {
   "key": "math_en_qq12_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 12 ولا 11؟"
+  "text": "إيه الرقم الأكبر: twelve ولا eleven؟"
  },
  {
   "key": "math_ar_q13_0",
@@ -6777,32 +7102,47 @@
  {
   "key": "math_en_q13_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 13."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه thirteen."
  },
  {
   "key": "math_en_q13_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 13؟ بعد thirteen بييجي fourteen."
+  "text": "إيه الرقم اللي بعد thirteen؟ بعد thirteen بييجي fourteen."
  },
  {
   "key": "math_en_q13_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 14؟ قبل fourteen بييجي thirteen."
+  "text": "إيه الرقم اللي قبل fourteen؟ قبل fourteen بييجي thirteen."
  },
  {
   "key": "math_en_q13_4",
   "lang": "ar_EG",
-  "text": "كان معانا 16 نجوم واختفى 2، فاضل كام؟ sixteen ناقص two يساوي fourteen. شيل two وعدّ الباقي."
+  "text": "كان معانا sixteen نجوم واختفى two، فاضل كام؟ sixteen ناقص two يساوي fourteen. شيل two وعدّ الباقي."
  },
  {
   "key": "math_en_q13_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 13 ولا 12؟ الرقم الأكبر هو 13."
+  "text": "إيه الرقم الأكبر: thirteen ولا twelve؟ الرقم الأكبر هو thirteen."
+ },
+ {
+  "key": "math_en_qq13_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد thirteen؟"
+ },
+ {
+  "key": "math_en_qq13_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل fourteen؟"
+ },
+ {
+  "key": "math_en_qq13_4",
+  "lang": "ar_EG",
+  "text": "كان معانا sixteen نجوم واختفى two، فاضل كام؟"
  },
  {
   "key": "math_en_qq13_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 13 ولا 12؟"
+  "text": "إيه الرقم الأكبر: thirteen ولا twelve؟"
  },
  {
   "key": "math_ar_q14_0",
@@ -6862,37 +7202,57 @@
  {
   "key": "math_en_q14_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 14."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه fourteen."
  },
  {
   "key": "math_en_q14_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 14؟ بعد fourteen بييجي fifteen."
+  "text": "إيه الرقم اللي بعد fourteen؟ بعد fourteen بييجي fifteen."
  },
  {
   "key": "math_en_q14_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 15؟ قبل fifteen بييجي fourteen."
+  "text": "إيه الرقم اللي قبل fifteen؟ قبل fifteen بييجي fourteen."
  },
  {
   "key": "math_en_q14_3",
   "lang": "ar_EG",
-  "text": "معانا 7 تفاحات وزودنا 5، بقوا كام؟ seven زائد five يساوي twelve. عدّهم مع بعض."
+  "text": "معانا seven تفاحات وزودنا five، بقوا كام؟ seven زائد five يساوي twelve. عدّهم مع بعض."
  },
  {
   "key": "math_en_q14_4",
   "lang": "ar_EG",
-  "text": "كان معانا 17 نجوم واختفى 1، فاضل كام؟ seventeen ناقص one يساوي sixteen. شيل one وعدّ الباقي."
+  "text": "كان معانا seventeen نجوم واختفى one، فاضل كام؟ seventeen ناقص one يساوي sixteen. شيل one وعدّ الباقي."
  },
  {
   "key": "math_en_q14_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 14 ولا 13؟ الرقم الأكبر هو 14."
+  "text": "إيه الرقم الأكبر: fourteen ولا thirteen؟ الرقم الأكبر هو fourteen."
+ },
+ {
+  "key": "math_en_qq14_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد fourteen؟"
+ },
+ {
+  "key": "math_en_qq14_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل fifteen؟"
+ },
+ {
+  "key": "math_en_qq14_3",
+  "lang": "ar_EG",
+  "text": "معانا seven تفاحات وزودنا five، بقوا كام؟"
+ },
+ {
+  "key": "math_en_qq14_4",
+  "lang": "ar_EG",
+  "text": "كان معانا seventeen نجوم واختفى one، فاضل كام؟"
  },
  {
   "key": "math_en_qq14_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 14 ولا 13؟"
+  "text": "إيه الرقم الأكبر: fourteen ولا thirteen؟"
  },
  {
   "key": "math_ar_q15_0",
@@ -6942,32 +7302,47 @@
  {
   "key": "math_en_q15_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 15."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه fifteen."
  },
  {
   "key": "math_en_q15_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 15؟ بعد fifteen بييجي sixteen."
+  "text": "إيه الرقم اللي بعد fifteen؟ بعد fifteen بييجي sixteen."
  },
  {
   "key": "math_en_q15_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 16؟ قبل sixteen بييجي fifteen."
+  "text": "إيه الرقم اللي قبل sixteen؟ قبل sixteen بييجي fifteen."
  },
  {
   "key": "math_en_q15_4",
   "lang": "ar_EG",
-  "text": "كان معانا 18 نجوم واختفى 2، فاضل كام؟ eighteen ناقص two يساوي sixteen. شيل two وعدّ الباقي."
+  "text": "كان معانا eighteen نجوم واختفى two، فاضل كام؟ eighteen ناقص two يساوي sixteen. شيل two وعدّ الباقي."
  },
  {
   "key": "math_en_q15_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 15 ولا 14؟ الرقم الأكبر هو 15."
+  "text": "إيه الرقم الأكبر: fifteen ولا fourteen؟ الرقم الأكبر هو fifteen."
+ },
+ {
+  "key": "math_en_qq15_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد fifteen؟"
+ },
+ {
+  "key": "math_en_qq15_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل sixteen؟"
+ },
+ {
+  "key": "math_en_qq15_4",
+  "lang": "ar_EG",
+  "text": "كان معانا eighteen نجوم واختفى two، فاضل كام؟"
  },
  {
   "key": "math_en_qq15_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 15 ولا 14؟"
+  "text": "إيه الرقم الأكبر: fifteen ولا fourteen؟"
  },
  {
   "key": "math_ar_q16_0",
@@ -7027,37 +7402,57 @@
  {
   "key": "math_en_q16_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 16."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه sixteen."
  },
  {
   "key": "math_en_q16_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 16؟ بعد sixteen بييجي seventeen."
+  "text": "إيه الرقم اللي بعد sixteen؟ بعد sixteen بييجي seventeen."
  },
  {
   "key": "math_en_q16_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 17؟ قبل seventeen بييجي sixteen."
+  "text": "إيه الرقم اللي قبل seventeen؟ قبل seventeen بييجي sixteen."
  },
  {
   "key": "math_en_q16_3",
   "lang": "ar_EG",
-  "text": "معانا 8 تفاحات وزودنا 5، بقوا كام؟ eight زائد five يساوي thirteen. عدّهم مع بعض."
+  "text": "معانا eight تفاحات وزودنا five، بقوا كام؟ eight زائد five يساوي thirteen. عدّهم مع بعض."
  },
  {
   "key": "math_en_q16_4",
   "lang": "ar_EG",
-  "text": "كان معانا 19 نجوم واختفى 1، فاضل كام؟ nineteen ناقص one يساوي eighteen. شيل one وعدّ الباقي."
+  "text": "كان معانا nineteen نجوم واختفى one، فاضل كام؟ nineteen ناقص one يساوي eighteen. شيل one وعدّ الباقي."
  },
  {
   "key": "math_en_q16_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 16 ولا 15؟ الرقم الأكبر هو 16."
+  "text": "إيه الرقم الأكبر: sixteen ولا fifteen؟ الرقم الأكبر هو sixteen."
+ },
+ {
+  "key": "math_en_qq16_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد sixteen؟"
+ },
+ {
+  "key": "math_en_qq16_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل seventeen؟"
+ },
+ {
+  "key": "math_en_qq16_3",
+  "lang": "ar_EG",
+  "text": "معانا eight تفاحات وزودنا five، بقوا كام؟"
+ },
+ {
+  "key": "math_en_qq16_4",
+  "lang": "ar_EG",
+  "text": "كان معانا nineteen نجوم واختفى one، فاضل كام؟"
  },
  {
   "key": "math_en_qq16_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 16 ولا 15؟"
+  "text": "إيه الرقم الأكبر: sixteen ولا fifteen؟"
  },
  {
   "key": "math_ar_q17_0",
@@ -7107,32 +7502,47 @@
  {
   "key": "math_en_q17_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 17."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه seventeen."
  },
  {
   "key": "math_en_q17_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 17؟ بعد seventeen بييجي eighteen."
+  "text": "إيه الرقم اللي بعد seventeen؟ بعد seventeen بييجي eighteen."
  },
  {
   "key": "math_en_q17_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 18؟ قبل eighteen بييجي seventeen."
+  "text": "إيه الرقم اللي قبل eighteen؟ قبل eighteen بييجي seventeen."
  },
  {
   "key": "math_en_q17_4",
   "lang": "ar_EG",
-  "text": "كان معانا 20 نجوم واختفى 2، فاضل كام؟ twenty ناقص two يساوي eighteen. شيل two وعدّ الباقي."
+  "text": "كان معانا twenty نجوم واختفى two، فاضل كام؟ twenty ناقص two يساوي eighteen. شيل two وعدّ الباقي."
  },
  {
   "key": "math_en_q17_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 17 ولا 16؟ الرقم الأكبر هو 17."
+  "text": "إيه الرقم الأكبر: seventeen ولا sixteen؟ الرقم الأكبر هو seventeen."
+ },
+ {
+  "key": "math_en_qq17_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد seventeen؟"
+ },
+ {
+  "key": "math_en_qq17_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل eighteen؟"
+ },
+ {
+  "key": "math_en_qq17_4",
+  "lang": "ar_EG",
+  "text": "كان معانا twenty نجوم واختفى two، فاضل كام؟"
  },
  {
   "key": "math_en_qq17_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 17 ولا 16؟"
+  "text": "إيه الرقم الأكبر: seventeen ولا sixteen؟"
  },
  {
   "key": "math_ar_q18_0",
@@ -7192,37 +7602,57 @@
  {
   "key": "math_en_q18_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 18."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه eighteen."
  },
  {
   "key": "math_en_q18_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 18؟ بعد eighteen بييجي nineteen."
+  "text": "إيه الرقم اللي بعد eighteen؟ بعد eighteen بييجي nineteen."
  },
  {
   "key": "math_en_q18_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 19؟ قبل nineteen بييجي eighteen."
+  "text": "إيه الرقم اللي قبل nineteen؟ قبل nineteen بييجي eighteen."
  },
  {
   "key": "math_en_q18_3",
   "lang": "ar_EG",
-  "text": "معانا 9 تفاحات وزودنا 5، بقوا كام؟ nine زائد five يساوي fourteen. عدّهم مع بعض."
+  "text": "معانا nine تفاحات وزودنا five، بقوا كام؟ nine زائد five يساوي fourteen. عدّهم مع بعض."
  },
  {
   "key": "math_en_q18_4",
   "lang": "ar_EG",
-  "text": "كان معانا 20 نجوم واختفى 1، فاضل كام؟ twenty ناقص one يساوي nineteen. شيل one وعدّ الباقي."
+  "text": "كان معانا twenty نجوم واختفى one، فاضل كام؟ twenty ناقص one يساوي nineteen. شيل one وعدّ الباقي."
  },
  {
   "key": "math_en_q18_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 18 ولا 17؟ الرقم الأكبر هو 18."
+  "text": "إيه الرقم الأكبر: eighteen ولا seventeen؟ الرقم الأكبر هو eighteen."
+ },
+ {
+  "key": "math_en_qq18_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد eighteen؟"
+ },
+ {
+  "key": "math_en_qq18_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل nineteen؟"
+ },
+ {
+  "key": "math_en_qq18_3",
+  "lang": "ar_EG",
+  "text": "معانا nine تفاحات وزودنا five، بقوا كام؟"
+ },
+ {
+  "key": "math_en_qq18_4",
+  "lang": "ar_EG",
+  "text": "كان معانا twenty نجوم واختفى one، فاضل كام؟"
  },
  {
   "key": "math_en_qq18_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 18 ولا 17؟"
+  "text": "إيه الرقم الأكبر: eighteen ولا seventeen؟"
  },
  {
   "key": "math_ar_q19_0",
@@ -7262,27 +7692,37 @@
  {
   "key": "math_en_q19_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 19."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه nineteen."
  },
  {
   "key": "math_en_q19_1",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي بعد 19؟ بعد nineteen بييجي twenty."
+  "text": "إيه الرقم اللي بعد nineteen؟ بعد nineteen بييجي twenty."
  },
  {
   "key": "math_en_q19_2",
   "lang": "ar_EG",
-  "text": "إيه الرقم اللي قبل 20؟ قبل twenty بييجي nineteen."
+  "text": "إيه الرقم اللي قبل twenty؟ قبل twenty بييجي nineteen."
  },
  {
   "key": "math_en_q19_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 19 ولا 18؟ الرقم الأكبر هو 19."
+  "text": "إيه الرقم الأكبر: nineteen ولا eighteen؟ الرقم الأكبر هو nineteen."
+ },
+ {
+  "key": "math_en_qq19_1",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي بعد nineteen؟"
+ },
+ {
+  "key": "math_en_qq19_2",
+  "lang": "ar_EG",
+  "text": "إيه الرقم اللي قبل twenty؟"
  },
  {
   "key": "math_en_qq19_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 19 ولا 18؟"
+  "text": "إيه الرقم الأكبر: nineteen ولا eighteen؟"
  },
  {
   "key": "math_ar_q20_0",
@@ -7312,22 +7752,27 @@
  {
   "key": "math_en_q20_0",
   "lang": "ar_EG",
-  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه 20."
+  "text": "عدّ الصور، فيه كام واحدة؟ عدّ كل صورة مرة واحدة. فيه twenty."
  },
  {
   "key": "math_en_q20_3",
   "lang": "ar_EG",
-  "text": "معانا 10 تفاحات وزودنا 5، بقوا كام؟ ten زائد five يساوي fifteen. عدّهم مع بعض."
+  "text": "معانا ten تفاحات وزودنا five، بقوا كام؟ ten زائد five يساوي fifteen. عدّهم مع بعض."
  },
  {
   "key": "math_en_q20_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 20 ولا 19؟ الرقم الأكبر هو 20."
+  "text": "إيه الرقم الأكبر: twenty ولا nineteen؟ الرقم الأكبر هو twenty."
+ },
+ {
+  "key": "math_en_qq20_3",
+  "lang": "ar_EG",
+  "text": "معانا ten تفاحات وزودنا five، بقوا كام؟"
  },
  {
   "key": "math_en_qq20_5",
   "lang": "ar_EG",
-  "text": "إيه الرقم الأكبر: 20 ولا 19؟"
+  "text": "إيه الرقم الأكبر: twenty ولا nineteen؟"
  },
  {
   "key": "les_namesound_0",
@@ -9952,22 +10397,22 @@
  {
   "key": "nancy_intro_story",
   "lang": "ar_EG",
-  "text": "قصة جديدة يا ملك ماثيو الشجاع! أنا مس نانسي، اركب حصانك وخد سيفك، ويلا ننقذ مارك ومريم مع بعض!"
+  "text": "قصة جديدة يا ملك ماثيو الشجاع! اركب حصانك وخد سيفك، ويلا ننقذ مارك ومريم مع بعض!"
  },
  {
   "key": "nancy_intro_story_2",
   "lang": "ar_EG",
-  "text": "يلا يا ملك ماثيو! أنا مس نانسي، مغامرة جديدة في الغابة، أنت البطل اللي هينقذ أخوه مارك!"
+  "text": "يلا يا ملك ماثيو! مغامرة جديدة في الغابة، أنت البطل اللي هينقذ أخوه مارك!"
  },
  {
   "key": "storyMarkIntro",
   "lang": "ar_EG",
-  "text": "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! أخوك الصغير مارك تاه في الغابة لوحده، وانت البطل الوحيد اللي يقدر ينقذه! اركب حصانك، خد سيفك، ويلا بينا يا بطل!"
+  "text": "أهلاً يا ملك ماثيو! بحبك أوي! أخوك الصغير مارك تاه في الغابة لوحده، وانت البطل الوحيد اللي يقدر ينقذه! اركب حصانك، خد سيفك، ويلا بينا يا بطل!"
  },
  {
   "key": "storyMarkS1",
   "lang": "ar_EG",
-  "text": "ماثيو وصل بوابة الغابة على حصانه. الشجر طويل والدنيا هادية. فجأة سمع صوت صغير بيعيط: ده مارك! ماثيو قال: متخافش يا مارك، أخوك الكبير جاي!"
+  "text": "ماثيو وصل بوابة الغابة على حصانه. شجرتين طوال واقفين قدام البوابة، والدنيا هادية. فجأة سمع صوت صغير بيعيط: ده مارك! ماثيو قال: متخافش يا مارك، أخوك الكبير جاي!"
  },
  {
   "key": "storyMarkS1Q1",
@@ -10237,7 +10682,7 @@
  {
   "key": "storyFamilyIntro",
   "lang": "ar_EG",
-  "text": "أهلاً يا ملك ماثيو! أنا مس نانسي وبحبك أوي! النهارده انت الملك الحامي! مارك ومريم صغيرين ومحتاجينك تحميهم وتحبهم. يلا نروح المغامرة سوا!"
+  "text": "أهلاً يا ملك ماثيو! بحبك أوي! النهارده انت الملك الحامي! مارك ومريم صغيرين ومحتاجينك تحميهم وتحبهم. يلا نروح المغامرة سوا!"
  },
  {
   "key": "storyFamilyS1",
@@ -10537,22 +10982,22 @@
  {
   "key": "chess_queen_intro",
   "lang": "ar_EG",
-  "text": "دي الملكة! شايفة التاج الجميل اللي لابساه؟ الملكة دي أقوى قطعة في الشطرنج كله! هي اللي بتحمي الملك ماثيو وبتساعده! الوزير بتقدر تعمل كل حاجة: تمشي زي الطابية في خط مستقيم، وتمشي زي الفيل على الوتر! يعني بتتحرك في كل الاتجاهات! يلا نتعلّم بتمشي إزاي!"
+  "text": "ده الوزير! شايف التاج الجميل اللي لابسه؟ الوزير ده أقوى قطعة في الشطرنج كله! هو اللي بيحمي الملك ماثيو وبيساعده! الوزير بيقدر يعمل كل حاجة: بيمشي زي الطابية في خط مستقيم، وبيمشي زي الفيل على الوتر! يعني بيتحرك في كل الاتجاهات! يلا نتعلّم بيمشي إزاي!"
  },
  {
   "key": "chess_queen_lesson",
   "lang": "ar_EG",
-  "text": "يا ملك ماثيو، الوزير أقوى قطعة في اللعبة، لأنها بتجمع قوة الطابية وقوة الفيل مع بعض! يعني الوزير تقدر تمشي قدّام وورا ويمين وشمال زي الطابية، وكمان تقدر تمشي على الوتر زي الفيل، في كل الاتجاهات، وكام مربع زي ما انت عايز! يعني الوزير تقدر توصل لأي مكان في الرقعة بسرعة أوي! بس خد بالك: الوزير قوية وغالية أوي، يعني لازم تحافظ عليها كويس، ومتحطهاش في مكان تقدر قطعة من العدو تاكلها ببلاش! والوزير برضه مش بتنط فوق القطع، لازم طريقها يكون فاضي! ليه الوزير مهمة؟ لأنها بتهاجم من بعيد ومن قريب، وبتحمي الملك، وبتاكل قطع العدو، ولو خسرتها هيبقى صعب تكسب! فالعب بيها بذكاء يا ملك ماثيو، واستخدم قوتها في الوقت الصح! يلا حرّك الوزير وكل الكوكيز!"
+  "text": "يا ملك ماثيو، الوزير أقوى قطعة في اللعبة، لأنه بيجمع قوة الطابية وقوة الفيل مع بعض! يعني الوزير يقدر يمشي قدّام وورا ويمين وشمال زي الطابية، وكمان يقدر يمشي على الوتر زي الفيل، في كل الاتجاهات، وكام مربع زي ما انت عايز! يعني الوزير يقدر يوصل لأي مكان في الرقعة بسرعة أوي! بس خد بالك: الوزير قوي وغالي أوي، يعني لازم تحافظ عليه كويس، ومتحطوش في مكان تقدر قطعة من العدو تاكله ببلاش! والوزير برضه مش بينط فوق القطع، لازم طريقه يكون فاضي! ليه الوزير مهم؟ لأنه بيهاجم من بعيد ومن قريب، وبيحمي الملك، وبياكل قطع العدو، ولو خسرته هيبقى صعب تكسب! فالعب بيه بذكاء يا ملك ماثيو، واستخدم قوته في الوقت الصح! يلا حرّك الوزير وكل الكوكيز!"
  },
  {
   "key": "chess_queen_question",
   "lang": "ar_EG",
-  "text": "حرّك الوزير يا بطل! دوس عليها وبعدين دوس على أي مربع في خط مستقيم أو على الوتر!"
+  "text": "حرّك الوزير يا بطل! دوس عليه وبعدين دوس على أي مربع في خط مستقيم أو على الوتر!"
  },
  {
   "key": "chess_queen_win",
   "lang": "ar_EG",
-  "text": "برافو يا ملك ماثيو! بقيت تعرف الوزير، أقوى قطعة في اللعبة! الملكة القوية بقت صاحبتك! خدت نجمة جديدة، ويلا نتعلّم الملك، وانت الملك نفسه!"
+  "text": "برافو يا ملك ماثيو! بقيت تعرف الوزير، أقوى قطعة في اللعبة! الوزير القوي بقى صاحبك! خدت نجمة جديدة، ويلا نتعلّم الملك، وانت الملك نفسه!"
  },
  {
   "key": "chess_king_intro",
@@ -10602,7 +11047,7 @@
  {
   "key": "chess_cookies_lesson",
   "lang": "ar_EG",
-  "text": "يا ملك ماثيو، في اللعبة دي هنلعب بكل القطع اللي اتعلّمناها سوا! الكوكيز واقفة على الرقعة، وكل كوكي محتاج قطعة معينة توصله! الطابية بتوصل في خط مستقيم، والفيل بيوصل على الوتر، والحصان بينط نطة حرف الإل، والوزير بتوصل من أي مكان، والبيدق بياكل من الجنب! فقبل ما تحرّك أي قطعة، بص على الكوكي واسأل نفسك: القطعة دي تقدر توصله ولا لأ؟ ولو اخترت القطعة الغلط، مفيش أي مشكلة، جرّب قطعة تانية! دي لعبة ذكاء وتفكير، وكل مرة هتبقى أذكى من اللي قبلها! وكل كوكي تاكله هتاخد نجمة، ولو كلت كل الكوكيز هتاخد ألماسة لتاجك!"
+  "text": "يا ملك ماثيو، في اللعبة دي هنلعب بكل القطع اللي اتعلّمناها سوا! الكوكيز واقفة على الرقعة، وكل كوكي محتاج قطعة معينة توصله! الطابية بتوصل في خط مستقيم، والفيل بيوصل على الوتر، والحصان بينط نطة حرف الإل، والوزير بيوصل من أي مكان، والبيدق بياكل من الجنب! فقبل ما تحرّك أي قطعة، بص على الكوكي واسأل نفسك: القطعة دي تقدر توصله ولا لأ؟ ولو اخترت القطعة الغلط، مفيش أي مشكلة، جرّب قطعة تانية! دي لعبة ذكاء وتفكير، وكل مرة هتبقى أذكى من اللي قبلها! وكل كوكي تاكله هتاخد نجمة، ولو كلت كل الكوكيز هتاخد ألماسة لتاجك!"
  },
  {
   "key": "chess_cookies_question",
@@ -10667,6 +11112,6 @@
  {
   "key": "chess_full_win",
   "lang": "ar_EG",
-  "text": "برافو يا ملك ماثيو! خلّصت لعبة شطرنج كاملة! انت بطل الشطرنج الحقيقي! خدت ألماسة جديدة لتاجك، ومس نانسي فخورة بيك أوي! العب تاني كل ما تحب يا ملك!"
+  "text": "برافو يا ملك ماثيو! خلّصت لعبة شطرنج كاملة! انت بطل الشطرنج الحقيقي! خدت ألماسة جديدة لتاجك، وأنا فخورة بيك أوي! العب تاني كل ما تحب يا ملك!"
  }
 ]

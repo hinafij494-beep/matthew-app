@@ -25,6 +25,11 @@
     const t = String(text || "").trim();
     const arabic = String(lang || "").toLowerCase().startsWith("ar");
     if (arabic && isBareDigit(t)) return BY_TEXT[norm(t)];
+    // Numbers-once F7: bare Latin digits 11–20 in English resolve to the
+    // English tracing clips (tr_ennum_11..20). The generated EXACT map
+    // points here too once the packs rebuild; this keeps the routing
+    // correct on the current maps as well.
+    if (!arabic && isBareDigit(t)) { const n = Number(t); if (n >= 11 && n <= 20) return "tr_ennum_" + n; }
     return EXACT[t] || BY_TEXT[norm(t)];
   };
   const play = (text, lang) => { const key = keyFor(text, lang); return key ? playKey(key) : false; };

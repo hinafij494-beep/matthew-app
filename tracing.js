@@ -75,7 +75,7 @@
   // activity herself (nancy_intro_trace) before the instruction + glyph.
   // Spoken as the first item of the first-open sequence, with the same
   // ~5s gap as the instruction (it is a full sentence, not a bare glyph).
-  const NANCY_TRACE_INTRO = "يلا نتتبع الحرف يا ملك ماثيو! أنا مس نانسي، امشي على الخط بصوابعك على مهلك، أنت بطل!";
+  const NANCY_TRACE_INTRO = "يلا نتتبع الحرف يا ملك ماثيو! امشي على الخط بصوابعك على مهلك، أنت بطل!";
   // Rescue.js pattern: a clip KEY plays first (exact clip, no text-map
   // collision); the spoken text is only the device-TTS fallback.
   const speakKey = (text, key, lang) => {

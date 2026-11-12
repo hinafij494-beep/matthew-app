@@ -208,7 +208,7 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
   };
 
   // Round 3.2.1 note 25b: مس نانسي joins the praise rotation (1 in 6) —
-  // «أنا مس نانسي وبحبك يا ماثيو، برافو يا بطل!» (recorded clip praise_nancy).
+  // «بحبك يا ماثيو، برافو يا بطل!» (recorded clip praise_nancy, Nancy voice).
   // Nancy-lines draft: her 10 praise variants + 5 gentle try-agains are
   // woven in alongside — every 3rd correct answer gets a rotating
   // nancy_praise_* line, every 2nd wrong answer a rotating nancy_retry_*
