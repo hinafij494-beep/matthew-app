@@ -121,6 +121,19 @@ test("story adventures and the mixed surprise quiz are both on the home screen",
   assert.match(rescue, /questions = shuffle\(all\)/, "story questions must be reshuffled every run");
 });
 
+test("rescue adventures: stage 1 shows AND speaks the intro plus the stage line (live verification 3.2.2 DEFECT 1)", () => {
+  const rescue = read("rescue.js");
+  // The stage-0 branch must not show/speak the intro alone: the child
+  // needs the stage line to derive the stage-1 answer (same fix as the
+  // brave stories in stories.js).
+  const m = rescue.match(/if \(first && stage === 0\) \{([\s\S]*?)\} else \{/);
+  assert.ok(m, "rescue startStage stage-0 branch not found");
+  assert.match(m[1], /story\.intro \+ " " \+ s\.line/, "stage 1 must SHOW intro + stage line");
+  assert.match(m[1], /speakSeq\(\[story\.intro, s\.line\]\)/, "stage 1 must SPEAK intro + stage line back-to-back");
+  assert.doesNotMatch(m[1], /\$\("rescueStory"\)\.textContent = story\.intro;/, "stage 1 must not show the intro alone");
+  assert.ok(rescue.includes("const speakSeq = list =>"), "rescue needs the speakSeq helper (same as the brave stories)");
+});
+
 test("recorded teacher voice covers the whole quiz bank and the corpus", () => {
   const corpus = JSON.parse(read("audio-src/corpus.json"));
   assert.ok(corpus.length >= 600, "corpus should cover the app, got " + corpus.length);
