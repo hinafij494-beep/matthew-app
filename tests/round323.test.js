@@ -190,15 +190,27 @@ test("side finding (live DOM): digit answers show once, word answers keep their 
       assert.ok(b.classList.contains("digit-only"), "digit button must carry the digit-only class");
     }
     // Letters quiz: non-digit answers must still get their picture.
+    // Round 3.2.4: the sampled FIRST question can be a counting question
+    // («كم حرفاً في كلمة…؟») whose answers are ALL digits — that is
+    // correct rendering, not a missing picture, so asserting on question 1
+    // alone flaked ~1 run in 8 (2 all-digit questions in the letters bank).
+    // Advance (answer + next) until a question with a word/letter answer
+    // appears, checking the digit rule on every question visited.
     window.start("letters");
-    const letButtons = [...window.document.querySelectorAll("#answers .answer")];
-    assert.equal(letButtons.length, 4, "letters question must render 4 answers");
-    let pictured = 0, digitOnly = 0;
-    for (const b of letButtons) {
-      if (/^[0-9٠-٩]+$/.test(b.dataset.answer)) { digitOnly++; assert.equal(b.querySelector(".answer-picture"), null); }
-      else { pictured++; assert.ok(b.querySelector(".answer-picture"), "word/letter answer must keep its picture: " + b.dataset.answer); }
+    let foundWord = false;
+    for (let attempt = 0; attempt < 10 && !foundWord; attempt++) {
+      const letButtons = [...window.document.querySelectorAll("#answers .answer")];
+      assert.equal(letButtons.length, 4, "letters question must render 4 answers");
+      for (const b of letButtons) {
+        if (/^[0-9٠-٩]+$/.test(b.dataset.answer)) { assert.equal(b.querySelector(".answer-picture"), null, "digit answer must have no picture slot: " + b.dataset.answer); }
+        else { foundWord = true; assert.ok(b.querySelector(".answer-picture"), "word/letter answer must keep its picture: " + b.dataset.answer); }
+      }
+      if (!foundWord) {
+        letButtons[0].click();
+        window.document.getElementById("nextBtn").click();
+      }
     }
-    assert.ok(pictured > 0, "letters question must include at least one pictured answer");
+    assert.ok(foundWord, "letters quiz must include at least one pictured answer");
   } finally {
     window.close();
   }
@@ -261,7 +273,10 @@ test("item 2 (F1/F1b): inline SVGs in the explain box are emoji-sized; ث مثا
 
 test("item 2 (F2/F3): haraka distractors and syllable answers get the neutral 🔤 tile", () => {
   const lessons = read("lessons.js");
-  assert.ok(lessons.includes('if (a === "حركة أخرى") return "🔤";'), "«حركة أخرى» must not borrow the horse picture");
+  // Round 3.2.4 blocker 2: the fake distractor is gone entirely (question
+  // + picture guard) — haraka names fall through to the neutral 🔤 tile
+  // via the base-letter lookup instead of borrowing a picture.
+  assert.ok(!lessons.includes("حركة أخرى"), "the fake distractor must not appear anywhere in lessons.js any more");
   assert.ok(lessons.includes('if (/^[ء-ي][ً-ٟ]?$/.test(String(a || ""))) return "🔤";'), "syllable answers must get the neutral tile, not one shared picture");
 });
 
@@ -550,7 +565,77 @@ test("playKey takes onDone and fires it once on end (or async when unplayable)",
   assert.ok(vc.includes("setTimeout(done, 0); return false;"), "playKey must fire onDone async when there is nothing to play");
 });
 
-test("speakSequence debounce never swallows a chained (onDone) call", () => {
-  const voice = read("voice.js");
-  assert.ok(voice.includes('typeof onDone !== "function") return true'), "the 300ms debounce must not apply when onDone is present");
+// ---------- Round 3.2.4 blocker 1: speakSequence threw on EVERY call ----------
+// The old test below was STRING-ONLY (it matched the debounce text and
+// never called the function), so it passed while the shipped function
+// threw `ReferenceError: joined is not defined` on every call — `joined`
+// and `now` were read here but declared only inside speak(). This loader
+// runs the REAL voice.js in a vm (Capacitor import stubbed; document.body
+// stays null so the load-time UI wiring is skipped) with a recording
+// MatthewClips runtime, so the test exercises the real code path.
+function loadVoiceReal() {
+  const src = read("voice.js").replace(
+    /^import \{ TextToSpeech \}.*$/m,
+    "const TextToSpeech = { stop: async () => {}, openInstall: async () => {} };",
+  );
+  assert.ok(!src.includes("from \"@capacitor-community/text-to-speech\""), "voice.js import must be stubbed for the vm");
+  const calls = [];
+  const sandbox = {
+    window: {},
+    document: {
+      getElementById: () => null,
+      querySelector: () => null,
+      createElement: () => ({
+        addEventListener() {}, setAttribute() {}, appendChild() {},
+        classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
+        style: {}, dataset: {},
+      }),
+      addEventListener: () => {},
+      body: null,
+    },
+    MutationObserver: class { constructor() {} observe() {} disconnect() {} },
+    setTimeout, clearTimeout,
+  };
+  sandbox.window.MatthewClips = {
+    playSequence(list, lang, onDone) {
+      calls.push({ list: [...list], lang });
+      if (typeof onDone === "function") setTimeout(onDone, 0);
+      return true;
+    },
+    play: () => false,
+    stop: () => {},
+  };
+  vm.runInNewContext(src, vm.createContext(sandbox), { filename: "voice.js" });
+  const MV = sandbox.window.MatthewVoice;
+  assert.ok(MV && typeof MV.speakSequence === "function", "voice.js must expose MatthewVoice.speakSequence");
+  return { MV, calls };
+}
+
+test("speakSequence runs for real: no throw, calls playSequence, onDone fires, 300ms debounce kept (round 3.2.4 blocker 1)", async () => {
+  const { MV, calls } = loadVoiceReal();
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  // (a)+(b) a plain sequence plays without throwing and reaches the clips runtime
+  let done1 = false;
+  assert.equal(MV.speakSequence(["اختبار واحد", "اختبار اثنين"], "ar-EG", () => { done1 = true; }), true);
+  assert.equal(calls.length, 1, "speakSequence must call MatthewClips.playSequence");
+  assert.deepEqual(calls[0].list, ["اختبار واحد", "اختبار اثنين"]);
+  assert.equal(calls[0].lang, "ar-EG");
+  // (c) onDone fires via the clips runtime
+  await sleep(20);
+  assert.equal(done1, true, "onDone must fire when the sequence finishes");
+  // (d) debounce: an identical repeat WITHOUT onDone inside 300ms returns
+  // true without re-playing…
+  assert.equal(MV.speakSequence(["اختبار واحد", "اختبار اثنين"], "ar-EG"), true);
+  assert.equal(calls.length, 1, "debounced repeat must not re-call playSequence");
+  // …but WITH onDone it re-plays (a chained caller must never hang)
+  let done2 = false;
+  assert.equal(MV.speakSequence(["اختبار واحد", "اختبار اثنين"], "ar-EG", () => { done2 = true; }), true);
+  assert.equal(calls.length, 2, "chained repeat must re-play despite the debounce window");
+  await sleep(20);
+  assert.equal(done2, true, "chained onDone must fire");
+  // empty input fires onDone async and returns false instead of throwing
+  let done3 = false;
+  assert.equal(MV.speakSequence([], "ar-EG", () => { done3 = true; }), false);
+  await sleep(20);
+  assert.equal(done3, true, "empty sequence must still fire onDone");
 });

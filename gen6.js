@@ -96,7 +96,18 @@ const INPUT_OVERRIDES = {
   ans_58: "سبعتاشر",
   // ans_260: Egyptian "مَيَّا" (water) — the shadda forces the Egyptian
   // reading; verify the result does not sound like "مئة" (100).
-  ans_260: "ميّا"
+  ans_260: "ميّا",
+  // Round 3.2.4 blocker 4: bare corpus text renders «العسكرية» (feminine)
+  // deterministically — plain re-record is PCM-identical to the defective
+  // clip. The comma pauses after each «العسكري» force the masculine
+  // reading (verified ar + en: العسكري ×2, العسكرية 0×). Corpus text
+  // unchanged; this override is TTS input only.
+  chess_pawn_question: "حرك العسكري، لقدام يا بطل! دوس على العسكري، وبعدين دوس على المربع اللي قدامه!",
+  // Round 3.2.3 let_full_9: the backend drawls bare «ر» (88 s for 269
+  // chars, deterministic). The shipped clip (35.6 s, 7.57 ch/s) was
+  // rendered from the harakat-kept input below; gen6.js strips diacritics
+  // for ar_EG, so without this override a re-run re-introduces the drawl.
+  let_full_9: "ده حرف الراء، وصوته رَ. لساننا بيهتز وبيتكرر بسرعة: رررر، زي صوت العربية وهي ماشية. شكله بيتغير حسب مكانه في الكلمة: في أول الكلمة بيبقى ر، وفي نص الكلمة ـر، وفي آخر الكلمة ـر. بنشوفه في كلمات بنعرفها زي رِيشَة وقِرْد وقَمَر. يلا نقول صوته مع بعض بصوت عالي: رَ، رَ، رَ!"
 };
 if (INPUT_OVERRIDES[key]) input = INPUT_OVERRIDES[key];
 input = input.replace(/\s+/g, " ").trim();

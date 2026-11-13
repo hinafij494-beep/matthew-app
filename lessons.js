@@ -224,7 +224,10 @@
       const formDist=allForms.filter(f=>f!==l.forms[0]).sort(()=>Math.random()-.5).slice(0,3);
       qs.push({q:"أي شكل لحرف "+l.name+" في أول الكلمة؟",a:[l.forms[0],...formDist],c:0});
     });
-    marks.forEach(m=>qs.push({q:"ما اسم الحركة في المقطع ده؟",show:m.sample,a:[m.name,"حركة أخرى","الشدة","التنوين"],c:0}));
+    // Round 3.2.4 blocker 2: the old fixed distractors contained a fake
+    // "other haraka" choice. Every question now draws its 3 distractors
+    // from real haraka names only — the other three marks + الشدة + التنوين.
+    marks.forEach(m=>{const pool=[...marks.map(x=>x.name).filter(n=>n!==m.name),"الشدة","التنوين"].sort(()=>Math.random()-.5).slice(0,3);qs.push({q:"ما اسم الحركة في المقطع ده؟",show:m.sample,a:[m.name,...pool],c:0});});
     qs.push({q:"أي مقطع عليه فتحة؟",a:["بَ","بُ","بِ","بْ"],c:0},{q:"أي مقطع عليه ضمة؟",a:["تِ","تُ","تَ","تْ"],c:1},{q:"أي مقطع عليه كسرة؟",a:["مَ","مْ","مِ","مُ"],c:2},{q:"أي مقطع عليه سكون؟",a:["سَ","سُ","سْ","سِ"],c:2});
     quiz=qs.sort(()=>Math.random()-.5).slice(0,10);quizIndex=0;score=0;moveBreakShown=false;showQuiz();
   }
@@ -236,10 +239,6 @@
   const quizPicMap = {};
   lessons.forEach(l => { quizPicMap[l.name] = l.emoji[0]; l.forms.forEach(f => { if (!(f in quizPicMap)) quizPicMap[f] = l.emoji[0]; }); });
   const quizPic = a => {
-    // Round 3.2.3 F2: the fake distractor "حركة أخرى" must not borrow a
-    // meaningful picture — the old fallback took its first letter (ح) and
-    // showed a horse 🐎, a readable clue for a fake answer.
-    if (a === "حركة أخرى") return "🔤";
     if (quizPicMap[a]) return quizPicMap[a];
     // Round 3.2.3 F3: syllable answers (one letter + one haraka/sukun)
     // all showed the same letter picture (e.g. all 🍌) — a neutral tile

@@ -188,6 +188,12 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     // (the next screen would never open). A debounced repeat is a
     // double-tap; a chained call is programmatic sequencing, so it
     // re-plays and its own onDone fires at the end.
+    // Round 3.2.4 blocker 1: `joined`/`now` were read by the debounce
+    // check below but never declared in this scope (they lived only
+    // inside speak()) — every speakSequence call threw ReferenceError
+    // and no multi-part sequence ever played.
+    const joined = list.join(" ");
+    const now = Date.now();
     if (joined === lastSpokenText && now - lastSpokenAt < 300 && typeof onDone !== "function") return true;
     lastSpokenText = joined; lastSpokenAt = now;
     let invoked = false;

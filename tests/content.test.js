@@ -735,7 +735,10 @@ test("letter-quiz and Arabic-journey spoken strings are covered by the voice cor
     need("أي مقطع عليه " + h.replace(/^ال/, "") + "؟ اختار الإجابة الصحيحة", "syllable question");
     need(h, "haraka-name choice");
   }
-  for (const d of ["حركة أخرى", "الشدة", "التنوين"]) need(d, "haraka distractor");
+  // Round 3.2.4 blocker 2: the fake distractor is gone — the only haraka
+  // distractors left are الشدة and التنوين (the other three marks are
+  // covered by lsq_haraka_* above).
+  for (const d of ["الشدة", "التنوين"]) need(d, "haraka distractor");
   // Arabic explanations are recorded in ar_EG, not en_US
   for (const e of corpus.filter(e => e.key.startsWith("math_en_q") || e.key.startsWith("basic_en_")))
     assert.strictEqual(e.lang, "ar_EG", e.key + " must be recorded in ar_EG");
