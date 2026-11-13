@@ -528,3 +528,17 @@ main{padding-bottom:110px}
 #letterSchool{padding-bottom:32px}
 /* Side finding (item 9): digit-only quiz answers render label-only, big. */
 .answer.digit-only{font-size:52px;font-weight:900}
+
+/* ==== Round 3.2.6 — lesson tabs (Worker B) ====
+   One tab system shared by every lesson entry (lessons.js, learning.js,
+   math-journey.js, math-english.js, science.js, reading.js, tracing.js):
+   three big pictured tabs — 📖 الدرس (lesson) / 🧕 الشرح (explanation,
+   spoken once on open) / 🏆 الاختبار (that lesson's quiz only). Each tab
+   is at least 56px tall with icon + label so a 5-year-old can tap it.
+   .tab-panel is hidden unless .active; switching tabs is class-only and
+   always stops the current audio first. */
+.lesson-tabs{display:flex;gap:8px;margin:12px 0}
+.lesson-tab{flex:1;min-height:56px;border:2px solid #e3dcff;border-radius:16px;background:#fff;font-size:18px;font-weight:800;color:#5b3cc4;cursor:pointer;padding:8px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.lesson-tab.active{background:#5b3cc4;color:#fff;border-color:#5b3cc4;box-shadow:0 4px 12px #5b3cc433}
+.tab-panel{display:none}
+.tab-panel.active{display:block}

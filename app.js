@@ -118,21 +118,15 @@ function choose(button,correct){if(answered)return;const q0=questions[index];con
 // Round 3.2.2 P1-7: second try — a first wrong answer only disables that
 // button and invites another pick; mastery is recorded on the final outcome.
 if(!correct&&tries===0){window.__qTries=1;window.__calmStreak=0;button.disabled=true;button.classList.add("wrong");$("feedback").textContent="محاولة جميلة! جرّب تاني يا بطل! 💜";try{window.MatthewVoice?.feedback("wrong")}catch(_){}return}
-answered=true;try{window.MatthewMastery?.record(category+":"+q0.q,correct);window.MatthewMastery?.record(category,correct)}catch(_){}document.querySelectorAll(".answer").forEach(b=>b.disabled=true);if(correct){score+=tries===0?1:0.5;window.MatthewVoice?.feedback("correct");button.classList.add("correct");$("feedback").textContent=tries===0?"برافو عليك! إجابة صحيحة ⭐":"برافو! جاوبت صح من تاني محاولة ⭐";
+answered=true;try{window.MatthewMastery?.record(category+":"+q0.q,correct);window.MatthewMastery?.record(category,correct)}catch(_){}document.querySelectorAll(".answer").forEach(b=>b.disabled=true);const tk=window.__qToken;let medalEarned=false;const explainAnswer=()=>{if(window.__qToken!==tk||!answered)return;try{const cq=questions[index];if(!cq)return;const ans=cq.a[cq.c];const isNum=/^[0-9٠-٩]+$/.test(String(ans).trim());/* Numbers-once F3: a digit answer was already spoken in the options — speak the prefix alone, never the digit a 2nd time. */const parts=[];if(medalEarned)parts.push("برافو يا ملك ماثيو! خدت وسام الهدوء والدقة عشان جاوبت صح على مهلك!");parts.push("الإجابة الصحيحة هي");if(!isNum)parts.push(ans);if(window.MatthewVoice?.speakSequence)window.MatthewVoice.speakSequence(parts,"ar-EG");else window.MatthewVoice?.speak(isNum?"الإجابة الصحيحة هي":"الإجابة الصحيحة هي "+ans,"ar-EG")}catch(_){}};if(correct){score+=tries===0?1:0.5;window.MatthewVoice?.feedback("correct",explainAnswer);button.classList.add("correct");$("feedback").textContent=tries===0?"برافو عليك! إجابة صحيحة ⭐":"برافو! جاوبت صح من تاني محاولة ⭐";
 // Round 3.2.2 P1-7: وسام الهدوء والدقة — correct, unhurried (≥2.5s after
 // the question appeared), twice in a row earns the medal.
-const calm=Date.now()-(window.__qShownAt||0)>=2500;window.__calmStreak=calm?((window.__calmStreak||0)+1):0;if((window.__calmStreak||0)>=2){window.__calmStreak=0;try{localStorage.setItem("matthewCalmMedals",safeNum(localStorage.getItem("matthewCalmMedals"))+1)}catch(_){}$("feedback").textContent+=" 🎖️ وسام الهدوء والدقة!";try{window.MatthewVoice?.speak("برافو يا ملك ماثيو! خدت وسام الهدوء والدقة عشان جاوبت صح على مهلك!","ar-EG")}catch(_){}}}else{window.__calmStreak=0;window.MatthewVoice?.feedback("wrong");button.classList.add("wrong");$("feedback").textContent="محاولة جميلة! الإجابة الصحيحة باللون الأخضر 💜";const q=questions[index];document.querySelectorAll(".answer").forEach(b=>{if(b.dataset.answer===q.a[q.c])b.classList.add("correct")})}const tk=window.__qToken;setTimeout(()=>{if(window.__qToken!==tk||!answered)return;try{const cq=questions[index];if(cq){const ans=cq.a[cq.c];
-// Numbers-once F3: a digit answer was already spoken in the options —
-// re-speaking it here would say the number a 2nd time in one turn, so
-// for bare-number answers speak the prefix alone (the green highlight
-// shows which one it is). Non-number answers are announced as before.
-const isNum=/^[0-9٠-٩]+$/.test(String(ans).trim());
-if(window.MatthewVoice?.speakSequence)window.MatthewVoice.speakSequence(isNum?["الإجابة الصحيحة هي"]:["الإجابة الصحيحة هي",ans],"ar-EG");else window.MatthewVoice?.speak(isNum?"الإجابة الصحيحة هي":"الإجابة الصحيحة هي "+ans,"ar-EG")}}catch(_){}},2600);$("nextBtn").textContent=index===questions.length-1?"شوف نتيجتك 🏆":"السؤال التالي ←";$("nextBtn").classList.remove("hidden")}
+const calm=Date.now()-(window.__qShownAt||0)>=2500;window.__calmStreak=calm?((window.__calmStreak||0)+1):0;if((window.__calmStreak||0)>=2){window.__calmStreak=0;try{localStorage.setItem("matthewCalmMedals",safeNum(localStorage.getItem("matthewCalmMedals"))+1)}catch(_){}$("feedback").textContent+=" 🎖️ وسام الهدوء والدقة!";medalEarned=true;}}else{window.__calmStreak=0;window.MatthewVoice?.feedback("wrong",explainAnswer);button.classList.add("wrong");$("feedback").textContent="محاولة جميلة! الإجابة الصحيحة باللون الأخضر 💜";const q=questions[index];document.querySelectorAll(".answer").forEach(b=>{if(b.dataset.answer===q.a[q.c])b.classList.add("correct")})}$("nextBtn").textContent=index===questions.length-1?"شوف نتيجتك 🏆":"السؤال التالي ←";$("nextBtn").classList.remove("hidden")}
 function finish(){ clearQuizProgress(category);$("quiz").classList.add("hidden");$("result").classList.remove("hidden");const stars=Math.max(1,Math.round(score/questions.length*5));$("resultText").textContent="جاوبت صح على "+fmtScore(score)+" من "+arabicDigits(questions.length)+" أسئلة";$("resultStars").textContent="⭐".repeat(stars)+"☆".repeat(5-stars);const old=safeNum(localStorage.getItem("matthewBest")),total=safeNum(localStorage.getItem("matthewStars")),points=safeNum(localStorage.getItem("matthewPoints")),trophies=safeNum(localStorage.getItem("matthewTrophies"));localStorage.setItem("matthewBest",Math.max(old,score));localStorage.setItem("matthewStars",total+stars);localStorage.setItem("matthewPoints",points+score*10);if(score===questions.length||(old>0&&score>old))localStorage.setItem("matthewTrophies",trophies+1);let history=[];try{history=JSON.parse(localStorage.getItem("matthewHistory")||"[]");if(!Array.isArray(history))history=[]}catch(_){history=[]}history.unshift({category:names[category],score,total:questions.length,stars,points:score*10,at:Date.now()});localStorage.setItem("matthewHistory",JSON.stringify(history.slice(0,30)));const resultLine="جاوبت صح على "+fmtScore(score)+" من "+arabicDigits(questions.length)+" أسئلة";const resultTip=score>=Math.ceil(questions.length*0.7)?"برافو يا ملك ماثيو! انت بطل شاطر أوي!":"محاولة جميلة يا بطل ماثيو! العب تاني وهتجيب نجوم أكتر!";try{if(window.MatthewVoice?.speakSequence)window.MatthewVoice.speakSequence([resultLine,resultTip],"ar-EG");else window.MatthewVoice?.speak(resultLine,"ar-EG")}catch(_){}updateStats();window.scrollTo({top:0,behavior:"smooth"})}
 function updateStats(){$("totalStars").textContent=arabicDigits(safeNum(localStorage.getItem("matthewStars")));$("totalPoints").textContent=arabicDigits(safeNum(localStorage.getItem("matthewPoints")));$("totalTrophies").textContent=arabicDigits(safeNum(localStorage.getItem("matthewTrophies")));$("bestScore").textContent=arabicDigits(safeNum(localStorage.getItem("matthewBest")));let ar=0,en=0;try{ar=Number(JSON.parse(localStorage.getItem("matthewMathProgress")||"{}").completed)||0}catch(_){}try{en=Number(JSON.parse(localStorage.getItem("matthewEnglishMathProgress")||"{}").completed)||0}catch(_){}const aml=$("arabicMathLevel");if(aml)aml.textContent=arabicDigits(Math.min(20,ar+1));const eml=$("englishMathLevel");if(eml)eml.textContent=arabicDigits(Math.min(20,en+1))}
 $("gameList").addEventListener("click",e=>{const card=e.target.closest("[data-category]");if(card)start(card.dataset.category)});$("nextBtn").addEventListener("click",()=>{if(index<questions.length-1){index++;showQuestion()}else finish()});$("replayBtn").addEventListener("click",()=>{window.__askNow?.()});$("backBtn").addEventListener("click",()=>{$("quiz").classList.add("hidden");$("gameList").classList.remove("hidden");saveQuizProgress();window.__qToken=(window.__qToken||0)+1;try{window.MatthewVoice?.stop()}catch(_){}const mb=$("moveBreak");if(mb)mb.remove();const aEl=$("answers");if(aEl)aEl.style.visibility=""});$("homeBtn").addEventListener("click",()=>{window.__qToken=(window.__qToken||0)+1;try{window.MatthewVoice?.stop()}catch(_){}$("result").classList.add("hidden");$("gameList").classList.remove("hidden");$("learningList")?.classList.remove("hidden")});$("againBtn").addEventListener("click",()=>start(category));updateStats();
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEvent=e;$("installBtn").classList.remove("hidden")});$("installBtn").addEventListener("click",async()=>{if(!installEvent)return;installEvent.prompt();await installEvent.userChoice;installEvent=null;$("installBtn").classList.add("hidden")});if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
-// ===== Home doors: four big sections instead of one long overwhelming list =====
+// ===== Home doors: three big sections instead of one long overwhelming list =====
 (function initHomeDoors() {
   const main = document.querySelector("main");
   const learnList = document.getElementById("learningList");
@@ -140,11 +134,14 @@ window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEven
   if (!main || !learnList || !gameList) return;
   const hero = document.querySelector(".hero");
   const heads = [...document.querySelectorAll(".section-head")];
+  // Round 3.2.6 note 9 (user home-structure decision): home has ONLY three
+  // sections — Lessons, Tests, Games. The 4th «الألوان والتلوين» door was
+  // removed; coloring lives inside Games now (workshop card + coloring
+  // card, both classify as "games" below).
   const DOORS = [
     { id: "learn", icon: "📚", label: "الدروس", hint: "الشرح خطوة خطوة" },
     { id: "quiz", icon: "🏆", label: "الأسئلة والاختبارات", hint: "اختبر شطارتك" },
-    { id: "games", icon: "🎮", label: "الألعاب", hint: "قصص وألعاب ممتعة" },
-    { id: "colors", icon: "🎨", label: "الألوان والتلوين", hint: "ارسم ولوّن الحروف" }
+    { id: "games", icon: "🎮", label: "الألعاب", hint: "قصص وألعاب ممتعة" }
   ];
   const nav = document.createElement("nav");
   nav.id = "homeDoors"; nav.className = "home-doors"; nav.setAttribute("aria-label", "أقسام المملكة");
@@ -281,11 +278,12 @@ window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEven
     if (card.dataset && card.dataset.stories) return "games";
     if (card.dataset && card.dataset.braveStories) return "games";
     if (card.dataset && card.dataset.workshop) return "games"; // Round 3.2: colouring-games workshop lives in the Games door
+    if (card.dataset && card.dataset.coloring) return "games"; // Round 3.2.6 note 8: the Games coloring card lives in the Games door
     if (card.dataset && card.dataset.memory) return "games"; // Round 3.2.1: memory game lives in the Games door
     if (card.dataset && card.dataset.chess) return "games"; // Round 3.2.2 P0-1: chess card lives in the Games door
     const t = card.textContent || "";
     if (t.includes("لوحة ولي الأمر")) return "parent";
-    if (t.includes("اكتب بإصبعك")) return "colors";
+    if (t.includes("اكتب بإصبعك")) return "learn"; // Round 3.2.6 note 9: tracing is a lesson activity; the colors door it used to hang under is gone
     if (t.includes("التوصيل واسمع")) return "games";
     if (card.closest("#gameList")) return card.dataset.category ? "quiz" : "games";
     return "learn";

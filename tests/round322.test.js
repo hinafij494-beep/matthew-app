@@ -41,7 +41,7 @@ test("P0-1: classify() sends EVERY dynamically added card to the right door", ()
   assert.equal(classify(fakeCard({ category: "letters" }, false)), "learn");
   // Text-based rules still work.
   assert.equal(classify(fakeCard({}, false, "لوحة ولي الأمر")), "parent");
-  assert.equal(classify(fakeCard({}, false, "اكتب بإصبعك")), "colors");
+  assert.equal(classify(fakeCard({}, false, "اكتب بإصبعك")), "learn");
   assert.equal(classify(fakeCard({}, false, "التوصيل واسمع")), "games");
 });
 

@@ -208,7 +208,14 @@ function makeEl() {
       if (sel === "[data-level]") out = parseAttr("data-level", "level");
       else if (sel === "[data-value]") out = parseAttr("data-value", "value");
       else if (sel === "[data-index]") out = parseAttr("data-index", "index");
-      else if (sel === "[data-card]") {
+      else if (sel === "[data-lesson-tab]") {
+        // Round 3.2.6: lesson tabs carry string values (lesson/explain/quiz).
+        out = [...this.innerHTML.matchAll(/data-lesson-tab="([a-z]+)"/g)].map((m) => {
+          const b = makeEl();
+          b.dataset.lessonTab = m[1];
+          return b;
+        });
+      } else if (sel === "[data-card]") {
         out = [...this.innerHTML.matchAll(/data-card="(\d+)"/g)].map((m) => {
           const b = makeEl();
           b.dataset.card = m[1];
@@ -326,6 +333,8 @@ test("EN journey listen button: each number spoken exactly once (all 20 levels)"
 
 // Already correct: the learn-screen auto-narration («ده رقم X. يلا نعدّ…»)
 // mentions the number once. Guard it so the echo fix does not break it.
+// Round 3.2.6 item 2: the narration no longer fires on lesson open — it
+// auto-plays once when the 🧕 الشرح tab opens. Open that tab first.
 test("learn auto-narration mentions the number once (AR + EN)", async () => {
   const voice = loadVoice();
   for (const [file, n, lang] of [["math-journey.js", 5, "ar"], ["math-english.js", 5, "en"]]) {
@@ -333,8 +342,17 @@ test("learn auto-narration mentions the number once (AR + EN)", async () => {
     journey.card.onclick();
     journey.panel.querySelectorAll("[data-level]")[n - 1].onclick();
     await sleep(250);
+    // Opening the lesson must NOT narrate (lesson tab is silent).
+    assert.equal(journey.voice.log.filter((c) => c.kind === "sequence").length, 0,
+      file + ": lesson tab must not auto-narrate");
+    const tabs = journey.panel.querySelectorAll("[data-lesson-tab]");
+    const explain = tabs.find((b) => b.dataset.lessonTab === "explain");
+    assert.ok(explain && typeof explain.onclick === "function",
+      file + ": the الشرح tab must exist and be clickable");
+    explain.onclick();
+    await sleep(250);
     const seqs = journey.voice.log.filter((c) => c.kind === "sequence");
-    assert.ok(seqs.length >= 1, file + ": auto-narration sequence must fire");
+    assert.ok(seqs.length >= 1, file + ": auto-narration sequence must fire on the explain tab");
     const first = seqs[0].list[0];
     const keys = await voice.playAll(first, seqs[0].lang);
     assert.equal(keys.length, 1, file + ": narration must resolve to one clip");
@@ -441,9 +459,12 @@ test("correct-answer announcement must not re-speak a digit answer already spoke
   assert.equal(replays, 0, `digit ${answer} already spoken in the options (${answerKey}); announcement replayed it ${replays} more time(s)`);
   // Regression guard on the REAL code: app.js choose() must keep the
   // isNum branch (prefix alone for digits, full sequence otherwise).
+  // Round 3.2.6 (integrator, item 4): the announcement is now built as a
+  // parts array so the calm-medal line can precede it in the same
+  // sequence — the digit rule is unchanged.
   const appSrc = read("app.js");
-  assert.ok(appSrc.includes('isNum?["الإجابة الصحيحة هي"]'), "app.js choose() must speak the prefix alone for digit answers");
-  assert.ok(appSrc.includes('["الإجابة الصحيحة هي",ans]'), "app.js choose() must keep the full announcement for non-number answers");
+  assert.ok(appSrc.includes('parts.push("الإجابة الصحيحة هي")'), "app.js choose() must announce the correct answer");
+  assert.ok(appSrc.includes("if(!isNum)parts.push(ans)"), "app.js choose() must speak the prefix alone for digit answers (F3)");
   // Control: a non-number answer IS still announced with the answer.
   const ctrlKeys = await voice.playAll(["الإجابة الصحيحة هي", "أسد"], "ar-EG");
   assert.equal(ctrlKeys.length, 2, `non-number announcement must play the prefix + the answer, got ${ctrlKeys}`);

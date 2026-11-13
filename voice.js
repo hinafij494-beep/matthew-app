@@ -85,7 +85,11 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
   document.addEventListener("pointerdown", event => {
     unlockAudio();
     if (event.target && event.target.closest && event.target.closest("button,[role='button']")) {
-      sound("tap");
+      // Round 3.2.6 item 4: no tap blip over a playing voice clip — the
+      // 55ms tone landing mid-word reads as a second voice stepping in.
+      // The blip returns as soon as the clip ends (isPlaying false).
+      // Optional-chained: an older cached clips bundle has no isPlaying.
+      if (!window.MatthewClips?.isPlaying?.()) sound("tap");
     }
   }, { capture: true, passive: true });
 
@@ -93,58 +97,6 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
   // and no Capacitor TextToSpeech fallback. A text with no recorded clip
   // stays silent (the UI shows a listen prompt) instead of speaking in a
   // mismatched device voice ("عربي في إنجليزي مشقلب").
-  // EXCEPTION — the pronunciation challenge below: hearing a single word
-  // and repeating it IS the feature, and most practice words have no
-  // recorded clip. It gets its own scoped device-TTS path (challengeSpeak),
-  // clip-first, with a voice matched to the word's language, so an English
-  // word is never spoken by an Arabic voice or vice versa.
-  const waitForBrowserVoices = synth => new Promise(resolve => {
-    let finished = false;
-    const done = () => {
-      if (finished) return;
-      finished = true;
-      try { synth.removeEventListener("voiceschanged", done); } catch (_) {}
-      resolve(synth.getVoices() || []);
-    };
-    const current = synth.getVoices() || [];
-    if (current.length) return resolve(current);
-    try { synth.addEventListener("voiceschanged", done); } catch (_) {}
-    setTimeout(done, 900);
-  });
-  const challengeSpeak = async (text, lang, id) => {
-    // Clip first (the teacher's voice where a clip exists), device voice
-    // only for practice words with no clip — never for narration.
-    try { if (window.MatthewClips && window.MatthewClips.play(text, lang)) return true; } catch (_) {}
-    const synth = window.speechSynthesis;
-    if (!synth || !window.SpeechSynthesisUtterance) {
-      setStatus("الصوت غير متاح في هذا المتصفح. جرّب محرك تحويل النص إلى كلام في إعدادات أندرويد.");
-      return false;
-    }
-    try {
-      synth.cancel();
-      const voices = await waitForBrowserVoices(synth);
-      if (id !== requestId) return false;
-      const prefix = String(lang || "ar-EG").slice(0, 2).toLowerCase();
-      const matches = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
-      const female = matches.find(v => /female|woman|زينة|سلمى|أميرة|ليلى|salma|zeina|amira|laila|aria/i.test(v.name || ""));
-      const exact = female || matches.find(v => v.lang.toLowerCase() === String(lang).toLowerCase());
-      const fallback = matches[0];
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = exact?.lang || fallback?.lang || lang;
-      utterance.rate = 0.92;
-      utterance.pitch = 1.12;
-      utterance.volume = 1;
-      if (exact || fallback) utterance.voice = exact || fallback;
-      utterance.onstart = () => { if (id === requestId) setStatus("🔊 اسمع كويس يا بطل"); };
-      utterance.onend = () => { if (id === requestId) setStatus("👏 خلصنا!"); };
-      utterance.onerror = () => {
-        if (id === requestId) setStatus("الصوت لم يبدأ. ارفع صوت الوسائط وتأكد من تثبيت صوت اللغة على الهاتف.");
-      };
-      synth.resume();
-      synth.speak(utterance);
-      return true;
-    } catch (_) { return false; }
-  };
   let lastSpokenText = "", lastSpokenAt = 0;
   const speak = async (rawText, lang = "ar-EG") => {
     const text = String(rawText || "").trim();
@@ -240,15 +192,29 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
   const tryKeys = ["try1", "try2", "try3"];
   const nancyRetryKeys = ["nancy_retry_1", "nancy_retry_2", "nancy_retry_3", "nancy_retry_4", "nancy_retry_5"];
   let praiseIndex = 0, tryIndex = 0, nancyPraiseIndex = 0, nancyRetryIndex = 0, correctCount = 0, wrongCount = 0;
-  const feedback = kind => {
+  const feedback = (kind, onDone) => {
     const id = ++requestId;
-    try { window.MatthewClips?.stop(); } catch (_) {}
+    // Round 3.2.6 (integrator, item 4): optional onDone fires when the
+    // praise clip ENDS — the answer-explanation call sites chain on it, so
+    // the explanation no longer cuts the praise at a fixed 2600ms (every
+    // praise clip is 2.4–4.8s). The once-guard keeps the contract exact
+    // even if the first playKey fails (it fires its onDone async itself)
+    // and the fallback plays too.
+    let doneFired = false;
+    const doneOnce = () => { if (doneFired) return; doneFired = true; if (typeof onDone === "function") { try { onDone(); } catch (_) {} } };
+    // Round 3.2.6 item 4: stop ONLY a running question sequence. A full
+    // stop() here killed any narration that had just started in the same
+    // tick — stories win() lost its win line in ~2ms, colour-game
+    // sentences were cut at the praise delay. A lone context clip is left
+    // playing; the praise queues behind it in the clips runtime instead.
+    // Fallback to stop() for a clips bundle without stopSequence.
+    try { if (window.MatthewClips?.stopSequence) window.MatthewClips.stopSequence(); else window.MatthewClips?.stop(); } catch (_) {}
     try { window.speechSynthesis?.cancel(); } catch (_) {}
     if (isAndroidNative()) { try { TextToSpeech.stop(); } catch (_) {} }
     sound(kind);
     try {
       const clips = window.MatthewClips;
-      if (!clips) return;
+      if (!clips) { setTimeout(doneOnce, 0); return; }
       const key = kind === "correct"
         ? (++correctCount % 3 === 0
           ? nancyPraiseKeys[nancyPraiseIndex++ % nancyPraiseKeys.length]
@@ -258,14 +224,24 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
             ? nancyRetryKeys[nancyRetryIndex++ % nancyRetryKeys.length]
             : tryKeys[tryIndex++ % tryKeys.length])
           : null;
+      // Round 3.2.6 item 4: praise waits 550ms, not 280ms — the correct
+      // chime's last tone ends ~+500ms, so at 280ms the praise voice
+      // started over the ringing chime (the "two voices at once" the
+      // user hears on every answer). 550ms clears the chime first.
       if (key) setTimeout(() => {
-        if (id === requestId && clips.playKey(key)) return;
+        // A newer speak() in the same turn supersedes the praise — its
+        // onDone stays unfired, so no stale explanation plays over the
+        // new audio (the call-site token guard is the second line).
+        if (id !== requestId) return;
+        if (clips.playKey(key, doneOnce)) return;
         // Unpacked Nancy clip (not generated yet): fall back to the old
         // generic clip of the same mood, never silence.
-        if (id === requestId && (key === "praise_nancy" || key.startsWith("nancy_praise_"))) clips.playKey("praise1");
-        else if (id === requestId && key.startsWith("nancy_retry_")) clips.playKey("try1");
-      }, 280);
-    } catch (_) {}
+        if (key === "praise_nancy" || key.startsWith("nancy_praise_")) { clips.playKey("praise1", doneOnce); return; }
+        if (key.startsWith("nancy_retry_")) { clips.playKey("try1", doneOnce); return; }
+        setTimeout(doneOnce, 0);
+      }, 550);
+      else setTimeout(doneOnce, 0);
+    } catch (_) { setTimeout(doneOnce, 0); }
   };
 
   window.MatthewVoice = {
@@ -296,113 +272,6 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     hero.append(button);
   };
 
-  const addPronunciationChallenge = () => {
-    const gameList = document.getElementById("gameList");
-    const main = document.querySelector("main");
-    if (!gameList || !main || document.getElementById("pronunciationChallenge")) return;
-    const card = document.createElement("button");
-    card.type = "button";
-    card.className = "game-card pink";
-    card.innerHTML = '<span class="game-icon">🎙️</span><strong>تحدي النطق</strong><small>اسمع الكلمة وحاول تنطقها</small><span class="play">ابدأ التدريب ←</span>';
-    gameList.append(card);
-
-    const panel = document.createElement("section");
-    panel.id = "pronunciationChallenge";
-    panel.className = "quiz-panel hidden";
-    panel.innerHTML = '<div class="quiz-top"><button id="pronounceBack" class="back" type="button">→ رجوع</button><strong>🎙️ تحدي النطق</strong><span id="pronounceScore">0 / 0</span></div><div class="language-switch"><button id="pronounceArabic" class="secondary" type="button">العربية</button><button id="pronounceEnglish" class="primary" type="button">الإنجليزية</button></div><div class="pronounce-card"><div id="pronounceEmoji" class="question-emoji">🍎</div><h2 id="pronounceWord">Apple</h2><p id="pronounceMeaning">تفاحة</p><button id="pronounceListen" class="voice-button" type="button">🔊 اسمع النطق</button><button id="pronounceCorrect" class="primary" type="button">👍 نطقها صح</button><button id="pronounceRetry" class="secondary" type="button">🔄 جرّب تاني</button><p id="pronounceStatus" class="feedback" aria-live="polite">اسمع الكلمة وحاول تكررها</p><button id="pronounceNext" class="secondary" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div><p class="voice-note">ماما أو بابا يسمعوا ماثيو، ولو نطق الكلمة صح دوسوا 👍 نطقها صح!</p>';
-    main.insertBefore(panel, document.querySelector("footer"));
-
-    const lists = {
-      ar: [
-        {word:"أسد",meaning:"حيوان قوي",emoji:"🦁"},
-        {word:"تفاحة",meaning:"فاكهة لذيذة",emoji:"🍎"},
-        {word:"قمر",meaning:"ينير الليل",emoji:"🌙"},
-        {word:"مدرسة",meaning:"مكان التعلم",emoji:"🏫"},
-        {word:"سيارة",meaning:"وسيلة مواصلات",emoji:"🚗"},
-        {word:"فراشة",meaning:"حشرة جميلة",emoji:"🦋"},
-        {word:"كتاب",meaning:"نقرأ فيه",emoji:"📘"},
-        {word:"شمس",meaning:"تنير النهار",emoji:"☀️"}
-      ],
-      en: [
-        {word:"Apple",meaning:"تفاحة",emoji:"🍎"},
-        {word:"Cat",meaning:"قطة",emoji:"🐱"},
-        {word:"Sun",meaning:"شمس",emoji:"☀️"},
-        {word:"Book",meaning:"كتاب",emoji:"📘"},
-        {word:"Ball",meaning:"كرة",emoji:"⚽"},
-        {word:"Dog",meaning:"كلب",emoji:"🐶"},
-        {word:"Milk",meaning:"حليب",emoji:"🥛"},
-        {word:"Fish",meaning:"سمكة",emoji:"🐟"}
-      ]
-    };
-    let language = "en", current = null, score = 0, attempts = 0, wordToken = 0;
-    const arDigits = v => String(v).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[+d]);
-    const showScore = () => { panel.querySelector("#pronounceScore").textContent = arDigits(score) + " / " + arDigits(attempts); };
-    const nextWord = () => {
-      wordToken++;
-      const list = lists[language];
-      let candidate = list[Math.floor(Math.random() * list.length)];
-      if (current && list.length > 1) {
-        while (candidate.word === current.word) candidate = list[Math.floor(Math.random() * list.length)];
-      }
-      current = candidate;
-      panel.querySelector("#pronounceEmoji").textContent = current.emoji;
-      panel.querySelector("#pronounceWord").textContent = current.word;
-      panel.querySelector("#pronounceMeaning").textContent = current.meaning;
-      panel.querySelector("#pronounceStatus").textContent = "اسمع الكلمة وحاول تكررها";
-      showScore();
-      speak(current.word, language === "ar" ? "ar-EG" : "en-US");
-    };
-    const setLanguage = value => {
-      language = value;
-      panel.querySelector("#pronounceArabic").className = value === "ar" ? "primary" : "secondary";
-      panel.querySelector("#pronounceEnglish").className = value === "en" ? "primary" : "secondary";
-      current = null;
-      nextWord();
-    };
-    const open = () => {
-      gameList.classList.add("hidden");
-      document.getElementById("learningList")?.classList.add("hidden");
-      document.getElementById("quiz")?.classList.add("hidden");
-      document.getElementById("result")?.classList.add("hidden");
-      panel.classList.remove("hidden");
-      setLanguage("en");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    };
-    card.addEventListener("click", open);
-    panel.querySelector("#pronounceBack").addEventListener("click", () => {
-      panel.classList.add("hidden");
-      gameList.classList.remove("hidden");
-      document.getElementById("learningList")?.classList.remove("hidden");
-      stop();
-    });
-    panel.querySelector("#pronounceArabic").addEventListener("click", () => setLanguage("ar"));
-    panel.querySelector("#pronounceEnglish").addEventListener("click", () => setLanguage("en"));
-    panel.querySelector("#pronounceListen").addEventListener("click", () => {
-      if (current) challengeSpeak(current.word, language === "ar" ? "ar-EG" : "en-US", ++requestId);
-    });
-    panel.querySelector("#pronounceNext").addEventListener("click", nextWord);
-    // Round 3.2.3 item 3 — PARENT-JUDGED mode: the 🎤 button can never work
-    // in the APK (Android WebView has no SpeechRecognition), so the dead
-    // mic path and its "غير مدعومة" message are gone. The parent listens
-    // and judges: "نطقها صح" counts a correct answer + praise and moves
-    // on; "جرّب تاني" replays the word for another try.
-    panel.querySelector("#pronounceCorrect").addEventListener("click", () => {
-      if (!current) return;
-      attempts++;
-      score++;
-      sound("correct");
-      panel.querySelector("#pronounceStatus").textContent = "👏 ممتاز! نطق جميل يا بطل!";
-      showScore();
-      try { feedback("correct"); } catch (_) {}
-      const tk = wordToken;
-      setTimeout(() => { if (tk === wordToken) nextWord(); }, 1400);
-    });
-    panel.querySelector("#pronounceRetry").addEventListener("click", () => {
-      if (!current) return;
-      panel.querySelector("#pronounceStatus").textContent = "اسمع كويس وحاول تاني يا بطل!";
-      challengeSpeak(current.word, language === "ar" ? "ar-EG" : "en-US", ++requestId);
-    });
-  };
 
   const ensureQuestionButton = area => {
     // Round 3.2.3 item 18: index.html already has a STATIC #replayBtn
@@ -436,13 +305,11 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
 
   const observer = new MutationObserver(() => {
     addHomeTestButton();
-    addPronunciationChallenge();
     observeQuestions();
   });
   if (document.body) {
     observer.observe(document.body, { childList: true, subtree: true, characterData: true });
     addHomeTestButton();
-    addPronunciationChallenge();
     observeQuestions();
   }
 })();

@@ -87,13 +87,19 @@ test("all app assets referenced by the page exist", () => {
     assert.ok(html.includes(asset), `page does not reference ${asset}`);
   }
 });
-test("voice module supports Arabic and English speech practice", () => {
+test("voice module supports Arabic and English speech practice (round 3.2.6 item 1: pronunciation challenge removed)", () => {
   const voice = read("voice.js");
   assert.match(voice, /ar-EG/);
-  assert.match(voice, /en-US/);
-  assert.match(voice, /SpeechSynthesisUtterance/);
-  assert.match(voice, /SpeechRecognition/);
-  assert.match(voice, /تحدي النطق/);
+  // The en-US literal lived in the deleted challengeSpeak; the module now
+  // takes a lang parameter (default ar-EG) and passes it to the clips
+  // runtime, so English lessons still speak via their recorded clips.
+  assert.ok(voice.includes('lang = "ar-EG"'), "speak/speakSequence must take a lang parameter");
+  assert.ok(voice.includes("MatthewClips.play(text, language)"), "the lang must reach the clips runtime");
+  assert.ok(!voice.includes("SpeechRecognition"), "the pronunciation challenge (and its mic) is gone");
+  assert.ok(!voice.includes("SpeechSynthesisUtterance"), "no device-synth speech path remains");
+  assert.ok(!voice.includes("تحدي النطق"), "no pronunciation-challenge UI may remain");
+  assert.ok(!voice.includes("challengeSpeak"), "challengeSpeak is gone");
+  assert.ok(voice.includes("speakSequence"), "recorded-voice sequencing stays");
 });
 
 test("expanded learning modules are loaded and included in offline cache", () => {
