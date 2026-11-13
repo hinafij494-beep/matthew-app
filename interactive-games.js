@@ -1188,6 +1188,11 @@
     try { if (key && window.MatthewClips && window.MatthewClips.playKey(key)) return; } catch (_) {}
     window.MatthewVoice?.speak(text, "ar-EG");
   };
+  // Same helper as the brave stories (stories.js): speak a list of texts
+  // back-to-back, each resolved to its recorded clip.
+  const speakSeq = list => {
+    if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(list, "ar-EG");
+  };
   const arabicDigits = value => String(value).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[Number(d)]);
   // حارس صور الأسئلة (تدقيق الصور، الجولة ٣.٢.١) — نفس قاعدة app.js:
   // صورة السؤال لازم ما تكشفش الإجابة الصح ولا ترسم اختيار غلط، ولو
@@ -1303,8 +1308,14 @@
     const s = story.stages[stage];
     $("rescueTitle").textContent = s.icon + " " + s.name;
     if (first && stage === 0) {
-      $("rescueStory").textContent = story.intro;
-      speak(story.intro, story.introClip);
+      // Live verification 3.2.2 DEFECT 1 (same fix as the brave stories):
+      // stage 1 used to show + speak ONLY the intro, so the stage line
+      // never reached the child and the stage-1 answer could not be
+      // derived from anything shown or spoken. Show the intro AND the
+      // stage line, and speak them back-to-back (intro clip, then
+      // stage-line clip) — no re-record needed: both clips already exist.
+      $("rescueStory").textContent = story.intro + " " + s.line;
+      speakSeq([story.intro, s.line]);
     } else {
       $("rescueStory").textContent = s.line;
       speak(s.line, s.clip);
