@@ -6,8 +6,8 @@
 // is never changed (full written explanation stays intact, every sci_* clip
 // still maps to title + short + long), the presentation is sliced into 2-3
 // steps at sentence boundaries, and the lesson's ONE clip still plays once
-// (auto-play on the first step only; 🔊 اسمع الشرح replays the whole lesson
-// from any step).
+// (round 3.2.6 item 2: auto-play on the 🧕 الشرح tab only, once per lesson;
+// 🔊 اسمع الشرح replays the whole lesson from any step).
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
@@ -140,7 +140,7 @@ test("renderLesson shows one step at a time with Next/Back controls (source)", (
   assert.ok(fn.includes('renderLesson(index+1)'), "lesson Next must reset to step 0");
 });
 
-test("audio: the ONE sci_* clip still plays once — auto-play on step 0 only, Listen replays the whole lesson", () => {
+test("audio: the ONE sci_* clip still plays once — auto-play on the الشرح tab only, Listen replays the whole lesson", () => {
   const fn = src.slice(src.indexOf("function renderLesson"));
   // The full lesson text (title + short + long) is spoken in exactly two
   // places: the 🔊 button and the guarded auto-play — never per step.
@@ -155,11 +155,16 @@ test("audio: the ONE sci_* clip still plays once — auto-play on step 0 only, L
     "last lesson must sequence lesson then offer");
   assert.ok(fn.includes('panel.querySelector("#scienceListen").onclick=()=>speak(lesson[0]+". "+lesson[2]+" "+lesson[3]);'),
     "🔊 اسمع الشرح must keep playing the WHOLE lesson from any step");
-  assert.ok(fn.includes("if(autoSpeak&&step===0){const tkN=++sciToken;setTimeout"),
-    "auto-play must be guarded to the first step only");
+  // Round 3.2.6 item 2: the auto-play moved from lesson-open (step 0) to
+  // the 🧕 الشرح tab — guarded once per lesson, token-cancelled on tab
+  // switch so it never doubles or plays over another clip.
+  assert.ok(fn.includes('if(name==="explain"&&!sciExplainSpoken){'),
+    "auto-play must be guarded to the explain tab, once per lesson");
+  assert.ok(fn.includes("const tkE=++sciToken;"),
+    "explain-tab auto-play must be token-guarded");
+  assert.ok(!fn.includes("if(autoSpeak&&step===0)"),
+    "the old step-0 auto-play on lesson open must be gone");
   assert.ok(!fn.includes("speak(steps[step]"), "audio must never be split per step");
-  assert.ok(fn.includes("else {sciToken++;"),
-    "a step change must cancel a pending first-step auto-play timer");
 });
 
 test("step controls are big and styled like the lesson pager (CSS)", () => {
@@ -202,6 +207,12 @@ test("DOM: stepping through يطفو ولا يغوص؟ (71 words) — Next/Back,
   q('[data-lesson="5"]').click();
   await sleep(250);
 
+  // Round 3.2.6 item 2: opening the lesson is silent — the full clip
+  // auto-plays once when the 🧕 الشرح tab opens, never on lesson open.
+  assert.equal(spoken.filter((t) => t === full).length, 0, "lesson open must not auto-play");
+  q('[data-lesson-tab="explain"]').click();
+  await sleep(250);
+
   // Step 1: first slice only, indicator ١ من ٣, Back disabled, clip played once.
   assert.equal(q(".science-detail").textContent, steps[0]);
   assert.ok(q(".science-step-indicator").textContent.includes("خطوة ١ من ٣"),
@@ -209,7 +220,7 @@ test("DOM: stepping through يطفو ولا يغوص؟ (71 words) — Next/Back,
   assert.equal(q(".science-step-dots").textContent, "●○○");
   assert.equal(q("#scienceStepPrev").disabled, true);
   assert.equal(q("#scienceStepNext").disabled, false);
-  assert.equal(spoken.filter((t) => t === full).length, 1, "full clip must auto-play exactly once on open");
+  assert.equal(spoken.filter((t) => t === full).length, 1, "full clip must auto-play exactly once on the explain tab");
 
   // Step 2: Next shows the second slice, no re-play.
   q("#scienceStepNext").click();
@@ -240,6 +251,8 @@ test("DOM: stepping through يطفو ولا يغوص؟ (71 words) — Next/Back,
     "Listen must replay the full lesson clip from any step");
 
   // Lesson Next leaves the stepped lesson for the next one, at its step 0.
+  // Round 3.2.6 item 2: the next lesson is silent on open too — its clip
+  // plays once from its own 🧕 الشرح tab.
   q("#scienceNext").click();
   await sleep(250);
   const rain = byTitle.get("المطر");
@@ -247,16 +260,24 @@ test("DOM: stepping through يطفو ولا يغوص؟ (71 words) — Next/Back,
   assert.equal(q(".science-detail").textContent, rain.long,
     "short lesson (29 words) shows its whole text in one step");
   assert.equal(q("#scienceStepNext"), null, "short lessons show no step controls");
+  assert.equal(spoken.filter((t) => t === rainFull).length, 0,
+    "the next lesson must not auto-play on open");
+  q('[data-lesson-tab="explain"]').click();
+  await sleep(250);
   assert.equal(spoken.filter((t) => t === rainFull).length, 1,
-    "the next lesson auto-plays its own clip once on open");
+    "the next lesson's clip plays once from its explain tab");
 
   // Lesson Prev returns to the stepped lesson, reset to step 1.
   q("#sciencePrev").click();
   await sleep(250);
   assert.equal(q(".science-detail").textContent, steps[0]);
   assert.ok(q(".science-step-indicator").textContent.includes("خطوة ١ من ٣"));
+  assert.equal(spoken.filter((t) => t === full).length, 2,
+    "re-opening a lesson must not replay its clip (once per explain-tab open, never per open)");
+  q('[data-lesson-tab="explain"]').click();
+  await sleep(250);
   assert.equal(spoken.filter((t) => t === full).length, 3,
-    "re-opening a lesson auto-plays its clip once again (once per open, never per step)");
+    "the explain-tab guard resets per lesson, so the clip plays once again from the tab");
 });
 
 test("DOM: a short lesson has no step controls and speaks once (المطر, 29 words)", { skip: skipDom }, async () => {
@@ -271,5 +292,9 @@ test("DOM: a short lesson has no step controls and speaks once (المطر, 29 w
   assert.equal(q("#scienceStepNext"), null);
   assert.equal(q("#scienceStepPrev"), null);
   assert.equal(q(".science-step-indicator"), null);
+  // Round 3.2.6 item 2: silent on open; the clip plays once from the الشرح tab.
+  assert.equal(spoken.filter((t) => t === full).length, 0);
+  q('[data-lesson-tab="explain"]').click();
+  await sleep(250);
   assert.equal(spoken.filter((t) => t === full).length, 1);
 });

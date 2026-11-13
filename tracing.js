@@ -58,6 +58,8 @@
   learningList.append(card);
 
   let setId = "arLetters", index = 0, mask = null, covered = null, guideCells = 0, hitCells = 0, drawing = false, done = false;
+  let traceTab = "lesson", traceExplainFor = "", traceChallenge = null, traceKeepTab = false;
+  const traceTabsHTML = active => `<div class="lesson-tabs" role="tablist"><button type="button" class="lesson-tab${active === "lesson" ? " active" : ""}" data-lesson-tab="lesson" role="tab">📖 الدرس</button><button type="button" class="lesson-tab${active === "explain" ? " active" : ""}" data-lesson-tab="explain" role="tab">🧕 الشرح</button><button type="button" class="lesson-tab${active === "quiz" ? " active" : ""}" data-lesson-tab="quiz" role="tab">🏆 الاختبار</button></div>`;
   let justOpened = false, narrationToken = 0;
   const COLORS = [
     { c: "#e53935", n: "أحمر" }, { c: "#fb8c00", n: "برتقالي" }, { c: "#ffeb3b", n: "أصفر" },
@@ -108,6 +110,7 @@
     document.getElementById("result")?.classList.add("hidden");
     document.getElementById("parentPanel")?.classList.add("hidden");
     panel.classList.remove("hidden");
+    traceTab = "lesson"; traceChallenge = null;
     justOpened = true;
     renderPicker();
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -172,9 +175,16 @@
     const glyph = set.items[index];
     const tk = ++narrationToken;
     done = false;
-    panel.innerHTML =
-      '<div class="quiz-top"><button id="traceBack" class="back" type="button">→ رجوع</button><strong>✏️ اكتب بإصبعك</strong><span>' +
-      String(index + 1).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[+d]) + ' / ' + String(set.items.length).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[+d]) + '</span></div>' +
+    // Round 3.2.6 item 2: the trace screen opens with three big tabs —
+    // 📖 الدرس (the trace canvas itself), 🧕 الشرح (the instruction,
+    // spoken once when the tab opens), 🏆 الاختبار (a trace-and-check
+    // challenge for the current set). Tab switches re-paint (traceKeepTab)
+    // so each canvas gets fresh listeners and a fresh mask; the lesson
+    // progress resets on tab switch — the challenge is the quiz, the
+    // lesson is practice.
+    if (!traceKeepTab) { traceTab = "lesson"; traceChallenge = null; }
+    traceKeepTab = false;
+    const lessonHTML =
       '<div class="trace-sets">' + Object.entries(SETS).map(([id, s]) => '<button type="button" class="trace-set' + (id === setId ? " active" : "") + '" data-set="' + id + '">' + s.title + '</button>').join("") + '</div>' +
       '<p class="touch-game-instruction">' + TRACE_INSTR + '</p>' +
       '<div class="trace-colors" role="group" aria-label="اختار لون التلوين">' + COLORS.map(col => '<button type="button" class="trace-color' + (col.c === traceColor ? " active" : "") + '" data-color="' + col.c + '" style="background:' + col.c + '" aria-label="لون ' + col.n + '"></button>').join("") + '</div>' +
@@ -185,35 +195,111 @@
       '<button id="traceNext" class="primary" type="button">اللي بعده<span class="pager-arrow">←</span></button>' +
       '<button id="traceListen" class="voice-button" type="button">🔊 اسمع</button>' +
       '<button id="traceClear" class="secondary" type="button">امسح وابدأ تاني</button></div>';
+    const explainHTML =
+      '<div class="explain-box"><strong>🧕 الميس بتشرح لك من الصفر</strong><p style="font-size:64px;font-weight:900;text-align:center;color:#5b3cc4;margin:8px 0">' + glyph + '</p><p>' + TRACE_INSTR + '</p><p>امشي على الخط بصوابعك على مهلك، ولوّن الحرف من جوّه بس. اختار اللون اللي يعجبك من الألوان، ولما تخلص كل الخط هتسمع برافو!</p></div>' +
+      '<button id="traceExplainListen" class="voice-button" type="button">🔊 اسمع الشرح</button><p>اسمع الشرح كويس، وبعدين جرّب 🏆 الاختبار — اكتب ٣ حروف من نفس المجموعة!</p>';
+    let quizHTML;
+    if (!traceChallenge) {
+      quizHTML = '<p>تحدي التتبع على نفس المجموعة — اكتب ٣ حروف بإصبعك من غير غلط!</p><button id="traceQuizStart" class="primary" type="button">🏆 ابدأ التحدي ⭐</button>';
+    } else if (traceChallenge.done) {
+      quizHTML = '<div class="academy-visual">' + (traceChallenge.score >= 2 ? "🏆" : "💪") + '</div><h2>' + (traceChallenge.score >= 2 ? "برافو يا بطل!" : "محاولة جميلة!") + '</h2><p class="academy-hint">كتبت صح ' + traceChallenge.score + ' من ٣.</p><button id="traceQuizAgain" class="secondary" type="button">العب تاني</button><button id="traceQuizBack" class="primary" type="button">ارجع للدرس<span class="pager-arrow">←</span></button>';
+    } else {
+      const ch = traceChallenge.glyphs[traceChallenge.pos];
+      quizHTML = '<p class="math-stage">تحدّي ' + (traceChallenge.pos + 1) + ' من ٣ — اكتب ' + ch.glyph + ' بإصبعك</p>' +
+        '<div class="trace-wrap" dir="' + set.dir + '"><canvas id="traceGuide2" width="320" height="320" aria-hidden="true"></canvas><canvas id="traceCanvas2" width="320" height="320" aria-label="لوحة تحدي ' + ch.glyph + '"></canvas></div>' +
+        '<div class="progress"><div id="traceProgress2" style="width:0%"></div></div>' +
+        '<p id="traceMsg2" class="feedback" aria-live="polite"></p>' +
+        '<button id="traceChallengeListen" class="voice-button" type="button">🔊 اسمع الحرف</button>' +
+        '<button id="traceQuizBack" class="secondary" type="button">ارجع للدرس<span class="pager-arrow">←</span></button>';
+    }
+    panel.innerHTML =
+      '<div class="quiz-top"><button id="traceBack" class="back" type="button">→ رجوع</button><strong>✏️ اكتب بإصبعك</strong><span>' +
+      String(index + 1).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[+d]) + ' / ' + String(set.items.length).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[+d]) + '</span></div>' +
+      traceTabsHTML(traceTab) +
+      '<div class="tab-panel' + (traceTab === "lesson" ? " active" : "") + '" data-tab-panel="lesson">' + lessonHTML + '</div>' +
+      '<div class="tab-panel' + (traceTab === "explain" ? " active" : "") + '" data-tab-panel="explain">' + explainHTML + '</div>' +
+      '<div class="tab-panel' + (traceTab === "quiz" ? " active" : "") + '" data-tab-panel="quiz">' + quizHTML + '</div>';
     panel.querySelector("#traceBack").onclick = renderPicker;
-    panel.querySelectorAll("[data-set]").forEach(b => b.onclick = () => { setId = b.dataset.set; index = 0; render(); });
+    panel.querySelectorAll("[data-lesson-tab]").forEach(b => b.onclick = () => switchTraceTab(b.dataset.lessonTab));
+    panel.querySelectorAll("[data-set]").forEach(b => b.onclick = () => { setId = b.dataset.set; index = 0; traceChallenge = null; render(); });
     panel.querySelector("#traceListen").onclick = () => speakKey(glyph, set.key(index), set.lang);
     panel.querySelector("#traceClear").onclick = render;
     panel.querySelector("#tracePrev").onclick = () => { index = (index + set.items.length - 1) % set.items.length; render(); };
     panel.querySelector("#traceNext").onclick = () => { index = (index + 1) % set.items.length; render(); };
-    setupCanvas(glyph, set);
+    panel.querySelector("#traceExplainListen").onclick = () => speakTraceExplain();
+    const qs = panel.querySelector("#traceQuizStart");
+    if (qs) qs.onclick = () => startTraceChallenge();
+    const qa = panel.querySelector("#traceQuizAgain");
+    if (qa) qa.onclick = () => startTraceChallenge();
+    panel.querySelectorAll("#traceQuizBack").forEach(b => b.onclick = () => { traceTab = "lesson"; traceKeepTab = true; render(); });
+    const cl = panel.querySelector("#traceChallengeListen");
+    if (cl) cl.onclick = () => { const ch = traceChallenge.glyphs[traceChallenge.pos]; speakKey(ch.glyph, set.key(ch.idx), set.lang); };
+    if (traceTab === "lesson") setupCanvas(glyph, set);
+    else if (traceTab === "quiz" && traceChallenge && !traceChallenge.done) {
+      const ch = traceChallenge.glyphs[traceChallenge.pos];
+      setupCanvas(ch.glyph, set, { guide: "traceGuide2", canvas: "traceCanvas2", progress: "traceProgress2", msg: "traceMsg2" }, () => {
+        traceChallenge.score++;
+        traceChallenge.pos++;
+        if (traceChallenge.pos >= traceChallenge.glyphs.length) traceChallenge.done = true;
+        traceKeepTab = true;
+        render();
+      });
+      setTimeout(() => { if (tk === narrationToken) speakKey(ch.glyph, set.key(ch.idx), set.lang); }, 150);
+    }
     panel.querySelectorAll(".trace-color").forEach(b => b.onclick = () => {
       traceColor = b.dataset.color;
       panel.querySelectorAll(".trace-color").forEach(x => x.classList.toggle("active", x === b));
       if (strokeCtx) { strokeCtx.strokeStyle = traceColor; strokeCtx.fillStyle = traceColor; }
     });
-    // Instruction narration: on the first render after open, مس نانسي
-    // opens the activity, then the instruction, then the glyph; later
-    // renders speak the glyph only.
+  }
+  // Instruction narration — now on the 🧕 الشرح tab (Round 3.2.6 item 2).
+  // On the first explain open after open(), مس نانسي opens the activity
+  // herself (nancy_intro_trace) before the instruction + glyph; later
+  // glyphs speak the instruction + glyph only.
+  function speakTraceExplain() {
+    const set = SETS[setId];
+    const glyph = set.items[index];
+    const tk = ++narrationToken;
     if (justOpened) {
       justOpened = false;
       speakSequence([{ text: NANCY_TRACE_INTRO, key: "nancy_intro_trace", lang: "ar-EG" }, { text: TRACE_INSTR, key: "trace_instr", lang: "ar-EG" }, { text: glyph, key: set.key(index), lang: set.lang }], tk);
     } else {
-      setTimeout(() => { if (tk === narrationToken) speakKey(glyph, set.key(index), set.lang); }, 150);
+      speakSequence([{ text: TRACE_INSTR, key: "trace_instr", lang: "ar-EG" }, { text: glyph, key: set.key(index), lang: set.lang }], tk);
     }
   }
-
-  function setupCanvas(glyph, set) {
-    const guide = panel.querySelector("#traceGuide");
-    const canvas = panel.querySelector("#traceCanvas");
+  function maybeSpeakTraceExplain() {
+    const key = setId + ":" + index;
+    if (traceExplainFor === key) return;
+    traceExplainFor = key;
+    speakTraceExplain();
+  }
+  function switchTraceTab(name) {
+    if (name !== "lesson" && name !== "explain" && name !== "quiz") return;
+    narrationToken++;
+    try { window.MatthewVoice?.stop(); } catch (_) {}
+    traceTab = name;
+    traceKeepTab = true;
+    render();
+    if (name === "explain") maybeSpeakTraceExplain();
+  }
+  // Round 3.2.6 item 3: the 🏆 tab is a trace-and-check challenge for the
+  // current set — the current glyph + the next 2 in set order, each traced
+  // to the same 40% goal. 0 new clips (the trace_done clip celebrates).
+  function startTraceChallenge() {
+    const set = SETS[setId];
+    const glyphs = [0, 1, 2].map(k => { const idx = (index + k) % set.items.length; return { glyph: set.items[idx], idx: idx }; });
+    traceChallenge = { glyphs: glyphs, pos: 0, score: 0, done: false };
+    traceTab = "quiz";
+    traceKeepTab = true;
+    render();
+  }
+  function setupCanvas(glyph, set, ids, onDone) {
+    ids = ids || { guide: "traceGuide", canvas: "traceCanvas", progress: "traceProgress", msg: "traceMsg" };
+    const guide = panel.querySelector("#" + ids.guide);
+    const canvas = panel.querySelector("#" + ids.canvas);
     const gtx = guide && guide.getContext("2d");
     const ctx = canvas && canvas.getContext("2d");
-    if (!gtx || !ctx) { panel.querySelector("#traceMsg").textContent = "هذا الجهاز لا يدعم لوحة الرسم."; return; }
+    if (!gtx || !ctx) { panel.querySelector("#" + ids.msg).textContent = "هذا الجهاز لا يدعم لوحة الرسم."; return; }
     buildMask(glyph);
     // Full-resolution glyph mask: paint may only exist inside the letter.
     const maskC = document.createElement("canvas");
@@ -278,8 +364,8 @@
         if (mask[cell] && !covered[cell]) { covered[cell] = 1; hitCells++; }
       }
       const ratio = guideCells ? hitCells / guideCells : 0;
-      panel.querySelector("#traceProgress").style.width = Math.min(100, Math.round(ratio * 100)) + "%";
-      if (ratio >= GOAL && !done) finishTracing(glyph, set);
+      panel.querySelector("#" + ids.progress).style.width = Math.min(100, Math.round(ratio * 100)) + "%";
+      if (ratio >= GOAL && !done) finishTracing(glyph, set, ids, onDone);
     };
     const dot = p => { ctx.beginPath(); ctx.arc(p.x, p.y, 13, 0, Math.PI * 2); ctx.fill(); };
     let pen = null; // last point INSIDE the glyph, or null while outside
@@ -324,9 +410,10 @@
     canvas.addEventListener("pointercancel", stop);
   }
 
-  function finishTracing(glyph, set) {
+  function finishTracing(glyph, set, ids, onDone) {
     done = true;
-    panel.querySelector("#traceMsg").textContent = "برافو يا بطل! كتبت " + glyph + " صح ⭐";
+    ids = ids || { guide: "traceGuide", canvas: "traceCanvas", progress: "traceProgress", msg: "traceMsg" };
+    panel.querySelector("#" + ids.msg).textContent = "برافو يا بطل! كتبت " + glyph + " صح ⭐";
     // No feedback("correct") here: it bumps MatthewVoice's requestId and
     // its delayed (+280ms) praise clip is suppressed by any speak() after
     // it — so completion was effectively silent — while calling it after
@@ -340,6 +427,10 @@
     } catch (_) { /* storage unavailable */ }
     window.updateStats?.();
     speakKey("برافو يا بطل", "trace_done", "ar-EG");
+    // Challenge mode: let the child see + hear the celebration, then
+    // advance to the next challenge glyph (guarded on the same challenge
+    // object, so leaving the challenge cancels the advance).
+    if (onDone) { const ch = traceChallenge; setTimeout(() => { if (traceChallenge === ch) onDone(); }, 1200); }
   }
 
   card.addEventListener("click", open);

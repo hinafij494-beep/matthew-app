@@ -173,13 +173,14 @@ test("voice: Nancy praise + gentle retry lines woven into feedback (note 25b)", 
   assert.ok(fallback.includes('"nancy_praise_1"') && fallback.includes('"nancy_retry_1"'), "web fallback mirrors the Nancy rotation");
 });
 
-test("voice: pronunciation auto-speaks on open/new word, Arabic UI kept", () => {
+test("voice: pronunciation challenge is fully removed (round 3.2.6 item 1) — no auto-speak of a practice word, no mic", () => {
   const voice = read("voice.js");
-  const nextWord = sliceFn(voice, "const nextWord", "const setLanguage");
-  assert.ok(nextWord.includes("speak(current.word"), "new word is pronounced automatically");
-  assert.ok(voice.includes('كلمة جديدة<span class="pager-arrow">←</span>'), "new-word button has a stacked arrow");
-  assert.ok(!voice.includes("كلمة جديدة ↻"), "old ↻ label is gone");
-  assert.ok(voice.includes("الإنجليزية"), "English language button stays Arabic");
+  assert.ok(!voice.includes("const nextWord"), "the practice-word cycler is gone with the challenge");
+  assert.ok(!voice.includes("speak(current.word"), "no word auto-speaks on open/new word");
+  assert.ok(!voice.includes("تحدي النطق"), "no challenge UI remains");
+  assert.ok(!voice.includes("SpeechRecognition"), "no mic path remains");
+  assert.ok(!voice.includes("SpeechSynthesisUtterance"), "no device-synth speech path remains");
+  assert.ok(voice.includes("speakSequence"), "recorded-voice sequencing stays");
 });
 
 // ---------- app.js ----------

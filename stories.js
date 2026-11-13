@@ -331,8 +331,13 @@
   // Round 3.2.2 P1-2: programmatic entry for the merged stories card.
   // The runner (startStory) lives inside the DOM setup block below, so the
   // exported openStory delegates through this binding the setup fills in.
+  // Round 3.2.6 item 5: the star gate is GONE from opening — every story
+  // opens on tap (the user: «القصة الأخيرة مش بتفتح»). Stars stay only
+  // as a display/reward (pickerHTML still shows the ⭐ goal + lock hint,
+  // win() still awards stars); isUnlocked/starTotal stay exported for
+  // that display and for tests, but NOTHING refuses to open a story.
   let braveStartStory = null;
-  const openStory = id => { const st = STORIES.find(x => x.id === id); if (!st) return; if (!isUnlocked(st)) { try { window.MatthewVoice?.speak(LOCKED_LINE, "ar-EG"); } catch (_) {} return; } if (braveStartStory) braveStartStory(st); };
+  const openStory = id => { const st = STORIES.find(x => x.id === id); if (!st) return; if (braveStartStory) braveStartStory(st); };
   if (typeof document !== "undefined") {
     const main = document.querySelector("main");
     const gameList = document.getElementById("gameList");
@@ -403,7 +408,6 @@
         play.querySelectorAll("[data-brave-story]").forEach(b => b.addEventListener("click", () => {
           const s = STORIES.find(x => x.id === b.dataset.braveStory);
           if (!s) return;
-          if (!isUnlocked(s, starTotal())) { speak(LOCKED_LINE, "story_locked"); return; }
           startStory(s);
         }));
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -502,27 +506,30 @@
         try { window.MatthewMastery?.record("brave:" + current.q, correct); window.MatthewMastery?.record("brave", correct); } catch (_) {}
         answers.querySelectorAll(".answer").forEach(b => { b.disabled = true; });
         const feedback = $("bravePlay").querySelector("#braveFeedback");
-        if (correct) {
-          score++;
-          button.classList.add("correct");
-          feedback.textContent = "برافو يا بطل! إجابة صح ⭐";
-          window.MatthewVoice?.feedback("correct");
-        } else {
-          button.classList.add("wrong");
-          feedback.textContent = "محاولة جميلة يا بطل! الإجابة الصح باللون الأخضر 💜";
-          answers.querySelectorAll(".answer").forEach(b => { if (b.dataset.answer === current.a[current.c]) b.classList.add("correct"); });
-          window.MatthewVoice?.feedback("wrong");
-        }
-        $("bravePlay").querySelector("#braveNext").classList.remove("hidden");
         const tk = qToken, cq = current;
-        setTimeout(() => {
+        // Round 3.2.6 (integrator, item 4): the explanation chains on the
+        // praise clip's end via feedback's onDone — the old fixed 2600ms
+        // timer cut every praise clip (2.4–4.8s) mid-sentence.
+        const explainAnswer = () => {
           if (qToken !== tk || !answered || !cq) return;
           // Numbers-once F3: a digit answer was already spoken in the
           // options — speak the prefix alone, never the digit a 2nd time.
           const ans = cq.a[cq.c];
           const isNum = /^[0-9٠-٩]+$/.test(String(ans).trim());
           speakSeq(isNum ? ["الإجابة الصحيحة هي"] : ["الإجابة الصحيحة هي", ans]);
-        }, 2600);
+        };
+        if (correct) {
+          score++;
+          button.classList.add("correct");
+          feedback.textContent = "برافو يا بطل! إجابة صح ⭐";
+          window.MatthewVoice?.feedback("correct", explainAnswer);
+        } else {
+          button.classList.add("wrong");
+          feedback.textContent = "محاولة جميلة يا بطل! الإجابة الصح باللون الأخضر 💜";
+          answers.querySelectorAll(".answer").forEach(b => { if (b.dataset.answer === current.a[current.c]) b.classList.add("correct"); });
+          window.MatthewVoice?.feedback("wrong", explainAnswer);
+        }
+        $("bravePlay").querySelector("#braveNext").classList.remove("hidden");
       };
 
       const advance = () => {

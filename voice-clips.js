@@ -14,11 +14,84 @@
   const urls = {}; const urlOrder = []; const URL_CACHE_MAX = 30; let audio = null;
   const supported = () => { try { const a = audio || new Audio(); return !!a.canPlayType && a.canPlayType('audio/ogg; codecs="opus"') !== ""; } catch (_) { return false; } };
   const urlFor = key => { if (!urls[key]) { const bin = atob(BY_KEY[key]); const bytes = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i); urls[key] = URL.createObjectURL(new Blob([bytes], { type: "audio/ogg" })); urlOrder.push(key); while (urlOrder.length > URL_CACHE_MAX) { const old = urlOrder.shift(); if (old !== key && urls[old]) { try { URL.revokeObjectURL(urls[old]); } catch (_) {} delete urls[old]; } } } return urls[key]; };
+  // Round 3.2.6 item 4: ONE Audio element, SERIALISED playback.
+  //
+  // The defect (reproduced live, 3.2.5 build): every playKey() overwrote
+  // audio.onended and reloaded audio.src on the shared element, so a
+  // praise/enrichment clip landing mid-sequence HIJACKED it — the
+  // sequence's remaining clips never played and its onDone never fired,
+  // which strands any caller chaining on real completion (rescue/stories
+  // intro -> question) on a screen that never advances: the "sometimes
+  // freezes, only force-close fixes it" hang. A praise scheduled at +280ms
+  // also started while the correct-chime (last tone ends ~+500ms) was
+  // still ringing, and a +2600ms answer-explanation sequence cut a
+  // 2.9–4.8s praise clip at ~2.3s in.
+  //
+  // Rules now:
+  // - active: what owns the element — one playSequence, or one single
+  //   playKey/play clip. A playKey/play arriving while anything is active
+  //   is ENQUEUED (queue) and plays when the active item finishes, in
+  //   order — it never overwrites onended, so it can no longer kill a
+  //   sequence's onDone chain. Its own onDone fires when ITS clip ends.
+  // - playSequence() (and speak(), which stops first) keep
+  //   preempt-and-clear-queue semantics for user taps/navigation: a new
+  //   sequence drops the queue, invalidates the in-flight chain (gen) and
+  //   starts at once. A preempted sequence's onDone never fires — same as
+  //   before, so a caller that navigated away is never advanced.
+  // - stop() clears the queue and cancels the pending onDone, as before.
+  // - stopSequence() stops ONLY a running sequence (a question narration
+  //   the child just answered); a lone context clip (story win line,
+  //   colour-game sentence) is left playing and the praise queues behind
+  //   it — feedback() uses this, so it can no longer kill a narration
+  //   that started in the same tick (stories win() was silenced in ~2ms).
+  // - armClip() never stalls: a rejected play() (no user gesture yet on a
+  //   fresh load) or a load error advances the chain instead of leaving
+  //   onDone unfired.
+  let queue = [];
+  let active = null;
+  let busy = false;
+  let gen = 0;
+  const armClip = (key, g, onEnded) => {
+    let ended = false;
+    const fire = () => { if (ended) return; ended = true; if (g !== gen) return; onEnded(); };
+    try {
+      if (!audio) audio = new Audio();
+      audio.onended = fire;
+      audio.onerror = fire;
+      audio.pause();
+      audio.src = urlFor(key);
+      audio.currentTime = 0;
+      busy = true;
+      const pr = audio.play();
+      if (pr && pr.catch) pr.catch(() => setTimeout(fire, 0));
+    } catch (_) { setTimeout(fire, 0); }
+  };
+  const drain = () => {
+    if (active || !queue.length) return;
+    const item = queue.shift();
+    const g = gen;
+    active = { kind: "key", done: item.onDone };
+    armClip(item.key, g, item.onDone);
+  };
   // Round 3.2.3 (brave stories): optional onDone — same contract as
   // playSequence: called once when the clip ends (audio.onended), or
   // async when there is nothing to play, so a caller waiting on it NEVER
-  // hangs. stop() cancels it by design (it nulls onended).
-  const playKey = (key, onDone) => { let fired = false; const done = () => { if (fired) return; fired = true; if (typeof onDone === "function") { try { onDone(); } catch (_) {} } }; if (!BY_KEY[key] || !supported()) { setTimeout(done, 0); return false; } try { if (!audio) audio = new Audio(); audio.onended = typeof onDone === "function" ? done : null; audio.pause(); audio.src = urlFor(key); audio.currentTime = 0; const p = audio.play(); if (p && p.catch) p.catch(() => {}); return true; } catch (_) { setTimeout(done, 0); return false; } };
+  // hangs. stop() cancels it by design (it nulls onended). Round 3.2.6:
+  // while a sequence (or another clip) owns the element, the clip is
+  // queued and its onDone fires when ITS clip ends, never by hijack.
+  const playKey = (key, onDone) => {
+    let fired = false;
+    const g0 = gen;
+    const done = () => { if (fired) return; fired = true; if (g0 !== gen) return; active = null; busy = false; if (typeof onDone === "function") { try { onDone(); } catch (_) {} } if (!active) drain(); };
+    if (!BY_KEY[key] || !supported()) { setTimeout(done, 0); return false; }
+    try {
+      if (active) { queue.push({ key, onDone: done }); return true; }
+      if (!audio) audio = new Audio();
+      active = { kind: "key", done };
+      armClip(key, gen, done);
+      return true;
+    } catch (_) { setTimeout(done, 0); return false; }
+  };
   // Round 3.2.2 P0-5: the EXACT map must respect caller language. A bare
   // Latin digit ("5") has an EXACT entry pointing at the ENGLISH tracing
   // clip (tr_ennum_5) — in an Arabic context that is the numbers trap, so
@@ -48,13 +121,31 @@
   // so navigating away mid-sequence never advances the old screen.
   const playSequence = (texts, lang, onDone) => {
     let fired = false;
-    const done = () => { if (fired) return; fired = true; if (typeof onDone === "function") { try { onDone(); } catch (_) {} } };
+    let g0 = gen;
+    const done = () => { if (fired) return; fired = true; if (g0 !== gen) return; if (typeof onDone === "function") { try { onDone(); } catch (_) {} } if (!active) drain(); };
     try {
       const keys = []; for (const t of texts || []) { const k = keyFor(t, lang); if (k) keys.push(k); }
       if (!keys.length || !supported()) { setTimeout(done, 0); return false; }
-      if (!audio) audio = new Audio(); let i = 0; const next = () => { if (i >= keys.length) { audio.onended = null; done(); return; } audio.src = urlFor(keys[i++]); const pr = audio.play(); if (pr && pr.catch) pr.catch(() => {}); }; audio.onended = next; next(); return true;
+      if (!audio) audio = new Audio();
+      gen++;
+      g0 = gen;
+      queue = [];
+      active = { kind: "seq", done };
+      let i = 0;
+      const next = () => { if (g0 !== gen) return; if (i >= keys.length) { active = null; busy = false; audio.onended = null; done(); return; } armClip(keys[i++], g0, next); };
+      busy = true;
+      next();
+      return true;
     } catch (_) { setTimeout(done, 0); return false; }
   };
-  const stop = () => { try { if (audio) { audio.onended = null; audio.pause(); } } catch (_) {} };
-  window.MatthewClips = { playKey, play, playSequence, stop, has: key => !!BY_KEY[key], keys: Object.keys(BY_KEY), count: Object.keys(BY_TEXT).length };
+  const stop = () => { gen++; queue = []; active = null; busy = false; try { if (audio) { audio.onended = null; audio.onerror = null; audio.pause(); } } catch (_) {} };
+  const stopSequence = () => {
+    if (!active || active.kind !== "seq") return;
+    gen++;
+    queue = [];
+    active = null; busy = false;
+    try { if (audio) { audio.onended = null; audio.onerror = null; audio.pause(); } } catch (_) {}
+  };
+  const isPlaying = () => { if (busy) return true; try { return !!audio && !audio.paused; } catch (_) { return false; } };
+  window.MatthewClips = { playKey, play, playSequence, stop, stopSequence, isPlaying, has: key => !!BY_KEY[key], keys: Object.keys(BY_KEY), count: Object.keys(BY_TEXT).length };
 })();

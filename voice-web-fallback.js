@@ -45,17 +45,26 @@
   const tryKeys = ["try1", "try2", "try3"];
   const nancyRetryKeys = ["nancy_retry_1", "nancy_retry_2", "nancy_retry_3", "nancy_retry_4", "nancy_retry_5"];
   let praiseIndex = 0, tryIndex = 0, nancyPraiseIndex = 0, nancyRetryIndex = 0, correctCount = 0, wrongCount = 0;
-  const feedback = type => {
+  const feedback = (type, onDone) => {
     const fid = ++request;
+    // Round 3.2.6 (integrator): optional onDone — mirrors voice.js: fires
+    // when the praise clip ENDS, so callers chaining on real completion
+    // (story intros, answer explanations) never hang when this fallback
+    // voice is the active one (voice.bundle.js absent). Before this the
+    // fallback silently dropped every completion callback: a story intro
+    // played and the first question never arrived, and an answer
+    // explanation never played after the praise.
+    let doneFired = false;
+    const doneOnce = () => { if (doneFired) return; doneFired = true; if (typeof onDone === "function") { try { onDone(); } catch (_) {} } };
     try { window.MatthewClips?.stop(); } catch (_) {}
     try { window.speechSynthesis?.cancel(); } catch (_) {}
     if (type === "correct") {
       tone(660, 0.13); tone(880, 0.17, 0.13); tone(1046, 0.2, 0.29);
-      try { const c = window.MatthewClips; if (c) setTimeout(() => { if (fid !== request) return; const key = (++correctCount % 3 === 0 ? nancyPraiseKeys[nancyPraiseIndex++ % nancyPraiseKeys.length] : praiseKeys[praiseIndex++ % praiseKeys.length]); if (c.playKey(key)) return; if (key === "praise_nancy" || key.startsWith("nancy_praise_")) c.playKey("praise1"); }, 280); } catch (_) {}
+      try { const c = window.MatthewClips; if (c) setTimeout(() => { if (fid !== request) return; const key = (++correctCount % 3 === 0 ? nancyPraiseKeys[nancyPraiseIndex++ % nancyPraiseKeys.length] : praiseKeys[praiseIndex++ % praiseKeys.length]); if (c.playKey(key, doneOnce)) return; if (key === "praise_nancy" || key.startsWith("nancy_praise_")) { if (c.playKey("praise1", doneOnce)) return; } setTimeout(doneOnce, 0); }, 280); else setTimeout(doneOnce, 0); } catch (_) { setTimeout(doneOnce, 0); }
     } else if (type === "wrong") {
       tone(330, 0.16); tone(260, 0.19, 0.14);
-      try { const c = window.MatthewClips; if (c) setTimeout(() => { if (fid !== request) return; const key = (++wrongCount % 2 === 0 ? nancyRetryKeys[nancyRetryIndex++ % nancyRetryKeys.length] : tryKeys[tryIndex++ % tryKeys.length]); if (!c.playKey(key) && key.startsWith("nancy_retry_")) c.playKey("try1"); }, 280); } catch (_) {}
-    } else tone(520, 0.055, 0, 0.03);
+      try { const c = window.MatthewClips; if (c) setTimeout(() => { if (fid !== request) return; const key = (++wrongCount % 2 === 0 ? nancyRetryKeys[nancyRetryIndex++ % nancyRetryKeys.length] : tryKeys[tryIndex++ % tryKeys.length]); if (c.playKey(key, doneOnce)) return; if (key.startsWith("nancy_retry_") && c.playKey("try1", doneOnce)) return; setTimeout(doneOnce, 0); }, 280); else setTimeout(doneOnce, 0); } catch (_) { setTimeout(doneOnce, 0); }
+    } else { tone(520, 0.055, 0, 0.03); setTimeout(doneOnce, 0); }
   };
 
   // Round 3.2.2 P0-4: recorded clips ONLY — the web fallback must never
@@ -84,10 +93,17 @@
     return speak("أهلاً يا ماثيو يا بطل! أنا الميس بتاعتك، يلا بينا نتعلّم ونلعب مع بعض.", "ar-EG");
   };
 
-  const speakSequence = (texts, lang = "ar-EG") => {
+  // Round 3.2.6 (integrator): optional onDone, passed through to
+  // MatthewClips.playSequence — same contract as voice.js: fires once
+  // when the last clip ends, or async when there is nothing to play, so
+  // a caller waiting on it NEVER hangs. Before this the fallback dropped
+  // the callback entirely and every chained screen (story questions,
+  // answer explanations) silently never opened.
+  const speakSequence = (texts, lang = "ar-EG", onDone) => {
     const list = (texts || []).map(x => String(x || "").trim()).filter(Boolean);
-    if (!list.length) return false;
-    try { if (window.MatthewClips && window.MatthewClips.playSequence(list, lang)) { sayStatus("🔊 اسمع صوت الميس يا بطل"); return true; } } catch (_) {}
+    if (!list.length) { if (typeof onDone === "function") setTimeout(onDone, 0); return false; }
+    try { if (window.MatthewClips && window.MatthewClips.playSequence(list, lang, onDone)) { sayStatus("🔊 اسمع صوت الميس يا بطل"); return true; } } catch (_) {}
+    if (typeof onDone === "function") setTimeout(onDone, 0);
     return false;
   };
 

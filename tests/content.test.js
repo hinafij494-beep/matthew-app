@@ -56,7 +56,7 @@ test("code modules ship inside the interactive-games bundle; voice packs load as
   }
   assert.ok(html.includes("interactive-games.js"), "page does not load the bundle file");
   assert.ok(sw.includes("./interactive-games.js"), "offline cache missing the bundle file");
-  assert.match(sw, /king-matthew-v23/);
+  assert.match(sw, /king-matthew-v24/);
   assert.ok(sw.includes("./voice.bundle.js"), "offline cache must precache voice.bundle.js (round 3.2)");
   // The whole point of the restructure: the bundle must fit GitHub's
   // 25 MB per-file web-UI limit, with headroom.
@@ -205,7 +205,11 @@ test("quizzes pronounce answers and speech never overlaps", () => {
   assert.ok(!rescue.includes("answer-say") && !rescue.includes("rescueListen"), "stories must not carry listen buttons (owner, round 3.1)");
   const voice = read("voice.js");
   assert.ok(voice.includes("speakSequence"), "MatthewVoice must expose speakSequence");
-  assert.match(voice, /if \(id === requestId[^}]*playKey\(key\)/, "delayed praise must yield to newer speech (no overlap)");
+  // Round 3.2.6 (integrator, item 4): a delayed praise yields to newer
+  // speech (stale requestId skips it), and the explanation chains on the
+  // praise clip's end via feedback's onDone instead of cutting it.
+  assert.ok(voice.includes("if (id !== requestId) return;"), "delayed praise must yield to newer speech (no overlap)");
+  assert.ok(voice.includes("clips.playKey(key, doneOnce)"), "the praise must chain its onDone so the explanation waits for it");
   assert.match(voice, /const speak = async[\s\S]{0,700}MatthewClips\?\.stop\(\)/, "speak() must stop a playing clip before TTS so voices never overlap");
   const vc = read("voice-clips.js");
   assert.ok(vc.includes("playSequence"), "recorded clips must support chained playback");
@@ -353,10 +357,14 @@ test("tracing confines colour inside the letter and offers a colour palette (rou
   assert.ok(new Set(colors.map(c => c.toLowerCase())).size >= 6, "palette must offer at least six colours");
 });
 
-test("home is four big doors and the hero is an intro only (round 3.1)", () => {
+test("home is three big doors and the hero is an intro only (round 3.2.6 item 9)", () => {
   const app = read("app.js");
-  for (const label of ["الدروس", "الأسئلة والاختبارات", "الألعاب", "الألوان والتلوين"])
-    assert.ok(app.includes(label), "missing home door: " + label);
+  // Scope to the DOORS array: the label «الألوان والتلوين» still appears in
+  // a comment about the removed door, so a whole-file check would lie.
+  const doors = app.slice(app.indexOf("const DOORS"), app.indexOf("];", app.indexOf("const DOORS")));
+  for (const label of ["الدروس", "الأسئلة والاختبارات", "الألعاب"])
+    assert.ok(doors.includes(label), "missing home door: " + label);
+  assert.ok(!doors.includes("الألوان والتلوين"), "the colors door was removed (round 3.2.6 item 9) — coloring lives in Games");
   assert.ok(app.includes("homeDoors"), "home doors navigation is missing");
   assert.match(app, /hero\.style\.display = \(!open && !current\)/, "hero must show only on the doors home, never inside a section");
   const css = read("styles.css");

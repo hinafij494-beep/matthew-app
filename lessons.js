@@ -82,6 +82,11 @@
   const $ = id => document.getElementById(id);
   const learningList = $("learningList") || $("gameList");
   let letterIndex=0, step=0, markIndex=0, quiz=[], quizIndex=0, score=0, moveBreakShown=false;
+  // Round 3.2.6 item 2: the lesson opens with three big tabs — 📖 الدرس /
+  // 🧕 الشرح / 🏆 الاختبار — sharing the .lesson-tabs styles. activeTab is
+  // the open tab; explainSpokenFor is the letter whose explanation already
+  // auto-played once on this visit (a fresh letter visit resets it).
+  let activeTab="lesson", explainSpokenFor=-1;
   // Round 3.2.2 P0-4: recorded clips ONLY — no device speechSynthesis.
   const say = text => {
     if(window.MatthewVoice&&typeof window.MatthewVoice.speak==="function"){
@@ -156,24 +161,25 @@
     panel.querySelector(".lesson-actions").style.display="none";
     $("lessonBody").innerHTML=`<div class="lesson-title">اختار حرف يا ملك ماثيو 👑</div><p>اضغط على أي حرف عشان تتعلمه</p><div class="basic-grid letter-picker">${lessons.map((l,i)=>`<button type="button" class="basic-tile" data-letter="${i}"><span>${l.emoji[0]}</span><b>${l.letter}</b><small>${l.name}</small></button>`).join("")}</div><button id="letterQuizBtn" class="primary" type="button">🏆 اختبر نفسك</button>`;
     panel.querySelectorAll("[data-letter]").forEach(b=>b.onclick=()=>{letterIndex=Number(b.dataset.letter);step=0;render()});
-    $("letterQuizBtn").onclick=()=>makeQuiz();
+    // Round 3.2.6 item 3: the picker quiz is a scoped quiz for ONE letter
+    // (picked at random) — never the old 10-from-all-28 mixed bank.
+    $("letterQuizBtn").onclick=()=>{letterIndex=Math.floor(Math.random()*lessons.length);step=0;render();activeTab="quiz";makeQuiz();};
     const tkP=window.__qToken=(window.__qToken||0)+1;setTimeout(()=>{if(window.__qToken!==tkP)return;say("اختار حرف يا ملك ماثيو")},120);
   }
   // The unified lesson (notes 9–11): everything about the letter on ONE
   // scrollable screen — big letter, name, sound, full explanation, forms
   // with words, harakat, word examples, quiz button. No steps to tap through.
-  function renderLesson(){
-    pushSub();
-    const l=lessons[letterIndex];
-    const ex=explainFor(l);
-    $("lessonStep").textContent=l.name;
-    $("lessonProgress").style.width="100%";
-    panel.querySelector(".lesson-actions").style.display="";
-    $("lessonBody").innerHTML=
-      `<div class="lesson-title">أهلاً يا ماثيو الملك 👑</div>`+
+  // Round 3.2.6 item 2: the lesson opens with three big tabs — 📖 الدرس
+  // (practice: letter, forms, words, harakat), 🧕 الشرح (the full
+  // explanation, spoken once when the tab opens), 🏆 الاختبار (the quiz
+  // for THIS letter only). The tabs share the .lesson-tabs styles; every
+  // lessonBody paint rebuilds tabs + all three panels, so the lesson, the
+  // explanation and the quiz are always one tap apart.
+  const lessonTabsHTML=active=>`<div class="lesson-tabs" role="tablist"><button type="button" class="lesson-tab${active==="lesson"?" active":""}" data-lesson-tab="lesson" role="tab">📖 الدرس</button><button type="button" class="lesson-tab${active==="explain"?" active":""}" data-lesson-tab="explain" role="tab">🧕 الشرح</button><button type="button" class="lesson-tab${active==="quiz"?" active":""}" data-lesson-tab="quiz" role="tab">🏆 الاختبار</button></div>`;
+  function lessonPanelHTML(l){
+    return `<div class="lesson-title">أهلاً يا ماثيو الملك 👑</div>`+
       `<div class="big-letter sticky-panel">${l.letter}</div><h2>${l.name}</h2>`+
       `<p class="lesson-example">صوت الحرف: <b>${l.sound}</b></p>`+
-      `<div class="explain-box"><strong>🧕 الميس بتشرح لك من الصفر</strong><p>${ex.shown}</p></div>`+
       `<div class="lesson-pager"><button id="prevLetter" class="secondary" ${letterIndex===0?"disabled":""}><span>الحرف السابق</span><span class="pager-arrow" aria-hidden="true">→</span></button><button id="nextLetter" class="secondary"><span>${letterIndex===lessons.length-1?"ابدأ من الأول":"الحرف التالي"}</span><span class="pager-arrow" aria-hidden="true">←</span></button></div>`+
       `<h3 class="lesson-section">أشكال الحرف</h3><p>شكل الحرف بيتغير حسب مكانه في الكلمة</p>`+
       `<div class="form-grid"><div><b>أول الكلمة</b><strong>${l.forms[0]}</strong></div><div><b>وسط الكلمة</b><strong>${l.forms[1]}</strong></div><div><b>آخر الكلمة</b><strong>${l.forms[2]}</strong></div></div>`+
@@ -184,19 +190,94 @@
       `<div class="mark-tabs">${marks.map((x,i)=>`<button class="${i===markIndex?"active":""}" data-mark="${i}">${x.name}</button>`).join("")}</div>`+
       `<div class="mark-card" id="markCard"></div>`+
       `<p>اختار كل حركة واسمعها بصوت واضح</p>`;
+  }
+  function explainPanelHTML(l,ex){
+    return `<div class="explain-box"><strong>🧕 الميس بتشرح لك من الصفر</strong><p>${ex.shown}</p></div>`+
+      `<button id="explainListen" class="voice-button" type="button">🔊 اسمع الشرح</button>`+
+      `<p>اسمع الشرح كويس، وبعدين دوس على 🏆 الاختبار عشان تختبري نفسك في حرف ${l.name} بس.</p>`;
+  }
+  // Every paint rebuilds tabs + all three panels (the lesson, the
+  // explanation and the quiz stay one tap apart); quizHTML fills the quiz
+  // panel when a quiz is showing, otherwise a start button sits there.
+  function paintLessonBody(quizHTML){
+    const l=lessons[letterIndex];
+    const ex=explainFor(l);
+    const quizPanel=quizHTML||`<p>اختبر نفسك في حرف ${l.name} بس — من غير أي حرف تاني.</p><button id="lessonQuizStart" class="primary" type="button">🏆 اختبر نفسك ⭐</button>`;
+    $("lessonBody").innerHTML=lessonTabsHTML(activeTab)+
+      `<div class="tab-panel${activeTab==="lesson"?" active":""}" data-tab-panel="lesson">${lessonPanelHTML(l)}</div>`+
+      `<div class="tab-panel${activeTab==="explain"?" active":""}" data-tab-panel="explain">${explainPanelHTML(l,ex)}</div>`+
+      `<div class="tab-panel${activeTab==="quiz"?" active":""}" data-tab-panel="quiz"><div id="lessonQuizPanel">${quizPanel}</div></div>`;
+    bindTabs();bindLessonPanel();bindExplainPanel();
+    const qs=$("lessonQuizStart");if(qs)qs.onclick=()=>{activeTab="quiz";makeQuiz()};
+  }
+  function bindTabs(){
+    panel.querySelectorAll("[data-lesson-tab]").forEach(b=>b.onclick=()=>switchTab(b.dataset.lessonTab));
+  }
+  function bindLessonPanel(){
+    const l=lessons[letterIndex];
     updateMark();
     $("prevLetter").onclick=()=>{letterIndex=(letterIndex+lessons.length-1)%lessons.length;render()};
     $("nextLetter").onclick=()=>{letterIndex=(letterIndex+1)%lessons.length;render()};
     $("formsListen").onclick=()=>say("شكل حرف "+l.name+" في أول الكلمة "+l.forms[0]+" زي كلمة "+l.words[0]+"، وفي نص الكلمة "+l.forms[1]+" زي كلمة "+l.words[1]+"، وفي آخر الكلمة "+l.forms[2]+" زي كلمة "+l.words[2]+".");
     panel.querySelectorAll(".word-examples>div").forEach((el,i)=>el.addEventListener("click",()=>say(l.words[i],"ar-EG")));
     panel.querySelectorAll("[data-mark]").forEach(b=>b.onclick=()=>{markIndex=Number(b.dataset.mark);updateMark();const m=marks[markIndex];say(m.name+"، "+markSample()+". "+m.hint+": "+markSample())});
-    $("lessonListen").textContent="🔊 اسمع الدرس";$("lessonListen").onclick=()=>say(ex.spoken);
-    $("lessonNext").textContent="🏆 اختبر نفسك ⭐";
+  }
+  function bindExplainPanel(){
+    const ex=explainFor(lessons[letterIndex]);
+    $("explainListen").onclick=()=>say(ex.spoken);
+  }
+  function syncFooterButtons(){
+    const l=lessons[letterIndex];
+    $("lessonListen").textContent=activeTab==="explain"?"🔊 اسمع الشرح":activeTab==="quiz"?"🔊 اسمع السؤال":"🔊 اسمع الدرس";
+    if(activeTab!=="quiz")$("lessonNext").textContent="🏆 اختبر نفسك ⭐";
+    $("lessonListen").onclick=()=>{
+      if(panel.dataset.finished==="1"){say(explainFor(l).spoken);return}
+      if(activeTab==="explain"){say(explainFor(l).spoken);return}
+      if(activeTab==="quiz"&&quiz.length){const q=quiz[quizIndex];if(q){const spoken=q.q+" اختار الإجابة الصحيحة";if(window.MatthewVoice?.speakSequence)window.MatthewVoice.speakSequence([spoken,...q.a],"ar-EG");else say(spoken)}return}
+      say(l.name+"، "+l.sound);
+    };
+  }
+  // The explanation auto-plays ONCE per letter visit, when the 🧕 tab
+  // opens — the quiz offer follows it in the same sequence, so it can
+  // never cut the lesson off. Switching tabs always stops current audio.
+  function maybeSpeakExplain(){
+    if(explainSpokenFor===letterIndex)return;
+    explainSpokenFor=letterIndex;
+    const ex=explainFor(lessons[letterIndex]);
     const tkL=window.__qToken=(window.__qToken||0)+1;setTimeout(()=>{if(window.__qToken!==tkL)return;saySeq([ex.spoken,QUIZ_OFFER])},120);
   }
-  function markSample(){
+  function switchTab(name){
+    if(name!=="lesson"&&name!=="explain"&&name!=="quiz")return;
+    try{window.MatthewVoice?.stop()}catch(_){}
+    activeTab=name;
+    panel.querySelectorAll("[data-lesson-tab]").forEach(b=>b.classList.toggle("active",b.dataset.lessonTab===name));
+    panel.querySelectorAll("[data-tab-panel]").forEach(p=>p.classList.toggle("active",p.dataset.tabPanel===name));
+    syncFooterButtons();
+    if(name==="explain")maybeSpeakExplain();
+    if(name==="quiz"){if(!quiz.length||panel.dataset.finished==="1")makeQuiz();else showQuiz()}
+  }
+  function renderLesson(){
+    pushSub();
+    activeTab="lesson";explainSpokenFor=-1;
+    $("lessonStep").textContent=lessons[letterIndex].name;
+    $("lessonProgress").style.width="100%";
+    panel.querySelector(".lesson-actions").style.display="";
+    paintLessonBody();
+    syncFooterButtons();
+  }
+  // This letter's sample for haraka mi (0 فتحة، 1 ضمة، 2 كسرة، 3 سكون).
+  // Round 3.2.1 note 14: only these four letters' sukun syllables have
+  // recorded Fusha clips (lsq_syl_sukun_0..3) — "بْ", "تْ", "مْ", "سْ".
+  // The map returns the same strings the computed form gives
+  // (letter + "ْ"); it documents the recorded coverage.
+  const SUKUN_CLIPS={"ب":"بْ","ت":"تْ","م":"مْ","س":"سْ"};
+  function sampleFor(mi){
     const l=lessons[letterIndex];
-    return l.letter==="أ"?["أَ","أُ","إِ","أْ"][markIndex]:l.letter+marks[markIndex].mark;
+    if(mi===3&&SUKUN_CLIPS[l.letter])return SUKUN_CLIPS[l.letter];
+    return l.letter==="أ"?["أَ","أُ","إِ","أْ"][mi]:l.letter+marks[mi].mark;
+  }
+  function markSample(){
+    return sampleFor(markIndex);
   }
   function updateMark(){
     const m=marks[markIndex];
@@ -214,27 +295,39 @@
     // A fresh quiz always starts unfinished.
     panel.dataset.finished="0";
     step=3;
-    const qs=[];
+    // Round 3.2.6 item 3: the quiz is scoped to the CURRENT letter only —
+    // its name, its first form, its four harakat (with its own samples),
+    // and finding the syllable that carries each haraka. 10 questions, all
+    // about this one letter; every question text already has a recorded
+    // clip (lsq_q_letter / lsq_q_form_* / lsq_q_haraka / lsq_q_syl_*), so
+    // NO new clips are needed. Distractors come from the other letters /
+    // other harakat, never from a fake list.
     // Round 3.2.1 note 4: the spoken question must never contain its own
     // correct answer. The glyph/sample is shown VISUALLY only (q.show) and
     // stays out of the spoken question (q.q + " اختار الإجابة الصحيحة").
-    // Round 3.2.2 P0-6: distractors must be genuinely different — the old
-    // fixed lists duplicated the correct answer (e.g. س → ["السين","السين"...]
-    // and non-joining letters → ["د","ـد","ـد","د"]).
+    // makeQuiz() is also run standalone by the round 3.2.2 / 3.2.4
+    // regression tests, which extract it into a vm sandbox that has
+    // lessons/marks/quiz/showQuiz/panel/pushSub but NO letterIndex and
+    // NO sampleFor — so the current letter resolves safely here (a
+    // missing letterIndex means the first letter, أ) and the sample is
+    // computed by a local helper, never by a free function.
+    const l=lessons[typeof letterIndex!=="undefined"?letterIndex:0];
+    const sampleForMi=mi=>l.letter==="أ"?["أَ","أُ","إِ","أْ"][mi]:l.letter+marks[mi].mark;
+    const qs=[];
     const allNames=lessons.map(x=>x.name);
     const allForms=[...new Set(lessons.flatMap(x=>x.forms))];
-    lessons.forEach(l=>{
-      const nameDist=allNames.filter(n=>n!==l.name).sort(()=>Math.random()-.5).slice(0,3);
-      qs.push({q:"ما اسم هذا الحرف؟",show:l.letter,a:[l.name,...nameDist],c:0});
-      const formDist=allForms.filter(f=>f!==l.forms[0]).sort(()=>Math.random()-.5).slice(0,3);
-      qs.push({q:"أي شكل لحرف "+l.name+" في أول الكلمة؟",a:[l.forms[0],...formDist],c:0});
-    });
+    const nameDist=allNames.filter(n=>n!==l.name).sort(()=>Math.random()-.5).slice(0,3);
+    qs.push({q:"ما اسم هذا الحرف؟",show:l.letter,a:[l.name,...nameDist],c:0});
+    const formDist=allForms.filter(f=>f!==l.forms[0]).sort(()=>Math.random()-.5).slice(0,3);
+    qs.push({q:"أي شكل لحرف "+l.name+" في أول الكلمة؟",a:[l.forms[0],...formDist],c:0});
     // Round 3.2.4 blocker 2: the old fixed distractors contained a fake
     // "other haraka" choice. Every question now draws its 3 distractors
     // from real haraka names only — the other three marks + الشدة + التنوين.
-    marks.forEach(m=>{const pool=[...marks.map(x=>x.name).filter(n=>n!==m.name),"الشدة","التنوين"].sort(()=>Math.random()-.5).slice(0,3);qs.push({q:"ما اسم الحركة في المقطع ده؟",show:m.sample,a:[m.name,...pool],c:0});});
-    qs.push({q:"أي مقطع عليه فتحة؟",a:["بَ","بُ","بِ","بْ"],c:0},{q:"أي مقطع عليه ضمة؟",a:["تِ","تُ","تَ","تْ"],c:1},{q:"أي مقطع عليه كسرة؟",a:["مَ","مْ","مِ","مُ"],c:2},{q:"أي مقطع عليه سكون؟",a:["سَ","سُ","سْ","سِ"],c:2});
-    quiz=qs.sort(()=>Math.random()-.5).slice(0,10);quizIndex=0;score=0;moveBreakShown=false;showQuiz();
+    // The shown sample is THIS letter's own: m.sample is refreshed here,
+    // because the marks table carries the ب sample (بَ/بُ/بِ/بْ).
+    marks.forEach((m,mi)=>{m.sample=sampleForMi(mi);const pool=[...marks.map(x=>x.name).filter(n=>n!==m.name),"الشدة","التنوين"].sort(()=>Math.random()-.5).slice(0,3);qs.push({q:"ما اسم الحركة في المقطع ده؟",show:m.sample,a:[m.name,...pool],c:0});});
+    [["أي مقطع عليه فتحة؟",0],["أي مقطع عليه ضمة؟",1],["أي مقطع عليه كسرة؟",2],["أي مقطع عليه سكون؟",3]].forEach(([qq,mi])=>{qs.push({q:qq,a:[0,1,2,3].map(sampleForMi),c:mi});});
+    quiz=qs.sort(()=>Math.random()-.5);quizIndex=0;score=0;moveBreakShown=false;showQuiz();
   }
   // Round 3.2.2 P0-6 (audit): the old glyph-keyed picture map NEVER matched
   // anything — quiz answers are letter NAMES ("الألف") and FORMS ("بـ"),
@@ -254,15 +347,17 @@
     return l ? l.emoji[0] : "🔤";
   };
   function showQuiz(){
+    activeTab="quiz";
     const q=quiz[quizIndex];
     // Round 3.2.2 P1-5: binding movement break before question 6 (mid-quiz),
-    // once per quiz — same 25s timer as the main quiz.
+    // once per quiz — same 25s timer as the main quiz. The break lives in
+    // the quiz panel so the tabs stay on screen.
     const MB=(typeof window!=="undefined")?window.MatthewMoveBreak:null;
-    if(quizIndex===5&&!moveBreakShown&&MB){moveBreakShown=true;$("lessonStep").textContent="وقت الحركة! 🏃";$("lessonProgress").style.width=(quizIndex/quiz.length*100)+"%";const host=document.createElement("div");host.className="move-break";host.id="lessonMoveBreak";$("lessonBody").innerHTML="";$("lessonBody").appendChild(host);const ln=$("lessonNext"),ll=$("lessonListen");if(ln)ln.disabled=true;if(ll)ll.disabled=true;MB.show(host,()=>{if(ln)ln.disabled=false;if(ll)ll.disabled=false;showQuiz()});return}
+    if(quizIndex===5&&!moveBreakShown&&MB){moveBreakShown=true;$("lessonStep").textContent="وقت الحركة! 🏃";$("lessonProgress").style.width=(quizIndex/quiz.length*100)+"%";paintLessonBody('<div class="move-break" id="lessonMoveBreak"></div>');const host=panel.querySelector("#lessonMoveBreak");const ln=$("lessonNext"),ll=$("lessonListen");if(ln)ln.disabled=true;if(ll)ll.disabled=true;MB.show(host,()=>{if(ln)ln.disabled=false;if(ll)ll.disabled=false;showQuiz()});return}
     if(!q._shuffled){const order=q.a.map((a,i)=>({a,ok:i===q.c})).sort(()=>Math.random()-.5);q.a=order.map(x=>x.a);q.c=order.findIndex(x=>x.ok);q._shuffled=true}$("lessonStep").textContent=(quizIndex+1).toLocaleString("ar-EG")+" / "+quiz.length.toLocaleString("ar-EG");
     $("lessonProgress").style.width=(quizIndex/quiz.length*100)+"%";
     const spoken=q.q+" اختار الإجابة الصحيحة";
-    $("lessonBody").innerHTML=`<div class="lesson-title">اختبار الملك ماثيو 👑</div>${q.show?`<div class="big-letter sticky-panel">${q.show}</div>`:""}<h2>${q.q}</h2><div class="lesson-answers">${q.a.map((a,i)=>`<button data-answer="${i}"><span class="answer-picture" aria-hidden="true">${quizPic(a)}</span><span class="answer-label">${a}</span></button>`).join("")}</div>`;
+    paintLessonBody(`<div class="lesson-title">اختبار الملك ماثيو 👑</div>${q.show?`<div class="big-letter sticky-panel">${q.show}</div>`:""}<h2>${q.q}</h2><div class="lesson-answers">${q.a.map((a,i)=>`<button data-answer="${i}"><span class="answer-picture" aria-hidden="true">${quizPic(a)}</span><span class="answer-label">${a}</span></button>`).join("")}</div>`);
     panel.querySelectorAll("[data-answer]").forEach(b=>b.onclick=()=>{if(panel.dataset.done==="1")return;panel.dataset.done="1";const ok=Number(b.dataset.answer)===q.c;try{window.MatthewMastery?.record("arabic-letters",ok);window.MatthewMastery?.record("arabic-letter:"+lessons[letterIndex].letter,ok)}catch(_){}if(ok)score++;panel.querySelectorAll("[data-answer]").forEach(x=>{x.disabled=true;if(Number(x.dataset.answer)===q.c)x.classList.add("correct")});if(!ok)b.classList.add("wrong");$("lessonStatus").textContent=ok?"برافو يا بطل! إجابة صحيحة ⭐":"محاولة جميلة! ركز في الحركة وجرب السؤال التالي";$("lessonNext").innerHTML=quizIndex===quiz.length-1?"النتيجة 🏆":"السؤال التالي<span class=\"pager-arrow\">←</span>"});
     panel.dataset.done="0";$("lessonNext").textContent="اختار الإجابة";
     $("lessonListen").textContent="🔊 اسمع السؤال";$("lessonListen").onclick=()=>{if(window.MatthewVoice?.speakSequence)window.MatthewVoice.speakSequence([spoken,...q.a],"ar-EG");else say(spoken)};
@@ -274,15 +369,15 @@
   }
   function finishQuiz(){
     panel.dataset.finished="1";
-    $("lessonBody").innerHTML=`<div class="lesson-title">برافو يا ملك ماثيو! 👑</div><div class="big-letter sticky-panel">🏆</div><h2>${score.toLocaleString("ar-EG")} من ${quiz.length.toLocaleString("ar-EG")}</h2><p>${score>=8?"ممتاز! أنت بطل الحروف والحركات ⭐":"شاطر! نعيد الدرس ونجرب تاني 💜"}</p><button id="retryLesson" class="primary">اختبار جديد بأسئلة مختلفة</button>`;
+    paintLessonBody(`<div class="lesson-title">برافو يا ملك ماثيو! 👑</div><div class="big-letter sticky-panel">🏆</div><h2>${score.toLocaleString("ar-EG")} من ${quiz.length.toLocaleString("ar-EG")}</h2><p>${score>=8?"ممتاز! أنت بطل الحروف والحركات ⭐":"شاطر! نعيد الدرس ونجرب تاني 💜"}</p><button id="retryLesson" class="primary">اختبار جديد بأسئلة مختلفة</button>`);
     $("retryLesson").onclick=()=>{step=3;makeQuiz()};
     $("lessonNext").innerHTML="العودة للدروس<span class=\"pager-arrow\">→</span>";
-    $("lessonListen").textContent="🔊 اسمع الدرس";$("lessonListen").onclick=()=>say(explainFor(lessons[letterIndex]).spoken);
+    syncFooterButtons();$("lessonListen").textContent="🔊 اسمع الدرس";
     $("lessonProgress").style.width="100%";
   }
   $("lessonNext").onclick=()=>{
     if(panel.dataset.finished==="1"){panel.dataset.finished="0";popSub();toPicker();return}
-    if(step===0){makeQuiz();return}
+    if(step===0){activeTab="quiz";makeQuiz();return}
     if(quizIndex<quiz.length-1){quizIndex++;showQuiz()}else finishQuiz();
   };
   // Round 3.2.3 item 13: from a lesson/quiz the back goes through

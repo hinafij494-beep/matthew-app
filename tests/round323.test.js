@@ -88,25 +88,29 @@ test("item 9: letter school speaks the quiz offer after the lesson (never text-o
   assert.ok(!/setTimeout\(\(\)=>\{[^}]*say\(ex\.spoken\)\},120\)/.test(lessons), "the old offer-less auto-speak must be gone");
 });
 
-test("item 9: math journey finish offers the numbers quiz and hides its panel first", () => {
+test("item 9 (round 3.2.6): math journey finish offers the level's own exercises in the quiz tab", () => {
   const mj = read("math-journey.js");
   assert.ok(mj.includes('id="mathQuiz"'), "finish screen must have a quiz button");
   assert.ok(mj.includes("🏆 اختبر نفسك في الأرقام ⭐"), "quiz button must be big and pictured");
-  assert.ok(mj.includes('start("numbers")'), "quiz button must open the numbers bank");
+  // The general numbers bank now lives ONLY in the Tests section — the
+  // finish button opens the level's own 4 exercises in the 🏆 tab.
+  assert.ok(!mj.includes('start("numbers")'), "finish must not open the general numbers bank");
   const handler = mj.slice(mj.indexOf("#mathQuiz"));
-  assert.ok(handler.includes('panel.classList.add("hidden")'), "panel must be hidden before start()");
+  assert.ok(handler.includes("startQuiz()"), "quiz button must open the level's own exercises");
   assert.ok(mj.includes("QUIZ_OFFER_NUMBERS"), "offer text must be defined");
   assert.ok(mj.includes("QUIZ_OFFER_NUMBERS]),150)"), "offer must be spoken in the finish sequence");
   assert.ok(mj.includes("يلا نختبر نفسك في الأرقام"), "offer must name the numbers quiz");
 });
 
-test("item 9: science lessons offer the science quiz on every lesson; the offer is spoken on the last lesson's last step", () => {
+test("item 9 (round 3.2.6): science lessons offer the subject's own quiz in the 🏆 tab", () => {
   const sci = read("science.js");
   assert.ok(sci.includes('id="scienceQuiz"'), "every lesson screen must have a quiz button");
   assert.ok(sci.includes("🏆 اختبر نفسك في العلوم ⭐"), "quiz button must be big and pictured");
-  assert.ok(sci.includes('start("science")'), "quiz button must open the science bank");
+  // The general science bank now lives ONLY in the Tests section — the
+  // quiz button opens the subject's own scoped quiz in the 🏆 tab.
+  assert.ok(!sci.includes('start("science")'), "quiz button must not open the general science bank");
   const handler = sci.slice(sci.indexOf("#scienceQuiz"));
-  assert.ok(handler.includes('panel.classList.add("hidden")'), "panel must be hidden before start()");
+  assert.ok(handler.includes('switchSciTab("quiz")'), "quiz button must open the quiz tab");
   assert.ok(sci.includes("QUIZ_OFFER"), "offer text must be defined");
   assert.ok(sci.includes("speakSeq([lessonText,QUIZ_OFFER])"), "single-step last lesson must sequence lesson then offer");
   assert.ok(sci.includes("isLastLesson&&isLastStep"), "offer must fire on the last lesson's last step");
@@ -140,20 +144,23 @@ test("item 9: English lessons NEVER route to the Arabic quiz banks", () => {
   assert.ok(!me.includes('start("numbers")') && !me.includes('start("science")') && !me.includes('start("letters")'),
     "English journey must not point at any Arabic bank");
   assert.ok(me.includes("englishMathContinue"), "English journey keeps its own next-level flow");
-  // The Arabic journey DOES route (its bank exists).
-  assert.ok(read("math-journey.js").includes('start("numbers")'), "Arabic journey must route to the numbers bank");
+  // The Arabic journey does NOT route to the general bank any more
+  // (round 3.2.6 item 3) — it quizzes the level's own exercises.
+  assert.ok(!read("math-journey.js").includes('start("numbers")'), "Arabic journey must not route to the general bank");
 });
 
-test("item 9: every quiz offer hides its lesson panel before start() (start() does not)", () => {
+test("item 9 (round 3.2.6): lesson quizzes open a tab, never the general bank via start()", () => {
   const app = read("app.js");
   const startBody = app.slice(app.indexOf("function start(cat)"), app.indexOf("function showQuestion"));
   assert.ok(!startBody.includes("basicLearning") && !startBody.includes("scienceAcademy") &&
     !startBody.includes("readingPanel") && !startBody.includes("mathJourney"),
     "start() itself does not hide lesson panels (guard: the callers must)");
-  for (const [file, panel] of [["math-journey.js", "mathJourney"], ["science.js", "scienceAcademy"]]) {
+  // The lesson modules never call start() at all any more — their quiz
+  // buttons switch to the 🏆 tab with the lesson's own scoped quiz.
+  for (const [file, tab] of [["math-journey.js", 'switchMathTab("quiz")'], ["science.js", 'switchSciTab("quiz")']]) {
     const src = read(file);
-    const i = src.indexOf('start("');
-    assert.ok(src.slice(0, i).includes('panel.classList.add("hidden")'), file + " must hide its panel before start()");
+    assert.ok(!src.includes('start("'), file + " must not call the general quiz bank");
+    assert.ok(src.includes(tab), file + " quiz button must open the quiz tab");
   }
 });
 
@@ -320,17 +327,19 @@ test("item 2 (F4/F5/F6): quiz pictures use the lesson's own mnemonics; distinct 
   assert.equal(ain.emoji[ain.words.indexOf("عُصْفُور")], "🐦", "عصفور must be 🐦");
 });
 
-// ---------- ITEM 3: pronunciation challenge, parent-judged ----------
-test("item 3: pronunciation challenge is parent-judged — no dead mic, no «غير مدعومة»", () => {
+// ---------- ITEM 3: pronunciation challenge, REMOVED (round 3.2.6 item 1) ----------
+test("item 3 (round 3.2.6): pronunciation challenge is fully removed — no card, no mic, no parent-judged buttons", () => {
   const voice = read("voice.js").replace(/\/\/[^\n]*/g, "");
   assert.ok(!voice.includes("SpeechRecognition"), "no SpeechRecognition may remain in voice.js");
   assert.ok(!voice.includes("غير مدعومة"), "the «غير مدعومة» message must be gone");
-  assert.ok(voice.includes('id="pronounceCorrect"'), "parent-judged 👍 button must exist");
-  assert.ok(voice.includes("👍 نطقها صح"), "correct button must be labelled 👍 نطقها صح");
-  assert.ok(voice.includes('id="pronounceRetry"'), "🔄 try-again button must exist");
-  assert.ok(voice.includes("🔄 جرّب تاني"), "retry button must be labelled 🔄 جرّب تاني");
-  assert.ok(voice.includes("ماما أو بابا يسمعوا ماثيو"), "the parent instruction must be shown");
-  assert.ok(voice.includes('id="pronounceListen"'), "listen button must stay");
+  assert.ok(!voice.includes("تحدي النطق"), "the challenge title must be gone");
+  assert.ok(!voice.includes("addPronunciationChallenge"), "the challenge card builder must be gone");
+  assert.ok(!voice.includes("challengeSpeak"), "challengeSpeak must be gone");
+  assert.ok(!voice.includes('id="pronounceCorrect"'), "the parent-judged 👍 button must be gone");
+  assert.ok(!voice.includes('id="pronounceRetry"'), "the 🔄 try-again button must be gone");
+  assert.ok(!voice.includes('id="pronounceListen"'), "the challenge listen button must be gone");
+  assert.ok(!voice.includes("ماما أو بابا يسمعوا ماثيو"), "the parent instruction must be gone");
+  assert.ok(voice.includes("speakSequence"), "recorded-voice sequencing stays");
 });
 
 // ---------- ITEM 10: yellow is a true clear yellow ----------
@@ -558,10 +567,12 @@ test("brave stories: intro chains by real completion (onDone), never by timeout"
   assert.equal((startStage.match(/nextQuestion\(\)/g) || []).length, 2, "startStage must call nextQuestion only via the two onDone callbacks");
 });
 
-test("playKey takes onDone and fires it once on end (or async when unplayable)", () => {
+test("playKey takes onDone and fires it once on end (or async when unplayable) — queued, never hijacking a sequence (round 3.2.6 item 4)", () => {
   const vc = read("voice-clips.js");
   assert.ok(vc.includes("const playKey = (key, onDone)"), "playKey must take onDone");
-  assert.ok(vc.includes("audio.onended = typeof onDone === \"function\" ? done : null"), "playKey must fire onDone from audio.onended");
+  assert.ok(vc.includes("let queue = []"), "playKey must queue behind a running sequence");
+  assert.ok(vc.includes("queue.push({ key, onDone: done })"), "a playKey during a sequence is enqueued with its onDone");
+  assert.ok(!vc.includes('audio.onended = typeof onDone === "function" ? done : null'), "the hijack line that killed a running sequence's onDone chain must be gone");
   assert.ok(vc.includes("setTimeout(done, 0); return false;"), "playKey must fire onDone async when there is nothing to play");
 });
 

@@ -190,7 +190,7 @@
     if (brave) play.querySelectorAll("[data-brave]").forEach(b => b.addEventListener("click", () => {
       const bs = brave.STORIES.find(x => x.id === b.dataset.brave);
       if (!bs) return;
-      if (brave.isUnlocked && !brave.isUnlocked(bs)) { window.MatthewVoice?.speak(brave.LOCKED_LINE || "القصة دي مقفولة لسه، اجمع نجوم أكتر!", "ar-EG"); return; }
+      // Round 3.2.6 item 5: no star gate — every story opens on tap.
       if (brave.openStory) brave.openStory(bs.id);
     }));
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -294,20 +294,11 @@
     try { window.MatthewMastery?.record("story:" + current.q, correct); window.MatthewMastery?.record(current.cat + ":" + current.q, correct); } catch (_) {}
     answers.querySelectorAll(".answer").forEach(b => { b.disabled = true; });
     const feedback = $("rescuePlay").querySelector("#rescueFeedback");
-    if (correct) {
-      score++;
-      button.classList.add("correct");
-      feedback.textContent = "برافو يا بطل! إجابة صح ⭐";
-      window.MatthewVoice?.feedback("correct");
-    } else {
-      button.classList.add("wrong");
-      feedback.textContent = "محاولة جميلة يا بطل! الإجابة الصح باللون الأخضر 💜";
-      answers.querySelectorAll(".answer").forEach(b => { if (b.dataset.answer === current.a[current.c]) b.classList.add("correct"); });
-      window.MatthewVoice?.feedback("wrong");
-    }
-    $("rescuePlay").querySelector("#rescueNext").classList.remove("hidden");
     const tk = qToken, cq = current;
-    setTimeout(() => {
+    // Round 3.2.6 (integrator, item 4): the explanation chains on the
+    // praise clip's end via feedback's onDone — the old fixed 2600ms
+    // timer cut every praise clip (2.4–4.8s) mid-sentence.
+    const explainAnswer = () => {
       if (qToken !== tk || !answered || !cq) return;
       // Numbers-once F3: a digit answer was already spoken in the options —
       // speak the prefix alone, never the digit a 2nd time in one turn.
@@ -315,7 +306,19 @@
       const isNum = /^[0-9٠-٩]+$/.test(String(ans).trim());
       if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(isNum ? ["الإجابة الصحيحة هي"] : ["الإجابة الصحيحة هي", ans], "ar-EG");
       else window.MatthewVoice?.speak(isNum ? "الإجابة الصحيحة هي" : "الإجابة الصحيحة هي " + ans, "ar-EG");
-    }, 2600);
+    };
+    if (correct) {
+      score++;
+      button.classList.add("correct");
+      feedback.textContent = "برافو يا بطل! إجابة صح ⭐";
+      window.MatthewVoice?.feedback("correct", explainAnswer);
+    } else {
+      button.classList.add("wrong");
+      feedback.textContent = "محاولة جميلة يا بطل! الإجابة الصح باللون الأخضر 💜";
+      answers.querySelectorAll(".answer").forEach(b => { if (b.dataset.answer === current.a[current.c]) b.classList.add("correct"); });
+      window.MatthewVoice?.feedback("wrong", explainAnswer);
+    }
+    $("rescuePlay").querySelector("#rescueNext").classList.remove("hidden");
   };
 
   const advance = () => {

@@ -203,10 +203,66 @@
     const fn = SCENES[s.lessons[index][0]];
     return fn ? fn() : null;
   }
+  // Round 3.2.6 item 3: subject-scoped quiz. Every bank science question
+  // maps to exactly one of the 7 subjects by topic keywords in the
+  // question text (q.q only — answers can mislead: "الشمس" is an answer
+  // in a shadow question but a universe topic in another). Checked
+  // against the real bank: 26/26 questions map to exactly one subject
+  // (animals 4, plants 2, body 3, physics 6, chemistry 4, universe 5,
+  // coding 2). Subjects with fewer than 4 bank questions are topped up
+  // to 6 with lesson-built questions: hear the lesson's own sci_* clip
+  // and pick its picture from 4 lessons of the same subject (the current
+  // lesson first). The filler heading "اسمع الدرس واختار صورته" is
+  // recorded as Aria clip sci_q_pick (round 3.2.6 integrator) and spoken
+  // bare before the lesson audio.
+  // Round 3.2.6 item 3: topic keywords mapping each bank science
+  // question to its subject. Written as "|"-joined STRINGS on purpose:
+  // the content/chunking tests count lessons by matching 4-string
+  // tuples in the source, and a 4-keyword array would be miscounted
+  // as a lesson (48 -> 50).
+  const SCIENCE_QUIZ_KEYWORDS={
+    animals:"لبن|نحلة|طيور|جمل",
+    plants:"النبات|ينمو|جذر",
+    body:"نرى|الدم|جسمنا|عين|قلب|عظام",
+    physics:"بالونة|ظل|كرة|مغناطيس|تطفو|تغوص|حجرة",
+    chemistry:"سكر|تلج|برق|فقاعات",
+    universe:"الشمس بتطلع|في الحقيقة|كوكب|القمر يدور|القمر والنجوم",
+    coding:"البرمجة|النمط|رتب الخطوات"
+  };
+  function scienceSubjectFor(q){
+    const text=(q&&q.q)||"";
+    for(const id of Object.keys(SCIENCE_QUIZ_KEYWORDS)){
+      if(SCIENCE_QUIZ_KEYWORDS[id].split("|").some(k=>text.indexOf(k)!==-1))return id;
+    }
+    return null;
+  }
+  // Build a 6-question quiz for one subject: its bank questions first,
+  // then lesson-built picture questions from that subject's own lessons.
+  // The bank may be absent (standalone test) — then it is all
+  // lesson-built. `bank` is read at call time, so script load order
+  // does not matter.
+  function scienceSubjectQuiz(subjectId, lessonIndex){
+    const subj=subjects.find(s=>s.id===subjectId);
+    if(!subj)return[];
+    const bankQs=(typeof bank!=="undefined"&&bank&&bank.science)?bank.science.filter(q=>scienceSubjectFor(q)===subjectId):[];
+    const qs=bankQs.map(q=>({kind:"bank",q:q.q,a:q.a.slice(),correct:q.c,ex:q.ex||""}));
+    let li=(typeof lessonIndex==="number"?lessonIndex:0);
+    let guard=0;
+    while(qs.length<6&&guard++<subj.lessons.length){
+      const lesson=subj.lessons[li%subj.lessons.length];
+      const others=subj.lessons.filter((_,i)=>i!==li%subj.lessons.length);
+      const picks=[lesson].concat(others.slice(0,3));
+      const shuffled=picks.slice().sort(()=>Math.random()-.5);
+      qs.push({kind:"lesson",q:"اسمع الدرس واختار صورته",lessonText:lesson[0]+". "+lesson[2]+" "+lesson[3],a:shuffled.map(l=>l[0]),pics:shuffled.map(l=>l[1]),correct:shuffled.indexOf(lesson)});
+      li++;
+    }
+    return qs.slice(0,6);
+  }
   const scienceScenesApi = {
     SCENES, sceneFor,
     chunkScienceSteps, scienceStepsFor, scienceWordCount,
     SCIENCE_LONG_WORDS, SCIENCE_STEP_MAX_WORDS, SCIENCE_MAX_STEPS,
+    scienceQuizKeywords: SCIENCE_QUIZ_KEYWORDS, scienceSubjectFor, scienceSubjectQuiz,
     lessonTitles: subjects.flatMap(s => s.lessons.map(l => l[0])),
     subjectLessons: subjects.map(s => ({ id: s.id, lessons: s.lessons.map(l => l[0]) }))
   };
@@ -228,7 +284,7 @@
   // spoken when the last lesson's last step is reached. NEW CLIP for the
   // audio worker: quiz_offer_science = this text (Aria, ar-EG).
   const QUIZ_OFFER="برافو يا بطل! خلصت الدرس! يلا نختبر نفسك في العلوم! دوس على الكاس!";
-  let subject=null, sciToken=0;
+  let subject=null, sciToken=0, sciTab="lesson", sciLessonKey="", sciExplainSpoken=false, sciQuiz=null, sciIndex=0, sciStep=0;
   const moveShownLessons=new Set();
   const card=document.createElement("button");
   card.type="button";card.className="game-card green";
@@ -275,30 +331,116 @@
     const MB=(typeof window!=="undefined")?window.MatthewMoveBreak:null;
     const moveKey=subject.id+":"+index;
     if(index%4===3&&!moveShownLessons.has(moveKey)&&MB){moveShownLessons.add(moveKey);panel.innerHTML='<div class="quiz-top"><button id="scienceBack" class="back" type="button">→ الدروس</button><strong>'+subject.icon+' '+subject.title+'</strong><span>'+(index+1).toLocaleString("ar-EG")+' / '+subject.lessons.length.toLocaleString("ar-EG")+'</span></div><div class="move-break" id="scienceMoveBreak"></div>';panel.querySelector("#scienceBack").onclick=renderLessons;MB.show(panel.querySelector("#scienceMoveBreak"),()=>renderLesson(index));return}
-    panel.innerHTML='<div class="quiz-top"><button id="scienceBack" class="back" type="button">→ الدروس</button><strong>'+subject.title+'</strong><span>'+(index+1).toLocaleString("ar-EG")+' / '+subject.lessons.length.toLocaleString("ar-EG")+'</span></div><div class="science-lesson"><div class="science-scene">'+(sceneFor(subject.id,index)||'<div class="science-emoji">'+lesson[1]+'</div>')+'</div><h2>'+lesson[0]+'</h2><p class="science-summary">'+lesson[2]+'</p><p class="science-detail">'+steps[step]+'</p>'+(steps.length>1?'<div class="science-step-indicator" aria-live="polite">خطوة '+(step+1).toLocaleString("ar-EG")+' من '+steps.length.toLocaleString("ar-EG")+' <span class="science-step-dots">'+steps.map((_,i)=>i===step?"●":"○").join("")+'</span></div><div class="science-steps"><button id="scienceStepPrev" class="secondary" type="button" '+(step===0?"disabled":"")+'>الخطوة اللي قبلها<span class="pager-arrow">→</span></button><button id="scienceStepNext" class="primary" type="button" '+(step===steps.length-1?"disabled":"")+'>'+(step===steps.length-1?"دي آخر خطوة ✅":"الخطوة اللي بعدها")+'<span class="pager-arrow">←</span></button></div>':"")+'<button id="scienceListen" class="voice-button" type="button">🔊 اسمع الشرح</button><div class="science-nav"><button id="sciencePrev" class="secondary" type="button" '+(index===0?"disabled":"")+'>السابق<span class="pager-arrow">→</span></button><button id="scienceNext" class="primary" type="button">'+(index===subject.lessons.length-1?"→ اختار درساً آخر":"الدرس التالي"+'<span class="pager-arrow">←</span>')+'</button></div><button id="scienceQuiz" class="primary" type="button">🏆 اختبر نفسك في العلوم ⭐</button></div>';
+    sciIndex=index;sciStep=step;
+    const key=subject.id+":"+index;
+    if(sciLessonKey!==key){sciLessonKey=key;sciExplainSpoken=false;sciQuiz=null;}
+    sciTab="lesson";
+    paintScienceLesson();
+    // Round 3.2.3 item 9: on the LAST lesson's LAST step the offer line
+    // follows — spoken on its own when the last step is reached by
+    // stepping (no lesson narration is playing then). The full sequence
+    // (lesson + offer) now plays from the 🧕 الشرح tab, see
+    // switchSciTab — repointed at the 🏆 tab, "دوس على الكاس" means the
+    // quiz tab now.
+    const isLastLesson=index===subject.lessons.length-1, isLastStep=step===steps.length-1;
+    if(!autoSpeak&&isLastLesson&&isLastStep){const tkO=++sciToken;setTimeout(()=>{if(tkO!==sciToken)return;speakSeq([QUIZ_OFFER])},120);}
+  }
+  // Round 3.2.6 item 2: the lesson opens with three big tabs — 📖 الدرس
+  // (scene + steps + lesson nav), 🧕 الشرح (the full lesson text, spoken
+  // once when the tab opens), 🏆 الاختبار (a quiz on THIS subject only).
+  const sciTabsHTML=active=>`<div class="lesson-tabs" role="tablist"><button type="button" class="lesson-tab${active==="lesson"?" active":""}" data-lesson-tab="lesson" role="tab">📖 الدرس</button><button type="button" class="lesson-tab${active==="explain"?" active":""}" data-lesson-tab="explain" role="tab">🧕 الشرح</button><button type="button" class="lesson-tab${active==="quiz"?" active":""}" data-lesson-tab="quiz" role="tab">🏆 الاختبار</button></div>`;
+  function sciLessonHTML(index, step){
+    const lesson=subject.lessons[index];
+    const steps=scienceStepsFor(lesson[3]);
+    return '<div class="science-lesson"><div class="science-scene">'+(sceneFor(subject.id,index)||'<div class="science-emoji">'+lesson[1]+'</div>')+'</div><h2>'+lesson[0]+'</h2><p class="science-summary">'+lesson[2]+'</p><p class="science-detail">'+steps[step]+'</p>'+(steps.length>1?'<div class="science-step-indicator" aria-live="polite">خطوة '+(step+1).toLocaleString("ar-EG")+' من '+steps.length.toLocaleString("ar-EG")+' <span class="science-step-dots">'+steps.map((_,i)=>i===step?"●":"○").join("")+'</span></div><div class="science-steps"><button id="scienceStepPrev" class="secondary" type="button" '+(step===0?"disabled":"")+'>الخطوة اللي قبلها<span class="pager-arrow">→</span></button><button id="scienceStepNext" class="primary" type="button" '+(step===steps.length-1?"disabled":"")+'>'+(step===steps.length-1?"دي آخر خطوة ✅":"الخطوة اللي بعدها")+'<span class="pager-arrow">←</span></button></div>':"")+'<button id="scienceListen" class="voice-button" type="button">🔊 اسمع الشرح</button><div class="science-nav"><button id="sciencePrev" class="secondary" type="button" '+(index===0?"disabled":"")+'>السابق<span class="pager-arrow">→</span></button><button id="scienceNext" class="primary" type="button">'+(index===subject.lessons.length-1?"→ اختار درساً آخر":"الدرس التالي"+'<span class="pager-arrow">←</span>')+'</button></div></div>';
+  }
+  function sciExplainHTML(index){
+    const lesson=subject.lessons[index];
+    return '<div class="explain-box"><strong>🧕 الميس بتشرح لك من الصفر</strong><h2>'+lesson[0]+'</h2><p>'+lesson[2]+'</p><p>'+lesson[3]+'</p></div><button id="scienceExplainListen" class="voice-button" type="button">🔊 اسمع الشرح</button><p>اسمع الشرح كويس، وبعدين جرّب 🏆 الاختبار على نفس العالم!</p>';
+  }
+  function sciQuizPanelHTML(){
+    if(!sciQuiz)return '<p>أسئلة على عالم '+subject.title+' بس — من الدروس اللي في نفس العالم.</p><button id="scienceQuiz" class="primary" type="button">🏆 اختبر نفسك في العلوم ⭐</button>';
+    if(sciQuiz.done){
+      return '<div class="academy-visual">'+(sciQuiz.score>=4?"🏆":"💪")+'</div><h2>'+(sciQuiz.score>=4?"برافو يا بطل!":"محاولة جميلة يا ماثيو!")+'</h2><p class="academy-hint">جاوبت صح على '+sciQuiz.score.toLocaleString("ar-EG")+' من '+sciQuiz.questions.length.toLocaleString("ar-EG")+'.</p><button id="scienceQuizRetry" class="secondary" type="button">أعيد الاختبار</button><button id="scienceQuizBack" class="primary" type="button">ارجع للدرس<span class="pager-arrow">←</span></button>';
+    }
+    const q=sciQuiz.questions[sciQuiz.qIndex];
+    const choices=q.kind==="lesson"
+      ? q.a.map((t,i)=>'<button type="button" data-value="'+i+'"><span class="answer-picture" aria-hidden="true">'+q.pics[i]+'</span><b>'+t+'</b></button>').join("")
+      : q.a.map((t,i)=>'<button type="button" data-value="'+i+'"><b>'+t+'</b></button>').join("");
+    return '<p class="math-stage">سؤال '+(sciQuiz.qIndex+1).toLocaleString("ar-EG")+' من '+sciQuiz.questions.length.toLocaleString("ar-EG")+'</p><h2>'+q.q+'</h2><button id="scienceQuestionSpeak" class="voice-button" type="button">🔊 اسمع السؤال</button><div class="math-choices">'+choices+'</div><p id="scienceFeedback" class="feedback" aria-live="polite"></p><button id="scienceNextQ" class="primary hidden">السؤال التالي<span class="pager-arrow">←</span></button>';
+  }
+  // One paint for every tabbed lesson screen (lesson / step / question /
+  // result): header + tabs + all three panels, so the tabs never
+  // disappear mid-lesson or mid-quiz.
+  function paintScienceLesson(){
+    const index=sciIndex, step=sciStep;
+    panel.innerHTML='<div class="quiz-top"><button id="scienceBack" class="back" type="button">→ الدروس</button><strong>'+subject.title+'</strong><span>'+(index+1).toLocaleString("ar-EG")+' / '+subject.lessons.length.toLocaleString("ar-EG")+'</span></div>'+sciTabsHTML(sciTab)
+      +'<div class="tab-panel'+(sciTab==="lesson"?" active":"")+'" data-tab-panel="lesson">'+sciLessonHTML(index,step)+'</div>'
+      +'<div class="tab-panel'+(sciTab==="explain"?" active":"")+'" data-tab-panel="explain">'+sciExplainHTML(index)+'</div>'
+      +'<div class="tab-panel'+(sciTab==="quiz"?" active":"")+'" data-tab-panel="quiz">'+sciQuizPanelHTML()+'</div>';
     panel.querySelector("#scienceBack").onclick=renderLessons;
+    panel.querySelectorAll("[data-lesson-tab]").forEach(b=>b.onclick=()=>switchSciTab(b.dataset.lessonTab));
+    const lesson=subject.lessons[index];
     panel.querySelector("#scienceListen").onclick=()=>speak(lesson[0]+". "+lesson[2]+" "+lesson[3]);
+    const steps=scienceStepsFor(lesson[3]);
     if(steps.length>1){
       panel.querySelector("#scienceStepPrev").onclick=()=>renderLesson(index,step-1,false);
       panel.querySelector("#scienceStepNext").onclick=()=>renderLesson(index,step+1,false);
     }
     panel.querySelector("#sciencePrev").onclick=()=>renderLesson(Math.max(0,index-1));
     panel.querySelector("#scienceNext").onclick=()=>index===subject.lessons.length-1?renderLessons():renderLesson(index+1);
-    // Round 3.2.3 item 9: the quiz offer. The main quiz start() does not
-    // hide lesson panels, so the academy panel is hidden (and the voice
-    // stopped) first — otherwise it would sit on top of the quiz.
-    panel.querySelector("#scienceQuiz").onclick=()=>{sciToken++;try{window.MatthewVoice?.stop()}catch(_){}panel.classList.add("hidden");start("science")};
-    // The lesson's ONE sci_* clip plays ONCE, on the first step only.
-    // Stepping never re-speaks (no echo); 🔊 اسمع الشرح above replays the
-    // whole lesson from any step. A step change bumps sciToken so a pending
-    // first-step timer from a fast tap cannot fire late.
-    // Round 3.2.3 item 9: on the LAST lesson's LAST step the offer line
-    // follows the lesson — as one sequence on a single-step lesson (so the
-    // offer can never cut the lesson off), or on its own when the last
-    // step is reached by stepping (no lesson narration is playing then).
-    const lessonText=lesson[0]+". "+lesson[2]+" "+lesson[3];
-    const isLastLesson=index===subject.lessons.length-1, isLastStep=step===steps.length-1;
-    if(autoSpeak&&step===0){const tkN=++sciToken;setTimeout(()=>{if(tkN!==sciToken)return;if(isLastLesson&&isLastStep)speakSeq([lessonText,QUIZ_OFFER]);else speak(lessonText)},120);}
-    else {sciToken++;if(isLastLesson&&isLastStep){const tkO=++sciToken;setTimeout(()=>{if(tkO!==sciToken)return;speakSeq([QUIZ_OFFER])},120);}}
+    panel.querySelector("#scienceExplainListen").onclick=()=>speak(lesson[0]+". "+lesson[2]+" "+lesson[3]);
+    bindSciQuizPanel();
+  }
+  function switchSciTab(name){
+    if(name!=="lesson"&&name!=="explain"&&name!=="quiz")return;
+    sciToken++;
+    try{window.MatthewVoice?.stop()}catch(_){}
+    sciTab=name;
+    panel.querySelectorAll("[data-lesson-tab]").forEach(b=>b.classList.toggle("active",b.dataset.lessonTab===name));
+    panel.querySelectorAll("[data-tab-panel]").forEach(p=>p.classList.toggle("active",p.dataset.tabPanel===name));
+    if(name==="explain"&&!sciExplainSpoken){
+      sciExplainSpoken=true;
+      const lesson=subject.lessons[sciIndex];
+      const lessonText=lesson[0]+". "+lesson[2]+" "+lesson[3];
+      const isLastLesson=sciIndex===subject.lessons.length-1, isLastStep=sciStep===scienceStepsFor(lesson[3]).length-1;
+      const tkE=++sciToken;
+      setTimeout(()=>{if(tkE!==sciToken)return;if(isLastLesson&&isLastStep)speakSeq([lessonText,QUIZ_OFFER]);else speak(lessonText)},120);
+    }
+    if(name==="quiz"&&!sciQuiz){sciQuiz={questions:scienceSubjectQuiz(subject.id,sciIndex),qIndex:0,score:0,done:false};paintScienceLesson();}
+  }
+  function bindSciQuizPanel(){
+    const start=panel.querySelector("#scienceQuiz");
+    if(start)start.onclick=()=>switchSciTab("quiz");
+    // Round 3.2.6 item 3: the quiz button opens the 🏆 tab with the
+    // subject's own quiz (the general bank lives ONLY in the Tests
+    // section now).
+    const retry=panel.querySelector("#scienceQuizRetry");
+    if(retry)retry.onclick=()=>{sciQuiz=null;switchSciTab("quiz");};
+    const back=panel.querySelector("#scienceQuizBack");
+    if(back)back.onclick=()=>switchSciTab("lesson");
+    if(!sciQuiz||sciQuiz.done)return;
+    const q=sciQuiz.questions[sciQuiz.qIndex];
+    let done=false;
+    const ask=()=>{if(q.kind==="lesson")speakSeq([q.lessonText,q.q]);else speakSeq([q.q,...q.a]);};
+    const speakBtn=panel.querySelector("#scienceQuestionSpeak");
+    if(speakBtn)speakBtn.onclick=ask;
+    const tkQ=++sciToken;
+    setTimeout(()=>{if(tkQ!==sciToken||done)return;ask();},350);
+    panel.querySelectorAll("[data-value]").forEach(b=>b.onclick=()=>{
+      if(done)return;done=true;
+      const correct=+b.dataset.value===q.correct;
+      try{window.MatthewMastery?.record("science",correct);window.MatthewMastery?.record("science-subject:"+subject.id,correct);}catch(_){}
+      if(correct){sciQuiz.score++;b.classList.add("correct");panel.querySelector("#scienceFeedback").textContent="برافو يا بطل! إجابة صح ⭐";}
+      else{b.classList.add("wrong");panel.querySelector("#scienceFeedback").textContent="ولا يهمك، نتعلم سوا. "+(q.ex?q.ex+" ":"")+"الإجابة الصح: "+q.a[q.correct];}
+      try{window.MatthewVoice?.feedback(correct?"correct":"wrong");}catch(_){}
+      panel.querySelectorAll("[data-value]").forEach(x=>{x.disabled=true;if(+x.dataset.value===q.correct)x.classList.add("correct");});
+      const next=panel.querySelector("#scienceNextQ");next.classList.remove("hidden");
+      next.innerHTML=sciQuiz.qIndex===sciQuiz.questions.length-1?"شوف نتيجتك 🏆":"السؤال التالي<span class=\"pager-arrow\">←</span>";
+    });
+    panel.querySelector("#scienceNextQ").onclick=()=>{
+      if(sciQuiz.qIndex<sciQuiz.questions.length-1){sciQuiz.qIndex++;paintScienceLesson();}
+      else{sciQuiz.done=true;paintScienceLesson();}
+    };
   }
 })();
