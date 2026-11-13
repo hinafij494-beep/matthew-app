@@ -141,6 +141,12 @@
    constrain it to ~emoji size, like the other word pictures. The big
    rendering in the word-example tiles is untouched (scoped to .explain-box). */
 .explain-box p svg{width:1.5em;height:1.5em;vertical-align:-.35em;display:inline-block}
+/* Round 3.2.5 FAIL 1: the inline-SVG word pictures (قفص/مغارة/مكتب/سأل)
+   and haraka mark pictures (الفتحة/الضمة/الكسرة) in lessons.js have no
+   width/height attributes, so they collapsed to 0x0 in their tiles while
+   the emoji pictures render at ~30px. Size them to emoji size, like
+   .answer-picture svg and .explain-box p svg already do for theirs. */
+.word-examples span svg,.mark-card>span svg{width:36px;height:36px;display:inline-block;vertical-align:middle}
 @media(max-width:360px){.king-art{width:130px;height:112px}}
 
 .answer{position:relative}

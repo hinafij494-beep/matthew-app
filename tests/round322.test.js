@@ -325,6 +325,9 @@ test("P0-6: letter quiz never offers the correct answer twice, and every answer 
   const qpSrc = lesSrc.slice(qpStart, lesSrc.indexOf("  };\n", lesSrc.indexOf("const quizPic = a => {")) + 5);
   const ctx = { Math, console };
   ctx.showQuiz = () => { ctx.captured = ctx.quiz; };
+  // Round 3.2.5 FAIL 2: makeQuiz() resets panel.dataset.finished — stub
+  // the letterSchool panel, as in tests/round324.test.js.
+  ctx.panel = { dataset: {} };
   // Round 3.2.3 item 13: makeQuiz() pushes a history sub-screen via the
   // module-level pushSub() — stub it here; this test exercises the quiz
   // generation, not navigation.

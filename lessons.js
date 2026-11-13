@@ -208,6 +208,11 @@
   }
   function makeQuiz(){
     pushSub();
+    // Round 3.2.5 FAIL 2: finishQuiz() sets panel.dataset.finished="1",
+    // and retry calls makeQuiz() without resetting it — the next tap then
+    // fires the finished branch and bounces to the picker instead of q2.
+    // A fresh quiz always starts unfinished.
+    panel.dataset.finished="0";
     step=3;
     const qs=[];
     // Round 3.2.1 note 4: the spoken question must never contain its own
