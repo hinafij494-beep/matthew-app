@@ -38,6 +38,9 @@ function loadMakeQuiz() {
   const sandbox = {
     lessons, marks,
     quiz: [], quizIndex: 0, score: 0, moveBreakShown: false, step: 0,
+    // Round 3.2.5 FAIL 2: makeQuiz() resets panel.dataset.finished — the
+    // stub panel stands in for the real letterSchool section.
+    panel: { dataset: {} },
     pushSub: () => {},
     showQuiz: () => { captured.push(...sandbox.quiz); },
   };
