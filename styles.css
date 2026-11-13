@@ -136,6 +136,11 @@
 .explain-box{background:#fff8e1;border:2px dashed #f0b429;border-radius:18px;padding:14px 16px;margin:14px 0;text-align:right}
 .explain-box strong{color:#9a6a00}
 .explain-box p{line-height:2.05;margin:6px 0 0;color:#5b4a1f}
+/* Round 3.2.3 F1: an inline SVG word-picture inside the explanation used
+   to render screen-filling and bury the rest of the text (5 letters) —
+   constrain it to ~emoji size, like the other word pictures. The big
+   rendering in the word-example tiles is untouched (scoped to .explain-box). */
+.explain-box p svg{width:1.5em;height:1.5em;vertical-align:-.35em;display:inline-block}
 @media(max-width:360px){.king-art{width:130px;height:112px}}
 
 .answer{position:relative}
@@ -234,9 +239,6 @@
 /* Round 3.2.1 note 7: the letter picker glyphs are big, like the lesson display. */
 .letter-picker .basic-tile b{font-size:36px;line-height:1.2}
 
-/* Round 3.2.1 notes 9-11: section headings inside the unified lesson. */
-.lesson-section{font-size:19px;font-weight:900;color:#5035b2;margin:24px 0 6px}
-#letterQuizBtn{width:100
 /* Round 3.2.1 notes 9-11: section headings inside the unified lesson. */
 .lesson-section{font-size:19px;font-weight:900;color:#5035b2;margin:24px 0 6px}
 #letterQuizBtn{width:100%;margin-top:16px}
@@ -497,3 +499,15 @@ body.brave-focus .topbar{display:none}
 @media (prefers-reduced-motion: reduce){
   .science-scene *{animation:none!important}
 }
+
+/* Round 3.2.3 — layout overlaps (user screenshots, 4 screens):
+   (a) the floating 🏠 home button covered content bottom-right (chess
+   lesson text, «الحاجة اللي بعدها», the برتقالي button) — content must
+   scroll clear of it; (b) the big purple «الرئيسية» badge covered screen
+   titles at top-right — it now flows inside the sticky header. */
+main{padding-bottom:110px}
+.quiz-top{flex-wrap:wrap;gap:8px}
+.quiz-top .back{flex:0 0 auto;white-space:nowrap;padding:8px 14px;font-size:15px;min-height:0}
+.quiz-top strong{flex:1 1 auto;min-width:0;text-align:center}
+/* Side finding (item 9): digit-only quiz answers render label-only, big. */
+.answer.digit-only{font-size:52px;font-weight:900}

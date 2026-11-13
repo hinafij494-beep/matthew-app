@@ -243,7 +243,7 @@ test("P2: leaving mid-quiz and re-entering the SAME quiz resumes the exact quest
   const t = runApp();
   t.start("numbers");
   assert.equal(t.questionCount(), "١ / ١٠");
-  assert.equal(t.byId.categoryName.textContent, "عالم الأرقام");
+  assert.equal(t.byId.categoryName.textContent, "اختبر نفسك في الأرقام");
   // Answer Q1 correctly, move to Q2, remember it, then leave.
   t.answerCorrectly(); t.next();
   assert.equal(t.questionCount(), "٢ / ١٠");

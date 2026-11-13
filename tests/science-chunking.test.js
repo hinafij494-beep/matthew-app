@@ -144,15 +144,21 @@ test("audio: the ONE sci_* clip still plays once — auto-play on step 0 only, L
   const fn = src.slice(src.indexOf("function renderLesson"));
   // The full lesson text (title + short + long) is spoken in exactly two
   // places: the 🔊 button and the guarded auto-play — never per step.
-  const fullSpeaks = [...fn.matchAll(/speak\(lesson\[0\]\+"\. "\+lesson\[2\]\+" "\+lesson\[3\]\)/g)];
-  assert.equal(fullSpeaks.length, 2,
-    "full-lesson speak must appear exactly twice (Listen + auto-play), got " + fullSpeaks.length);
+  // Round 3.2.3 item 9: the auto-play goes through a lessonText const so
+  // the quiz offer can follow it in one sequence on the last lesson.
+  assert.ok(fn.includes('const lessonText=lesson[0]+". "+lesson[2]+" "+lesson[3];'),
+    "renderLesson must build the full-lesson text once");
+  const fullSpeaks = [...fn.matchAll(/speak\(lessonText\)/g)];
+  assert.equal(fullSpeaks.length, 1,
+    "full-lesson speak via lessonText must appear once (auto-play), got " + fullSpeaks.length);
+  assert.ok(fn.includes("speakSeq([lessonText,QUIZ_OFFER])"),
+    "last lesson must sequence lesson then offer");
   assert.ok(fn.includes('panel.querySelector("#scienceListen").onclick=()=>speak(lesson[0]+". "+lesson[2]+" "+lesson[3]);'),
     "🔊 اسمع الشرح must keep playing the WHOLE lesson from any step");
   assert.ok(fn.includes("if(autoSpeak&&step===0){const tkN=++sciToken;setTimeout"),
     "auto-play must be guarded to the first step only");
   assert.ok(!fn.includes("speak(steps[step]"), "audio must never be split per step");
-  assert.ok(fn.includes("else sciToken++;"),
+  assert.ok(fn.includes("else {sciToken++;"),
     "a step change must cancel a pending first-step auto-play timer");
 });
 

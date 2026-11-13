@@ -222,6 +222,12 @@
   panel.id="scienceAcademy";panel.className="academy-panel hidden";panel.dir="rtl";
   main.insertBefore(panel,document.querySelector("footer"));
   const speak=(text)=>window.MatthewVoice?.speak(text,"ar-EG");
+  const speakSeq=(list)=>window.MatthewVoice?.speakSequence(list,"ar-EG");
+  // Round 3.2.3 item 9: lesson → quiz offer (bank `science` — a direct
+  // fit). The 🏆 button sits on EVERY lesson screen; the offer line is
+  // spoken when the last lesson's last step is reached. NEW CLIP for the
+  // audio worker: quiz_offer_science = this text (Aria, ar-EG).
+  const QUIZ_OFFER="برافو يا بطل! خلصت الدرس! يلا نختبر نفسك في العلوم! دوس على الكاس!";
   let subject=null, sciToken=0;
   const moveShownLessons=new Set();
   const card=document.createElement("button");
@@ -269,7 +275,7 @@
     const MB=(typeof window!=="undefined")?window.MatthewMoveBreak:null;
     const moveKey=subject.id+":"+index;
     if(index%4===3&&!moveShownLessons.has(moveKey)&&MB){moveShownLessons.add(moveKey);panel.innerHTML='<div class="quiz-top"><button id="scienceBack" class="back" type="button">→ الدروس</button><strong>'+subject.icon+' '+subject.title+'</strong><span>'+(index+1).toLocaleString("ar-EG")+' / '+subject.lessons.length.toLocaleString("ar-EG")+'</span></div><div class="move-break" id="scienceMoveBreak"></div>';panel.querySelector("#scienceBack").onclick=renderLessons;MB.show(panel.querySelector("#scienceMoveBreak"),()=>renderLesson(index));return}
-    panel.innerHTML='<div class="quiz-top"><button id="scienceBack" class="back" type="button">→ الدروس</button><strong>'+subject.title+'</strong><span>'+(index+1).toLocaleString("ar-EG")+' / '+subject.lessons.length.toLocaleString("ar-EG")+'</span></div><div class="science-lesson"><div class="science-scene">'+(sceneFor(subject.id,index)||'<div class="science-emoji">'+lesson[1]+'</div>')+'</div><h2>'+lesson[0]+'</h2><p class="science-summary">'+lesson[2]+'</p><p class="science-detail">'+steps[step]+'</p>'+(steps.length>1?'<div class="science-step-indicator" aria-live="polite">خطوة '+(step+1).toLocaleString("ar-EG")+' من '+steps.length.toLocaleString("ar-EG")+' <span class="science-step-dots">'+steps.map((_,i)=>i===step?"●":"○").join("")+'</span></div><div class="science-steps"><button id="scienceStepPrev" class="secondary" type="button" '+(step===0?"disabled":"")+'>الخطوة اللي قبلها<span class="pager-arrow">→</span></button><button id="scienceStepNext" class="primary" type="button" '+(step===steps.length-1?"disabled":"")+'>'+(step===steps.length-1?"دي آخر خطوة ✅":"الخطوة اللي بعدها")+'<span class="pager-arrow">←</span></button></div>':"")+'<button id="scienceListen" class="voice-button" type="button">🔊 اسمع الشرح</button><div class="science-nav"><button id="sciencePrev" class="secondary" type="button" '+(index===0?"disabled":"")+'>السابق<span class="pager-arrow">→</span></button><button id="scienceNext" class="primary" type="button">'+(index===subject.lessons.length-1?"→ اختار درساً آخر":"الدرس التالي"+'<span class="pager-arrow">←</span>')+'</button></div></div>';
+    panel.innerHTML='<div class="quiz-top"><button id="scienceBack" class="back" type="button">→ الدروس</button><strong>'+subject.title+'</strong><span>'+(index+1).toLocaleString("ar-EG")+' / '+subject.lessons.length.toLocaleString("ar-EG")+'</span></div><div class="science-lesson"><div class="science-scene">'+(sceneFor(subject.id,index)||'<div class="science-emoji">'+lesson[1]+'</div>')+'</div><h2>'+lesson[0]+'</h2><p class="science-summary">'+lesson[2]+'</p><p class="science-detail">'+steps[step]+'</p>'+(steps.length>1?'<div class="science-step-indicator" aria-live="polite">خطوة '+(step+1).toLocaleString("ar-EG")+' من '+steps.length.toLocaleString("ar-EG")+' <span class="science-step-dots">'+steps.map((_,i)=>i===step?"●":"○").join("")+'</span></div><div class="science-steps"><button id="scienceStepPrev" class="secondary" type="button" '+(step===0?"disabled":"")+'>الخطوة اللي قبلها<span class="pager-arrow">→</span></button><button id="scienceStepNext" class="primary" type="button" '+(step===steps.length-1?"disabled":"")+'>'+(step===steps.length-1?"دي آخر خطوة ✅":"الخطوة اللي بعدها")+'<span class="pager-arrow">←</span></button></div>':"")+'<button id="scienceListen" class="voice-button" type="button">🔊 اسمع الشرح</button><div class="science-nav"><button id="sciencePrev" class="secondary" type="button" '+(index===0?"disabled":"")+'>السابق<span class="pager-arrow">→</span></button><button id="scienceNext" class="primary" type="button">'+(index===subject.lessons.length-1?"→ اختار درساً آخر":"الدرس التالي"+'<span class="pager-arrow">←</span>')+'</button></div><button id="scienceQuiz" class="primary" type="button">🏆 اختبر نفسك في العلوم ⭐</button></div>';
     panel.querySelector("#scienceBack").onclick=renderLessons;
     panel.querySelector("#scienceListen").onclick=()=>speak(lesson[0]+". "+lesson[2]+" "+lesson[3]);
     if(steps.length>1){
@@ -278,11 +284,21 @@
     }
     panel.querySelector("#sciencePrev").onclick=()=>renderLesson(Math.max(0,index-1));
     panel.querySelector("#scienceNext").onclick=()=>index===subject.lessons.length-1?renderLessons():renderLesson(index+1);
+    // Round 3.2.3 item 9: the quiz offer. The main quiz start() does not
+    // hide lesson panels, so the academy panel is hidden (and the voice
+    // stopped) first — otherwise it would sit on top of the quiz.
+    panel.querySelector("#scienceQuiz").onclick=()=>{sciToken++;try{window.MatthewVoice?.stop()}catch(_){}panel.classList.add("hidden");start("science")};
     // The lesson's ONE sci_* clip plays ONCE, on the first step only.
     // Stepping never re-speaks (no echo); 🔊 اسمع الشرح above replays the
     // whole lesson from any step. A step change bumps sciToken so a pending
     // first-step timer from a fast tap cannot fire late.
-    if(autoSpeak&&step===0){const tkN=++sciToken;setTimeout(()=>{if(tkN!==sciToken)return;speak(lesson[0]+". "+lesson[2]+" "+lesson[3])},120);}
-    else sciToken++;
+    // Round 3.2.3 item 9: on the LAST lesson's LAST step the offer line
+    // follows the lesson — as one sequence on a single-step lesson (so the
+    // offer can never cut the lesson off), or on its own when the last
+    // step is reached by stepping (no lesson narration is playing then).
+    const lessonText=lesson[0]+". "+lesson[2]+" "+lesson[3];
+    const isLastLesson=index===subject.lessons.length-1, isLastStep=step===steps.length-1;
+    if(autoSpeak&&step===0){const tkN=++sciToken;setTimeout(()=>{if(tkN!==sciToken)return;if(isLastLesson&&isLastStep)speakSeq([lessonText,QUIZ_OFFER]);else speak(lessonText)},120);}
+    else {sciToken++;if(isLastLesson&&isLastStep){const tkO=++sciToken;setTimeout(()=>{if(tkO!==sciToken)return;speakSeq([QUIZ_OFFER])},120);}}
   }
 })();

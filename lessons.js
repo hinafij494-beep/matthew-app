@@ -1,33 +1,33 @@
 (() => {
   const lessons = [
     {letter:"أ",name:"الألف",forms:["أ","ـأ","ـأ"],words:["أَسَد","سَأَلَ","مَلْجَأ"],emoji:["🦁","<svg viewBox='0 0 64 64' aria-hidden='true'><circle cx='18' cy='44' r='10' fill='#ffd9b3' stroke='#b5651d' stroke-width='2.5'/><circle cx='15' cy='43' r='1.5' fill='#4a2f14'/><circle cx='21' cy='43' r='1.5' fill='#4a2f14'/><path d='M15 49 q3 3 6 0' stroke='#b5651d' stroke-width='2' fill='none' stroke-linecap='round'/><path d='M30 10 h22 a6 6 0 0 1 6 6 v10 a6 6 0 0 1 -6 6 h-12 l-8 8 v-8 h-2 a6 6 0 0 1 -6 -6 V16 a6 6 0 0 1 6 -6Z' fill='#fff' stroke='#7c5cff' stroke-width='2.5'/><path d='M44 14 q6 0 6 6 q0 4 -4 5 q-2 1 -2 3' stroke='#7c5cff' stroke-width='3' fill='none' stroke-linecap='round'/><circle cx='44' cy='30' r='2' fill='#7c5cff'/></svg>","🏡"],sound:"أَ"},
-    {letter:"ب",name:"الباء",forms:["بـ","ـبـ","ـب"],words:["بَطَّة","جَبَل","كِتَاب"],emoji:["🦆","⛰️","📘"],sound:"بَ"},
+    {letter:"ب",name:"الباء",forms:["بـ","ـبـ","ـب"],words:["بَطَّة","جَبَل","بَاب"],emoji:["🦆","⛰️","🚪"],sound:"بَ"},
     {letter:"ت",name:"التاء",forms:["تـ","ـتـ","ـت"],words:["تُفَّاحَة","مَتْجَر","بَيْت"],emoji:["🍎","🏪","🏠"],sound:"تَ"},
-    {letter:"ث",name:"الثاء",forms:["ثـ","ـثـ","ـث"],words:["ثَعْلَب","مِثَال","حَدِيث"],emoji:["🦊","<svg viewBox='0 0 64 64' aria-hidden='true'><rect x='8' y='12' width='48' height='34' rx='5' fill='#2f6b4f' stroke='#1e4d38' stroke-width='3'/><text x='32' y='35' font-size='15' text-anchor='middle' fill='#fff' font-weight='bold'>١+١=٢</text><path d='M24 52 h16 M32 46 v6' stroke='#8a5a24' stroke-width='3' stroke-linecap='round'/></svg>","💬"],sound:"ثَ"},
+    {letter:"ث",name:"الثاء",forms:["ثـ","ـثـ","ـث"],words:["ثَعْلَب","مِثَال","حَدِيث"],emoji:["🦊","📝","💬"],sound:"ثَ"},
     {letter:"ج",name:"الجيم",forms:["جـ","ـجـ","ـج"],words:["جَمَل","شَجَرَة","تَاج"],emoji:["🐪","🌳","👑"],sound:"جَ"},
     {letter:"ح",name:"الحاء",forms:["حـ","ـحـ","ـح"],words:["حِصَان","بَحْر","مِفْتَاح"],emoji:["🐎","🌊","🔑"],sound:"حَ"},
     {letter:"خ",name:"الخاء",forms:["خـ","ـخـ","ـخ"],words:["خَرُوف","نَخْلَة","بَطِيخ"],emoji:["🐑","🌴","🍉"],sound:"خَ"},
     {letter:"د",name:"الدال",forms:["د","ـد","ـد"],words:["دُبّ","مَدْرَسَة","وَرْد"],emoji:["🐻","🏫","🌹"],sound:"دَ"},
     {letter:"ذ",name:"الذال",forms:["ذ","ـذ","ـذ"],words:["ذِئْب","أُذُن","لَذِيذ"],emoji:["🐺","👂","😋"],sound:"ذَ"},
-    {letter:"ر",name:"الراء",forms:["ر","ـر","ـر"],words:["رِيشَة","فَرَاشَة","قَمَر"],emoji:["🪶","🦋","🌙"],sound:"رَ"},
+    {letter:"ر",name:"الراء",forms:["ر","ـر","ـر"],words:["رِيشَة","قِرْد","قَمَر"],emoji:["🪶","🐒","🌙"],sound:"رَ"},
     {letter:"ز",name:"الزاي",forms:["ز","ـز","ـز"],words:["زَرَافَة","وَزَّة","خُبْز"],emoji:["🦒","🪿","🍞"],sound:"زَ"},
-    {letter:"س",name:"السين",forms:["سـ","ـسـ","ـس"],words:["سَمَكَة","مَسْجِد","شَمْس"],emoji:["🐟","🕌","☀️"],sound:"سَ"},
+    {letter:"س",name:"السين",forms:["سـ","ـسـ","ـس"],words:["سَمَكَة","مَسْجِد","قَوْس"],emoji:["🐟","🕌","🏹"],sound:"سَ"},
     {letter:"ش",name:"الشين",forms:["شـ","ـشـ","ـش"],words:["شَمْس","فَرَاشَة","عُشّ"],emoji:["☀️","🦋","🪺"],sound:"شَ"},
     {letter:"ص",name:"الصاد",forms:["صـ","ـصـ","ـص"],words:["صَقْر","عَصِير","قَفَص"],emoji:["🦅","🧃","<svg viewBox='0 0 64 64' aria-hidden='true'><circle cx='32' cy='10' r='3.5' fill='none' stroke='#8a8f96' stroke-width='3'/><path d='M14 54 V30 q0 -16 18 -16 q18 0 18 16 V54 Z' fill='#fdf6e3' stroke='#8a8f96' stroke-width='3'/><path d='M22 20 V54 M32 15 V54 M42 20 V54' stroke='#8a8f96' stroke-width='2.5'/><path d='M14 40 h36 M14 28 q18 -6 36 0' stroke='#8a8f96' stroke-width='2.5' fill='none'/><rect x='10' y='54' width='44' height='5' rx='2.5' fill='#c89b4e' stroke='#8f6a1e' stroke-width='2'/></svg>"],sound:"صَ"},
     {letter:"ض",name:"الضاد",forms:["ضـ","ـضـ","ـض"],words:["ضِفْدَع","مِضْرَب","بَيْض"],emoji:["🐸","🏏","🥚"],sound:"ضَ"},
-    {letter:"ط",name:"الطاء",forms:["طـ","ـطـ","ـط"],words:["طَائِر","بَطَّة","خَيْط"],emoji:["🐦","🦆","🧵"],sound:"طَ"},
+    {letter:"ط",name:"الطاء",forms:["طـ","ـطـ","ـط"],words:["طَائِر","مِطْبَخ","خَيْط"],emoji:["🐦","🍳","🧵"],sound:"طَ"},
     {letter:"ظ",name:"الظاء",forms:["ظـ","ـظـ","ـظ"],words:["ظَرْف","نَظِيف","حَظّ"],emoji:["✉️","🧼","🍀"],sound:"ظَ"},
-    {letter:"ع",name:"العين",forms:["عـ","ـعـ","ـع"],words:["عُصْفُور","لُعْبَة","شَارِع"],emoji:["🐤","🧸","🛣️"],sound:"عَ"},
+    {letter:"ع",name:"العين",forms:["عـ","ـعـ","ـع"],words:["عُصْفُور","لُعْبَة","شَارِع"],emoji:["🐦","🧸","🛣️"],sound:"عَ"},
     {letter:"غ",name:"الغين",forms:["غـ","ـغـ","ـغ"],words:["غَزَال","مَغَارَة","صَمْغ"],emoji:["🦌","<svg viewBox='0 0 64 64' aria-hidden='true'><path d='M6 56 L24 14 L32 26 L40 10 L58 56 Z' fill='#a97e3f' stroke='#7c4a21' stroke-width='3' stroke-linejoin='round'/><path d='M24 56 v-10 a8 8 0 0 1 16 0 v10 Z' fill='#2b2f36'/><circle cx='18' cy='48' r='2' fill='#7c4a21'/><circle cx='47' cy='44' r='2' fill='#7c4a21'/></svg>","🧴"],sound:"غَ"},
-    {letter:"ف",name:"الفاء",forms:["فـ","ـفـ","ـف"],words:["فِيل","مِفْتَاح","هَاتِف"],emoji:["🐘","🔑","📱"],sound:"فَ"},
-    {letter:"ق",name:"القاف",forms:["قـ","ـقـ","ـق"],words:["قِطَّة","بَقَرَة","سُوق"],emoji:["🐱","🐄","🏪"],sound:"قَ"},
-    {letter:"ك",name:"الكاف",forms:["كـ","ـكـ","ـك"],words:["كِتَاب","مَكْتَب","سَمَك"],emoji:["📘","<svg viewBox='0 0 64 64' aria-hidden='true'><rect x='8' y='20' width='48' height='7' rx='3' fill='#c89b4e' stroke='#8f6a1e' stroke-width='2.5'/><rect x='12' y='27' width='8' height='27' fill='#b5793b' stroke='#7c4a21' stroke-width='2.5'/><rect x='44' y='27' width='8' height='27' fill='#b5793b' stroke='#7c4a21' stroke-width='2.5'/><rect x='24' y='27' width='16' height='10' rx='2' fill='#e8b06a' stroke='#8f6a1e' stroke-width='2'/><circle cx='32' cy='32' r='2' fill='#8f6a1e'/><rect x='26' y='12' width='12' height='8' rx='2' fill='#69b7ff' stroke='#2169a8' stroke-width='2'/></svg>","🐟"],sound:"كَ"},
-    {letter:"ل",name:"اللام",forms:["لـ","ـلـ","ـل"],words:["لَبَن","قَلَم","جَمَل"],emoji:["🥛","✏️","🐪"],sound:"لَ"},
-    {letter:"م",name:"الميم",forms:["مـ","ـمـ","ـم"],words:["مَوْز","سَمَك","قَلَم"],emoji:["🍌","🐟","✏️"],sound:"مَ"},
-    {letter:"ن",name:"النون",forms:["نـ","ـنـ","ـن"],words:["نَمِر","عِنَب","لَبَن"],emoji:["🐅","🍇","🥛"],sound:"نَ"},
+    {letter:"ف",name:"الفاء",forms:["فـ","ـفـ","ـف"],words:["فِيل","سَفِينَة","هَاتِف"],emoji:["🐘","🚢","📱"],sound:"فَ"},
+    {letter:"ق",name:"القاف",forms:["قـ","ـقـ","ـق"],words:["قِطَّة","بَقَرَة","سُوق"],emoji:["🐱","🐄","🛒"],sound:"قَ"},
+    {letter:"ك",name:"الكاف",forms:["كـ","ـكـ","ـك"],words:["كِتَاب","مَكْتَب","مَلِك"],emoji:["📘","<svg viewBox='0 0 64 64' aria-hidden='true'><rect x='8' y='20' width='48' height='7' rx='3' fill='#c89b4e' stroke='#8f6a1e' stroke-width='2.5'/><rect x='12' y='27' width='8' height='27' fill='#b5793b' stroke='#7c4a21' stroke-width='2.5'/><rect x='44' y='27' width='8' height='27' fill='#b5793b' stroke='#7c4a21' stroke-width='2.5'/><rect x='24' y='27' width='16' height='10' rx='2' fill='#e8b06a' stroke='#8f6a1e' stroke-width='2'/><circle cx='32' cy='32' r='2' fill='#8f6a1e'/><rect x='26' y='12' width='12' height='8' rx='2' fill='#69b7ff' stroke='#2169a8' stroke-width='2'/></svg>","👑"],sound:"كَ"},
+    {letter:"ل",name:"اللام",forms:["لـ","ـلـ","ـل"],words:["لَبَن","قَلَم","عَسَل"],emoji:["🥛","✏️","🍯"],sound:"لَ"},
+    {letter:"م",name:"الميم",forms:["مـ","ـمـ","ـم"],words:["مَوْز","سَمَك","عَلَم"],emoji:["🍌","🐟","🚩"],sound:"مَ"},
+    {letter:"ن",name:"النون",forms:["نـ","ـنـ","ـن"],words:["نَمِر","عِنَب","لَوْن"],emoji:["🐅","🍇","🎨"],sound:"نَ"},
     {letter:"هـ",name:"الهاء",forms:["هـ","ـهـ","ـه"],words:["هَدِيَّة","مُهَنْدِس","وَجْه"],emoji:["🎁","👷","🙂"],sound:"هَ"},
     {letter:"و",name:"الواو",forms:["و","ـو","ـو"],words:["وَرْدَة","حَوْت","دَلْو"],emoji:["🌹","🐳","🪣"],sound:"وَ"},
-    {letter:"ي",name:"الياء",forms:["يـ","ـيـ","ـي"],words:["يَد","بَيْت","كُرْسِيّ"],emoji:["✋","🏠","🪑"],sound:"يَ"}
+    {letter:"ي",name:"الياء",forms:["يـ","ـيـ","ـي"],words:["يَد","سَيَّارَة","كُرْسِيّ"],emoji:["✋","🚗","🪑"],sound:"يَ"}
   ];
   const HINTS = {
     "أ":"بنفتح بُقنا على الآخر وبنقول آ بصوت واضح من حلقنا.",
@@ -91,6 +91,37 @@
     const status=document.getElementById("lessonStatus");
     if(status)status.textContent="🎧 اسمع من الميس — المقطع ده لسه بيتسجّل";
   };
+  // Round 3.2.3 item 9: the quiz offer is SPOKEN, not text-only — a
+  // non-reader cannot discover a button he cannot read. The offer follows
+  // the lesson explanation in the SAME sequence, so it can never cut the
+  // lesson off. NEW CLIP for the audio worker: les_quiz_offer = this text
+  // (Aria, ar-EG). The button and makeQuiz() are unchanged.
+  const QUIZ_OFFER="برافو يا بطل! خلصت الدرس! يلا نختبر نفسك! دوس على الكاس!";
+  const saySeq = list => {
+    if(window.MatthewVoice&&typeof window.MatthewVoice.speakSequence==="function"){window.MatthewVoice.speakSequence(list,"ar-EG");return;}
+    say(list[0]);
+  };
+  // Round 3.2.3 item 13: a lesson/quiz is one sub-screen level above the
+  // letter picker — the system back returns to the picker, not out of
+  // the app. subPushed guards the push (lesson→quiz stays on the same
+  // level; prev/next letter too).
+  let subPushed = false;
+  const toPicker = () => { quiz = []; quizIndex = 0; score = 0; step = -1; render(); };
+  const pushSub = () => {
+    if (subPushed) return;
+    subPushed = true;
+    // Guarded for non-browser contexts (tests run makeQuiz in a bare vm
+    // sandbox with no window): without it the quiz test throws.
+    if (typeof window !== "undefined") {
+      window.__matthewBack = () => { subPushed = false; toPicker(); };
+      window.MatthewNav?.pushSubscreen();
+    }
+  };
+  const popSub = () => {
+    if (!subPushed) return;
+    subPushed = false;
+    if (typeof window !== "undefined") window.MatthewNav?.popSubscreen();
+  };
   const card=document.createElement("button");
   card.className="game-card pink"; card.type="button"; card.dataset.lessonEntry="true";
   card.innerHTML='<span class="game-icon">📚</span><strong>مدرسة الحروف</strong><small>نتعلم الحرف والحركات قبل الاختبار</small><span class="play">ابدأ التعلم ←</span>';
@@ -106,7 +137,7 @@
   `;
   document.querySelector("main").insertBefore(panel,document.querySelector("footer"));
   function open(){ $("gameList").classList.add("hidden");learningList.classList.add("hidden");$("quiz").classList.add("hidden");$("result").classList.add("hidden");panel.classList.remove("hidden");letterIndex=0;step=-1;quiz=[];quizIndex=0;score=0;render();}
-  function back(){window.__qToken=(window.__qToken||0)+1;panel.classList.add("hidden");$("gameList").classList.remove("hidden");learningList.classList.remove("hidden");window.MatthewVoice?.stop();}
+  function back(){subPushed=false;window.__qToken=(window.__qToken||0)+1;panel.classList.add("hidden");$("gameList").classList.remove("hidden");learningList.classList.remove("hidden");window.MatthewVoice?.stop();}
   // Round 3.2.1 notes 9–11: no step wizard any more — one scrollable
   // lesson screen holds everything about the letter (explanation, forms,
   // words, marks, quiz button). step: -1 = picker, 0 = lesson, 3 = quiz.
@@ -132,6 +163,7 @@
   // scrollable screen — big letter, name, sound, full explanation, forms
   // with words, harakat, word examples, quiz button. No steps to tap through.
   function renderLesson(){
+    pushSub();
     const l=lessons[letterIndex];
     const ex=explainFor(l);
     $("lessonStep").textContent=l.name;
@@ -160,7 +192,7 @@
     panel.querySelectorAll("[data-mark]").forEach(b=>b.onclick=()=>{markIndex=Number(b.dataset.mark);updateMark();const m=marks[markIndex];say(m.name+"، "+markSample()+". "+m.hint+": "+markSample())});
     $("lessonListen").textContent="🔊 اسمع الدرس";$("lessonListen").onclick=()=>say(ex.spoken);
     $("lessonNext").textContent="🏆 اختبر نفسك ⭐";
-    const tkL=window.__qToken=(window.__qToken||0)+1;setTimeout(()=>{if(window.__qToken!==tkL)return;say(ex.spoken)},120);
+    const tkL=window.__qToken=(window.__qToken||0)+1;setTimeout(()=>{if(window.__qToken!==tkL)return;saySeq([ex.spoken,QUIZ_OFFER])},120);
   }
   function markSample(){
     const l=lessons[letterIndex];
@@ -175,6 +207,7 @@
     panel.querySelectorAll("[data-mark]").forEach(b=>b.classList.toggle("active",Number(b.dataset.mark)===markIndex));
   }
   function makeQuiz(){
+    pushSub();
     step=3;
     const qs=[];
     // Round 3.2.1 note 4: the spoken question must never contain its own
@@ -203,7 +236,15 @@
   const quizPicMap = {};
   lessons.forEach(l => { quizPicMap[l.name] = l.emoji[0]; l.forms.forEach(f => { if (!(f in quizPicMap)) quizPicMap[f] = l.emoji[0]; }); });
   const quizPic = a => {
+    // Round 3.2.3 F2: the fake distractor "حركة أخرى" must not borrow a
+    // meaningful picture — the old fallback took its first letter (ح) and
+    // showed a horse 🐎, a readable clue for a fake answer.
+    if (a === "حركة أخرى") return "🔤";
     if (quizPicMap[a]) return quizPicMap[a];
+    // Round 3.2.3 F3: syllable answers (one letter + one haraka/sukun)
+    // all showed the same letter picture (e.g. all 🍌) — a neutral tile
+    // instead, so the four options stop looking like duplicates.
+    if (/^[ء-ي][ً-ٟ]?$/.test(String(a || ""))) return "🔤";
     const base = String(a || "").replace(/[ً-ٰٟـ]/g, "").charAt(0);
     const l = lessons.find(x => x.letter === base);
     return l ? l.emoji[0] : "🔤";
@@ -236,11 +277,15 @@
     $("lessonProgress").style.width="100%";
   }
   $("lessonNext").onclick=()=>{
-    if(panel.dataset.finished==="1"){panel.dataset.finished="0";quiz=[];step=-1;render();return}
+    if(panel.dataset.finished==="1"){panel.dataset.finished="0";popSub();toPicker();return}
     if(step===0){makeQuiz();return}
     if(quizIndex<quiz.length-1){quizIndex++;showQuiz()}else finishQuiz();
   };
-  $("lessonBack").onclick=()=>{if(step===-1){back()}else{quiz=[];quizIndex=0;score=0;step=-1;render()}};
+  // Round 3.2.3 item 13: from a lesson/quiz the back goes through
+  // history when we own an entry (popstate returns to the picker via
+  // the hook); with no entry it returns directly. From the picker it
+  // closes the panel.
+  $("lessonBack").onclick=()=>{if(step===-1){back()}else if(!window.MatthewNav?.back()){popSub();toPicker()}};
   $("lessonListen").onclick=()=>{const l=lessons[letterIndex];say(l.name+"، "+l.sound)};
   card.onclick=open;
   panel.addEventListener("click",e=>{if(e.target.id==="retryLesson")return});

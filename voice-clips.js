@@ -14,7 +14,11 @@
   const urls = {}; const urlOrder = []; const URL_CACHE_MAX = 30; let audio = null;
   const supported = () => { try { const a = audio || new Audio(); return !!a.canPlayType && a.canPlayType('audio/ogg; codecs="opus"') !== ""; } catch (_) { return false; } };
   const urlFor = key => { if (!urls[key]) { const bin = atob(BY_KEY[key]); const bytes = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i); urls[key] = URL.createObjectURL(new Blob([bytes], { type: "audio/ogg" })); urlOrder.push(key); while (urlOrder.length > URL_CACHE_MAX) { const old = urlOrder.shift(); if (old !== key && urls[old]) { try { URL.revokeObjectURL(urls[old]); } catch (_) {} delete urls[old]; } } } return urls[key]; };
-  const playKey = key => { if (!BY_KEY[key] || !supported()) return false; try { if (!audio) audio = new Audio(); audio.onended = null; audio.pause(); audio.src = urlFor(key); audio.currentTime = 0; const p = audio.play(); if (p && p.catch) p.catch(() => {}); return true; } catch (_) { return false; } };
+  // Round 3.2.3 (brave stories): optional onDone — same contract as
+  // playSequence: called once when the clip ends (audio.onended), or
+  // async when there is nothing to play, so a caller waiting on it NEVER
+  // hangs. stop() cancels it by design (it nulls onended).
+  const playKey = (key, onDone) => { let fired = false; const done = () => { if (fired) return; fired = true; if (typeof onDone === "function") { try { onDone(); } catch (_) {} } }; if (!BY_KEY[key] || !supported()) { setTimeout(done, 0); return false; } try { if (!audio) audio = new Audio(); audio.onended = typeof onDone === "function" ? done : null; audio.pause(); audio.src = urlFor(key); audio.currentTime = 0; const p = audio.play(); if (p && p.catch) p.catch(() => {}); return true; } catch (_) { setTimeout(done, 0); return false; } };
   // Round 3.2.2 P0-5: the EXACT map must respect caller language. A bare
   // Latin digit ("5") has an EXACT entry pointing at the ENGLISH tracing
   // clip (tr_ennum_5) — in an Arabic context that is the numbers trap, so
@@ -36,7 +40,21 @@
   // Round 3.2.2 P0-4 (review 2.5): element-by-element — an item with no
   // recorded clip is skipped silently instead of dropping the whole
   // question to device TTS.
-  const playSequence = (texts, lang) => { const keys = []; for (const t of texts || []) { const k = keyFor(t, lang); if (k) keys.push(k); } if (!keys.length || !supported()) return false; try { if (!audio) audio = new Audio(); let i = 0; const next = () => { if (i >= keys.length) { audio.onended = null; return; } audio.src = urlFor(keys[i++]); const pr = audio.play(); if (pr && pr.catch) pr.catch(() => {}); }; audio.onended = next; next(); return true; } catch (_) { return false; } };
+  // Round 3.2.3 item 14a: optional onDone — called when the LAST clip in
+  // the sequence ends (real completion via the audio.onended chain), or
+  // async when there is nothing to play (no keys / audio unsupported /
+  // error), so a caller waiting on it NEVER hangs. Fires at most once.
+  // stop() still cancels a pending callback by design: it nulls onended,
+  // so navigating away mid-sequence never advances the old screen.
+  const playSequence = (texts, lang, onDone) => {
+    let fired = false;
+    const done = () => { if (fired) return; fired = true; if (typeof onDone === "function") { try { onDone(); } catch (_) {} } };
+    try {
+      const keys = []; for (const t of texts || []) { const k = keyFor(t, lang); if (k) keys.push(k); }
+      if (!keys.length || !supported()) { setTimeout(done, 0); return false; }
+      if (!audio) audio = new Audio(); let i = 0; const next = () => { if (i >= keys.length) { audio.onended = null; done(); return; } audio.src = urlFor(keys[i++]); const pr = audio.play(); if (pr && pr.catch) pr.catch(() => {}); }; audio.onended = next; next(); return true;
+    } catch (_) { setTimeout(done, 0); return false; }
+  };
   const stop = () => { try { if (audio) { audio.onended = null; audio.pause(); } } catch (_) {} };
   window.MatthewClips = { playKey, play, playSequence, stop, has: key => !!BY_KEY[key], keys: Object.keys(BY_KEY), count: Object.keys(BY_TEXT).length };
 })();

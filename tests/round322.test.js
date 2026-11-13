@@ -325,8 +325,11 @@ test("P0-6: letter quiz never offers the correct answer twice, and every answer 
   const qpSrc = lesSrc.slice(qpStart, lesSrc.indexOf("  };\n", lesSrc.indexOf("const quizPic = a => {")) + 5);
   const ctx = { Math, console };
   ctx.showQuiz = () => { ctx.captured = ctx.quiz; };
+  // Round 3.2.3 item 13: makeQuiz() pushes a history sub-screen via the
+  // module-level pushSub() — stub it here; this test exercises the quiz
+  // generation, not navigation.
   vm.runInNewContext(
-    lessonsDecl + "\n" + marksDecl + "\n" + makeQuizSrc + "\n" + qpSrc
+    "const pushSub = () => {};\n" + lessonsDecl + "\n" + marksDecl + "\n" + makeQuizSrc + "\n" + qpSrc
     + "\nglobalThis.lessons = lessons; globalThis.quizPic = quizPic;\nmakeQuiz();",
     ctx,
   );

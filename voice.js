@@ -173,24 +173,38 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     return false;
   };
 
-  const speakSequence = (texts, lang = "ar-EG") => {
+  // Round 3.2.3 item 14a: optional onDone, passed through to
+  // MatthewClips.playSequence — it owns the callback (fires once when the
+  // last clip ends, or async when there is nothing to play). Only when
+  // the clips runtime is absent entirely does speakSequence fire it
+  // itself, so a caller waiting on it never hangs. A debounced duplicate
+  // tap does not re-register: the in-flight sequence's own callback
+  // handles it.
+  const speakSequence = (texts, lang = "ar-EG", onDone) => {
     const list = (texts || []).map(x => String(x || "").trim()).filter(Boolean);
-    if (!list.length) return false;
-    // 300ms debounce on the whole sequence (review P4).
-    const now = Date.now();
-    const joined = list.join(" | ");
-    if (joined === lastSpokenText && now - lastSpokenAt < 300) return true;
+    if (!list.length) { if (typeof onDone === "function") setTimeout(onDone, 0); return false; }
+    // 300ms debounce on the whole sequence (review P4) — but NEVER for a
+    // chained caller: swallowing an onDone call would hang the chain
+    // (the next screen would never open). A debounced repeat is a
+    // double-tap; a chained call is programmatic sequencing, so it
+    // re-plays and its own onDone fires at the end.
+    if (joined === lastSpokenText && now - lastSpokenAt < 300 && typeof onDone !== "function") return true;
     lastSpokenText = joined; lastSpokenAt = now;
+    let invoked = false;
     try {
       // The clip runtime plays element-by-element and skips any item with
       // no recorded clip, so one missing key never drops the whole
       // question (review 2.5).
-      if (window.MatthewClips && window.MatthewClips.playSequence(list, lang)) {
-        requestId++;
-        setStatus("🔊 اسمع صوت الميس يا بطل");
-        return true;
+      if (window.MatthewClips) {
+        invoked = true;
+        if (window.MatthewClips.playSequence(list, lang, onDone)) {
+          requestId++;
+          setStatus("🔊 اسمع صوت الميس يا بطل");
+          return true;
+        }
       }
     } catch (_) {}
+    if (!invoked && typeof onDone === "function") setTimeout(onDone, 0);
     return false;
   };
 
@@ -289,7 +303,7 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
     const panel = document.createElement("section");
     panel.id = "pronunciationChallenge";
     panel.className = "quiz-panel hidden";
-    panel.innerHTML = '<div class="quiz-top"><button id="pronounceBack" class="back" type="button">→ رجوع</button><strong>🎙️ تحدي النطق</strong><span id="pronounceScore">0 / 0</span></div><div class="language-switch"><button id="pronounceArabic" class="secondary" type="button">العربية</button><button id="pronounceEnglish" class="primary" type="button">الإنجليزية</button></div><div class="pronounce-card"><div id="pronounceEmoji" class="question-emoji">🍎</div><h2 id="pronounceWord">Apple</h2><p id="pronounceMeaning">تفاحة</p><button id="pronounceListen" class="voice-button" type="button">🔊 اسمع النطق</button><button id="pronounceRecord" class="primary" type="button">🎤 اضغط واتكلم</button><p id="pronounceStatus" class="feedback" aria-live="polite">اسمع الكلمة وحاول تكررها</p><button id="pronounceNext" class="secondary" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div><p class="voice-note">التعرف على كلامك يعتمد على دعم الهاتف والمتصفح وقد يحتاج اتصالاً بالإنترنت.</p>';
+    panel.innerHTML = '<div class="quiz-top"><button id="pronounceBack" class="back" type="button">→ رجوع</button><strong>🎙️ تحدي النطق</strong><span id="pronounceScore">0 / 0</span></div><div class="language-switch"><button id="pronounceArabic" class="secondary" type="button">العربية</button><button id="pronounceEnglish" class="primary" type="button">الإنجليزية</button></div><div class="pronounce-card"><div id="pronounceEmoji" class="question-emoji">🍎</div><h2 id="pronounceWord">Apple</h2><p id="pronounceMeaning">تفاحة</p><button id="pronounceListen" class="voice-button" type="button">🔊 اسمع النطق</button><button id="pronounceCorrect" class="primary" type="button">👍 نطقها صح</button><button id="pronounceRetry" class="secondary" type="button">🔄 جرّب تاني</button><p id="pronounceStatus" class="feedback" aria-live="polite">اسمع الكلمة وحاول تكررها</p><button id="pronounceNext" class="secondary" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div><p class="voice-note">ماما أو بابا يسمعوا ماثيو، ولو نطق الكلمة صح دوسوا 👍 نطقها صح!</p>';
     main.insertBefore(panel, document.querySelector("footer"));
 
     const lists = {
@@ -314,10 +328,11 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
         {word:"Fish",meaning:"سمكة",emoji:"🐟"}
       ]
     };
-    let language = "en", current = null, recognition = null, score = 0, attempts = 0;
+    let language = "en", current = null, score = 0, attempts = 0, wordToken = 0;
     const arDigits = v => String(v).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[+d]);
     const showScore = () => { panel.querySelector("#pronounceScore").textContent = arDigits(score) + " / " + arDigits(attempts); };
     const nextWord = () => {
+      wordToken++;
       const list = lists[language];
       let candidate = list[Math.floor(Math.random() * list.length)];
       if (current && list.length > 1) {
@@ -360,43 +375,34 @@ import { TextToSpeech } from "@capacitor-community/text-to-speech";
       if (current) challengeSpeak(current.word, language === "ar" ? "ar-EG" : "en-US", ++requestId);
     });
     panel.querySelector("#pronounceNext").addEventListener("click", nextWord);
-    panel.querySelector("#pronounceRecord").addEventListener("click", () => {
-      const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const status = panel.querySelector("#pronounceStatus");
-      const button = panel.querySelector("#pronounceRecord");
-      if (!SpeechRecognitionClass) {
-        status.textContent = "ميزة التعرف على الكلام غير مدعومة هنا. استخدم زر اسمع النطق للتدريب.";
-        return;
-      }
-      if (recognition) { try { recognition.abort(); } catch (_) {} }
-      recognition = new SpeechRecognitionClass();
-      recognition.lang = language === "ar" ? "ar-EG" : "en-US";
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 3;
-      button.disabled = true;
-      button.textContent = "🎙️ سامعك...";
-      recognition.onresult = event => {
-        const clean = value => value.toLocaleLowerCase().replace(/[ًٌٍَُِّْـ.,!?؟]/g, "").trim();
-        const alternatives = event.results[0];
-        const heard = alternatives[0].transcript.trim();
-        const correct = Array.from(alternatives).some(item => clean(item.transcript) === clean(current.word));
-        attempts++;
-        if (correct) { score++; sound("correct"); }
-        else sound("wrong");
-        status.textContent = (correct ? "👏 ممتاز! نطق جميل. " : "محاولة حلوة! ") + "سمعت: " + heard + " — الكلمة: " + current.word;
-        showScore();
-      };
-      recognition.onerror = event => {
-        status.textContent = event.error === "not-allowed" ? "اسمح باستخدام الميكروفون من إعدادات التطبيق." : "مش قادر أسمع بوضوح. جرّب مرة تانية.";
-      };
-      recognition.onend = () => { button.disabled = false; button.textContent = "🎤 اضغط واتكلم"; };
-      try { recognition.start(); }
-      catch (_) { button.disabled = false; button.textContent = "🎤 اضغط واتكلم"; }
+    // Round 3.2.3 item 3 — PARENT-JUDGED mode: the 🎤 button can never work
+    // in the APK (Android WebView has no SpeechRecognition), so the dead
+    // mic path and its "غير مدعومة" message are gone. The parent listens
+    // and judges: "نطقها صح" counts a correct answer + praise and moves
+    // on; "جرّب تاني" replays the word for another try.
+    panel.querySelector("#pronounceCorrect").addEventListener("click", () => {
+      if (!current) return;
+      attempts++;
+      score++;
+      sound("correct");
+      panel.querySelector("#pronounceStatus").textContent = "👏 ممتاز! نطق جميل يا بطل!";
+      showScore();
+      try { feedback("correct"); } catch (_) {}
+      const tk = wordToken;
+      setTimeout(() => { if (tk === wordToken) nextWord(); }, 1400);
+    });
+    panel.querySelector("#pronounceRetry").addEventListener("click", () => {
+      if (!current) return;
+      panel.querySelector("#pronounceStatus").textContent = "اسمع كويس وحاول تاني يا بطل!";
+      challengeSpeak(current.word, language === "ar" ? "ar-EG" : "en-US", ++requestId);
     });
   };
 
   const ensureQuestionButton = area => {
-    if (!area || area.querySelector(".speak-question")) return;
+    // Round 3.2.3 item 18: index.html already has a STATIC #replayBtn
+    // (wired in app.js to window.__askNow) — if it is present, never add
+    // a second «اسمع السؤال» button next to it.
+    if (!area || area.querySelector(".speak-question") || area.querySelector("#replayBtn")) return;
     const button = document.createElement("button");
     button.type = "button";
     button.className = "voice-button speak-question";

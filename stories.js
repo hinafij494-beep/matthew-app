@@ -313,11 +313,16 @@
     return '<div class="question-emoji">' + questionEmojiSafe(q) + '</div>' +
       '<h3 class="brave-question">' + arabicDigits(q.q) + '</h3>' +
       '<button type="button" class="voice-button brave-replay" id="braveReplay">🔊 اسمع السؤال</button>' +
-      '<div class="answers" id="braveAnswers">' + choices.map(item =>
-        '<button type="button" class="answer" data-answer="' + item.text + '">' +
-        '<span class="answer-picture">' + answerPic(item.text, q) + '</span>' +
-        '<span class="answer-label">' + arabicDigits(item.text) + '</span></button>'
-      ).join("") + '</div>' +
+      '<div class="answers" id="braveAnswers">' + choices.map(item => {
+        // Round 3.2.3 side finding (same as app.js): a pure-digit answer
+        // rendered TWICE — picture slot + label both show the digit — so
+        // it renders label-only once, big, like the main quiz.
+        const isDigit = /^[0-9٠-٩]+$/.test(String(item.text).trim());
+        return '<button type="button" class="answer' + (isDigit ? ' digit-only' : '') + '" data-answer="' + item.text + '">' +
+          (isDigit ? '<span class="answer-label">' + arabicDigits(item.text) + '</span>'
+            : '<span class="answer-picture">' + answerPic(item.text, q) + '</span>' +
+              '<span class="answer-label">' + arabicDigits(item.text) + '</span>') + '</button>';
+      }).join("") + '</div>' +
       '<p class="feedback" id="braveFeedback"></p>' +
       '<button type="button" class="primary hidden" id="braveNext">كمّل المغامرة ←</button>';
   }
@@ -332,13 +337,19 @@
     const main = document.querySelector("main");
     const gameList = document.getElementById("gameList");
     if (main && gameList) {
-      const speak = (text, key) => {
-        try { if (key && window.MatthewClips && window.MatthewClips.playKey(key)) return; } catch (_) {}
-        window.MatthewVoice?.speak(text, "ar-EG");
+      // Round 3.2.3 (brave sequencing): optional onDone — playKey fires it
+      // when the clip ends (or async when there is nothing to play), so a
+      // caller chaining on it NEVER hangs; stop() cancels it by design.
+      // Fallback goes through the sequence path (not a bare speak) so the
+      // completion still chains on real playback instead of firing early.
+      const speak = (text, key, onDone) => {
+        try { if (key && window.MatthewClips && window.MatthewClips.playKey(key, onDone)) return; } catch (_) {}
+        if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence([text], "ar-EG", onDone);
+        else { window.MatthewVoice?.speak(text, "ar-EG"); if (typeof onDone === "function") setTimeout(onDone, 0); }
       };
-      const speakSeq = list => {
-        if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(list, "ar-EG");
-        else window.MatthewVoice?.speak(list.join("، "), "ar-EG");
+      const speakSeq = (list, onDone) => {
+        if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(list, "ar-EG", onDone);
+        else { window.MatthewVoice?.speak(list.join("، "), "ar-EG"); if (typeof onDone === "function") setTimeout(onDone, 0); }
       };
 
       const panel = document.createElement("section");
@@ -439,6 +450,14 @@
         $("braveScene").innerHTML = sceneHTML(story, stage);
         renderMap();
         $("braveTitle").textContent = s.icon + " " + s.name;
+        // Round 3.2.3 (brave sequencing — same defect as rescue item 14a):
+        // the intro used to be spoken on a guessed ~4.5s timeout while the
+        // question auto-played after 350ms, so the question cut the intro
+        // off. Now the audio chains by REAL completion: opener → intro +
+        // stage line → question. Each step is guarded by stage + story
+        // identity, so leaving stage 0 early cancels the rest.
+        const st = stage, stStory = story;
+        const guard = fn => () => { if (story !== stStory || stage !== st) return; fn(); };
         if (first && stage === 0) {
           // Live re-test §5: stage 1 used to show + speak ONLY the intro,
           // so the stage line — e.g. the P1 «شجرتين» sentence in the Mark
@@ -448,18 +467,14 @@
           // (intro clip, then stage-line clip) — no re-record needed.
           $("braveStory").textContent = story.intro + " " + s.line;
           // Round 3.2.1 note 25b: Nancy's opener first, then the story
-          // intro after ~4.5s (the opener's length). Guarded by stage +
-          // story identity, so leaving stage 0 early cancels the intro.
+          // intro — chained by completion, not a guessed timeout.
           const opener = STORY_OPENERS[openerIndex++ % STORY_OPENERS.length];
           const openerKey = opener === STORY_OPENERS[0] ? "nancy_intro_story" : "nancy_intro_story_2";
-          speak(opener, openerKey);
-          const st = stage, stStory = story;
-          setTimeout(() => { if (story !== stStory || stage !== st) return; speakSeq([story.intro, s.line]); }, 4500);
+          speak(opener, openerKey, guard(() => speakSeq([story.intro, s.line], guard(() => nextQuestion()))));
         } else {
           $("braveStory").textContent = s.line;
-          speak(s.line, clipKey("stage", stage));
+          speak(s.line, clipKey("stage", stage), guard(() => nextQuestion()));
         }
-        nextQuestion();
       };
 
       const narrateQuestion = () => {

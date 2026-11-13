@@ -58,7 +58,8 @@ test("reading opens with pickers: 28 letters, 10 words, 10 CVC (round 3.2.1)", (
     assert.ok(reading.includes("function " + fn + "()"), "missing picker " + fn);
   }
   // open() lands on the picker, and a picker tap opens the item.
-  assert.match(reading, /picker = true;\s*\n\s*render\(\);/, "open() must start on the picker");
+  // Round 3.2.3 item 9: open() also resets the once-per-open quiz-offer flag.
+  assert.match(reading, /picker = true;\s*\n\s*(offerSpoken = false;\s*\n\s*)?render\(\);/, "open() must start on the picker");
   assert.ok(reading.includes('data-letter="'), "letter picker must render letter tiles");
   assert.ok(reading.includes('data-word="'), "word picker must render word tiles");
   assert.ok(reading.includes('data-cvc="'), "CVC picker must render word tiles");
@@ -90,7 +91,10 @@ test("stacked pager arrows on every reading prev/next pair and the quiz next (ro
 });
 
 test("syllable open speaks the letter name + all 6 syllables (round 3.2.1)", () => {
-  assert.match(reading, /speakSequence\(\[letter\.name\]\.concat\(syllables\.map\(s => s\.say\)\)/,
+  // Round 3.2.3 item 9: the sequence is built in a `seq` variable first so
+  // the quiz offer can follow the syllables on first entry — the narration
+  // itself is unchanged: name + all 6 syllables, in order.
+  assert.match(reading, /const seq = \[letter\.name\]\.concat\(syllables\.map\(s => s\.say\)\);[\s\S]*?speakSequence\(seq, "ar-EG"\)/,
     "syllable open must speakSequence the name + all 6 syllables");
   assert.ok(!reading.includes("syllables[0].say"), "the old 2-syllable short narration must be gone");
   // Every spoken syllable text must match its recorded rd_syl_* clip, and

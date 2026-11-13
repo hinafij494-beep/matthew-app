@@ -115,7 +115,12 @@ test("every lesson's spoken strings resolve to recorded clips (round 3.2.1, note
 
 test("back navigation is hierarchical everywhere (round 3.2.1, note 16)", () => {
   const lessons = read("lessons.js");
-  assert.ok(/lessonBack.*onclick=\(\)=>\{if\(step===-1\)\{back\(\)\}else\{[^}]*step=-1;render\(\)/.test(lessons), "letter lesson back goes to the picker; picker back goes home");
+  // Round 3.2.3 item 13: the back still goes lesson → picker → home, but
+  // through history when we own an entry (MatthewNav.back() → popstate
+  // runs the same toPicker via the hook); with no entry it returns
+  // directly. toPicker() is the extracted `step=-1; render()` return.
+  assert.ok(/lessonBack.*onclick=\(\)=>\{if\(step===-1\)\{back\(\)\}else if\(!window\.MatthewNav\?\.back\(\)\)\{popSub\(\);toPicker\(\)\}/.test(lessons), "letter lesson back goes to the picker; picker back goes home");
+  assert.ok(lessons.includes("const toPicker = () => { quiz = []; quizIndex = 0; score = 0; step = -1; render(); };"), "toPicker must reset to the picker");
   const reading = read("reading.js");
   assert.ok(reading.includes("picker = true; render()"), "reading item back returns to its picker");
   assert.ok(/bindHeader\(backToPicker\)/.test(reading) || reading.includes("backToPicker ? () => { picker = true; render(); } : close"), "reading picker back closes to home");
@@ -131,7 +136,11 @@ test("back navigation is hierarchical everywhere (round 3.2.1, note 16)", () => 
   assert.ok(tracing.includes('panel.querySelector("#traceBack").onclick = close'), "tracing picker back goes home");
   assert.ok(/traceBack.*renderPicker|renderPicker.*traceBack/.test(tracing) || tracing.includes("back from a trace screen returns to the\n  // picker"), "tracing trace-screen back returns to the picker");
   const rescue = read("rescue.js");
-  assert.ok(rescue.includes('if (story) openPicker(); else close()'), "rescue stage back goes to the story list; list back closes to Games");
+  // Round 3.2.3 item 13: the back still goes story → picker → close,
+  // but through history when we own an entry (MatthewNav.back() →
+  // popstate returns to the picker via the hook); with no entry it
+  // returns directly.
+  assert.ok(/rescueBack.*if \(story\) \{ if \(!window\.MatthewNav\?\.back\(\)\) \{ popSub\(\); openPicker\(\); \} \} else close\(\)/.test(rescue), "rescue stage back goes to the story list; list back closes to Games");
   const app = read("app.js");
   const backSeg = app.slice(app.indexOf('"backBtn"'), app.indexOf('"homeBtn"'));
   assert.ok(backSeg.includes('classList.remove("hidden")') && backSeg.includes('gameList'), "quiz back shows the game list");
