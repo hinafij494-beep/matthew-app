@@ -509,5 +509,16 @@ main{padding-bottom:110px}
 .quiz-top{flex-wrap:wrap;gap:8px}
 .quiz-top .back{flex:0 0 auto;white-space:nowrap;padding:8px 14px;font-size:15px;min-height:0}
 .quiz-top strong{flex:1 1 auto;min-width:0;text-align:center}
+/* Round 3.2.4 blocker 3: the floating 🏠 button still covered the lesson
+   screen at 800×1280 (live: it sat on the 🦁 word card and grazed the
+   «اسمع أشكال الحرف» button). Both flagged leaves were rect artefacts —
+   the block emoji span spans the whole card width and the full-width
+   listen button spans the whole panel, while the actual glyph/text sits
+   centred, clear of the button — so tighten both rects to their content,
+   and give the panel extra bottom clearance so its last row scrolls
+   clear of the button too. */
+.word-examples>div{display:flex;flex-direction:column;align-items:center;justify-content:center}
+#letterSchool #formsListen{max-width:420px;margin-inline:auto}
+#letterSchool{padding-bottom:32px}
 /* Side finding (item 9): digit-only quiz answers render label-only, big. */
 .answer.digit-only{font-size:52px;font-weight:900}
