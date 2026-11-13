@@ -120,7 +120,12 @@ test("English alphabet and Arabic/English numbers are available", () => {
   // Round 3.2.1 note 3: the section title is Arabic now, but it still
   // teaches the English alphabet (A–Z with a word per letter).
   assert.match(learning, /الحروف الإنجليزية/);
-  assert.match(learning, /الأرقام العربية/);
+  // Round 3.2.3 item 8: the numbers cards moved out of learning.js — the
+  // two journeys are the numbers lessons now (4 numbers cards → 2).
+  assert.ok(!learning.includes('id:"arNumbers"') && !learning.includes('id:"enNumbers"'),
+    "numbers cards must be gone from learning.js");
+  assert.match(read("math-journey.js"), /الحساب بالعربي: الأرقام ١–٢٠/);
+  assert.match(read("math-english.js"), /الرياضيات بالإنجليزي: 1–20/);
 });
 
 test("science quiz and touch games are loaded and cached offline", () => {

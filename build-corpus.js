@@ -222,6 +222,22 @@ add("mem_again", "يلا نلعب تاني يا ملك ماثيو! كروت جد
 add("nancy_intro_trace", "يلا نتتبع الحرف يا ملك ماثيو! امشي على الخط بصوابعك على مهلك، أنت بطل!");
 add("nancy_intro_color", "يلا نلوّن يا ملك ماثيو! اختار لون حلو ولوّن معايا!");
 add("nancy_intro_color_num", "لعبة لوني العدد يا بطلي ماثيو! شوف الرقم على التاج ودوس على نفس الرقم في الزر!");
+// Round 3.2.3 item 4: Nancy's voice is REMOVED from the coloring workshop —
+// the same two intros re-recorded in Aria (new keys cg_intro_*; the Nancy
+// keys above stay in the corpus for greeting/encouragement use elsewhere).
+// cg_intro_color shares its exact text with nancy_intro_color, so add()
+// would dedupe it away — FORCE-add by key like the tr_ennum_11..20
+// precedent, AFTER the Nancy entry so BY_TEXT last-wins points the text
+// at the Aria clip (color-games.js plays it by key anyway).
+corpus.set("key:cg_intro_color", { key: "cg_intro_color", lang: "ar_EG", text: "يلا نلوّن يا ملك ماثيو! اختار لون حلو ولوّن معايا!" });
+add("cg_intro_num", "لعبة لون العدد يا بطلي ماثيو! شوف الرقم على التاج ودوس على نفس الرقم في الزر!");
+// Round 3.2.3 item 9: lesson-finish quiz offers (code plays them by key
+// after a lesson completes, then the quiz opens). Texts mirror the code.
+add("les_quiz_offer", "برافو يا بطل! خلصت الدرس! يلا نختبر نفسك! دوس على الكاس!");
+add("quiz_offer_numbers", "برافو يا بطل! خلصت الدرس! يلا نختبر نفسك في الأرقام! دوس على الكاس!");
+add("quiz_offer_science", "برافو يا بطل! خلصت الدرس! يلا نختبر نفسك في العلوم! دوس على الكاس!");
+add("quiz_offer_reading", "برافو يا بطل! يلا نتحدى القراءة! دوس على الكاس!");
+add("en_letters_done", "برافو يا بطل! خلصت كل الحروف الإنجليزية!");
 // Home greetings (app.js NANCY_GREETS, spoken by text) + quiz intros
 // (app.js NANCY_QUIZ_INTROS, first question only) + memory second intro
 // (memory-game.js MEM_INTRO_2, rotated with MEM_INTRO) + the praise /

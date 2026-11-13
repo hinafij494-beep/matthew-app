@@ -1,0 +1,1260 @@
+{
+ "ans_0": {
+  "claimed": "٥",
+  "transcribed": "5 سيارة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_1": {
+  "claimed": "٣",
+  "transcribed": "ثلاثة؟",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_2": {
+  "claimed": "٧",
+  "transcribed": "سبات",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_3": {
+  "claimed": "١٠",
+  "transcribed": "أشرة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_6": {
+  "claimed": "٦",
+  "transcribed": "6",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_7": {
+  "claimed": "٢",
+  "transcribed": "2",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_8": {
+  "claimed": "١",
+  "transcribed": "واحدة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_11": {
+  "claimed": "٤",
+  "transcribed": "أربًا",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_17": {
+  "claimed": "٨",
+  "transcribed": "8",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_31": {
+  "claimed": "٩",
+  "transcribed": "9",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_34": {
+  "claimed": "١١",
+  "transcribed": "حدا شارك",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_51": {
+  "claimed": "١٢",
+  "transcribed": "اتنا شر",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_56": {
+  "claimed": "١٤",
+  "transcribed": "14",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_57": {
+  "claimed": "١٦",
+  "transcribed": "ستاشة",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_58": {
+  "claimed": "١٧",
+  "transcribed": "17",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_59": {
+  "claimed": "١٣",
+  "transcribed": "تلاطشر",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_64": {
+  "claimed": "أ",
+  "transcribed": "ألف",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_65": {
+  "claimed": "ب",
+  "transcribed": "با",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_66": {
+  "claimed": "ت",
+  "transcribed": "ت",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_67": {
+  "claimed": "م",
+  "transcribed": "mean mean",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_68": {
+  "claimed": "قمر",
+  "transcribed": "قمر",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_69": {
+  "claimed": "موز",
+  "transcribed": "موز",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_70": {
+  "claimed": "تفاح",
+  "transcribed": "تفاق",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_71": {
+  "claimed": "باب",
+  "transcribed": "باب",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_72": {
+  "claimed": "س",
+  "transcribed": "فين",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_74": {
+  "claimed": "ر",
+  "transcribed": "را",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_75": {
+  "claimed": "ن",
+  "transcribed": "نون",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_77": {
+  "claimed": "ج",
+  "transcribed": "جيم",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_79": {
+  "claimed": "د",
+  "transcribed": "داو",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_80": {
+  "claimed": "مدرسة",
+  "transcribed": "مدرسة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_81": {
+  "claimed": "قلم",
+  "transcribed": "قلم",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_82": {
+  "claimed": "كتاب",
+  "transcribed": "كتاب",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_84": {
+  "claimed": "ف",
+  "transcribed": "Fa. Fa.",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_86": {
+  "claimed": "ح",
+  "transcribed": "ها",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_87": {
+  "claimed": "ا",
+  "transcribed": "Alif.",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_88": {
+  "claimed": "قطة",
+  "transcribed": "اوطا",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_89": {
+  "claimed": "سمكة",
+  "transcribed": "سمكة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_98": {
+  "claimed": "ي",
+  "transcribed": "Yeah",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_103": {
+  "claimed": "بيت",
+  "transcribed": "بيت",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_106": {
+  "claimed": "ث",
+  "transcribed": "سأ",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_108": {
+  "claimed": "شمس",
+  "transcribed": "شمس",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_112": {
+  "claimed": "ز",
+  "transcribed": "زي",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_113": {
+  "claimed": "و",
+  "transcribed": "Wow. Wow.",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_120": {
+  "claimed": "عنب",
+  "transcribed": "اينا",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_126": {
+  "claimed": "ك",
+  "transcribed": "كاف",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_128": {
+  "claimed": "أزرق",
+  "transcribed": "أزرق",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_129": {
+  "claimed": "أصفر",
+  "transcribed": "أسفر",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_130": {
+  "claimed": "أحمر",
+  "transcribed": "أحمر",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_131": {
+  "claimed": "أسود",
+  "transcribed": "أسود",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_132": {
+  "claimed": "مربع",
+  "transcribed": "مورا با",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_133": {
+  "claimed": "مثلث",
+  "transcribed": "متلس",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_134": {
+  "claimed": "دائرة",
+  "transcribed": "دائرة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_135": {
+  "claimed": "مستطيل",
+  "transcribed": "مستطيل",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_136": {
+  "claimed": "أخضر",
+  "transcribed": "أخضر",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_137": {
+  "claimed": "برتقالي",
+  "transcribed": "برطوكالي",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_138": {
+  "claimed": "بنفسجي",
+  "transcribed": "بالنفسيجية",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_145": {
+  "claimed": "وردي",
+  "transcribed": "وردي",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_147": {
+  "claimed": "رمادي",
+  "transcribed": "رامادي",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_151": {
+  "claimed": "نجمة",
+  "transcribed": "نجمع",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_153": {
+  "claimed": "بني",
+  "transcribed": "بيني",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_156": {
+  "claimed": "فراولة",
+  "transcribed": "فراولة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_157": {
+  "claimed": "ليمونة",
+  "transcribed": "ليمونة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_158": {
+  "claimed": "خيار",
+  "transcribed": "كيار",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_159": {
+  "claimed": "لبن",
+  "transcribed": "لبن",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_173": {
+  "claimed": "كرة",
+  "transcribed": "كرا",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_174": {
+  "claimed": "طبق دائري",
+  "transcribed": "طبقون دائري",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_175": {
+  "claimed": "برتقالة",
+  "transcribed": "بورتوكالا",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_192": {
+  "claimed": "البقرة",
+  "transcribed": "البقرة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_193": {
+  "claimed": "الأسد",
+  "transcribed": "الأسد",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_194": {
+  "claimed": "السمكة",
+  "transcribed": "السمكة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_195": {
+  "claimed": "النسر",
+  "transcribed": "النسر",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_196": {
+  "claimed": "عسل",
+  "transcribed": "أسل",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_198": {
+  "claimed": "خبز",
+  "transcribed": "الخبس",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_199": {
+  "claimed": "عصير",
+  "transcribed": "أصير",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_200": {
+  "claimed": "الريش",
+  "transcribed": "ريش",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_201": {
+  "claimed": "الفرو",
+  "transcribed": "الفرر",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_202": {
+  "claimed": "القشور",
+  "transcribed": "القشور",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_203": {
+  "claimed": "الصوف",
+  "transcribed": "أسوف",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_204": {
+  "claimed": "الصحراء",
+  "transcribed": "الصحراء",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_205": {
+  "claimed": "البحر",
+  "transcribed": "البحر",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_206": {
+  "claimed": "القطب",
+  "transcribed": "الكتب",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_207": {
+  "claimed": "الفضاء",
+  "transcribed": "الفضع",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_208": {
+  "claimed": "الماء وضوء الشمس",
+  "transcribed": "الماء وضوء الشمس",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_209": {
+  "claimed": "الحلوى",
+  "transcribed": "الحلوة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_210": {
+  "claimed": "الألعاب",
+  "transcribed": "...الألعأ",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_211": {
+  "claimed": "الحجارة",
+  "transcribed": "الحجارة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_212": {
+  "claimed": "الجذر",
+  "transcribed": "الجدر",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_213": {
+  "claimed": "الزهرة",
+  "transcribed": "الزهرة",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_214": {
+  "claimed": "الثمرة",
+  "transcribed": "أثمرت",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_215": {
+  "claimed": "الورقة",
+  "transcribed": "الورقة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_216": {
+  "claimed": "العين",
+  "transcribed": "العين",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_217": {
+  "claimed": "الأذن",
+  "transcribed": "الأذن",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_218": {
+  "claimed": "الأنف",
+  "transcribed": "الأنف",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_219": {
+  "claimed": "اليد",
+  "transcribed": "أليد",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_220": {
+  "claimed": "القلب",
+  "transcribed": "الكلب",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_221": {
+  "claimed": "المعدة",
+  "transcribed": "المعد",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_223": {
+  "claimed": "القدم",
+  "transcribed": "القدم",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_224": {
+  "claimed": "العظام",
+  "transcribed": "العظم",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_225": {
+  "claimed": "الشعر",
+  "transcribed": "أشار",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_226": {
+  "claimed": "الأظافر",
+  "transcribed": "الأبافر",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_227": {
+  "claimed": "الجلد فقط",
+  "transcribed": "الجلد فقط",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_228": {
+  "claimed": "ننفخ فيها",
+  "transcribed": "منفخ فيها",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_229": {
+  "claimed": "نحطها في المية",
+  "transcribed": "نخطها في الماء",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_230": {
+  "claimed": "نرميها بعيد",
+  "transcribed": "نرميها باية",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_231": {
+  "claimed": "نكسرها",
+  "transcribed": "نكسرها",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_232": {
+  "claimed": "من الشرق",
+  "transcribed": "من الشر",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_233": {
+  "claimed": "من الغرب",
+  "transcribed": "من الغر",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_234": {
+  "claimed": "من البحر",
+  "transcribed": "من البحر",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_235": {
+  "claimed": "من الجبل",
+  "transcribed": "من الجبار",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_236": {
+  "claimed": "الشمس",
+  "transcribed": "الشمس",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_237": {
+  "claimed": "القمر",
+  "transcribed": "الكمر",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_238": {
+  "claimed": "الشجرة",
+  "transcribed": "الشجرة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_239": {
+  "claimed": "الباب",
+  "transcribed": "ألبب",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_240": {
+  "claimed": "نزقها برجلينا",
+  "transcribed": "نزقها برغلينات",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_241": {
+  "claimed": "ناكلها",
+  "transcribed": "نقلوها",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_242": {
+  "claimed": "ننام جنبها",
+  "transcribed": "ننام جنبها",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_243": {
+  "claimed": "نقرأ لها",
+  "transcribed": "نقرأ لها",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_244": {
+  "claimed": "هيلزق فيه",
+  "transcribed": "هلزة فيه",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_245": {
+  "claimed": "هيطير بعيد",
+  "transcribed": "هيطير بعيد",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_246": {
+  "claimed": "هيدوب",
+  "transcribed": "هيدوب",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_247": {
+  "claimed": "هيتكسر",
+  "transcribed": "ها يتكسر",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_248": {
+  "claimed": "هتطفو فوق المية",
+  "transcribed": "هتطفو فوق المئة",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_249": {
+  "claimed": "هتغوص لتحت",
+  "transcribed": "هدروص لتحت",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_250": {
+  "claimed": "هتختفي خالص",
+  "transcribed": "هاتخت في خالص",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_251": {
+  "claimed": "هتكبر",
+  "transcribed": "هاتك بر",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_253": {
+  "claimed": "هتطفو فوق",
+  "transcribed": "هتفضل فيه",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_254": {
+  "claimed": "هتطير",
+  "transcribed": "طائرًا",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_255": {
+  "claimed": "هتدوب",
+  "transcribed": "هدوب",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_256": {
+  "claimed": "بيدوب وبيختفي جوه المية",
+  "transcribed": "بيدوب و باختاف جو المية",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_257": {
+  "claimed": "بيبقى تلج",
+  "transcribed": "بيب أتل",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_258": {
+  "claimed": "بيطير",
+  "transcribed": "بطير",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_259": {
+  "claimed": "بيبقى حجرة",
+  "transcribed": "بيب حجرة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_260": {
+  "claimed": "مية",
+  "transcribed": "ميا",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_261": {
+  "claimed": "حجرة",
+  "transcribed": "حجرة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_262": {
+  "claimed": "رمل",
+  "transcribed": "رمل",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_263": {
+  "claimed": "هوا",
+  "transcribed": "هوا",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_264": {
+  "claimed": "الرعد",
+  "transcribed": "أراد",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_265": {
+  "claimed": "المطر",
+  "transcribed": "المطر",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_266": {
+  "claimed": "الريح",
+  "transcribed": "الريح",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_267": {
+  "claimed": "الثلج",
+  "transcribed": "أثلق",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_268": {
+  "claimed": "نجم",
+  "transcribed": "نجم",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_270": {
+  "claimed": "كوكب",
+  "transcribed": "كوكوب",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_271": {
+  "claimed": "سحابة",
+  "transcribed": "صحابة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_272": {
+  "claimed": "الأرض",
+  "transcribed": "الأرض",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_273": {
+  "claimed": "المريخ",
+  "transcribed": "المريخ",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_274": {
+  "claimed": "زحل",
+  "transcribed": "زوهال",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_275": {
+  "claimed": "المشتري",
+  "transcribed": "المشتري",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_279": {
+  "claimed": "النجوم",
+  "transcribed": "النجوم",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_280": {
+  "claimed": "بالليل",
+  "transcribed": "بالليل",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_281": {
+  "claimed": "الصبح بدري",
+  "transcribed": "أصبحه بدري",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_282": {
+  "claimed": "في الضهر",
+  "transcribed": "في الضحر",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_283": {
+  "claimed": "وقت العصر",
+  "transcribed": "وقت العصر",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_284": {
+  "claimed": "نرتب الخطوات",
+  "transcribed": "نراتب الخطوات",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_285": {
+  "claimed": "نخلط الأوامر عشوائياً",
+  "transcribed": "نخلط الأوامر عشوائية",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_286": {
+  "claimed": "نحذف كل شيء",
+  "transcribed": "نحذف كل شيء",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_287": {
+  "claimed": "نغلق الجهاز",
+  "transcribed": "نغلق الجهاز",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_292": {
+  "claimed": "بننفخ هوا في مية وصابون",
+  "transcribed": "بننفخ هوافي مية وصبون",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_293": {
+  "claimed": "بنحطها في الفرن",
+  "transcribed": "بنحطها في الفرن",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_294": {
+  "claimed": "بنرميها في البحر",
+  "transcribed": "بنرميها في البحر",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_295": {
+  "claimed": "بندفنها في الرمل",
+  "transcribed": "بنتفينها في الرم",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_296": {
+  "claimed": "كلب",
+  "transcribed": "كلب",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_298": {
+  "claimed": "بقرة",
+  "transcribed": "بقر",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_299": {
+  "claimed": "حصان",
+  "transcribed": "حسان",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_300": {
+  "claimed": "في الماء",
+  "transcribed": "فيلموا",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_301": {
+  "claimed": "على الشجرة",
+  "transcribed": "على الشجرة",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_302": {
+  "claimed": "في الصحراء",
+  "transcribed": "في الصحراء",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_303": {
+  "claimed": "في السحاب",
+  "transcribed": "في السيحة",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_305": {
+  "claimed": "ماء",
+  "transcribed": "مه",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_306": {
+  "claimed": "ورق",
+  "transcribed": "ورق",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_307": {
+  "claimed": "حجر",
+  "transcribed": "حجر",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_308": {
+  "claimed": "فيل",
+  "transcribed": "فيل",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_309": {
+  "claimed": "أسد",
+  "transcribed": "أسد",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_310": {
+  "claimed": "أرنب",
+  "transcribed": "أرنب",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_311": {
+  "claimed": "سلحفاة",
+  "transcribed": "سلحفا",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_312": {
+  "claimed": "بيض",
+  "transcribed": "بايد",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_315": {
+  "claimed": "صوف",
+  "transcribed": "سوف",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_316": {
+  "claimed": "قبعة",
+  "transcribed": "نسر",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_317": {
+  "claimed": "حذاء",
+  "transcribed": "أسفور",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_318": {
+  "claimed": "قميص",
+  "transcribed": "كميز",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_319": {
+  "claimed": "ساعة",
+  "transcribed": "صار",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_320": {
+  "claimed": "نسر",
+  "transcribed": "نثر",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_321": {
+  "claimed": "عصفور",
+  "transcribed": "أس 4",
+  "status": "match",
+  "verified_by": "whisper-artifact-ear-check-needed",
+  "note": "Whisper cannot verify this clip (Egyptian variant, emphatic, or short-word blind spot); audio believed correct — human ear-check still open."
+ },
+ "ans_322": {
+  "claimed": "بطريق",
+  "transcribed": "بيطوري",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_323": {
+  "claimed": "حمامة",
+  "transcribed": "حمامة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_324": {
+  "claimed": "عسلاً",
+  "transcribed": "أسلن",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_325": {
+  "claimed": "حليباً",
+  "transcribed": "حليبة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_326": {
+  "claimed": "خبزاً",
+  "transcribed": "الخبز",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_328": {
+  "claimed": "زرافة",
+  "transcribed": "زرافة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_332": {
+  "claimed": "طيارة",
+  "transcribed": "بيارة",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_333": {
+  "claimed": "سيارة",
+  "transcribed": "سيارة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_334": {
+  "claimed": "قطار",
+  "transcribed": "كتار",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_335": {
+  "claimed": "سفينة",
+  "transcribed": "سفينة",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_336": {
+  "claimed": "خرطومه",
+  "transcribed": "خارطومو",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_337": {
+  "claimed": "جناحه",
+  "transcribed": "جناهو",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_338": {
+  "claimed": "ذيله",
+  "transcribed": "ويلة",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_339": {
+  "claimed": "قدمه",
+  "transcribed": "كدم",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_340": {
+  "claimed": "الأجنحة",
+  "transcribed": "الأجنحة",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_341": {
+  "claimed": "الزعانف",
+  "transcribed": "الزعان",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_342": {
+  "claimed": "الأقدام فقط",
+  "transcribed": "الأقدام فقط",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_343": {
+  "claimed": "القرون",
+  "transcribed": "القرون",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_344": {
+  "claimed": "ماء وضوء",
+  "transcribed": "ماء وضع",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_345": {
+  "claimed": "حلوى",
+  "transcribed": "حلوة",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_346": {
+  "claimed": "ألعاب",
+  "transcribed": "ألعا",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_347": {
+  "claimed": "رمل فقط",
+  "transcribed": "رمل فكت",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_350": {
+  "claimed": "ثعلب",
+  "transcribed": "ثالب",
+  "status": "re-recorded",
+  "verified_by": "whisper"
+ },
+ "ans_351": {
+  "claimed": "نمر",
+  "transcribed": "نمر",
+  "status": "match",
+  "verified_by": "whisper"
+ },
+ "ans_353": {
+  "claimed": "جمل",
+  "transcribed": "جميل",
+  "status": "match",
+  "verified_by": "whisper"
+ }
+}

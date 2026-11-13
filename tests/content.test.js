@@ -129,9 +129,9 @@ test("rescue adventures: stage 1 shows AND speaks the intro plus the stage line 
   const m = rescue.match(/if \(first && stage === 0\) \{([\s\S]*?)\} else \{/);
   assert.ok(m, "rescue startStage stage-0 branch not found");
   assert.match(m[1], /story\.intro \+ " " \+ s\.line/, "stage 1 must SHOW intro + stage line");
-  assert.match(m[1], /speakSeq\(\[story\.intro, s\.line\]\)/, "stage 1 must SPEAK intro + stage line back-to-back");
+  assert.match(m[1], /speakSeq\(\[story\.intro, s\.line\], \(\) => nextQuestion\(\)\)/, "stage 1 must SPEAK intro + stage line back-to-back, and the question must wait for them to finish (round 3.2.3 item 14a: onDone, not a guessed timeout)");
   assert.doesNotMatch(m[1], /\$\("rescueStory"\)\.textContent = story\.intro;/, "stage 1 must not show the intro alone");
-  assert.ok(rescue.includes("const speakSeq = list =>"), "rescue needs the speakSeq helper (same as the brave stories)");
+  assert.ok(rescue.includes("const speakSeq = (list, onDone) =>"), "rescue speakSeq must take the onDone completion callback (round 3.2.3 item 14a)");
 });
 
 test("recorded teacher voice covers the whole quiz bank and the corpus", () => {
@@ -414,7 +414,7 @@ test("reading teaches all 28 Arabic letters (round 3.2)", () => {
 
 test("colouring-games workshop is registered inside the Games door (round 3.2)", () => {
   const cg = read("color-games.js");
-  for (const name of ["ورشة ألعاب وتلوين الملك ماثيو", "لوني العدد", "سحب لون الطبيعة", "أكمل تلوين النمط"]) {
+  for (const name of ["ورشة ألعاب وتلوين الملك ماثيو", "لون العدد", "سحب لون الطبيعة", "أكمل تلوين النمط"]) {
     assert.ok(cg.includes(name), "workshop missing game: " + name);
   }
   assert.ok(cg.includes('setAttribute("data-workshop", "1")'), "workshop card must carry data-workshop");
@@ -583,7 +583,9 @@ test("math in English and the English alphabet explain in Arabic (round 3.2.1)",
   assert.ok(learning.includes("زي كلمة"), "enLetters spoken line must frame the English word in Arabic");
   assert.ok(learning.includes("يعني"), "enLetters spoken line must give the Arabic meaning");
   assert.ok(!learning.includes(", lowercase "), "enLetters spoken line must not be all-English");
-  for (const s of ["الحروف الإنجليزية", "الأرقام الإنجليزية", "الشكل الصغير:", "الصوت:", "اتعلم واسمع"])
+  // Round 3.2.3 item 8: "الأرقام الإنجليزية" left learning.js with the
+  // enNumbers card — the English numbers lesson is math-english.js now.
+  for (const s of ["الحروف الإنجليزية", "الشكل الصغير:", "الصوت:", "اتعلم واسمع"])
     assert.ok(learning.includes(s), "missing Arabic label in learning.js: " + s);
   for (const s of ["English Alphabet", "English Numbers", "Learn to count in English", "Learn and listen", "Lowercase:", "Sound:"])
     assert.ok(!learning.includes(s), "English UI remains in learning.js: " + s);
@@ -745,8 +747,13 @@ test("the Lessons door offers exactly one Arabic-letters entry: the unified scho
   const learning = read("learning.js");
   assert.ok(!learning.includes('id:"arLetters"'), "the duplicate Arabic-letters card must be gone from learning.js");
   assert.ok(!learning.includes("arabicLetters"), "the basic Arabic-letters data must be gone with the card");
-  for (const id of ["enLetters", "arNumbers", "enNumbers"])
-    assert.ok(learning.includes('id:"' + id + '"'), "learning.js must keep " + id);
+  assert.ok(learning.includes('id:"enLetters"'), "learning.js must keep enLetters");
+  // Round 3.2.3 item 8: the numbers cards are gone from learning.js — the
+  // two journeys are the only numbers lessons (4 numbers cards → 2).
+  for (const id of ["arNumbers", "enNumbers"])
+    assert.ok(!learning.includes('id:"' + id + '"'), "the duplicate numbers card must be gone from learning.js: " + id);
+  assert.ok(read("math-journey.js").includes("الحساب بالعربي: الأرقام ١–٢٠"), "the Arabic numbers journey must stay as a numbers entry");
+  assert.ok(read("math-english.js").includes("الرياضيات بالإنجليزي: 1–20"), "the English numbers journey must stay as a numbers entry");
   const lessons = read("lessons.js");
   assert.strictEqual((lessons.match(/dataset\.lessonEntry="true"/g) || []).length, 1, "exactly one letter-school entry card");
   assert.ok(lessons.includes("مدرسة الحروف"), "the single entry is the letter school");

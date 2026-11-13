@@ -213,7 +213,9 @@ test("replay buttons (اسمع السؤال) are present on every game question 
 });
 
 test("game intros are spoken on open (auto-narration, not tap-to-listen)", () => {
-  assert.match(COLOR_GAMES, /function open\(\)[\s\S]*?speakSeq\(\[NANCY_INTRO_COLOR, \.\.\.tabSpeechItems\(\)\]\)/, "workshop open must speak Nancy's opener + the tab intro");
+  // Round 3.2.3 item 4: Nancy voice is OUT of the workshop — the opener
+  // is the Aria clip cg_intro_color (same text), not a Nancy intro.
+  assert.match(COLOR_GAMES, /function open\(\)[\s\S]*?speakSeq\(\[CG_INTRO_COLOR, \.\.\.tabSpeechItems\(\)\]\)/, "workshop open must speak the Aria opener + the tab intro");
   assert.match(TOUCH_CORE, /renderMenu\(\);speak\(MENU_INTRO\)/, "touch games menu must speak its intro on open");
   assert.match(TOUCH_CORE, /speak\(MATCH_INTRO\);/, "match game must speak its intro on start");
   assert.match(TOUCH_CORE, /speakSequence\(\[LISTEN_INTRO,/, "listen game must speak its intro, then the target");
@@ -225,10 +227,13 @@ test("game intros are spoken on open (auto-narration, not tap-to-listen)", () =>
   assert.match(MEMORY, /lastMemIntro = memIntroIndex\+\+ % 2 === 0 \? MEM_INTRO : MEM_INTRO_2/, "memory intro must rotate between the two Nancy lines");
 });
 
-test("color games: Nancy opens the workshop + the numbers game (note 25b)", () => {
-  assert.ok(COLOR_GAMES.includes('const NANCY_INTRO_COLOR = "يلا نلوّن يا ملك ماثيو! اختار لون حلو ولوّن معايا!"'), "workshop opener line missing");
-  assert.ok(COLOR_GAMES.includes('const NANCY_INTRO_COLOR_NUM = "لعبة لوني العدد يا بطلي ماثيو! شوف الرقم على التاج ودوس على نفس الرقم في الزر!"'), "numbers-game opener line missing");
-  assert.match(COLOR_GAMES, /function tabSpeechItems\(\)[\s\S]*?NANCY_INTRO_COLOR_NUM/, "numbers tab speech must open with Nancy's numbers line");
+test("color games: Aria opens the workshop + the numbers game (3.2.3 item 4 replaces note 25b)", () => {
+  assert.ok(COLOR_GAMES.includes('const CG_INTRO_COLOR = "يلا نلوّن يا ملك ماثيو! اختار لون حلو ولوّن معايا!"'), "workshop opener line missing");
+  assert.ok(COLOR_GAMES.includes('const CG_INTRO_NUM = "لعبة لون العدد يا بطلي ماثيو! شوف الرقم على التاج ودوس على نفس الرقم في الزر!"'), "numbers-game opener line missing");
+  assert.match(COLOR_GAMES, /function tabSpeechItems\(\)[\s\S]*?CG_INTRO_NUM/, "numbers tab speech must open with the numbers intro");
+  // Round 3.2.3 item 4: no Nancy voice anywhere in the workshop — she
+  // stays only for greeting + encouragement elsewhere.
+  assert.ok(!COLOR_GAMES.includes("NANCY_INTRO") && !COLOR_GAMES.includes("nancy_intro_color"), "no Nancy intro may remain in the workshop (item 4)");
   assert.match(COLOR_GAMES, /function speakTabSpeech\(\) \{ speakSeq\(tabSpeechItems\(\)\); \}/, "tab speech must go through the clip sequence");
   // The match-game draft line is a duplicate of the existing MATCH_INTRO /
   // touch_match_intro (same game, same instruction) — it must NOT be added.
@@ -256,7 +261,7 @@ test("animated game scenes: new keyframes exist and game screens use them", () =
   assert.match(STYLES, /\.result-stars\{animation:matthewTwinkle/, "win stars must twinkle");
 });
 
-test("لوني العدد: no written instructions or legend, split buttons carry name + number, intro is spoken", () => {
+test("لون العدد: no written instructions or legend, split buttons carry name + number, intro is spoken (round 3.2.3 items 16/17)", () => {
   const numbersFn = COLOR_GAMES.slice(
     COLOR_GAMES.indexOf("function renderNumbers()"),
     COLOR_GAMES.indexOf("function onCrownPart")
@@ -270,13 +275,38 @@ test("لوني العدد: no written instructions or legend, split buttons carr
   assert.match(numbersFn, /cg-color-btn cg-split/, "color buttons must be split buttons");
   assert.match(numbersFn, /<span class="cg-split-name">/, "split button must carry the color-name half");
   assert.match(numbersFn, /<span class="cg-split-num"[^>]*>/, "split button must carry the number half");
-  assert.match(numbersFn, /win\.find\(n => \(n - 1\) % 6 === i\)/, "split button number must be the number whose color it is");
-  // The mapping is a bijection per window: every color shows exactly one
-  // number and every number in the window appears on exactly one button.
-  for (const win of [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12], [13, 14, 15, 16, 17, 18], [15, 16, 17, 18, 19, 20]]) {
-    const shown = [0, 1, 2, 3, 4, 5].map(i => win.find(n => (n - 1) % 6 === i));
-    assert.deepEqual([...shown].sort((a, b) => a - b), [...win].sort((a, b) => a - b), "split buttons must cover window " + win);
+  // Round 3.2.3 item 16: the number on each colour button is SHUFFLED per
+  // round — assign[j] is the number on colour-button j, dealt fresh from
+  // the window; the crown expects colorForNumber(n), the colour whose
+  // button shows that number. The buttons are never in order.
+  assert.match(numbersFn, /numbersState\.assign = shuffle\(win\)/, "numbers must be shuffled across the colour buttons each round");
+  assert.match(numbersFn, /arDigits\(numbersState\.assign\[i\]\)/, "split button number must be its shuffled assignment");
+  assert.match(COLOR_GAMES, /const colorForNumber = n => \{[\s\S]*?COLORS\[a\.indexOf\(n\)\]/, "crown part must expect the colour whose button shows its number");
+  assert.ok(COLOR_GAMES.includes("numbersState.assign = null; // fresh shuffle for the new window"), "next round must re-deal the shuffle");
+  // The assignment is a permutation of the window: every colour shows
+  // exactly one number and every number appears on exactly one button.
+  // (shuffle is the shared Fisher-Yates helper — run it, don't re-derive it.)
+  const shStart = COLOR_GAMES.indexOf("const shuffle = arr =>");
+  assert.ok(shStart >= 0, "shuffle helper not found");
+  let depth = 0, shEnd = -1;
+  for (let k = shStart; k < COLOR_GAMES.length; k++) {
+    if (COLOR_GAMES[k] === "{") depth++;
+    else if (COLOR_GAMES[k] === "}") { depth--; if (depth === 0) { shEnd = k + 1; break; } }
   }
+  assert.ok(shEnd > shStart, "shuffle helper must close");
+  const shuffle = vm.runInContext("(" + COLOR_GAMES.slice(shStart, shEnd).replace("const shuffle = ", "") + ")", vm.createContext({}));
+  for (const win of [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12], [13, 14, 15, 16, 17, 18], [15, 16, 17, 18, 19, 20]]) {
+    const shown = shuffle(win);
+    assert.deepEqual([...shown].sort((a, b) => a - b), [...win].sort((a, b) => a - b), "shuffled buttons must cover window " + win);
+    assert.equal(new Set(shown).size, 6, "each number must appear on exactly one button");
+  }
+  // Round 3.2.3 item 16: the buttons sit side by side in a grid (2 per
+  // row, 3 on wide screens), never stacked vertically.
+  assert.ok(numbersFn.includes("cg-palette cg-num-grid"), "numbers palette must use the grid layout");
+  assert.match(COLOR_GAMES, /\.cg-palette\.cg-num-grid\{display:grid;grid-template-columns:repeat\(2,minmax\(0,1fr\)\)\}/, "grid must be 2 columns on mobile");
+  // Round 3.2.3 item 17: the game is «لون العدد», not «لوني العدد».
+  assert.ok(COLOR_GAMES.includes("🔢 لون العدد"), "numbers tab must be named لون العدد");
+  assert.ok(!COLOR_GAMES.includes("لوني العدد"), "the old name لوني العدد must be gone");
   // The crown still shows its digits, and the intro is spoken on open.
   assert.match(numbersFn, /arDigits\(n\)/, "crown parts must still show their (Arabic-Indic) digits");
   assert.match(COLOR_GAMES, /\$\("cgListenNumbers"\)\.onclick = \(\) => speakTabSpeech\(\)/, "numbers replay button must re-speak the intro");

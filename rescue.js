@@ -82,9 +82,13 @@
     window.MatthewVoice?.speak(text, "ar-EG");
   };
   // Same helper as the brave stories (stories.js): speak a list of texts
-  // back-to-back, each resolved to its recorded clip.
-  const speakSeq = list => {
-    if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(list, "ar-EG");
+  // back-to-back, each resolved to its recorded clip. Round 3.2.3 item
+  // 14a: optional onDone — fires when the sequence finishes, so the
+  // rescue question can wait for the intro/stage line instead of cutting
+  // it off. If the voice runtime is absent, it fires async (never hang).
+  const speakSeq = (list, onDone) => {
+    if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(list, "ar-EG", onDone);
+    else if (typeof onDone === "function") setTimeout(onDone, 0);
   };
   const arabicDigits = value => String(value).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[Number(d)]);
   // حارس صور الأسئلة (تدقيق الصور، الجولة ٣.٢.١) — نفس قاعدة app.js:
@@ -112,6 +116,25 @@
 
   let story = null, stage = 0, inStage = 0, questions = [], current = null, answered = false, score = 0, total = 0;
   let qToken = 0, lastChoices = [];
+  // Round 3.2.3 item 13: a running story is one sub-screen level above
+  // the story picker — the system back returns to the picker, not out of
+  // the app. subPushed guards the push (a replay from the win screen
+  // restarts the same story on the same level).
+  let subPushed = false;
+  const pushSub = () => {
+    if (subPushed) return;
+    subPushed = true;
+    // Guarded for non-browser contexts (tests load rescue.js in node).
+    if (typeof window !== "undefined") {
+      window.__matthewBack = () => { subPushed = false; openPicker(); };
+      window.MatthewNav?.pushSubscreen();
+    }
+  };
+  const popSub = () => {
+    if (!subPushed) return;
+    subPushed = false;
+    if (typeof window !== "undefined") window.MatthewNav?.popSubscreen();
+  };
 
   const pool = () => {
     try {
@@ -176,6 +199,7 @@
   const startStory = chosen => {
     focusMode(true);
     story = chosen;
+    pushSub();
     const all = pool();
     if (!all.length) return;
     questions = shuffle(all);
@@ -208,12 +232,20 @@
       // stage line, and speak them back-to-back (intro clip, then
       // stage-line clip) — no re-record needed: both clips already exist.
       $("rescueStory").textContent = story.intro + " " + s.line;
-      speakSeq([story.intro, s.line]);
+      // Round 3.2.3 item 14a: the question waits for the intro to
+      // FINISH (real completion via onDone), not a guessed timeout —
+      // the old immediate nextQuestion() let the 350ms auto-play cut
+      // the intro off on the same single Audio element.
+      speakSeq([story.intro, s.line], () => nextQuestion());
     } else {
       $("rescueStory").textContent = s.line;
-      speak(s.line, s.clip);
+      // Same wait for every stage: the stage line finishes before the
+      // question speaks (the old speak()+immediate nextQuestion() cut
+      // the stage line the same way). speakSeq resolves the line to its
+      // recorded clip via the text map — all 20 stage lines are covered
+      // (see tests/round323.test.js, item 14b).
+      speakSeq([s.line], () => nextQuestion());
     }
-    nextQuestion();
   };
 
   const nextQuestion = () => {
@@ -334,6 +366,7 @@
   };
 
   const close = () => {
+    subPushed = false;
     qToken++;
     focusMode(false);
     panel.classList.add("hidden");
@@ -342,7 +375,10 @@
     try { window.MatthewVoice?.stop(); } catch (_) {}
     if (typeof updateStats === "function") { try { updateStats(); } catch (_) {} }
   };
-  $("rescueBack").addEventListener("click", () => { if (story) openPicker(); else close(); });
+  // Round 3.2.3 item 13: inside a story the back goes through history
+  // when we own an entry (popstate returns to the picker via the hook);
+  // with no entry it returns directly. From the picker it closes.
+  $("rescueBack").addEventListener("click", () => { if (story) { if (!window.MatthewNav?.back()) { popSub(); openPicker(); } } else close(); });
 
   if (!document.getElementById("rescueStyle")) {
     const style = document.createElement("style");

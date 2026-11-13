@@ -391,7 +391,7 @@ test("مستطيل is a drawn SVG rectangle, not a framed picture (note 29)", ()
   assert.ok(isSvg(svgRect) && svgRect.includes("<rect"), "shapeSvg rectangle must be a drawn SVG too");
 });
 
-test("lessons.js: cage, desk, ask, example, cave are drawn; harakat are mouth drawings (Tables 1#13-14, 4c)", () => {
+test("lessons.js: cage, desk, ask, cave are drawn; example is 📝 (3.2.3 F1b); harakat are mouth drawings (Tables 1#13-14, 4c)", () => {
   const emojiOf = {};
   for (const l of lessons) l.words.forEach((w, i) => { emojiOf[w] = l.emoji[i]; });
   assertSvg(emojiOf["قَفَص"], "قفص (cage)");
@@ -400,8 +400,10 @@ test("lessons.js: cage, desk, ask, example, cave are drawn; harakat are mouth dr
   assert.ok(emojiOf["مَكْتَب"].includes("e8b06a"), "desk must show its drawer");
   assertSvg(emojiOf["سَأَلَ"], "سأل (asked)");
   assert.ok(emojiOf["سَأَلَ"].includes("7c5cff"), "asked must show a speech bubble");
-  assertSvg(emojiOf["مِثَال"], "مثال (example)");
-  assert.ok(emojiOf["مِثَال"].includes("١+١=٢"), "example must show ١+١=٢");
+  // Round 3.2.3 F1b: the chalkboard "١+١=٢" SVG rendered confusingly
+  // (looked like "Γ=1+1") and a maths sum does not depict "an example" —
+  // مثال is a 📝 note now, which the audit explicitly allows ("or an emoji").
+  assert.equal(emojiOf["مِثَال"], "📝", "مثال (example) must be 📝, not the confusing chalkboard sum");
   assertSvg(emojiOf["مَغَارَة"], "مغارة (cave)");
   assert.ok(emojiOf["مَغَارَة"].includes("#2b2f36"), "cave must show its dark opening");
   const markEmoji = Object.fromEntries(marks.map(m => [m.name, m.emoji]));

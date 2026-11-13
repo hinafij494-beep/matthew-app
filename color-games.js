@@ -5,10 +5,10 @@
  * كل إجابة صح تكسب نجمة ⭐، وكل لعبة كاملة تكسب ألماسة 💎 لتاج الملك.
  *
  * الألعاب:
- *  ١) لوني العدد — تاج مقسّم ٦ أجزاء، كل جزء عليه رقم؛ الطفل يختار لوناً
+ *  ١) لون العدد — تاج مقسّم ٦ أجزاء، كل جزء عليه رقم؛ الطفل يختار لوناً
  *     من اللوحة ثم يضغط الجزء الذي يطابق رقمه ذلك اللون. الجولات تتدرج
  *     بالأرقام من ١ إلى ٢٠ (١–٦، ثم ٧–١٢، ثم ١٣–١٨، ثم ١٥–٢٠).
- *  ٢) سحب لون الطبيعة — صورة رمادية من دروس العلوم (تفاحة، شمس، سمكة...)
+ *  ٢) سحب لون الطبيعة — صورة رمادية من دروس العلوم (تفاحة، شمس...)
  *     والطفل يختار لونها الحقيقي من اللوحة، مع معلومة علمية قصيرة.
  *  ٣) أكمل تلوين النمط — صف من ٦ خانات، آخر خانة فارغة؛ النمط يتدرج
  *     من ABAB إلى AAB ثم AABB، مع ٣ ألوان للاختيار.
@@ -40,6 +40,10 @@
       ".cg-legend-chip{display:flex;align-items:center;gap:6px;background:#f8f6ff;border:2px solid #e8e2f7;border-radius:999px;padding:6px 12px;font-weight:800;font-size:15px}" +
       ".cg-dot{width:18px;height:18px;border-radius:50%;display:inline-block;border:2px solid #0002;flex-shrink:0}" +
       ".cg-palette{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:14px 0}" +
+      // Round 3.2.3 item 16: the numbers buttons are a 2-column grid
+      // (3 on wide screens), never a vertical list.
+      ".cg-palette.cg-num-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}" +
+      "@media(min-width:650px){.cg-palette.cg-num-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}" +
       ".cg-color-btn{min-width:88px;border:3px solid #0001;border-radius:16px;padding:13px 10px;font:800 15px inherit;cursor:pointer;box-shadow:0 3px 10px #30205b14}" +
       ".cg-color-btn.selected{border-color:#5b3cc4;transform:scale(1.07);box-shadow:0 0 0 3px #d9ccff}" +
       ".cg-crown-wrap{text-align:center;margin:8px 0}" +
@@ -78,7 +82,12 @@
   const COLORS = [
     { id: "red", name: "أحمر", hex: "#e53935", text: "#ffffff" },
     { id: "blue", name: "أزرق", hex: "#1e88e5", text: "#ffffff" },
-    { id: "yellow", name: "أصفر", hex: "#f9a825", text: "#5b3c00" },
+    // Round 3.2.3 item 10: true clear yellow — the old #f9a825 amber was
+    // nearly identical to orange #fb8c00 on screen. `glyph` is the dark
+    // amber used ONLY for the number inside the white circle (bright
+    // yellow on white is unreadable); everywhere else the button/crown/
+    // slot fill uses the true yellow hex.
+    { id: "yellow", name: "أصفر", hex: "#ffeb3b", text: "#5b3c00", glyph: "#f9a825" },
     { id: "green", name: "أخضر", hex: "#43a047", text: "#ffffff" },
     { id: "orange", name: "برتقالي", hex: "#fb8c00", text: "#ffffff" },
     { id: "purple", name: "بنفسجي", hex: "#8e24aa", text: "#ffffff" },
@@ -87,13 +96,13 @@
   ];
   const colorById = id => COLORS.find(c => c.id === id) || COLORS[0];
   const NUM_NAMES = ["واحد", "اتنين", "تلاتة", "أربعة", "خمسة", "ستة", "سبعة", "تمانية", "تسعة", "عشرة", "حداشر", "اتناشر", "تلتاشر", "أربعتاشر", "خمستاشر", "ستاشر", "سبعتاشر", "تمنتاشر", "تسعتاشر", "عشرين"];
-  // رقم العدد -> لونه في المفتاح (الألوان الستة تتكرر بعد ٦).
-  const legendColorFor = n => COLORS[(n - 1) % 6];
 
   const NATURE = [
     { emoji: "🍎", name: "تفاحة", color: "red", fact: "التفاحة حمرا وصحية! التفاح بيقوّي جسمك يا بطل!" },
     { emoji: "☀️", name: "شمس", color: "yellow", fact: "الشمس صفرا ومنوّرة! الشمس بتدفّي الدنيا كلها!" },
-    { emoji: "🐟", name: "سمكة", color: "blue", fact: "السمكة زرقا وبتعوم في البحر الأزرق!" },
+    // Round 3.2.3 item 11: the fish is GONE — a fish has no single
+    // canonical colour, and Matthew rightly objects that a fish is not
+    // blue. 8 items → 7; its orphan clip stays in place.
     { emoji: "🍃", name: "ورقة شجرة", color: "green", fact: "ورقة الشجرة خضرا! الشجر الأخضر بينضّف الهوا اللي بنتنفسه!" },
     { emoji: "☁️", name: "سحابة", color: "white", fact: "السحابة بيضا وبتطير في السما! السحاب الأبيض بيجيب المطر!" },
     { emoji: "🌸", name: "وردة", color: "pink", fact: "الوردة وردي وريحتها حلوة! الورد بيجمّل الدنيا!" },
@@ -126,15 +135,14 @@
     patterns: "لعبة أكمل تلوين النمط يا ملك ماثيو! بص على الألوان اللي في الصف وخمّن اللون اللي ناقص في الآخر!"
   };
 
-  // Round 3.2.1 note 25b (Nancy-lines draft): مس نانسي opens the workshop
-  // herself (nancy_intro_color) and introduces the numbers game with its
-  // split-button mechanic (nancy_intro_color_num — the crown number and
-  // the same number on the button). Spoken via speakSequence so each line
-  // resolves to its own recorded clip; before generation the sequence
-  // falls back to one joined TTS utterance, never silence. Clip keys are
-  // stable: her real recordings will replace these TTS clips as-is.
-  const NANCY_INTRO_COLOR = "يلا نلوّن يا ملك ماثيو! اختار لون حلو ولوّن معايا!";
-  const NANCY_INTRO_COLOR_NUM = "لعبة لوني العدد يا بطلي ماثيو! شوف الرقم على التاج ودوس على نفس الرقم في الزر!";
+  // Round 3.2.3 item 4: Nancy voice is OUT of the workshop — she stays
+  // only for greeting + encouragement. The workshop intros are Aria clips
+  // now (audio manifest: cg_intro_color, cg_intro_num). cg_intro_color
+  // shares its exact text with the old Nancy intro; the corpus force-adds
+  // it by key, so BY_TEXT resolves that sentence to the Aria clip.
+  // Round 3.2.3 item 17: the game is «لون العدد» (renamed).
+  const CG_INTRO_COLOR = "يلا نلوّن يا ملك ماثيو! اختار لون حلو ولوّن معايا!";
+  const CG_INTRO_NUM = "لعبة لون العدد يا بطلي ماثيو! شوف الرقم على التاج ودوس على نفس الرقم في الزر!";
 
   // ---------- helpers ----------
   const arDigits = value => String(value).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[Number(d)]);
@@ -222,9 +230,21 @@
 
   // ---------- state ----------
   let activeTab = "numbers";
-  const numbersState = { round: 1, selected: null, done: [false, false, false, false, false, false] };
+  // Round 3.2.3 item 16: assign[j] = the number shown on colour-button j,
+  // shuffled fresh each round — the buttons are never in order. The crown
+  // stays the ordered reference (its parts show win[0..5] in order).
+  const numbersState = { round: 1, selected: null, done: [false, false, false, false, false, false], assign: null };
   const natureState = { items: [], index: 0, answered: false, roundDone: false };
   const patternsState = { round: 1, answered: false };
+
+  // The colour a crown part expects: the colour whose button shows that
+  // number this round. Falls back to the old (n-1)%6 mapping until the
+  // first shuffle is dealt (e.g. a test calling it before render).
+  const colorForNumber = n => {
+    const a = numbersState.assign;
+    if (a && a.indexOf(n) >= 0) return COLORS[a.indexOf(n)];
+    return COLORS[(n - 1) % 6];
+  };
 
   function numbersWindow() {
     return NUM_WINDOWS[(numbersState.round - 1) % NUM_WINDOWS.length];
@@ -239,7 +259,7 @@
     panel.classList.remove("hidden");
     renderPanel();
     refreshCrowns();
-    speakSeq([NANCY_INTRO_COLOR, ...tabSpeechItems()]);
+    speakSeq([CG_INTRO_COLOR, ...tabSpeechItems()]);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -256,7 +276,7 @@
       '<div class="quiz-top"><button id="cgBack" class="back" type="button">🏠 الرئيسية</button><strong>🎨 ورشة ألعاب وتلوين الملك ماثيو</strong><span>👑</span></div>' +
       '<div class="cg-counter">⭐ <b id="cgStars">٠</b> &nbsp; 💎 <b id="cgDiamonds">٠</b> &nbsp;·&nbsp; 👑 تاج الملك ماثيو</div>' +
       '<div class="cg-tabs" role="tablist">' +
-      '<button type="button" class="cg-tab' + (activeTab === "numbers" ? " active" : "") + '" data-tab="numbers">🔢 لوني العدد</button>' +
+      '<button type="button" class="cg-tab' + (activeTab === "numbers" ? " active" : "") + '" data-tab="numbers">🔢 لون العدد</button>' +
       '<button type="button" class="cg-tab' + (activeTab === "nature" ? " active" : "") + '" data-tab="nature">🌿 سحب لون الطبيعة</button>' +
       '<button type="button" class="cg-tab' + (activeTab === "patterns" ? " active" : "") + '" data-tab="patterns">🎨 أكمل تلوين النمط</button></div>' +
       '<div id="cgGame" class="anim-enter"></div>';
@@ -286,11 +306,11 @@
     return INSTRUCTIONS.numbers;
   }
 
-  // Spoken items for the active tab: the numbers tab is opened by مس نانسي
-  // herself (nancy_intro_color_num), the other tabs speak their composed
-  // intro (each resolves to one recorded cg_*_tab clip).
+  // Spoken items for the active tab: the numbers tab opens with the Aria
+  // intro (cg_intro_num), the other tabs speak their composed intro (each
+  // resolves to one recorded cg_*_tab clip).
   function tabSpeechItems() {
-    if (activeTab === "numbers") return [NANCY_INTRO_COLOR_NUM, INSTRUCTIONS.numbers];
+    if (activeTab === "numbers") return [CG_INTRO_NUM, INSTRUCTIONS.numbers];
     return [tabSpeech()];
   }
   function speakTabSpeech() { speakSeq(tabSpeechItems()); }
@@ -303,17 +323,23 @@
 
   function gameArea() { return $("cgGame"); }
 
-  // ---------- Game 1: لوني العدد ----------
+  // ---------- Game 1: لون العدد ----------
   function renderNumbers() {
     const area = gameArea();
     if (!area) return;
     const win = numbersWindow();
+    // Round 3.2.3 item 16: fresh shuffle per round — the number on each
+    // colour button is random, never in order. Re-dealt when the window
+    // changed (assign holds numbers from another window) or on next round.
+    if (!numbersState.assign || numbersState.assign.length !== win.length ||
+        numbersState.assign.some(n => !win.includes(n)))
+      numbersState.assign = shuffle(win);
     const allDone = numbersState.done.every(Boolean);
     const crownSvg = '<svg viewBox="0 0 320 185" role="img" aria-label="تاج الملك ماثيو">' +
       '<circle cx="80" cy="38" r="7" fill="#ffb340"/><circle cx="160" cy="22" r="7" fill="#ffb340"/><circle cx="240" cy="38" r="7" fill="#ffb340"/>' +
       CROWN_PARTS.map((p, i) => {
         const n = win[i];
-        const col = legendColorFor(n);
+        const col = colorForNumber(n);
         const done = numbersState.done[i];
         const fill = done ? col.hex : "#ece7f7";
         const textFill = done ? col.text : "#5b3cc4";
@@ -323,13 +349,14 @@
         return '<g class="cg-crown-part' + (done ? " done" : "") + '" data-part="' + i + '">' + shape +
           '<text x="' + p.cx + '" y="' + (p.cy + 11) + '" font-size="30" font-weight="900" text-anchor="middle" fill="' + textFill + '">' + arDigits(n) + "</text></g>";
       }).join("") + "</svg>";
+    // Round 3.2.3 item 12: fixed top — round + crown + listen stay pinned
+    // in .cg-sticky; the colour palette scrolls below it.
     area.innerHTML =
-      '<p class="cg-round">الجولة ' + arDigits(numbersState.round) + "</p>" +
-      '<div class="cg-sticky"><div class="cg-crown-wrap' + (allDone ? " cg-celebrate" : "") + '">' + crownSvg + "</div>" +
-      '<button id="cgListenNumbers" class="voice-button" type="button">🔊 اسمع السؤال</button>' +
-      '<div class="cg-palette">' + COLORS.slice(0, 6).map((col, i) =>
-        '<button type="button" class="cg-color-btn cg-split' + (numbersState.selected === i ? " selected" : "") + '" data-color="' + i + '" style="background:' + col.hex + ";color:" + col.text + '"><span class="cg-split-name">' + col.name + '</span><span class="cg-split-div" aria-hidden="true"></span><span class="cg-split-num" style="color:' + col.hex + '">' + arDigits(win.find(n => (n - 1) % 6 === i)) + "</span></button>"
-      ).join("") + "</div></div>" +
+      '<div class="cg-sticky"><p class="cg-round">الجولة ' + arDigits(numbersState.round) + '</p><div class="cg-crown-wrap' + (allDone ? " cg-celebrate" : "") + '">' + crownSvg + "</div>" +
+      '<button id="cgListenNumbers" class="voice-button" type="button">🔊 اسمع السؤال</button></div>' +
+      '<div class="cg-palette cg-num-grid">' + COLORS.slice(0, 6).map((col, i) =>
+        '<button type="button" class="cg-color-btn cg-split' + (numbersState.selected === i ? " selected" : "") + '" data-color="' + i + '" style="background:' + col.hex + ";color:" + col.text + '"><span class="cg-split-name">' + col.name + '</span><span class="cg-split-div" aria-hidden="true"></span><span class="cg-split-num" style="color:' + (col.glyph || col.hex) + '">' + arDigits(numbersState.assign[i]) + "</span></button>"
+      ).join("") + "</div>" +
       '<p id="cgMsg" class="cg-msg" aria-live="polite"></p>' +
       (allDone ? '<button id="cgNextRound" class="primary cg-next" type="button">الجولة اللي بعدها <span class="pager-arrow">←</span></button>' : "");
     $("cgListenNumbers").onclick = () => speakTabSpeech();
@@ -344,6 +371,7 @@
       numbersState.round += 1;
       numbersState.selected = null;
       numbersState.done = [false, false, false, false, false, false];
+      numbersState.assign = null; // fresh shuffle for the new window
       renderNumbers();
       const w = numbersWindow();
       speak("جولة جديدة يا بطل! دلوقتي هنلوّن الأرقام من " + NUM_NAMES[w[0] - 1] + " لـ " + NUM_NAMES[w[5] - 1] + "!");
@@ -365,7 +393,7 @@
       return;
     }
     const picked = COLORS[numbersState.selected];
-    const want = legendColorFor(n);
+    const want = colorForNumber(n);
     if (picked.id === want.id) {
       numbersState.done[i] = true;
       recordAnswer("color-games-numbers", true);
@@ -415,14 +443,15 @@
     const last = natureState.index === total - 1;
     area.innerHTML =
       '<p class="cg-instruction">شوف الصورة الرمادي، واختار لونها الحقيقي من اللوحة</p>' +
-      '<p class="cg-round">' + arDigits(natureState.index + 1) + " / " + arDigits(total) + "</p>" +
-      '<div class="cg-sticky"><div class="cg-nature"><div class="cg-nature-emoji' + (natureState.answered ? " cg-pop" : " cg-grey") + '" aria-hidden="true">' + item.emoji + '</div>' +
+      // Round 3.2.3 item 12: fixed top — round + picture + listen stay
+      // pinned; the palette scrolls below it.
+      '<div class="cg-sticky"><p class="cg-round">' + arDigits(natureState.index + 1) + " / " + arDigits(total) + '</p><div class="cg-nature"><div class="cg-nature-emoji' + (natureState.answered ? " cg-pop" : " cg-grey") + '" aria-hidden="true">' + item.emoji + '</div>' +
       '<div class="cg-nature-name">' + item.name + "</div>" +
-      '<button id="cgListenNature" class="voice-button" type="button">🔊 اسمع السؤال</button></div>' +
+      '<button id="cgListenNature" class="voice-button" type="button">🔊 اسمع السؤال</button></div></div>' +
       '<div class="cg-palette">' + NATURE_PALETTE.map(id => {
         const col = colorById(id);
         return '<button type="button" class="cg-color-btn" data-color="' + id + '" style="background:' + col.hex + ";color:" + col.text + (id === "white" ? ";border-color:#d9d2f0" : "") + '">' + col.name + "</button>";
-      }).join("") + "</div></div>" +
+      }).join("") + "</div>" +
       '<p id="cgMsg" class="cg-msg" aria-live="polite"></p>' +
       (natureState.answered
         ? '<button id="cgNatureNext" class="primary cg-next" type="button">' + (natureState.roundDone ? 'جولة جديدة <span class="pager-arrow">←</span>' : 'الحاجة اللي بعدها <span class="pager-arrow">←</span>') + "</button>"
@@ -497,17 +526,18 @@
     const choices = patternsState.answered ? [] : shuffle([p.target, other, p.distractor]);
     area.innerHTML =
       '<p class="cg-instruction">بص على الألوان اللي في الصف، وخمّن اللون اللي ناقص في الآخر واختاره</p>' +
-      '<p class="cg-round">النمط ' + arDigits(patternsState.round) + " • " + p.type.label + "</p>" +
-      '<div class="cg-sticky"><div class="cg-pattern">' + p.shown.map(c =>
+      // Round 3.2.3 item 12: fixed top — round + pattern + listen stay
+      // pinned; the choices scroll below it.
+      '<div class="cg-sticky"><p class="cg-round">النمط ' + arDigits(patternsState.round) + " • " + p.type.label + '</p><div class="cg-pattern">' + p.shown.map(c =>
         '<span class="cg-slot" style="background:' + c.hex + ";color:" + c.text + ";border-color:" + c.hex + '"></span>'
       ).join("") +
       (patternsState.answered
         ? '<span class="cg-slot cg-pop" style="background:' + p.target.hex + ";color:" + p.target.text + ";border-color:" + p.target.hex + '">✓</span>'
         : '<span class="cg-slot empty">؟</span>') + "</div>" +
-      '<button id="cgListenPatterns" class="voice-button" type="button">🔊 اسمع السؤال</button>' +
+      '<button id="cgListenPatterns" class="voice-button" type="button">🔊 اسمع السؤال</button></div>' +
       '<div class="cg-palette">' + choices.map(c =>
         '<button type="button" class="cg-color-btn" data-color="' + c.id + '" style="background:' + c.hex + ";color:" + c.text + (c.id === "white" ? ";border-color:#d9d2f0" : "") + '">' + c.name + "</button>"
-      ).join("") + "</div></div>" +
+      ).join("") + "</div>" +
       '<p id="cgMsg" class="cg-msg" aria-live="polite">' + (patternsState.answered ? "برافو يا بطل! النمط كده صح ⭐" : "") + "</p>" +
       (patternsState.answered ? '<button id="cgPatternNext" class="primary cg-next" type="button">النمط اللي بعده <span class="pager-arrow">←</span></button>' : "");
     $("cgListenPatterns").onclick = speakPatternIntro;

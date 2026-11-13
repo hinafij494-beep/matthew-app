@@ -60,7 +60,7 @@
   let setId = "arLetters", index = 0, mask = null, covered = null, guideCells = 0, hitCells = 0, drawing = false, done = false;
   let justOpened = false, narrationToken = 0;
   const COLORS = [
-    { c: "#e53935", n: "أحمر" }, { c: "#fb8c00", n: "برتقالي" }, { c: "#f9a825", n: "أصفر" },
+    { c: "#e53935", n: "أحمر" }, { c: "#fb8c00", n: "برتقالي" }, { c: "#ffeb3b", n: "أصفر" },
     { c: "#43a047", n: "أخضر" }, { c: "#1e88e5", n: "أزرق" }, { c: "#8e24aa", n: "بنفسجي" }
   ];
   let traceColor = COLORS[1].c, strokeCtx = null;

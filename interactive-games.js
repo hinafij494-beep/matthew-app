@@ -15,7 +15,11 @@
   const urls = {}; const urlOrder = []; const URL_CACHE_MAX = 30; let audio = null;
   const supported = () => { try { const a = audio || new Audio(); return !!a.canPlayType && a.canPlayType('audio/ogg; codecs="opus"') !== ""; } catch (_) { return false; } };
   const urlFor = key => { if (!urls[key]) { const bin = atob(BY_KEY[key]); const bytes = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i); urls[key] = URL.createObjectURL(new Blob([bytes], { type: "audio/ogg" })); urlOrder.push(key); while (urlOrder.length > URL_CACHE_MAX) { const old = urlOrder.shift(); if (old !== key && urls[old]) { try { URL.revokeObjectURL(urls[old]); } catch (_) {} delete urls[old]; } } } return urls[key]; };
-  const playKey = key => { if (!BY_KEY[key] || !supported()) return false; try { if (!audio) audio = new Audio(); audio.onended = null; audio.pause(); audio.src = urlFor(key); audio.currentTime = 0; const p = audio.play(); if (p && p.catch) p.catch(() => {}); return true; } catch (_) { return false; } };
+  // Round 3.2.3 (brave stories): optional onDone — same contract as
+  // playSequence: called once when the clip ends (audio.onended), or
+  // async when there is nothing to play, so a caller waiting on it NEVER
+  // hangs. stop() cancels it by design (it nulls onended).
+  const playKey = (key, onDone) => { let fired = false; const done = () => { if (fired) return; fired = true; if (typeof onDone === "function") { try { onDone(); } catch (_) {} } }; if (!BY_KEY[key] || !supported()) { setTimeout(done, 0); return false; } try { if (!audio) audio = new Audio(); audio.onended = typeof onDone === "function" ? done : null; audio.pause(); audio.src = urlFor(key); audio.currentTime = 0; const p = audio.play(); if (p && p.catch) p.catch(() => {}); return true; } catch (_) { setTimeout(done, 0); return false; } };
   // Round 3.2.2 P0-5: the EXACT map must respect caller language. A bare
   // Latin digit ("5") has an EXACT entry pointing at the ENGLISH tracing
   // clip (tr_ennum_5) — in an Arabic context that is the numbers trap, so
@@ -37,7 +41,21 @@
   // Round 3.2.2 P0-4 (review 2.5): element-by-element — an item with no
   // recorded clip is skipped silently instead of dropping the whole
   // question to device TTS.
-  const playSequence = (texts, lang) => { const keys = []; for (const t of texts || []) { const k = keyFor(t, lang); if (k) keys.push(k); } if (!keys.length || !supported()) return false; try { if (!audio) audio = new Audio(); let i = 0; const next = () => { if (i >= keys.length) { audio.onended = null; return; } audio.src = urlFor(keys[i++]); const pr = audio.play(); if (pr && pr.catch) pr.catch(() => {}); }; audio.onended = next; next(); return true; } catch (_) { return false; } };
+  // Round 3.2.3 item 14a: optional onDone — called when the LAST clip in
+  // the sequence ends (real completion via the audio.onended chain), or
+  // async when there is nothing to play (no keys / audio unsupported /
+  // error), so a caller waiting on it NEVER hangs. Fires at most once.
+  // stop() still cancels a pending callback by design: it nulls onended,
+  // so navigating away mid-sequence never advances the old screen.
+  const playSequence = (texts, lang, onDone) => {
+    let fired = false;
+    const done = () => { if (fired) return; fired = true; if (typeof onDone === "function") { try { onDone(); } catch (_) {} } };
+    try {
+      const keys = []; for (const t of texts || []) { const k = keyFor(t, lang); if (k) keys.push(k); }
+      if (!keys.length || !supported()) { setTimeout(done, 0); return false; }
+      if (!audio) audio = new Audio(); let i = 0; const next = () => { if (i >= keys.length) { audio.onended = null; done(); return; } audio.src = urlFor(keys[i++]); const pr = audio.play(); if (pr && pr.catch) pr.catch(() => {}); }; audio.onended = next; next(); return true;
+    } catch (_) { setTimeout(done, 0); return false; }
+  };
   const stop = () => { try { if (audio) { audio.onended = null; audio.pause(); } } catch (_) {} };
   window.MatthewClips = { playKey, play, playSequence, stop, has: key => !!BY_KEY[key], keys: Object.keys(BY_KEY), count: Object.keys(BY_TEXT).length };
 })();
@@ -485,7 +503,7 @@
   let setId = "arLetters", index = 0, mask = null, covered = null, guideCells = 0, hitCells = 0, drawing = false, done = false;
   let justOpened = false, narrationToken = 0;
   const COLORS = [
-    { c: "#e53935", n: "أحمر" }, { c: "#fb8c00", n: "برتقالي" }, { c: "#f9a825", n: "أصفر" },
+    { c: "#e53935", n: "أحمر" }, { c: "#fb8c00", n: "برتقالي" }, { c: "#ffeb3b", n: "أصفر" },
     { c: "#43a047", n: "أخضر" }, { c: "#1e88e5", n: "أزرق" }, { c: "#8e24aa", n: "بنفسجي" }
   ];
   let traceColor = COLORS[1].c, strokeCtx = null;
@@ -903,6 +921,22 @@
   const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 
   let mode = "ar-syllables", letterIndex = 0, wordIndex = 0, picker = true, readToken = 0;
+  // Round 3.2.3 item 9: lesson → quiz offer. The reading quiz already
+  // exists («تحدي القراءة» tab) but a non-reader cannot find a text tab,
+  // so every lesson screen gets a big pictured 🏆 button that opens it.
+  // The offer line is spoken ONCE, on first entry to a lesson screen
+  // (appended to that screen's own narration sequence, so it can never
+  // cut the lesson off). NEW CLIP for the audio worker:
+  // quiz_offer_reading = this text (Aria, ar-EG).
+  const QUIZ_OFFER = "برافو يا بطل! يلا نتحدى القراءة! دوس على الكاس!";
+  let offerSpoken = false;
+  function quizOfferButton() {
+    return '<button id="readQuizOffer" class="primary" type="button">🏆 تحدي القراءة ⭐</button>';
+  }
+  function bindQuizOffer() {
+    const b = panel.querySelector("#readQuizOffer");
+    if (b) b.onclick = () => { mode = "quiz"; render(); };
+  }
 
   function open() {
     gameList.classList.add("hidden");
@@ -912,6 +946,7 @@
     document.getElementById("parentPanel")?.classList.add("hidden");
     panel.classList.remove("hidden");
     picker = true;
+    offerSpoken = false;
     render();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -965,14 +1000,18 @@
       '<p class="touch-game-instruction">من الصفر يا بطل: الحرف لوحده ليه صوت، ولما بنحط عليه فتحة أو كسرة أو ضمة صوته بيتغيّر شوية صغيرة. اضغط على كل مقطع واسمع صوته كويس وقوله ورايا، وبعد شوية هنركّب المقاطع على بعض ونعمل منها كلمة كاملة نقراها سوا!</p>' +
       '<div class="read-syllables">' + syllables.map((s, i) => '<button type="button" class="read-syllable" data-syl="' + i + '"><b>' + s.text + '</b><small>' + s.label + '</small></button>').join("") + '</div>' +
       '<div class="basic-nav"><button id="readPrevLetter" class="secondary" type="button">الحرف السابق<span class="pager-arrow">→</span></button>' +
-      '<button id="readNextLetter" class="primary" type="button">الحرف التالي<span class="pager-arrow">←</span></button></div>';
+      '<button id="readNextLetter" class="primary" type="button">الحرف التالي<span class="pager-arrow">←</span></button></div>' +
+      quizOfferButton();
     bindHeader(true);
+    bindQuizOffer();
     panel.querySelectorAll("[data-syl]").forEach(b => b.onclick = () => speakKey(syllables[Number(b.dataset.syl)].say, "rd_syl_" + letterIndex + "_" + b.dataset.syl, "ar-EG"));
     panel.querySelector("#readPrevLetter").onclick = () => { letterIndex = (letterIndex + LETTERS.length - 1) % LETTERS.length; renderSyllables(); };
     panel.querySelector("#readNextLetter").onclick = () => { letterIndex = (letterIndex + 1) % LETTERS.length; renderSyllables(); };
     // Full narration on open: the letter name (lsq_name_*) then ALL 6
     // syllables in order (rd_syl_* via the EXACT map) — not a short version.
-    setTimeout(() => { if (tk !== readToken) return; speakSequence([letter.name].concat(syllables.map(s => s.say)), "ar-EG"); }, 150);
+    // Round 3.2.3 item 9: on first entry the quiz offer follows the
+    // syllables in the same sequence, so it never cuts them off.
+    setTimeout(() => { if (tk !== readToken) return; const seq = [letter.name].concat(syllables.map(s => s.say)); if (!offerSpoken) { offerSpoken = true; seq.push(QUIZ_OFFER); } speakSequence(seq, "ar-EG"); }, 150);
   }
 
   function renderArWordPicker() {
@@ -995,15 +1034,19 @@
       '<h2>' + item.meaning + '</h2><p>اضغط على كل مقطع، وبعدين اضغط على الكلمة كلها</p>' +
       '<button id="readWordListen" class="voice-button" type="button">🔊 اسمع الكلمة</button></div>' +
       '<div class="basic-nav"><button id="readPrevWord" class="secondary" type="button">الكلمة السابقة<span class="pager-arrow">→</span></button>' +
-      '<button id="readNextWord" class="primary" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div>';
+      '<button id="readNextWord" class="primary" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div>' +
+      quizOfferButton();
     bindHeader(true);
+    bindQuizOffer();
     panel.querySelectorAll("[data-part]").forEach(b => b.onclick = () => speakKey(item.parts[Number(b.dataset.part)], "rd_part_" + wi + "_" + b.dataset.part, "ar-EG"));
     panel.querySelector("#readWhole").onclick = () => speakKey(item.word, "rd_word_" + wi, "ar-EG");
     panel.querySelector("#readWordListen").onclick = () => speakKey(blend, "rd_blend_" + wi, "ar-EG");
     panel.querySelector("#readPrevWord").onclick = () => { wordIndex = (wordIndex + AR_WORDS.length - 1) % AR_WORDS.length; renderArWord(); };
     panel.querySelector("#readNextWord").onclick = () => { wordIndex = (wordIndex + 1) % AR_WORDS.length; renderArWord(); };
     // Full narration on open: the whole blend line (rd_blend_*).
-    setTimeout(() => { if (tk !== readToken) return; speakKey(blend, "rd_blend_" + wi, "ar-EG"); }, 150);
+    // Round 3.2.3 item 9: on first entry the quiz offer follows the blend
+    // in the same sequence (the blend text resolves via BY_TEXT, verified).
+    setTimeout(() => { if (tk !== readToken) return; if (!offerSpoken) { offerSpoken = true; speakSequence([blend, QUIZ_OFFER], "ar-EG"); } else speakKey(blend, "rd_blend_" + wi, "ar-EG"); }, 150);
   }
 
   function renderCvcPicker() {
@@ -1026,15 +1069,19 @@
       '<p>اضغط على كل صوت، وبعدين ادمجهم مع بعض</p>' +
       '<button id="readCvcListen" class="voice-button" type="button">🔊 اسمع</button></div>' +
       '<div class="basic-nav"><button id="readPrevCvc" class="secondary" type="button">السابق<span class="pager-arrow">→</span></button>' +
-      '<button id="readNextCvc" class="primary" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div>';
+      '<button id="readNextCvc" class="primary" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div>' +
+      quizOfferButton();
     bindHeader(true);
+    bindQuizOffer();
     panel.querySelectorAll("[data-sound]").forEach(b => b.onclick = () => speakKey(item.sounds[Number(b.dataset.sound)], "rd_cvc_s_" + wi + "_" + b.dataset.sound, "en-US"));
     panel.querySelector("#readWholeEn").onclick = () => speakKey(item.word, "rd_cvc_" + wi, "en-US");
     panel.querySelector("#readCvcListen").onclick = () => speakKey(blend, "rd_cvc_blend_" + wi, "en-US");
     panel.querySelector("#readPrevCvc").onclick = () => { wordIndex = (wordIndex + CVC_WORDS.length - 1) % CVC_WORDS.length; renderCvc(); };
     panel.querySelector("#readNextCvc").onclick = () => { wordIndex = (wordIndex + 1) % CVC_WORDS.length; renderCvc(); };
     // Full narration on open: the whole blend line (rd_cvc_blend_*).
-    setTimeout(() => { if (tk !== readToken) return; speakKey(blend, "rd_cvc_blend_" + wi, "en-US"); }, 150);
+    // Round 3.2.3 item 9: on first entry the quiz offer follows the blend
+    // in the same sequence (the blend text resolves via BY_TEXT, verified).
+    setTimeout(() => { if (tk !== readToken) return; if (!offerSpoken) { offerSpoken = true; speakSequence([blend, QUIZ_OFFER], "en-US"); } else speakKey(blend, "rd_cvc_blend_" + wi, "en-US"); }, 150);
   }
 
   function renderQuiz() {
@@ -1189,9 +1236,13 @@
     window.MatthewVoice?.speak(text, "ar-EG");
   };
   // Same helper as the brave stories (stories.js): speak a list of texts
-  // back-to-back, each resolved to its recorded clip.
-  const speakSeq = list => {
-    if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(list, "ar-EG");
+  // back-to-back, each resolved to its recorded clip. Round 3.2.3 item
+  // 14a: optional onDone — fires when the sequence finishes, so the
+  // rescue question can wait for the intro/stage line instead of cutting
+  // it off. If the voice runtime is absent, it fires async (never hang).
+  const speakSeq = (list, onDone) => {
+    if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(list, "ar-EG", onDone);
+    else if (typeof onDone === "function") setTimeout(onDone, 0);
   };
   const arabicDigits = value => String(value).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[Number(d)]);
   // حارس صور الأسئلة (تدقيق الصور، الجولة ٣.٢.١) — نفس قاعدة app.js:
@@ -1219,6 +1270,25 @@
 
   let story = null, stage = 0, inStage = 0, questions = [], current = null, answered = false, score = 0, total = 0;
   let qToken = 0, lastChoices = [];
+  // Round 3.2.3 item 13: a running story is one sub-screen level above
+  // the story picker — the system back returns to the picker, not out of
+  // the app. subPushed guards the push (a replay from the win screen
+  // restarts the same story on the same level).
+  let subPushed = false;
+  const pushSub = () => {
+    if (subPushed) return;
+    subPushed = true;
+    // Guarded for non-browser contexts (tests load rescue.js in node).
+    if (typeof window !== "undefined") {
+      window.__matthewBack = () => { subPushed = false; openPicker(); };
+      window.MatthewNav?.pushSubscreen();
+    }
+  };
+  const popSub = () => {
+    if (!subPushed) return;
+    subPushed = false;
+    if (typeof window !== "undefined") window.MatthewNav?.popSubscreen();
+  };
 
   const pool = () => {
     try {
@@ -1283,6 +1353,7 @@
   const startStory = chosen => {
     focusMode(true);
     story = chosen;
+    pushSub();
     const all = pool();
     if (!all.length) return;
     questions = shuffle(all);
@@ -1315,12 +1386,20 @@
       // stage line, and speak them back-to-back (intro clip, then
       // stage-line clip) — no re-record needed: both clips already exist.
       $("rescueStory").textContent = story.intro + " " + s.line;
-      speakSeq([story.intro, s.line]);
+      // Round 3.2.3 item 14a: the question waits for the intro to
+      // FINISH (real completion via onDone), not a guessed timeout —
+      // the old immediate nextQuestion() let the 350ms auto-play cut
+      // the intro off on the same single Audio element.
+      speakSeq([story.intro, s.line], () => nextQuestion());
     } else {
       $("rescueStory").textContent = s.line;
-      speak(s.line, s.clip);
+      // Same wait for every stage: the stage line finishes before the
+      // question speaks (the old speak()+immediate nextQuestion() cut
+      // the stage line the same way). speakSeq resolves the line to its
+      // recorded clip via the text map — all 20 stage lines are covered
+      // (see tests/round323.test.js, item 14b).
+      speakSeq([s.line], () => nextQuestion());
     }
-    nextQuestion();
   };
 
   const nextQuestion = () => {
@@ -1441,6 +1520,7 @@
   };
 
   const close = () => {
+    subPushed = false;
     qToken++;
     focusMode(false);
     panel.classList.add("hidden");
@@ -1449,7 +1529,10 @@
     try { window.MatthewVoice?.stop(); } catch (_) {}
     if (typeof updateStats === "function") { try { updateStats(); } catch (_) {} }
   };
-  $("rescueBack").addEventListener("click", () => { if (story) openPicker(); else close(); });
+  // Round 3.2.3 item 13: inside a story the back goes through history
+  // when we own an entry (popstate returns to the picker via the hook);
+  // with no entry it returns directly. From the picker it closes.
+  $("rescueBack").addEventListener("click", () => { if (story) { if (!window.MatthewNav?.back()) { popSub(); openPicker(); } } else close(); });
 
   if (!document.getElementById("rescueStyle")) {
     const style = document.createElement("style");
@@ -1518,10 +1601,10 @@
  * كل إجابة صح تكسب نجمة ⭐، وكل لعبة كاملة تكسب ألماسة 💎 لتاج الملك.
  *
  * الألعاب:
- *  ١) لوني العدد — تاج مقسّم ٦ أجزاء، كل جزء عليه رقم؛ الطفل يختار لوناً
+ *  ١) لون العدد — تاج مقسّم ٦ أجزاء، كل جزء عليه رقم؛ الطفل يختار لوناً
  *     من اللوحة ثم يضغط الجزء الذي يطابق رقمه ذلك اللون. الجولات تتدرج
  *     بالأرقام من ١ إلى ٢٠ (١–٦، ثم ٧–١٢، ثم ١٣–١٨، ثم ١٥–٢٠).
- *  ٢) سحب لون الطبيعة — صورة رمادية من دروس العلوم (تفاحة، شمس، سمكة...)
+ *  ٢) سحب لون الطبيعة — صورة رمادية من دروس العلوم (تفاحة، شمس...)
  *     والطفل يختار لونها الحقيقي من اللوحة، مع معلومة علمية قصيرة.
  *  ٣) أكمل تلوين النمط — صف من ٦ خانات، آخر خانة فارغة؛ النمط يتدرج
  *     من ABAB إلى AAB ثم AABB، مع ٣ ألوان للاختيار.
@@ -1553,6 +1636,10 @@
       ".cg-legend-chip{display:flex;align-items:center;gap:6px;background:#f8f6ff;border:2px solid #e8e2f7;border-radius:999px;padding:6px 12px;font-weight:800;font-size:15px}" +
       ".cg-dot{width:18px;height:18px;border-radius:50%;display:inline-block;border:2px solid #0002;flex-shrink:0}" +
       ".cg-palette{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:14px 0}" +
+      // Round 3.2.3 item 16: the numbers buttons are a 2-column grid
+      // (3 on wide screens), never a vertical list.
+      ".cg-palette.cg-num-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}" +
+      "@media(min-width:650px){.cg-palette.cg-num-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}" +
       ".cg-color-btn{min-width:88px;border:3px solid #0001;border-radius:16px;padding:13px 10px;font:800 15px inherit;cursor:pointer;box-shadow:0 3px 10px #30205b14}" +
       ".cg-color-btn.selected{border-color:#5b3cc4;transform:scale(1.07);box-shadow:0 0 0 3px #d9ccff}" +
       ".cg-crown-wrap{text-align:center;margin:8px 0}" +
@@ -1591,7 +1678,12 @@
   const COLORS = [
     { id: "red", name: "أحمر", hex: "#e53935", text: "#ffffff" },
     { id: "blue", name: "أزرق", hex: "#1e88e5", text: "#ffffff" },
-    { id: "yellow", name: "أصفر", hex: "#f9a825", text: "#5b3c00" },
+    // Round 3.2.3 item 10: true clear yellow — the old #f9a825 amber was
+    // nearly identical to orange #fb8c00 on screen. `glyph` is the dark
+    // amber used ONLY for the number inside the white circle (bright
+    // yellow on white is unreadable); everywhere else the button/crown/
+    // slot fill uses the true yellow hex.
+    { id: "yellow", name: "أصفر", hex: "#ffeb3b", text: "#5b3c00", glyph: "#f9a825" },
     { id: "green", name: "أخضر", hex: "#43a047", text: "#ffffff" },
     { id: "orange", name: "برتقالي", hex: "#fb8c00", text: "#ffffff" },
     { id: "purple", name: "بنفسجي", hex: "#8e24aa", text: "#ffffff" },
@@ -1600,13 +1692,13 @@
   ];
   const colorById = id => COLORS.find(c => c.id === id) || COLORS[0];
   const NUM_NAMES = ["واحد", "اتنين", "تلاتة", "أربعة", "خمسة", "ستة", "سبعة", "تمانية", "تسعة", "عشرة", "حداشر", "اتناشر", "تلتاشر", "أربعتاشر", "خمستاشر", "ستاشر", "سبعتاشر", "تمنتاشر", "تسعتاشر", "عشرين"];
-  // رقم العدد -> لونه في المفتاح (الألوان الستة تتكرر بعد ٦).
-  const legendColorFor = n => COLORS[(n - 1) % 6];
 
   const NATURE = [
     { emoji: "🍎", name: "تفاحة", color: "red", fact: "التفاحة حمرا وصحية! التفاح بيقوّي جسمك يا بطل!" },
     { emoji: "☀️", name: "شمس", color: "yellow", fact: "الشمس صفرا ومنوّرة! الشمس بتدفّي الدنيا كلها!" },
-    { emoji: "🐟", name: "سمكة", color: "blue", fact: "السمكة زرقا وبتعوم في البحر الأزرق!" },
+    // Round 3.2.3 item 11: the fish is GONE — a fish has no single
+    // canonical colour, and Matthew rightly objects that a fish is not
+    // blue. 8 items → 7; its orphan clip stays in place.
     { emoji: "🍃", name: "ورقة شجرة", color: "green", fact: "ورقة الشجرة خضرا! الشجر الأخضر بينضّف الهوا اللي بنتنفسه!" },
     { emoji: "☁️", name: "سحابة", color: "white", fact: "السحابة بيضا وبتطير في السما! السحاب الأبيض بيجيب المطر!" },
     { emoji: "🌸", name: "وردة", color: "pink", fact: "الوردة وردي وريحتها حلوة! الورد بيجمّل الدنيا!" },
@@ -1639,15 +1731,14 @@
     patterns: "لعبة أكمل تلوين النمط يا ملك ماثيو! بص على الألوان اللي في الصف وخمّن اللون اللي ناقص في الآخر!"
   };
 
-  // Round 3.2.1 note 25b (Nancy-lines draft): مس نانسي opens the workshop
-  // herself (nancy_intro_color) and introduces the numbers game with its
-  // split-button mechanic (nancy_intro_color_num — the crown number and
-  // the same number on the button). Spoken via speakSequence so each line
-  // resolves to its own recorded clip; before generation the sequence
-  // falls back to one joined TTS utterance, never silence. Clip keys are
-  // stable: her real recordings will replace these TTS clips as-is.
-  const NANCY_INTRO_COLOR = "يلا نلوّن يا ملك ماثيو! اختار لون حلو ولوّن معايا!";
-  const NANCY_INTRO_COLOR_NUM = "لعبة لوني العدد يا بطلي ماثيو! شوف الرقم على التاج ودوس على نفس الرقم في الزر!";
+  // Round 3.2.3 item 4: Nancy voice is OUT of the workshop — she stays
+  // only for greeting + encouragement. The workshop intros are Aria clips
+  // now (audio manifest: cg_intro_color, cg_intro_num). cg_intro_color
+  // shares its exact text with the old Nancy intro; the corpus force-adds
+  // it by key, so BY_TEXT resolves that sentence to the Aria clip.
+  // Round 3.2.3 item 17: the game is «لون العدد» (renamed).
+  const CG_INTRO_COLOR = "يلا نلوّن يا ملك ماثيو! اختار لون حلو ولوّن معايا!";
+  const CG_INTRO_NUM = "لعبة لون العدد يا بطلي ماثيو! شوف الرقم على التاج ودوس على نفس الرقم في الزر!";
 
   // ---------- helpers ----------
   const arDigits = value => String(value).replace(/[0-9]/g, d => "٠١٢٣٤٥٦٧٨٩"[Number(d)]);
@@ -1735,9 +1826,21 @@
 
   // ---------- state ----------
   let activeTab = "numbers";
-  const numbersState = { round: 1, selected: null, done: [false, false, false, false, false, false] };
+  // Round 3.2.3 item 16: assign[j] = the number shown on colour-button j,
+  // shuffled fresh each round — the buttons are never in order. The crown
+  // stays the ordered reference (its parts show win[0..5] in order).
+  const numbersState = { round: 1, selected: null, done: [false, false, false, false, false, false], assign: null };
   const natureState = { items: [], index: 0, answered: false, roundDone: false };
   const patternsState = { round: 1, answered: false };
+
+  // The colour a crown part expects: the colour whose button shows that
+  // number this round. Falls back to the old (n-1)%6 mapping until the
+  // first shuffle is dealt (e.g. a test calling it before render).
+  const colorForNumber = n => {
+    const a = numbersState.assign;
+    if (a && a.indexOf(n) >= 0) return COLORS[a.indexOf(n)];
+    return COLORS[(n - 1) % 6];
+  };
 
   function numbersWindow() {
     return NUM_WINDOWS[(numbersState.round - 1) % NUM_WINDOWS.length];
@@ -1752,7 +1855,7 @@
     panel.classList.remove("hidden");
     renderPanel();
     refreshCrowns();
-    speakSeq([NANCY_INTRO_COLOR, ...tabSpeechItems()]);
+    speakSeq([CG_INTRO_COLOR, ...tabSpeechItems()]);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -1769,7 +1872,7 @@
       '<div class="quiz-top"><button id="cgBack" class="back" type="button">🏠 الرئيسية</button><strong>🎨 ورشة ألعاب وتلوين الملك ماثيو</strong><span>👑</span></div>' +
       '<div class="cg-counter">⭐ <b id="cgStars">٠</b> &nbsp; 💎 <b id="cgDiamonds">٠</b> &nbsp;·&nbsp; 👑 تاج الملك ماثيو</div>' +
       '<div class="cg-tabs" role="tablist">' +
-      '<button type="button" class="cg-tab' + (activeTab === "numbers" ? " active" : "") + '" data-tab="numbers">🔢 لوني العدد</button>' +
+      '<button type="button" class="cg-tab' + (activeTab === "numbers" ? " active" : "") + '" data-tab="numbers">🔢 لون العدد</button>' +
       '<button type="button" class="cg-tab' + (activeTab === "nature" ? " active" : "") + '" data-tab="nature">🌿 سحب لون الطبيعة</button>' +
       '<button type="button" class="cg-tab' + (activeTab === "patterns" ? " active" : "") + '" data-tab="patterns">🎨 أكمل تلوين النمط</button></div>' +
       '<div id="cgGame" class="anim-enter"></div>';
@@ -1799,11 +1902,11 @@
     return INSTRUCTIONS.numbers;
   }
 
-  // Spoken items for the active tab: the numbers tab is opened by مس نانسي
-  // herself (nancy_intro_color_num), the other tabs speak their composed
-  // intro (each resolves to one recorded cg_*_tab clip).
+  // Spoken items for the active tab: the numbers tab opens with the Aria
+  // intro (cg_intro_num), the other tabs speak their composed intro (each
+  // resolves to one recorded cg_*_tab clip).
   function tabSpeechItems() {
-    if (activeTab === "numbers") return [NANCY_INTRO_COLOR_NUM, INSTRUCTIONS.numbers];
+    if (activeTab === "numbers") return [CG_INTRO_NUM, INSTRUCTIONS.numbers];
     return [tabSpeech()];
   }
   function speakTabSpeech() { speakSeq(tabSpeechItems()); }
@@ -1816,17 +1919,23 @@
 
   function gameArea() { return $("cgGame"); }
 
-  // ---------- Game 1: لوني العدد ----------
+  // ---------- Game 1: لون العدد ----------
   function renderNumbers() {
     const area = gameArea();
     if (!area) return;
     const win = numbersWindow();
+    // Round 3.2.3 item 16: fresh shuffle per round — the number on each
+    // colour button is random, never in order. Re-dealt when the window
+    // changed (assign holds numbers from another window) or on next round.
+    if (!numbersState.assign || numbersState.assign.length !== win.length ||
+        numbersState.assign.some(n => !win.includes(n)))
+      numbersState.assign = shuffle(win);
     const allDone = numbersState.done.every(Boolean);
     const crownSvg = '<svg viewBox="0 0 320 185" role="img" aria-label="تاج الملك ماثيو">' +
       '<circle cx="80" cy="38" r="7" fill="#ffb340"/><circle cx="160" cy="22" r="7" fill="#ffb340"/><circle cx="240" cy="38" r="7" fill="#ffb340"/>' +
       CROWN_PARTS.map((p, i) => {
         const n = win[i];
-        const col = legendColorFor(n);
+        const col = colorForNumber(n);
         const done = numbersState.done[i];
         const fill = done ? col.hex : "#ece7f7";
         const textFill = done ? col.text : "#5b3cc4";
@@ -1836,13 +1945,14 @@
         return '<g class="cg-crown-part' + (done ? " done" : "") + '" data-part="' + i + '">' + shape +
           '<text x="' + p.cx + '" y="' + (p.cy + 11) + '" font-size="30" font-weight="900" text-anchor="middle" fill="' + textFill + '">' + arDigits(n) + "</text></g>";
       }).join("") + "</svg>";
+    // Round 3.2.3 item 12: fixed top — round + crown + listen stay pinned
+    // in .cg-sticky; the colour palette scrolls below it.
     area.innerHTML =
-      '<p class="cg-round">الجولة ' + arDigits(numbersState.round) + "</p>" +
-      '<div class="cg-sticky"><div class="cg-crown-wrap' + (allDone ? " cg-celebrate" : "") + '">' + crownSvg + "</div>" +
-      '<button id="cgListenNumbers" class="voice-button" type="button">🔊 اسمع السؤال</button>' +
-      '<div class="cg-palette">' + COLORS.slice(0, 6).map((col, i) =>
-        '<button type="button" class="cg-color-btn cg-split' + (numbersState.selected === i ? " selected" : "") + '" data-color="' + i + '" style="background:' + col.hex + ";color:" + col.text + '"><span class="cg-split-name">' + col.name + '</span><span class="cg-split-div" aria-hidden="true"></span><span class="cg-split-num" style="color:' + col.hex + '">' + arDigits(win.find(n => (n - 1) % 6 === i)) + "</span></button>"
-      ).join("") + "</div></div>" +
+      '<div class="cg-sticky"><p class="cg-round">الجولة ' + arDigits(numbersState.round) + '</p><div class="cg-crown-wrap' + (allDone ? " cg-celebrate" : "") + '">' + crownSvg + "</div>" +
+      '<button id="cgListenNumbers" class="voice-button" type="button">🔊 اسمع السؤال</button></div>' +
+      '<div class="cg-palette cg-num-grid">' + COLORS.slice(0, 6).map((col, i) =>
+        '<button type="button" class="cg-color-btn cg-split' + (numbersState.selected === i ? " selected" : "") + '" data-color="' + i + '" style="background:' + col.hex + ";color:" + col.text + '"><span class="cg-split-name">' + col.name + '</span><span class="cg-split-div" aria-hidden="true"></span><span class="cg-split-num" style="color:' + (col.glyph || col.hex) + '">' + arDigits(numbersState.assign[i]) + "</span></button>"
+      ).join("") + "</div>" +
       '<p id="cgMsg" class="cg-msg" aria-live="polite"></p>' +
       (allDone ? '<button id="cgNextRound" class="primary cg-next" type="button">الجولة اللي بعدها <span class="pager-arrow">←</span></button>' : "");
     $("cgListenNumbers").onclick = () => speakTabSpeech();
@@ -1857,6 +1967,7 @@
       numbersState.round += 1;
       numbersState.selected = null;
       numbersState.done = [false, false, false, false, false, false];
+      numbersState.assign = null; // fresh shuffle for the new window
       renderNumbers();
       const w = numbersWindow();
       speak("جولة جديدة يا بطل! دلوقتي هنلوّن الأرقام من " + NUM_NAMES[w[0] - 1] + " لـ " + NUM_NAMES[w[5] - 1] + "!");
@@ -1878,7 +1989,7 @@
       return;
     }
     const picked = COLORS[numbersState.selected];
-    const want = legendColorFor(n);
+    const want = colorForNumber(n);
     if (picked.id === want.id) {
       numbersState.done[i] = true;
       recordAnswer("color-games-numbers", true);
@@ -1928,14 +2039,15 @@
     const last = natureState.index === total - 1;
     area.innerHTML =
       '<p class="cg-instruction">شوف الصورة الرمادي، واختار لونها الحقيقي من اللوحة</p>' +
-      '<p class="cg-round">' + arDigits(natureState.index + 1) + " / " + arDigits(total) + "</p>" +
-      '<div class="cg-sticky"><div class="cg-nature"><div class="cg-nature-emoji' + (natureState.answered ? " cg-pop" : " cg-grey") + '" aria-hidden="true">' + item.emoji + '</div>' +
+      // Round 3.2.3 item 12: fixed top — round + picture + listen stay
+      // pinned; the palette scrolls below it.
+      '<div class="cg-sticky"><p class="cg-round">' + arDigits(natureState.index + 1) + " / " + arDigits(total) + '</p><div class="cg-nature"><div class="cg-nature-emoji' + (natureState.answered ? " cg-pop" : " cg-grey") + '" aria-hidden="true">' + item.emoji + '</div>' +
       '<div class="cg-nature-name">' + item.name + "</div>" +
-      '<button id="cgListenNature" class="voice-button" type="button">🔊 اسمع السؤال</button></div>' +
+      '<button id="cgListenNature" class="voice-button" type="button">🔊 اسمع السؤال</button></div></div>' +
       '<div class="cg-palette">' + NATURE_PALETTE.map(id => {
         const col = colorById(id);
         return '<button type="button" class="cg-color-btn" data-color="' + id + '" style="background:' + col.hex + ";color:" + col.text + (id === "white" ? ";border-color:#d9d2f0" : "") + '">' + col.name + "</button>";
-      }).join("") + "</div></div>" +
+      }).join("") + "</div>" +
       '<p id="cgMsg" class="cg-msg" aria-live="polite"></p>' +
       (natureState.answered
         ? '<button id="cgNatureNext" class="primary cg-next" type="button">' + (natureState.roundDone ? 'جولة جديدة <span class="pager-arrow">←</span>' : 'الحاجة اللي بعدها <span class="pager-arrow">←</span>') + "</button>"
@@ -2010,17 +2122,18 @@
     const choices = patternsState.answered ? [] : shuffle([p.target, other, p.distractor]);
     area.innerHTML =
       '<p class="cg-instruction">بص على الألوان اللي في الصف، وخمّن اللون اللي ناقص في الآخر واختاره</p>' +
-      '<p class="cg-round">النمط ' + arDigits(patternsState.round) + " • " + p.type.label + "</p>" +
-      '<div class="cg-sticky"><div class="cg-pattern">' + p.shown.map(c =>
+      // Round 3.2.3 item 12: fixed top — round + pattern + listen stay
+      // pinned; the choices scroll below it.
+      '<div class="cg-sticky"><p class="cg-round">النمط ' + arDigits(patternsState.round) + " • " + p.type.label + '</p><div class="cg-pattern">' + p.shown.map(c =>
         '<span class="cg-slot" style="background:' + c.hex + ";color:" + c.text + ";border-color:" + c.hex + '"></span>'
       ).join("") +
       (patternsState.answered
         ? '<span class="cg-slot cg-pop" style="background:' + p.target.hex + ";color:" + p.target.text + ";border-color:" + p.target.hex + '">✓</span>'
         : '<span class="cg-slot empty">؟</span>') + "</div>" +
-      '<button id="cgListenPatterns" class="voice-button" type="button">🔊 اسمع السؤال</button>' +
+      '<button id="cgListenPatterns" class="voice-button" type="button">🔊 اسمع السؤال</button></div>' +
       '<div class="cg-palette">' + choices.map(c =>
         '<button type="button" class="cg-color-btn" data-color="' + c.id + '" style="background:' + c.hex + ";color:" + c.text + (c.id === "white" ? ";border-color:#d9d2f0" : "") + '">' + c.name + "</button>"
-      ).join("") + "</div></div>" +
+      ).join("") + "</div>" +
       '<p id="cgMsg" class="cg-msg" aria-live="polite">' + (patternsState.answered ? "برافو يا بطل! النمط كده صح ⭐" : "") + "</p>" +
       (patternsState.answered ? '<button id="cgPatternNext" class="primary cg-next" type="button">النمط اللي بعده <span class="pager-arrow">←</span></button>' : "");
     $("cgListenPatterns").onclick = speakPatternIntro;
@@ -2373,11 +2486,16 @@
     return '<div class="question-emoji">' + questionEmojiSafe(q) + '</div>' +
       '<h3 class="brave-question">' + arabicDigits(q.q) + '</h3>' +
       '<button type="button" class="voice-button brave-replay" id="braveReplay">🔊 اسمع السؤال</button>' +
-      '<div class="answers" id="braveAnswers">' + choices.map(item =>
-        '<button type="button" class="answer" data-answer="' + item.text + '">' +
-        '<span class="answer-picture">' + answerPic(item.text, q) + '</span>' +
-        '<span class="answer-label">' + arabicDigits(item.text) + '</span></button>'
-      ).join("") + '</div>' +
+      '<div class="answers" id="braveAnswers">' + choices.map(item => {
+        // Round 3.2.3 side finding (same as app.js): a pure-digit answer
+        // rendered TWICE — picture slot + label both show the digit — so
+        // it renders label-only once, big, like the main quiz.
+        const isDigit = /^[0-9٠-٩]+$/.test(String(item.text).trim());
+        return '<button type="button" class="answer' + (isDigit ? ' digit-only' : '') + '" data-answer="' + item.text + '">' +
+          (isDigit ? '<span class="answer-label">' + arabicDigits(item.text) + '</span>'
+            : '<span class="answer-picture">' + answerPic(item.text, q) + '</span>' +
+              '<span class="answer-label">' + arabicDigits(item.text) + '</span>') + '</button>';
+      }).join("") + '</div>' +
       '<p class="feedback" id="braveFeedback"></p>' +
       '<button type="button" class="primary hidden" id="braveNext">كمّل المغامرة ←</button>';
   }
@@ -2392,13 +2510,19 @@
     const main = document.querySelector("main");
     const gameList = document.getElementById("gameList");
     if (main && gameList) {
-      const speak = (text, key) => {
-        try { if (key && window.MatthewClips && window.MatthewClips.playKey(key)) return; } catch (_) {}
-        window.MatthewVoice?.speak(text, "ar-EG");
+      // Round 3.2.3 (brave sequencing): optional onDone — playKey fires it
+      // when the clip ends (or async when there is nothing to play), so a
+      // caller chaining on it NEVER hangs; stop() cancels it by design.
+      // Fallback goes through the sequence path (not a bare speak) so the
+      // completion still chains on real playback instead of firing early.
+      const speak = (text, key, onDone) => {
+        try { if (key && window.MatthewClips && window.MatthewClips.playKey(key, onDone)) return; } catch (_) {}
+        if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence([text], "ar-EG", onDone);
+        else { window.MatthewVoice?.speak(text, "ar-EG"); if (typeof onDone === "function") setTimeout(onDone, 0); }
       };
-      const speakSeq = list => {
-        if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(list, "ar-EG");
-        else window.MatthewVoice?.speak(list.join("، "), "ar-EG");
+      const speakSeq = (list, onDone) => {
+        if (window.MatthewVoice?.speakSequence) window.MatthewVoice.speakSequence(list, "ar-EG", onDone);
+        else { window.MatthewVoice?.speak(list.join("، "), "ar-EG"); if (typeof onDone === "function") setTimeout(onDone, 0); }
       };
 
       const panel = document.createElement("section");
@@ -2499,6 +2623,14 @@
         $("braveScene").innerHTML = sceneHTML(story, stage);
         renderMap();
         $("braveTitle").textContent = s.icon + " " + s.name;
+        // Round 3.2.3 (brave sequencing — same defect as rescue item 14a):
+        // the intro used to be spoken on a guessed ~4.5s timeout while the
+        // question auto-played after 350ms, so the question cut the intro
+        // off. Now the audio chains by REAL completion: opener → intro +
+        // stage line → question. Each step is guarded by stage + story
+        // identity, so leaving stage 0 early cancels the rest.
+        const st = stage, stStory = story;
+        const guard = fn => () => { if (story !== stStory || stage !== st) return; fn(); };
         if (first && stage === 0) {
           // Live re-test §5: stage 1 used to show + speak ONLY the intro,
           // so the stage line — e.g. the P1 «شجرتين» sentence in the Mark
@@ -2508,18 +2640,14 @@
           // (intro clip, then stage-line clip) — no re-record needed.
           $("braveStory").textContent = story.intro + " " + s.line;
           // Round 3.2.1 note 25b: Nancy's opener first, then the story
-          // intro after ~4.5s (the opener's length). Guarded by stage +
-          // story identity, so leaving stage 0 early cancels the intro.
+          // intro — chained by completion, not a guessed timeout.
           const opener = STORY_OPENERS[openerIndex++ % STORY_OPENERS.length];
           const openerKey = opener === STORY_OPENERS[0] ? "nancy_intro_story" : "nancy_intro_story_2";
-          speak(opener, openerKey);
-          const st = stage, stStory = story;
-          setTimeout(() => { if (story !== stStory || stage !== st) return; speakSeq([story.intro, s.line]); }, 4500);
+          speak(opener, openerKey, guard(() => speakSeq([story.intro, s.line], guard(() => nextQuestion()))));
         } else {
           $("braveStory").textContent = s.line;
-          speak(s.line, clipKey("stage", stage));
+          speak(s.line, clipKey("stage", stage), guard(() => nextQuestion()));
         }
-        nextQuestion();
       };
 
       const narrateQuestion = () => {
@@ -2966,7 +3094,7 @@
 // إنترنت): رقعة ٨×٨، حركات قانونية لكل قطعة، أسر، كش/كش مات/جمود.
 // الكش مات والجمود يُكتشفان على الرقعة الكاملة وعلى رقع المباريات
 // الصغيرة. التبييت خارج النطاق تماماً لكي جي ١: لا يُعلَّم ولا يُنفَّذ
-// ولا يُعرَض أبداً. الترقية: البيدق الذي يصل آخر صف يصبح وزيراً تلقائياً.
+// ولا يُعرَض أبداً. الترقية: العسكري الذي يصل آخر صف يصبح وزيراً تلقائياً.
 //
 // الصوت: كل سطر منطوق له مقطع مسجل بصوت مس نانسي (CORPUS أدناه، ar_EG)؛
 // الشرح كامل ووافٍ بالعامية المصرية — لا اختصار أبداً. الملف جزء من حزمة
@@ -3004,14 +3132,14 @@
     return b;
   }
 
-  // رقعة سباق البيادق: ٤ بيادق بيضاء و٤ سوداء فقط.
+  // رقعة سباق العساكر: ٤ عساكر بيضاء و٤ سوداء فقط.
   function setupPawnRace() {
     const b = emptyBoard();
     [1, 3, 4, 6].forEach(c => { b[1][c] = { t: "p", c: "b" }; b[6][c] = { t: "p", c: "w" }; });
     return b;
   }
 
-  // رقعة مباراة البيادق + الطابيات الصغيرة: بيادق وطابية لكل لون.
+  // رقعة مباراة العساكر + الطابيات الصغيرة: عساكر وطابية لكل لون.
   function setupMiniRooks() {
     const b = emptyBoard();
     [2, 3, 4, 5].forEach(c => { b[1][c] = { t: "p", c: "b" }; b[6][c] = { t: "p", c: "w" }; });
@@ -3021,7 +3149,7 @@
     return b;
   }
 
-  // رقعة لعبة «كُل الكوكيز»: قطعة ماثيو + كوكيز (بيادق سوداء لا تتحرك).
+  // رقعة لعبة «كُل الكوكيز»: قطعة ماثيو + كوكيز (عساكر سوداء لا تتحرك).
   function setupCookies(pieceType) {
     const b = emptyBoard();
     b[7][4] = { t: pieceType, c: "w" };
@@ -3089,8 +3217,8 @@
 
   // هل المربع (r,c) مهدد من لون by؟ (يُستخدم لكشف الكش وفلترته)
   function isAttacked(board, r, c, by) {
-    // بيادق
-    const dir = by === "w" ? 1 : -1; // بيدق أبيض يهاجم من الصف الأعلى رقماً
+    // عساكر
+    const dir = by === "w" ? 1 : -1; // عسكري أبيض يهاجم من الصف الأعلى رقماً
     for (const dc of [-1, 1]) {
       const q = pieceAt(board, r + dir, c + dc);
       if (q && q.t === "p" && q.c === by) return true;
@@ -3129,7 +3257,7 @@
     return isAttacked(board, k.r, k.c, other(color));
   }
 
-  // تنفيذ نقلة على نسخة جديدة (لا يعدّل الرقعة الأصلية). البيدق الذي يصل
+  // تنفيذ نقلة على نسخة جديدة (لا يعدّل الرقعة الأصلية). العسكري الذي يصل
   // آخر صف يصبح وزيراً تلقائياً (أقوى قطعة — أبسط قاعدة لكي جي ١).
   function applyMove(board, from, to) {
     const b = cloneBoard(board);
@@ -3171,9 +3299,9 @@
     return inCheck(board, turn) ? "check" : "ongoing";
   }
 
-  // هل وصل أي بيدق من هذا اللون إلى آخر صف؟ (فوز سباق البيادق)
-  // ملاحظة: البيدق الذي يصل آخر صف يترقّى لوزير في applyMove، فيُقبل أي
-  // قطعة من لون المتسابق على آخر صف — في السباق لا توجد إلا البيادق.
+  // هل وصل أي عسكري من هذا اللون إلى آخر صف؟ (فوز سباق العساكر)
+  // ملاحظة: العسكري الذي يصل آخر صف يترقّى لوزير في applyMove، فيُقبل أي
+  // قطعة من لون المتسابق على آخر صف — في السباق لا توجد إلا العساكر.
   function raceWon(board, color) {
     const row = LAST_ROW[color];
     return board[row].some(p => p && p.c === color);
@@ -3203,16 +3331,16 @@
   // ================= المنهج: من الصفر، قطعة قطعة =================
   // عتبات النجوم سخية عن قصد (٢ نجمة بين درس ودرس): ماثيو يجمع النجوم
   // بسرعة من أي درس يخلّصه، فلا إحباط أبداً.
-  const PICKER_LINE = "أهلاً بيك في لعبة الشطرنج يا ملك ماثيو! الشطرنج لعبة الملوك والأذكياء، وهنعلّمها سوا من الصفر، قطعة قطعة، بلعب وضحك! كل قطعة ليها حركة خاصة بيها، وهنلعب بيها لعبة صغيرة عشان تفهمها كويس! اختار أول درس ويلا بينا يا بطل!";
-  const LOCKED_LINE = "مس نانسي بتقولك: لسه شوية يا بطل! العب الدرس اللي قبله واجمع نجوم، والدرس ده هيتفتح لك قريب! أنت تقدر يا ملك ماثيو!";
-  const OPPONENT_LINE = "أنا صاحبك اللطيف، هلعب معاك بالقطع السودا! متخافش خالص، هنلعب سوا ونتعلم، ولو حصل أي حاجة هنحاول تاني يا بطل! أنت الملك ماثيو الشجاع!";
-  const CHECK_LINE = "خد بالك يا ملك ماثيو! الملك بتاعك محتاج حماية! دي اسمها كش، يعني في قطعة من صاحبك بتهدد الملك! متخافش، حرّك قطعة تحميه، أو حرّك الملك نفسه لمكان آمن! أنت الملك الحامي وبتعرف تحمي نفسك وأصحابك يا بطل!";
-  const RETRY_LINE = "حاول تاني يا بطل! مفيش أي مشكلة خالص، كل الأبطال بيحاولوا تاني! هنرجّع القطع من الأول ونلعب تاني، وأنت هتكسب المرة دي يا ملك ماثيو!";
-  const DRAW_LINE = "تعادل يا بطل! يعني محدش كسب ومحدش خسر، وانت لعبت لعبة جميلة أوي! مس نانسي فخورة بيك يا ملك ماثيو، خد نجمة والعب تاني لو حابب!";
+  const PICKER_LINE = "أهلاً بيك في لعبة الشطرنج يا ملك ماثيو! الشطرنج لعبة الملوك، وهنلعبها سوا من الصفر، قطعة قطعة! كل قطعة ليها حركة خاصة بيها، وهنلعب بيها لعبة صغيرة عشان تفهمها! اختار أول درس ويلا بينا يا بطل!";
+  const LOCKED_LINE = "لسه شوية يا بطل! العب الدرس اللي قبله واجمع نجوم، والدرس ده هيتفتح لك! أنت تقدر يا ملك ماثيو!";
+  const OPPONENT_LINE = "أنا صاحبك اللطيف، هلعب معاك بالقطع السودا! متخافش، هنلعب سوا ونتعلم، ولو حصل أي حاجة هنحاول تاني يا بطل!";
+  const CHECK_LINE = "خد بالك يا ملك ماثيو! الملك بتاعك في خطر! دي اسمها كش، يعني في قطعة بتهدد الملك! حرّك قطعة تحميه، أو حرّك الملك لمكان آمن! أنت الملك الحامي يا بطل!";
+  const RETRY_LINE = "حاول تاني يا بطل! مفيش أي مشكلة، كل الأبطال بيحاولوا تاني! هنرجّع القطع من الأول ونلعب تاني، وأنت هتكسب يا ملك ماثيو!";
+  const DRAW_LINE = "تعادل يا بطل! يعني محدش كسب ومحدش خسر، وأنت لعبت لعبة جميلة أوي! خد نجمة والعب تاني لو حابب!";
   const PRAISE = [
     "برافو يا ملك ماثيو! شاطر خالص!",
     "يا سلام يا بطل ماثيو! حركة ذكية أوي!",
-    "أحسنت يا ملك ماثيو! أنت بتلعب شطرنج زي الملوك!"
+    "أحسنت يا ملك ماثيو! أنت بتلعب زي الملوك!"
   ];
   const TRY_LINES = [
     "حاول تاني يا بطل",
@@ -3230,28 +3358,28 @@
       id: "board", title: "الرقعة", piece: null, stars: 0, kind: "board",
       icon: "board",
       desc: "اتعلّم الرقعة: مربعات فاتحة وغامقة، واعرف مكان كل قطعة",
-      intro: "يا ملك ماثيو، أول حاجة في الشطرنج هي الرقعة، يعني الملعب اللي هنلعب عليه! الرقعة دي مربع كبير متقسّم مربعات صغيرة، عدّهم معايا: تمانية في الطول وتمانية في العرض، يبقى كلهم أربعة وستين مربع! شايف الألوان؟ مربع فاتح ومربع غامق، مربع فاتح ومربع غامق، زي رقعة الشطرنج اللي في الكرتون! وكل مربع ليه لون ثابت، يعني المربع الغامق هيفضل غامق على طول، والفاتح هيفضل فاتح! والقطع بتقف على المربعات دي، وكل قطعة بتتحرك بطريقة معينة هنعرفها سوا! يلا نلعب لعبة: هدوس على مربعات وانت تقول لي لونها إيه!",
-      lesson: "يا ملك ماثيو، الرقعة دي هي مملكة الشطرنج بتاعتك! تخيّلها زي مدينة صغيرة فيها شوارع، كل مربع فيها بيت صغير لقطعة من قطعك! المربعات الفاتحة لونها زي الرمل، والمربعات الغامقة لونها زي الشوكولاتة! وفيه قاعدة مهمة أوي: لما تحط الرقعة قدامك، المربع اللي على يمينك تحت لازم يكون فاتح، يعني لونه أبيض! دي قاعدة الملوك، احفظها! والقطع البيضا بتاعتك بتقف في الصفين اللي قريبين منك، والقطع السودا بتاعة صاحبك بتقف في الصفين البعيدين! وفي النص فيه أربع صفوف فاضية، دي أرض المعركة اللي القطع هتمشي فيها! ليه الرقعة مهمة؟ لأن كل حركة في الشطرنج معناها إن القطعة بتنتقل من مربع لمربع، ولو عرفت المربعات كويس، هتعرف تخطط وتكسب! يلا ندوّر على المربعات سوا!",
+      intro: "يا ملك ماثيو، أول حاجة في الشطرنج هي الرقعة، يعني الملعب اللي هنلعب عليه! الرقعة دي مربع كبير متقسّم مربعات صغيرة. عدّهم معايا: واحد، اتنين، تلاتة، أربعة، خمسة، ستة، سبعة، تمانية! تمانية في الطول وتمانية في العرض، مربعات كتير أوي! شايف الألوان؟ مربع فاتح ومربع غامق، مربع فاتح ومربع غامق! والقطع بتقف على المربعات دي، وكل قطعة بتتحرك بطريقة هنعرفها سوا! يلا نلعب: هدوس على مربعات وأنت تقول لي لونها إيه!",
+      lesson: "يا ملك ماثيو، الرقعة دي هي مملكة الشطرنج بتاعتك! تخيّلها زي مدينة صغيرة، كل مربع فيها بيت صغير لقطعة من قطعك! المربعات الفاتحة لونها زي الرمل، والمربعات الغامقة لونها زي الشوكولاتة! وفيه قاعدة مهمة: لما تحط الرقعة قدامك، المربع اللي على يمينك تحت لازم يكون فاتح! دي قاعدة الملوك، احفظها! والقطع البيضا بتاعتك بتقف في الصفين اللي قريبين منك، والقطع السودا بتاعة صاحبك بتقف في الصفين البعيدين! وفي النص فيه صفوف فاضية، دي أرض اللعب اللي القطع هتمشي فيها! لو عرفت المربعات كويس، هتعرف تلعب وتكسب! يلا ندوّر على المربعات سوا!",
       question: "دوس على مربع غامق يا بطل!",
       question2: "برافو! دلوقتي دوس على مربع فاتح يا ملك ماثيو!",
       question3: "جميل أوي! آخر واحد: دوس على مربع في نص الرقعة!",
-      win: "برافو يا ملك ماثيو! بقيت تعرف الرقعة كويس أوي! المربعات الفاتحة والغامقة بقوا أصحابك! خدت نجمة جديدة، ويلا نتعلّم أول قطعة: البيدق الشجاع!"
+      win: "برافو يا ملك ماثيو! بقيت تعرف الرقعة كويس أوي! المربعات الفاتحة والغامقة بقوا أصحابك! خدت نجمة جديدة، ويلا نتعلّم أول قطعة: العسكري الشجاع!"
     },
     {
-      id: "pawn", title: "البيدق", piece: "p", stars: 2, kind: "piece",
+      id: "pawn", title: "العسكري", piece: "p", stars: 2, kind: "piece",
       icon: "pawn",
-      desc: "الجندي الشجاع: بيمشي لقدام مربع واحد، وبياكل من الجنب",
-      intro: "يا ملك ماثيو، دي أول قطعة هنتعلّمها: البيدق! البيدق ده الجندي الصغير الشجاع بتاعك! هو أصغر قطعة في الشطرنج، بس شجاع أوي وبيحب يحمي الملك! عندك تمانية بيادق، واقفين صف واحد قدام كل القطع الكبيرة، زي الجنود اللي بيحموا القلعة! ولو البيدق وصل لآخر الرقعة، بيحصل له حاجة سحرية جميلة: بيكبر ويبقى وزير، أقوى قطعة في اللعبة! يلا نتعلّم بيمشي إزاي!",
-      lesson: "يا ملك ماثيو، البيدق بيمشي لقدام بس، مربع واحد كل مرة، زي الجندي اللي بيمشي بخطوة واحدة لقدام! عمره ما بيرجع لورا أبداً، لأنه شجاع وبيتقدم على طول! وأول مرة بس يتحرك من مكانه، يقدر يمشي مربعين بدل مربع واحد، يعني نطة كبيرة في البداية! بس خد بالك: البيدق بياكل بطريقة مختلفة عن مشيه! هو بياكل القطعة اللي قدامه على الجنب، يعني بيمشي لقدام على طول، لكن لما ييجي ياكل، بياكل القطعة اللي واقفة قدامه يمين أو شمال على شكل حرف في! يعني لو فيه قطعة سودا واقفة قدامه على طول، البيدق مش هيقدر ياكلها، لازم تكون على الجنب! وليه البيدق مهم؟ لأنه بيحمي القطع الكبيرة وراه، وبيفتح الطريق ليهم، ولو وصل لآخر الرقعة بيبقى وزير! يعني الجندي الصغير ده ممكن يبقى أقوى واحد في اللعبة! يلا نلعب سباق البيادق ونشوف بيدقك هيوصل الأول ولا لأ!",
-      question: "حرّك البيدق لقدام يا بطل! دوس على البيدق وبعدين دوس على المربع اللي قدامه!",
-      win: "برافو يا ملك ماثيو! بقيت تعرف البيدق بيمشي إزاي وبياكل إزاي! الجندي الشجاع بقى صاحبك! خدت نجمة جديدة، ويلا نتعلّم الطابية القوية!"
+      desc: "العسكري الشجاع: بيمشي لقدام خطوة واحدة، وبياكل من الجنب",
+      intro: "يا ملك ماثيو، دي أول قطعة هنتعلّمها: العسكري! العسكري ده الجندي الصغير الشجاع بتاعك! هو أصغر قطعة في الشطرنج، بس شجاع أوي وبيحب يحمي الملك! عندك تمانية عساكر، واقفين صف واحد قدام كل القطع الكبيرة، زي الجنود اللي بيحموا القلعة! ولو العسكري وصل لآخر الرقعة، بيحصل له حاجة جميلة: بيكبر ويبقى وزير، أقوى قطعة في اللعبة! يلا نتعلّم بيمشي إزاي!",
+      lesson: "يا ملك ماثيو، العسكري بيمشي لقدام بس، خطوة واحدة كل مرة، زي الجندي اللي بيمشي خطوة واحدة لقدام! عمره ما بيرجع لورا أبداً، لأنه شجاع وبيتقدم على طول! وأول مرة بس يتحرك من مكانه، يقدر يمشي خطوتين بدل خطوة واحدة! بس خد بالك: العسكري بياكل بطريقة مختلفة! هو بيمشي لقدام على طول، لكن لما ييجي ياكل، بياكل القطعة اللي واقفة قدامه على الجنب، يمين أو شمال! يعني لو فيه قطعة سودا واقفة قدامه على طول، العسكري مش هيقدر ياكلها، لازم تكون على الجنب! وليه العسكري مهم؟ لأنه بيحمي القطع الكبيرة وراه، وبيفتح الطريق ليهم، ولو وصل لآخر الرقعة بيبقى وزير! يعني الجندي الصغير ده ممكن يبقى أقوى واحد في اللعبة! يلا نلعب سباق العساكر ونشوف عسكريك هيوصل الأول ولا لأ!",
+      question: "حرّك العسكري لقدام يا بطل! دوس على العسكري وبعدين دوس على المربع اللي قدامه!",
+      win: "برافو يا ملك ماثيو! بقيت تعرف العسكري بيمشي إزاي وبياكل إزاي! الجندي الشجاع بقى صاحبك! خدت نجمة جديدة، ويلا نتعلّم الطابية القوية!"
     },
     {
       id: "rook", title: "الطابية", piece: "r", stars: 4, kind: "piece",
       icon: "rook",
       desc: "برج القلعة: بتمشي في خط مستقيم، يمين وشمال وقدام وورا",
-      intro: "يا ملك ماثيو، دي الطابية! شايف شكلها؟ دي زي برج القلعة الكبير اللي بيحمي المملكة! الطابية قوية أوي، وبتمشي في خط مستقيم، يعني زي العربية اللي بتمشي في الشارع على طول، يمين أو شمال، وقدام أو ورا! عندك طابيتين، واحدة في كل ركن من أركان الرقعة، زي برجين بيحرسوا القلعة من الناحيتين! يلا نتعلّم بتمشي إزاي!",
-      lesson: "يا ملك ماثيو، الطابية بتمشي في خط مستقيم بس، يعني تقدر تمشي قدّام كام مربع زي ما انت عايز، أو ترجع لورا، أو تمشي يمين أو شمال، المهم تمشي على طول في نفس الصف أو نفس العمود، زي العربية اللي بتمشي في شارع مستقيم! بس خد بالك: الطابية مش بتقدر تنط فوق أي قطعة! لو فيه قطعة واقفة في طريقها، لازم تقف قبلها، أو تاكلها لو كانت من قطع العدو! ولو القطعة اللي في طريقها من قطعك انت، يبقى الطابية لازم تقف قبلها خالص! ليه الطابية مهمة؟ لأنها قوية وبتوصل لأي مكان في الرقعة بسرعة، وبتحمي الملك من بعيد، وبتاكل قطع العدو من مسافة كبيرة! والطابية مع الملك بيعملوا فريق قوي أوي في آخر اللعبة! يلا حرّك الطابية في الخط المستقيم وكل الكوكيز!",
+      intro: "يا ملك ماثيو، دي الطابية! شايف شكلها؟ دي زي برج القلعة الكبير اللي بيحمي المملكة! الطابية قوية أوي، وبتمشي في خط مستقيم، يعني زي العربية اللي بتمشي في الشارع على طول، يمين أو شمال، وقدام أو ورا! عندك طابيتين، واحدة في كل ركن من أركان الرقعة، زي برجين بيحرسوا القلعة! يلا نتعلّم بتمشي إزاي!",
+      lesson: "يا ملك ماثيو، الطابية بتمشي في خط مستقيم بس! يعني تقدر تمشي قدّام كام مربع زي ما أنت عايز، أو ترجع لورا، أو تمشي يمين أو شمال! المهم تمشي على طول في نفس الصف أو نفس العمود، زي العربية اللي بتمشي في شارع مستقيم! بس خد بالك: الطابية مش بتقدر تنط فوق أي قطعة! لو فيه قطعة واقفة في طريقها، لازم تقف قبلها، أو تاكلها لو كانت من قطع العدو! ولو القطعة اللي في طريقها من قطعك أنت، يبقى الطابية لازم تقف قبلها! ليه الطابية مهمة؟ لأنها قوية وبتوصل لأي مكان في الرقعة بسرعة، وبتحمي الملك من بعيد! يلا حرّك الطابية في الخط المستقيم وكل الكوكيز!",
       question: "حرّك الطابية في خط مستقيم يا بطل! دوس عليها وبعدين دوس على مربع في نفس الصف أو نفس العمود!",
       win: "برافو يا ملك ماثيو! بقيت تعرف الطابية بتمشي في خط مستقيم! برج القلعة بقى صاحبك! خدت نجمة جديدة، ويلا نتعلّم الفيل الذكي!"
     },
@@ -3259,8 +3387,8 @@
       id: "bishop", title: "الفيل", piece: "b", stars: 6, kind: "piece",
       icon: "bishop",
       desc: "بيمشي في خط مايل على الوتر، وبيفضل على نفس لون مربعه",
-      intro: "يا ملك ماثيو، ده الفيل! شايف القبعة الطويلة اللي عاملة زي المثلث اللي لابسها؟ الفيل ده ذكي أوي وبيحب يمشي في خط مايل، يعني على الوتر! عندك فيلين، واحد واقف على مربع فاتح والتاني واقف على مربع غامق، وكل واحد فيهم هيفضل على لون مربعه على طول، مش هيغيّر لونه أبداً! يلا نتعلّم بيمشي إزاي!",
-      lesson: "يا ملك ماثيو، الفيل بيمشي على الوتر بس، يعني في خط مايل، زي اللي بيمشي على سلم مايل! يقدر يمشي كام مربع زي ما انت عايز في الاتجاه المايل، يمين قدام أو شمال قدام، أو يمين ورا أو شمال ورا! بس خد بالك من حاجة جميلة: الفيل اللي واقف على مربع فاتح هيفضل يمشي على المربعات الفاتحة بس طول اللعبة، والفيل اللي واقف على مربع غامق هيفضل على المربعات الغامقة بس! يعني كل فيل ليه لون خاص بيه! والفيل برضه مش بينط فوق القطع، لازم طريقه يكون فاضي! ليه الفيل مهم؟ لأنه بيوصل لأماكن بعيدة في الرقعة بسرعة، وبيهاجم من بعيد على الوتر، وبيحمي الملك من الجنب! ولما الفيلين يشتغلوا سوا، واحد على الفاتح وواحد على الغامق، بيغطوا كل الرقعة! يلا حرّك الفيل على الوتر وكل الكوكيز!",
+      intro: "يا ملك ماثيو، ده الفيل! شايف القبعة الطويلة اللي لابسها؟ الفيل ده ذكي أوي وبيحب يمشي في خط مايل، يعني على الوتر! عندك فيلين، واحد واقف على مربع فاتح والتاني واقف على مربع غامق، وكل واحد فيهم هيفضل على لون مربعه على طول! يلا نتعلّم بيمشي إزاي!",
+      lesson: "يا ملك ماثيو، الفيل بيمشي على الوتر بس، يعني في خط مايل، زي اللي بيمشي على سلم مايل! يقدر يمشي كام مربع زي ما أنت عايز في الاتجاه المايل: يمين قدام أو شمال قدام، أو يمين ورا أو شمال ورا! بس خد بالك من حاجة جميلة: الفيل اللي واقف على مربع فاتح هيفضل يمشي على المربعات الفاتحة بس طول اللعبة، والفيل اللي واقف على مربع غامق هيفضل على المربعات الغامقة بس! يعني كل فيل ليه لون خاص بيه! والفيل برضه مش بينط فوق القطع، لازم طريقه يكون فاضي! ليه الفيل مهم؟ لأنه بيوصل لأماكن بعيدة بسرعة، وبيهاجم من بعيد على الوتر، وبيحمي الملك من الجنب! يلا حرّك الفيل على الوتر وكل الكوكيز!",
       question: "حرّك الفيل على الوتر يا بطل! دوس عليه وبعدين دوس على مربع مايل عنه!",
       win: "برافو يا ملك ماثيو! بقيت تعرف الفيل بيمشي على الوتر! الفيل الذكي بقى صاحبك! خدت نجمة جديدة، ويلا نتعلّم الوزير، أقوى قطعة!"
     },
@@ -3269,25 +3397,25 @@
       icon: "queen",
       desc: "أقوى قطعة: بيمشي مستقيم ومايل، في كل الاتجاهات",
       intro: "ده الوزير! شايف التاج الجميل اللي لابسه؟ الوزير ده أقوى قطعة في الشطرنج كله! هو اللي بيحمي الملك ماثيو وبيساعده! الوزير بيقدر يعمل كل حاجة: بيمشي زي الطابية في خط مستقيم، وبيمشي زي الفيل على الوتر! يعني بيتحرك في كل الاتجاهات! يلا نتعلّم بيمشي إزاي!",
-      lesson: "يا ملك ماثيو، الوزير أقوى قطعة في اللعبة، لأنه بيجمع قوة الطابية وقوة الفيل مع بعض! يعني الوزير يقدر يمشي قدّام وورا ويمين وشمال زي الطابية، وكمان يقدر يمشي على الوتر زي الفيل، في كل الاتجاهات، وكام مربع زي ما انت عايز! يعني الوزير يقدر يوصل لأي مكان في الرقعة بسرعة أوي! بس خد بالك: الوزير قوي وغالي أوي، يعني لازم تحافظ عليه كويس، ومتحطوش في مكان تقدر قطعة من العدو تاكله ببلاش! والوزير برضه مش بينط فوق القطع، لازم طريقه يكون فاضي! ليه الوزير مهم؟ لأنه بيهاجم من بعيد ومن قريب، وبيحمي الملك، وبياكل قطع العدو، ولو خسرته هيبقى صعب تكسب! فالعب بيه بذكاء يا ملك ماثيو، واستخدم قوته في الوقت الصح! يلا حرّك الوزير وكل الكوكيز!",
+      lesson: "يا ملك ماثيو، الوزير أقوى قطعة في اللعبة، لأنه بيجمع قوة الطابية وقوة الفيل مع بعض! يعني الوزير يقدر يمشي قدّام وورا ويمين وشمال زي الطابية، وكمان يقدر يمشي على الوتر زي الفيل، في كل الاتجاهات، وكام مربع زي ما أنت عايز! يعني الوزير يقدر يوصل لأي مكان في الرقعة بسرعة أوي! بس خد بالك: الوزير قوي وغالي أوي، يعني لازم تحافظ عليه كويس، ومتحطوش في مكان تقدر قطعة من العدو تاكله ببلاش! والوزير برضه مش بينط فوق القطع، لازم طريقه يكون فاضي! ليه الوزير مهم؟ لأنه بيهاجم من بعيد ومن قريب، وبيحمي الملك، وبياكل قطع العدو! فالعب بيه بذكاء يا ملك ماثيو، واستخدم قوته في الوقت الصح! يلا حرّك الوزير وكل الكوكيز!",
       question: "حرّك الوزير يا بطل! دوس عليه وبعدين دوس على أي مربع في خط مستقيم أو على الوتر!",
-      win: "برافو يا ملك ماثيو! بقيت تعرف الوزير، أقوى قطعة في اللعبة! الوزير القوي بقى صاحبك! خدت نجمة جديدة، ويلا نتعلّم الملك، وانت الملك نفسه!"
+      win: "برافو يا ملك ماثيو! بقيت تعرف الوزير، أقوى قطعة في اللعبة! الوزير القوي بقى صاحبك! خدت نجمة جديدة، ويلا نتعلّم الملك، وأنت الملك نفسه!"
     },
     {
       id: "king", title: "الملك ماثيو", piece: "k", stars: 10, kind: "piece",
       icon: "king",
       desc: "ده انت يا ملك ماثيو! بيمشي مربع واحد في أي اتجاه، ولازم تحميه",
-      intro: "ده الملك! وده انت يا ملك ماثيو! شايف التاج الدهبي؟ ده تاجك انت، والملك ده هو أهم قطعة في اللعبة كلها! كل القطع التانية موجودة عشان تحمي الملك، ولو الملك اتحاصر ومبقاش ليه أي مكان يهرب له، اللعبة بتخلص! يلا نتعلّم الملك بيمشي إزاي!",
-      lesson: "يا ملك ماثيو، انت الملك! الملك بيمشي مربع واحد بس كل مرة، بس يقدر يمشي في أي اتجاه: قدّام أو ورا، يمين أو شمال، أو على الوتر! يعني الملك بيمشي خطوة واحدة صغيرة، زي الملك اللي بيمشي بهدوء في قصره! بس خد بالك من أهم قاعدة في الشطرنج: الملك هو أهم قطعة، وكل اللعبة بتدور حوالين حمايته! لو قطعة من العدو هددت الملك، دي اسمها كش، ولازم تحمي الملك فوراً: يا إما تحرّك الملك لمكان آمن، يا إما تحط قطعة تحميه، يا إما تاكل القطعة اللي بتهدده! ولو الملك اتحاصر ومبقاش فيه أي حل، دي اسمها كش مات، واللعبة بتخلص! عشان كده انت الملك الحامي يا ماثيو: بتحمي نفسك، وبتحمي أخوك مارك ومريم، وكل قطعك بتحميك! يلا حرّك الملك خطوة واحدة وحافظ عليه!",
+      intro: "ده الملك! وده انت يا ملك ماثيو! شايف التاج الدهبي؟ ده تاجك أنت، والملك ده هو أهم قطعة في اللعبة كلها! كل القطع التانية موجودة عشان تحمي الملك، ولو الملك اتحاصر ومبقاش ليه أي مكان يهرب له، اللعبة بتخلص! يلا نتعلّم الملك بيمشي إزاي!",
+      lesson: "يا ملك ماثيو، أنت الملك! الملك بيمشي خطوة واحدة بس كل مرة، بس يقدر يمشي في أي اتجاه: قدّام أو ورا، يمين أو شمال، أو على الوتر! يعني الملك بيمشي خطوة واحدة صغيرة، زي الملك اللي بيمشي بهدوء في قصره! بس خد بالك من أهم قاعدة في الشطرنج: الملك هو أهم قطعة، وكل اللعبة بتدور حوالين حمايته! لو قطعة من العدو هددت الملك، دي اسمها كش، ولازم تحمي الملك فوراً: يا إما تحرّك الملك لمكان آمن، يا إما تحط قطعة تحميه، يا إما تاكل القطعة اللي بتهدده! ولو الملك اتحاصر ومبقاش فيه أي حل، دي اسمها كش مات، واللعبة بتخلص! عشان كده أنت الملك الحامي يا ماثيو: بتحمي نفسك، وبتحمي أخوك مارك ومريم، وكل قطعك بتحميك! يلا حرّك الملك خطوة واحدة وحافظ عليه!",
       question: "حرّك الملك يا بطل! دوس عليه وبعدين دوس على أي مربع جنبه على طول!",
-      win: "برافو يا ملك ماثيو! بقيت تعرف الملك بيمشي إزاي، وإنك لازم تحميه! انت الملك الحامي الشجاع! خدت نجمة جديدة، ويلا نتعلّم الحصان اللي بينط!"
+      win: "برافو يا ملك ماثيو! بقيت تعرف الملك بيمشي إزاي، وإنك لازم تحميه! أنت الملك الحامي الشجاع! خدت نجمة جديدة، ويلا نتعلّم الحصان اللي بينط!"
     },
     {
       id: "knight", title: "الحصان", piece: "n", stars: 12, kind: "piece",
       icon: "knight",
       desc: "بينط على شكل حرف إل: مربعين في اتجاه ومربع على الجنب",
-      intro: "يا ملك ماثيو، ده الحصان! شايف شكله؟ ده الحصان بتاعك اللي بتركبه في مغامراتك! الحصان ده مميز أوي، لأنه القطعة الوحيدة اللي بتقدر تنط فوق القطع التانية! حركته غريبة وجميلة: بينط على شكل حرف إل، يعني مربعين في اتجاه ومربع واحد على الجنب! يلا نتعلّم بينط إزاي!",
-      lesson: "يا ملك ماثيو، الحصان بينط على شكل حرف إل! يعني بيمشي مربعين في اتجاه واحد، وبعدين مربع واحد على الجنب! مثلاً: مربعين لقدام ومربع واحد يمين، أو مربعين يمين ومربع واحد لقدام! جرّب تعدّ معايا: واحد، اتنين لقدام، وواحد على الجنب، نط! والحاجة الجميلة أوي في الحصان إنه بينط فوق أي قطعة في طريقه، يعني لو فيه قطعة واقفة قدامه، الحصان بينط من فوقها ولا يهمه! هو القطعة الوحيدة اللي بتعمل كده! ليه الحصان مهم؟ لأنه بيقدر يوصل لأماكن القطع التانية مش بتقدر توصلها، وبيفاجئ العدو بنطته، وبيهاجم من فوق القطع! عشان كده الحصان صعب أوي يتوقع حركته! يلا خلّي الحصان ينط نطته الجميلة وكل الكوكيز!",
+      intro: "يا ملك ماثيو، ده الحصان! شايف شكله؟ ده الحصان بتاعك اللي بتركبه في مغامراتك! الحصان ده مميز أوي، لأنه القطعة الوحيدة اللي بتقدر تنط فوق القطع التانية! حركته جميلة: بينط على شكل حرف إل، يعني مربعين في اتجاه ومربع واحد على الجنب! يلا نتعلّم بينط إزاي!",
+      lesson: "يا ملك ماثيو، الحصان بينط على شكل حرف إل! يعني بيمشي مربعين في اتجاه واحد، وبعدين مربع واحد على الجنب! مثلاً: مربعين لقدام ومربع واحد يمين، أو مربعين يمين ومربع واحد لقدام! جرّب تعدّ معايا: اتنين لقدام، وواحدة على الجنب، نط! والحاجة الجميلة أوي في الحصان إنه بينط فوق أي قطعة في طريقه، يعني لو فيه قطعة واقفة قدامه، الحصان بينط من فوقها ولا يهمه! هو القطعة الوحيدة اللي بتعمل كده! ليه الحصان مهم؟ لأنه بيقدر يوصل لأماكن القطع التانية مش بتقدر توصلها، وبيفاجئ العدو بنطته! يلا خلّي الحصان ينط نطته الجميلة وكل الكوكيز!",
       question: "خلّي الحصان ينط يا بطل! دوس عليه وبعدين دوس على مربع على شكل حرف إل!",
       win: "برافو يا ملك ماثيو! بقيت تعرف الحصان بينط إزاي على شكل حرف إل! الحصان بتاعك بقى صاحبك! خدت نجمة جديدة، ويلا نلعب لعبة أكل الكوكيز!"
     },
@@ -3295,37 +3423,37 @@
       id: "cookies", title: "كُل الكوكيز", piece: null, stars: 14, kind: "cookies",
       icon: "cookies",
       desc: "اختار القطعة الصح وكل كل الكوكيز اللي على الرقعة",
-      intro: "يا ملك ماثيو، دي لعبة كُل الكوكيز! شايف الكوكيز اللذيذة اللي على الرقعة؟ كل كوكي واقف في مكان، وانت لازم تختار القطعة الصح اللي تقدر توصله وتاكله! كل قطعة بتتحرك بطريقة مختلفة، ففكّر كويس: مين اللي يقدر يوصل للكوكي ده؟ الطابية ولا الفيل ولا الحصان؟ دوس على القطعة وبعدين دوس على الكوكي، وكلهم يا بطل!",
-      lesson: "يا ملك ماثيو، في اللعبة دي هنلعب بكل القطع اللي اتعلّمناها سوا! الكوكيز واقفة على الرقعة، وكل كوكي محتاج قطعة معينة توصله! الطابية بتوصل في خط مستقيم، والفيل بيوصل على الوتر، والحصان بينط نطة حرف الإل، والوزير بيوصل من أي مكان، والبيدق بياكل من الجنب! فقبل ما تحرّك أي قطعة، بص على الكوكي واسأل نفسك: القطعة دي تقدر توصله ولا لأ؟ ولو اخترت القطعة الغلط، مفيش أي مشكلة، جرّب قطعة تانية! دي لعبة ذكاء وتفكير، وكل مرة هتبقى أذكى من اللي قبلها! وكل كوكي تاكله هتاخد نجمة، ولو كلت كل الكوكيز هتاخد ألماسة لتاجك!",
+      intro: "يا ملك ماثيو، دي لعبة كُل الكوكيز! شايف الكوكيز اللذيذة اللي على الرقعة؟ كل كوكي واقف في مكان، وأنت لازم تختار القطعة الصح اللي تقدر توصله وتاكله! كل قطعة بتتحرك بطريقة مختلفة، ففكّر كويس: مين اللي يقدر يوصل للكوكي ده؟ الطابية ولا الفيل ولا الحصان؟ دوس على القطعة وبعدين دوس على الكوكي، وكلهم يا بطل!",
+      lesson: "يا ملك ماثيو، في اللعبة دي هنلعب بكل القطع اللي اتعلّمناها سوا! الكوكيز واقفة على الرقعة، وكل كوكي محتاج قطعة معينة توصله! الطابية بتوصل في خط مستقيم، والفيل بيوصل على الوتر، والحصان بينط نطة حرف الإل، والوزير بيوصل من أي مكان، والعسكري بياكل من الجنب! فقبل ما تحرّك أي قطعة، بص على الكوكي واسأل نفسك: القطعة دي تقدر توصله ولا لأ؟ ولو اخترت القطعة الغلط، مفيش أي مشكلة، جرّب قطعة تانية! دي لعبة ذكاء وتفكير، وكل مرة هتبقى أذكى من اللي قبلها! وكل كوكي تاكله هتاخد نجمة، ولو كلت كل الكوكيز هتاخد ألماسة لتاجك!",
       question: "اختار قطعة وكل الكوكي يا بطل! دوس على القطعة وبعدين دوس على الكوكي!",
-      win: "برافو يا ملك ماثيو! كلت كل الكوكيز! بقيت تعرف كل قطعة بتوصل لفين! خدت ألماسة جديدة لتاجك، ويلا نلعب أول مباراة حقيقية: سباق البيادق!"
+      win: "برافو يا ملك ماثيو! كلت كل الكوكيز! بقيت تعرف كل قطعة بتوصل لفين! خدت ألماسة جديدة لتاجك، ويلا نلعب أول مباراة حقيقية: سباق العساكر!"
     },
     {
-      id: "race", title: "سباق البيادق", piece: "p", stars: 16, kind: "race",
+      id: "race", title: "سباق العساكر", piece: "p", stars: 16, kind: "race",
       icon: "race",
-      desc: "مين بيدقه يوصل لآخر الرقعة الأول: انت ولا صاحبك اللطيف؟",
-      intro: "يا ملك ماثيو، دي أول مباراة حقيقية ليك: سباق البيادق! عندك أربع بيادق بيضا، وصاحبك اللطيف عنده أربع بيادق سودا! اللي بيدقه يوصل لآخر الرقعة الأول هو اللي يكسب السباق! فكّر كويس: هتحرّك أنهي بيدق؟ البيدق اللي قدامك فاضي؟ ولا فيه بيدق أسود هياكله من الجنب؟ يلا يا بطل، السباق بدأ!",
-      lesson: "يا ملك ماثيو، سباق البيادق دي أول مباراة شطرنج كاملة تلعبها! القاعدة بسيطة: كل واحد في دوره بيحرّك بيدق واحد بس، مربع واحد لقدام، وأول مرة ممكن مربعين! ولو بيدقك وقف قدام بيدق أسود على الجنب، تقدر تاكله! واللي يوصل بيدقه لآخر الرقعة الأول يكسب! ليه السباق ده مهم؟ لأنه بيعلّمك تفكّر قبل ما تحرّك: لو حرّكت البيدق ده، البيدق الأسود هياكله ولا لأ؟ ولو سيبت البيدق ده هنا، هيوصل الأول ولا البيدق التاني أسرع؟ وبيعلّمك كمان إن البيدق الصغير ممكن يكسب لو فكّر كويس! وصاحبك اللطيف بيلعب معاك بلطف، فمتخافش، ولو خسرت السباق هنحاول تاني يا بطل!",
-      question: "دورك يا ملك ماثيو! حرّك بيدق من بيادقك لقدام!",
-      win: "برافو يا ملك ماثيو! بيدقك وصل لآخر الرقعة الأول وكسب السباق! انت بطل السباق! خدت نجمة جديدة، ويلا نلعب مباراة أكبر: بيادق وطابيات!"
+      desc: "مين عسكريه يوصل لآخر الرقعة الأول: انت ولا صاحبك اللطيف؟",
+      intro: "يا ملك ماثيو، دي أول مباراة حقيقية ليك: سباق العساكر! عندك أربع عساكر بيضا، وصاحبك اللطيف عنده أربع عساكر سودا! اللي عسكريه يوصل لآخر الرقعة الأول هو اللي يكسب السباق! فكّر كويس: هتحرّك أنهي عسكري؟ العسكري اللي قدامه فاضي؟ ولا فيه عسكري أسود هياكله من الجنب؟ يلا يا بطل، السباق بدأ!",
+      lesson: "يا ملك ماثيو، سباق العساكر دي أول مباراة شطرنج كاملة تلعبها! القاعدة بسيطة: كل واحد في دوره بيحرّك عسكري واحد بس، خطوة واحدة لقدام، وأول مرة ممكن خطوتين! ولو عسكريك وقف قدام عسكري أسود على الجنب، تقدر تاكله! واللي يوصل عسكريه لآخر الرقعة الأول يكسب! ليه السباق ده مهم؟ لأنه بيعلّمك تفكّر قبل ما تحرّك: لو حرّكت العسكري ده، العسكري الأسود هياكله ولا لأ؟ وبيعلّمك كمان إن العسكري الصغير ممكن يكسب لو فكّر كويس! وصاحبك اللطيف بيلعب معاك بلطف، فمتخافش، ولو خسرت السباق هنحاول تاني يا بطل!",
+      question: "دورك يا ملك ماثيو! حرّك عسكري من عساكرك لقدام!",
+      win: "برافو يا ملك ماثيو! عسكريك وصل لآخر الرقعة الأول وكسب السباق! أنت بطل السباق! خدت نجمة جديدة، ويلا نلعب مباراة أكبر: عساكر وطابيات!"
     },
     {
-      id: "match_rooks", title: "مباراة البيادق والطابيات", piece: null, stars: 18, kind: "match",
+      id: "match_rooks", title: "مباراة العساكر والطابيات", piece: null, stars: 18, kind: "match",
       icon: "match",
-      desc: "مباراة صغيرة ببيادق وطابيات ضد صاحبك اللطيف",
-      intro: "دي مباراة أكبر شوية: بيادق وطابيات! عندك أربع بيادق وطابيتين وملك، وصاحبك اللطيف عنده زيهم بالظبط! اللي ياكل كل قطع التاني، أو يعمل كش مات للملك، هو اللي يكسب! فكّر قبل كل حركة، واحمي ملكك كويس يا ملك ماثيو الحامي!",
-      lesson: "يا ملك ماثيو، في المباراة دي هنلعب بقطع أكتر: البيادق بتمشي لقدام وبتاكل من الجنب، والطابيات بتمشي في خط مستقيم وبتاكل من بعيد، والملك بيمشي خطوة واحدة ولازم تحميه! والقاعدة الجديدة هنا هي الكش مات: لو ملكك اتهدد ومبقاش ليه أي مكان يهرب له، اللعبة بتخلص! ولو أكلت كل قطع صاحبك، برضه تكسب! ليه المباراة دي مهمة؟ لأنها بيعلّمك تلعب بقطع مختلفة سوا: البيادق تحمي الطابيات، والطابيات تحمي البيادق، وكلهم يحموا الملك! وبيعلّمك تخطط خطوتين لقدام: لو حرّكت الطابية هنا، صاحبك هيعمل إيه؟ فكّر كويس يا بطل، وانت تقدر تكسب!",
+      desc: "مباراة صغيرة بعساكر وطابيات ضد صاحبك اللطيف",
+      intro: "دي مباراة أكبر شوية: عساكر وطابيات! عندك أربع عساكر وطابيتين وملك، وصاحبك اللطيف عنده زيهم بالظبط! اللي ياكل كل قطع التاني، أو يعمل كش مات للملك، هو اللي يكسب! فكّر قبل كل حركة، واحمي ملكك كويس يا ملك ماثيو الحامي!",
+      lesson: "يا ملك ماثيو، في المباراة دي هنلعب بقطع أكتر: العساكر بتمشي لقدام وبتاكل من الجنب، والطابيات بتمشي في خط مستقيم وبتاكل من بعيد، والملك بيمشي خطوة واحدة ولازم تحميه! والقاعدة الجديدة هنا هي الكش مات: لو ملكك اتهدد ومبقاش ليه أي مكان يهرب له، اللعبة بتخلص! ولو أكلت كل قطع صاحبك، برضه تكسب! ليه المباراة دي مهمة؟ لأنها بتعلّمك تلعب بقطع مختلفة سوا: العساكر تحمي الطابيات، والطابيات تحمي العساكر، وكلهم يحموا الملك! وبتعلّمك تخطط خطوتين لقدام: لو حرّكت الطابية هنا، صاحبك هيعمل إيه؟ فكّر كويس يا بطل، وأنت تقدر تكسب!",
       question: "دورك يا ملك ماثيو! حرّك قطعة من قطعك!",
-      win: "برافو يا ملك ماثيو! كسبت مباراة البيادق والطابيات! بقيت بتلعب شطرنج بجد! خدت نجمة جديدة، ويلا نلعب اللعبة الكاملة!"
+      win: "برافو يا ملك ماثيو! كسبت مباراة العساكر والطابيات! بقيت بتلعب شطرنج بجد! خدت نجمة جديدة، ويلا نلعب اللعبة الكاملة!"
     },
     {
       id: "full", title: "اللعبة الكاملة", piece: null, stars: 20, kind: "full",
       icon: "full",
       desc: "لعبة شطرنج كاملة بكل القطع ضد صاحبك اللطيف",
-      intro: "وصلنا للعبة الكاملة! دي لعبة شطرنج حقيقية بكل القطع: بيادق وطابيات وفيلة ووزير وحصانين والملك، يعني انت! هتلعب بالقطع البيضا، وصاحبك اللطيف هيلعب بالقطع السودا! اللي يعمل كش مات لملك التاني يكسب، ولو محدش قدر يعمل كش مات والملك اتحاصر من غير كش، يبقى تعادل يا بطل! يلا يا ملك ماثيو، دي مملكتك!",
-      lesson: "يا ملك ماثيو، اللعبة الكاملة هي كل اللي اتعلّمناه سوا في لعبة واحدة! في الأول، حرّك البيادق عشان تفتح الطريق للقطع الكبيرة، وبعدين طلّع الفيلة والحصانين، وبعدين حرّك الوزير بحرص، وخلي الملك في مكان آمن ورا البيادق! وكل حركة فكّر فيها: القطعة دي هتروح فين؟ وهل فيه قطعة من العدو هتاكلها؟ وهل الملك بتاعي في أمان؟ ولو ملك صاحبك اتهدد، دي كش، ولو اتحاصر من غير أي حل، دي كش مات وانت تكسب! ولو اللعبة خلصت تعادل، دي برضه نتيجة جميلة، لأنك لعبت لعبة كاملة زي الملوك! أهم حاجة إنك تستمتع وتفكّر، ومس نانسي فخورة بيك أوي يا ملك ماثيو!",
+      intro: "وصلنا للعبة الكاملة! دي لعبة شطرنج حقيقية بكل القطع: عساكر وطابيات وفيلة ووزير وحصانين والملك، يعني أنت! هتلعب بالقطع البيضا، وصاحبك اللطيف هيلعب بالقطع السودا! اللي يعمل كش مات لملك التاني يكسب، ولو محدش قدر يعمل كش مات والملك اتحاصر من غير كش، يبقى تعادل يا بطل! يلا يا ملك ماثيو، دي مملكتك!",
+      lesson: "يا ملك ماثيو، اللعبة الكاملة هي كل اللي اتعلّمناه سوا في لعبة واحدة! في الأول، حرّك العساكر عشان تفتح الطريق للقطع الكبيرة، وبعدين طلّع الفيلة والحصانين، وبعدين حرّك الوزير بحرص، وخلي الملك في مكان آمن ورا العساكر! وكل حركة فكّر فيها: القطعة دي هتروح فين؟ وهل فيه قطعة من العدو هتاكلها؟ وهل الملك بتاعي في أمان؟ ولو ملك صاحبك اتهدد، دي كش، ولو اتحاصر من غير أي حل، دي كش مات وأنت تكسب! ولو اللعبة خلصت تعادل، دي برضه نتيجة جميلة، لأنك لعبت لعبة كاملة زي الملوك! أهم حاجة إنك تستمتع وتفكّر، وأنا فخورة بيك أوي يا ملك ماثيو!",
       question: "دورك يا ملك ماثيو! حرّك قطعة من قطعك!",
-      win: "برافو يا ملك ماثيو! خلّصت لعبة شطرنج كاملة! انت بطل الشطرنج الحقيقي! خدت ألماسة جديدة لتاجك، وأنا فخورة بيك أوي! العب تاني كل ما تحب يا ملك!"
+      win: "برافو يا ملك ماثيو! خلّصت لعبة شطرنج كاملة! أنت بطل الشطرنج الحقيقي! خدت ألماسة جديدة لتاجك، وأنا فخورة بيك أوي! العب تاني كل ما تحب يا ملك!"
     }
   ];
 
@@ -3435,6 +3563,17 @@
       '<path d="M22 52 L20 34 q-2 -12 8 -20 q4 -3 8 -2 l4 -4 l2 6 q10 2 12 12 q1 8 -4 12 l-4 14 Z" fill="#fff7e0" stroke="#7c4a21" stroke-width="2"/>' +
       '<circle cx="36" cy="22" r="2" fill="#4a2f14"/></svg>';
   }
+  // Round 3.2.3 item 1: the old ▦ hero/menu glyph rendered as a 4×4 grid
+  // (16 squares) while the lesson teaches 8×8 = 64 — a picture that
+  // contradicted the lesson. A real 8×8 board, drawn as SVG in the same
+  // colours as the playable board, for the menu icon and the lesson hero.
+  function boardIconSVG() {
+    let cells = "";
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+      cells += '<rect x="' + (2 + c * 8) + '" y="' + (2 + r * 8) + '" width="8" height="8" fill="' + (((r + c) % 2 === 0) ? "#f0d9b5" : "#b58863") + '"/>';
+    }
+    return '<svg viewBox="0 0 68 68" class="chess-board-icon" aria-hidden="true"><rect x="0" y="0" width="68" height="68" rx="6" fill="#7c4a21"/>' + cells + "</svg>";
+  }
 
   // ================= HTML نقي (يُختبَر بلا DOM) =================
   function menuHTML(total) {
@@ -3442,7 +3581,7 @@
       '<div class="science-grid chess-grid">' + LESSONS.map(l => {
         const open = isUnlocked(l, total);
         const need = Math.max(0, (l.stars || 0) - total);
-        const icon = l.piece ? pieceSVG(l.piece, "w") : (l.id === "board" ? '<span class="chess-board-mini">▦</span>' : l.id === "race" ? pieceSVG("p", "w") : l.id === "match_rooks" ? pieceSVG("r", "w") : l.id === "full" ? pieceSVG("k", "w") : '<span class="chess-menu-emoji">🍪</span>');
+        const icon = l.piece ? pieceSVG(l.piece, "w") : (l.id === "board" ? boardIconSVG() : l.id === "race" ? pieceSVG("p", "w") : l.id === "match_rooks" ? pieceSVG("r", "w") : l.id === "full" ? pieceSVG("k", "w") : '<span class="chess-menu-emoji">🍪</span>');
         return '<button type="button" class="science-card chess-card' + (open ? "" : " chess-locked") + '" data-chess-lesson="' + l.id + '">' +
           '<span class="chess-menu-icon">' + (open ? icon : "🔒") + '</span><b>' + l.title + '</b>' +
           '<small>' + l.desc + '</small>' +
@@ -3508,7 +3647,8 @@
           ".chess-lesson-text{background:#fff7e0;border:2px solid #ffd94d;border-radius:16px;padding:14px 16px;line-height:1.9;font-size:17px;margin:12px 0}" +
           ".chess-grid .chess-card .chess-menu-icon{display:grid;place-items:center;min-height:64px}" +
           ".chess-grid .chess-card .chess-menu-icon .chess-piece-svg{width:64px;height:64px}" +
-          ".chess-grid .chess-card .chess-menu-icon .chess-board-mini{font-size:52px}" +
+          ".chess-grid .chess-card .chess-menu-icon .chess-board-icon{width:64px;height:64px}" +
+          ".chess-hero .chess-board-icon{width:150px;height:150px}" +
           ".chess-grid .chess-card .chess-menu-icon .chess-menu-emoji{font-size:52px}" +
           ".chess-card.chess-locked{opacity:.75}" +
           ".chess-stars-line{text-align:center;font-weight:700;margin:8px 0}" +
@@ -3558,6 +3698,25 @@
 
       let lesson = null;          // الدرس الحالي
       let mode = "menu";          // menu | lesson | game
+      // Round 3.2.3 item 13: the lesson/game view is one sub-screen level
+      // above the chess menu — the system back returns to the menu, not
+      // out of the app. subPushed guards the push (openLesson is the only
+      // menu→lesson transition; startGame stays on the same level).
+      let subPushed = false;
+      const pushSub = () => {
+        if (subPushed) return;
+        subPushed = true;
+        // Guarded for non-browser contexts (tests load chess.js in node).
+        if (typeof window !== "undefined") {
+          window.__matthewBack = () => { subPushed = false; openMenu(); };
+          window.MatthewNav?.pushSubscreen();
+        }
+      };
+      const popSub = () => {
+        if (!subPushed) return;
+        subPushed = false;
+        if (typeof window !== "undefined") window.MatthewNav?.popSubscreen();
+      };
       let board = null, turn = "w", selected = null, dots = {};
       let target = null, round = 0, cookiesEaten = 0, lock = false;
       let praiseIndex = 0, tryIndex = 0, greatIndex = 0;
@@ -3606,7 +3765,7 @@
       };
 
       const close = () => {
-        mode = "menu"; lesson = null;
+        mode = "menu"; lesson = null; subPushed = false;
         panel.classList.add("hidden");
         gameList.classList.remove("hidden");
         document.getElementById("learningList")?.classList.remove("hidden");
@@ -3614,15 +3773,19 @@
         if (typeof updateStats === "function") { try { updateStats(); } catch (_) {} }
       };
       // رجوع هرمي: داخل درس/لعبة ← قائمة الشطرنج، ومن القائمة ← باب الألعاب.
-      $("chessBack").addEventListener("click", () => { if (mode === "menu") close(); else openMenu(); });
+      // Round 3.2.3 item 13: the on-screen back goes through history when
+      // we own an entry (popstate runs the same openMenu via the hook);
+      // with no entry it closes directly.
+      $("chessBack").addEventListener("click", () => { if (mode === "menu") close(); else if (!window.MatthewNav?.back()) { popSub(); openMenu(); } });
 
       const openLesson = l => {
         lesson = l; mode = "lesson";
+        pushSub();
         hideOthers();
         panel.classList.remove("hidden");
         $("chessProgress").textContent = "";
         const hero = l.piece ? pieceSVG(l.piece, "w")
-          : (l.id === "board" ? '<span class="chess-board-mini" style="font-size:96px">▦</span>'
+          : (l.id === "board" ? boardIconSVG()
           : l.id === "cookies" ? '<span style="font-size:96px">🍪</span>'
           : l.id === "race" ? pieceSVG("p", "w")
           : l.id === "match_rooks" ? pieceSVG("r", "w")
@@ -3636,7 +3799,9 @@
           '<button type="button" class="secondary" id="chessBackMenu">اختار درس تاني</button>';
         $("chessListenLesson").onclick = () => speak(l.lesson, "chess_" + l.id + "_lesson");
         $("chessPlay").onclick = () => startGame(l);
-        $("chessBackMenu").onclick = openMenu;
+        // Round 3.2.3 item 13: «اختار درس تاني» closes the sub-screen
+        // directly — unwind its history entry first.
+        $("chessBackMenu").onclick = () => { popSub(); openMenu(); };
         speak(l.intro, "chess_" + l.id + "_intro");
         window.scrollTo({ top: 0, behavior: "smooth" });
       };
@@ -3709,7 +3874,7 @@
         } else if (l.kind === "race") {
           board = setupPawnRace(); turn = "w";
           body().innerHTML = '<h2 class="touch-game-title">' + l.title + '</h2>' +
-            '<p class="chess-turn" id="chessQ">دورك يا ملك ماثيو! حرّك بيدق أبيض لقدام!</p>' +
+            '<p class="chess-turn" id="chessQ">دورك يا ملك ماثيو! حرّك عسكري أبيض لقدام!</p>' +
             '<button type="button" class="voice-button" id="chessListenQ">🔊 اسمع السؤال</button>';
           $("chessListenQ").onclick = () => speak(l.question, "chess_race_question");
           renderBoard("");
@@ -3726,7 +3891,7 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
-      // لعبة الكوكيز: ضع كوكيز (بيادق سوداء) على مربعات قانونية للقطعة.
+      // لعبة الكوكيز: ضع كوكيز (عساكر سوداء) على مربعات قانونية للقطعة.
       const PIECE_CYCLE = ["r", "b", "n", "q"];
       function piecePos() {
         for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
@@ -3826,7 +3991,7 @@
           else if (selected) { tryAgain(); showMsg("دوس على مربع أخضر يا بطل!"); }
           return;
         }
-        // مباريات (سباق / بيادق وطابيات / كاملة): دور أبيض ثم خصم لطيف.
+        // مباريات (سباق / عساكر وطابيات / كاملة): دور أبيض ثم خصم لطيف.
         if (turn !== "w") return;
         if (selected && dots[r + "-" + c]) {
           const from = selected;
@@ -3946,7 +4111,7 @@
     LESSONS, CORPUS, PICKER_LINE, LOCKED_LINE, OPPONENT_LINE, CHECK_LINE,
     RETRY_LINE, DRAW_LINE, PRAISE, TRY_LINES, GREAT_MOVE,
     spokenStrings, starTotal, isUnlocked, menuHTML, boardHTML, pieceSVG,
-    cardIconSVG, arabicDigits, squareName,
+    cardIconSVG, boardIconSVG, arabicDigits, squareName,
     emptyBoard, startPosition, setupPawnRace, setupMiniRooks, setupCookies,
     legalMoves, pseudoMoves, applyMove, inCheck, isAttacked, gameStatus,
     allLegalMoves, gentleMove, raceWon, cookiesLeft, countPieces, findKing,

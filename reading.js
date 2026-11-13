@@ -130,6 +130,22 @@
   const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 
   let mode = "ar-syllables", letterIndex = 0, wordIndex = 0, picker = true, readToken = 0;
+  // Round 3.2.3 item 9: lesson → quiz offer. The reading quiz already
+  // exists («تحدي القراءة» tab) but a non-reader cannot find a text tab,
+  // so every lesson screen gets a big pictured 🏆 button that opens it.
+  // The offer line is spoken ONCE, on first entry to a lesson screen
+  // (appended to that screen's own narration sequence, so it can never
+  // cut the lesson off). NEW CLIP for the audio worker:
+  // quiz_offer_reading = this text (Aria, ar-EG).
+  const QUIZ_OFFER = "برافو يا بطل! يلا نتحدى القراءة! دوس على الكاس!";
+  let offerSpoken = false;
+  function quizOfferButton() {
+    return '<button id="readQuizOffer" class="primary" type="button">🏆 تحدي القراءة ⭐</button>';
+  }
+  function bindQuizOffer() {
+    const b = panel.querySelector("#readQuizOffer");
+    if (b) b.onclick = () => { mode = "quiz"; render(); };
+  }
 
   function open() {
     gameList.classList.add("hidden");
@@ -139,6 +155,7 @@
     document.getElementById("parentPanel")?.classList.add("hidden");
     panel.classList.remove("hidden");
     picker = true;
+    offerSpoken = false;
     render();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -192,14 +209,18 @@
       '<p class="touch-game-instruction">من الصفر يا بطل: الحرف لوحده ليه صوت، ولما بنحط عليه فتحة أو كسرة أو ضمة صوته بيتغيّر شوية صغيرة. اضغط على كل مقطع واسمع صوته كويس وقوله ورايا، وبعد شوية هنركّب المقاطع على بعض ونعمل منها كلمة كاملة نقراها سوا!</p>' +
       '<div class="read-syllables">' + syllables.map((s, i) => '<button type="button" class="read-syllable" data-syl="' + i + '"><b>' + s.text + '</b><small>' + s.label + '</small></button>').join("") + '</div>' +
       '<div class="basic-nav"><button id="readPrevLetter" class="secondary" type="button">الحرف السابق<span class="pager-arrow">→</span></button>' +
-      '<button id="readNextLetter" class="primary" type="button">الحرف التالي<span class="pager-arrow">←</span></button></div>';
+      '<button id="readNextLetter" class="primary" type="button">الحرف التالي<span class="pager-arrow">←</span></button></div>' +
+      quizOfferButton();
     bindHeader(true);
+    bindQuizOffer();
     panel.querySelectorAll("[data-syl]").forEach(b => b.onclick = () => speakKey(syllables[Number(b.dataset.syl)].say, "rd_syl_" + letterIndex + "_" + b.dataset.syl, "ar-EG"));
     panel.querySelector("#readPrevLetter").onclick = () => { letterIndex = (letterIndex + LETTERS.length - 1) % LETTERS.length; renderSyllables(); };
     panel.querySelector("#readNextLetter").onclick = () => { letterIndex = (letterIndex + 1) % LETTERS.length; renderSyllables(); };
     // Full narration on open: the letter name (lsq_name_*) then ALL 6
     // syllables in order (rd_syl_* via the EXACT map) — not a short version.
-    setTimeout(() => { if (tk !== readToken) return; speakSequence([letter.name].concat(syllables.map(s => s.say)), "ar-EG"); }, 150);
+    // Round 3.2.3 item 9: on first entry the quiz offer follows the
+    // syllables in the same sequence, so it never cuts them off.
+    setTimeout(() => { if (tk !== readToken) return; const seq = [letter.name].concat(syllables.map(s => s.say)); if (!offerSpoken) { offerSpoken = true; seq.push(QUIZ_OFFER); } speakSequence(seq, "ar-EG"); }, 150);
   }
 
   function renderArWordPicker() {
@@ -222,15 +243,19 @@
       '<h2>' + item.meaning + '</h2><p>اضغط على كل مقطع، وبعدين اضغط على الكلمة كلها</p>' +
       '<button id="readWordListen" class="voice-button" type="button">🔊 اسمع الكلمة</button></div>' +
       '<div class="basic-nav"><button id="readPrevWord" class="secondary" type="button">الكلمة السابقة<span class="pager-arrow">→</span></button>' +
-      '<button id="readNextWord" class="primary" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div>';
+      '<button id="readNextWord" class="primary" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div>' +
+      quizOfferButton();
     bindHeader(true);
+    bindQuizOffer();
     panel.querySelectorAll("[data-part]").forEach(b => b.onclick = () => speakKey(item.parts[Number(b.dataset.part)], "rd_part_" + wi + "_" + b.dataset.part, "ar-EG"));
     panel.querySelector("#readWhole").onclick = () => speakKey(item.word, "rd_word_" + wi, "ar-EG");
     panel.querySelector("#readWordListen").onclick = () => speakKey(blend, "rd_blend_" + wi, "ar-EG");
     panel.querySelector("#readPrevWord").onclick = () => { wordIndex = (wordIndex + AR_WORDS.length - 1) % AR_WORDS.length; renderArWord(); };
     panel.querySelector("#readNextWord").onclick = () => { wordIndex = (wordIndex + 1) % AR_WORDS.length; renderArWord(); };
     // Full narration on open: the whole blend line (rd_blend_*).
-    setTimeout(() => { if (tk !== readToken) return; speakKey(blend, "rd_blend_" + wi, "ar-EG"); }, 150);
+    // Round 3.2.3 item 9: on first entry the quiz offer follows the blend
+    // in the same sequence (the blend text resolves via BY_TEXT, verified).
+    setTimeout(() => { if (tk !== readToken) return; if (!offerSpoken) { offerSpoken = true; speakSequence([blend, QUIZ_OFFER], "ar-EG"); } else speakKey(blend, "rd_blend_" + wi, "ar-EG"); }, 150);
   }
 
   function renderCvcPicker() {
@@ -253,15 +278,19 @@
       '<p>اضغط على كل صوت، وبعدين ادمجهم مع بعض</p>' +
       '<button id="readCvcListen" class="voice-button" type="button">🔊 اسمع</button></div>' +
       '<div class="basic-nav"><button id="readPrevCvc" class="secondary" type="button">السابق<span class="pager-arrow">→</span></button>' +
-      '<button id="readNextCvc" class="primary" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div>';
+      '<button id="readNextCvc" class="primary" type="button">كلمة جديدة<span class="pager-arrow">←</span></button></div>' +
+      quizOfferButton();
     bindHeader(true);
+    bindQuizOffer();
     panel.querySelectorAll("[data-sound]").forEach(b => b.onclick = () => speakKey(item.sounds[Number(b.dataset.sound)], "rd_cvc_s_" + wi + "_" + b.dataset.sound, "en-US"));
     panel.querySelector("#readWholeEn").onclick = () => speakKey(item.word, "rd_cvc_" + wi, "en-US");
     panel.querySelector("#readCvcListen").onclick = () => speakKey(blend, "rd_cvc_blend_" + wi, "en-US");
     panel.querySelector("#readPrevCvc").onclick = () => { wordIndex = (wordIndex + CVC_WORDS.length - 1) % CVC_WORDS.length; renderCvc(); };
     panel.querySelector("#readNextCvc").onclick = () => { wordIndex = (wordIndex + 1) % CVC_WORDS.length; renderCvc(); };
     // Full narration on open: the whole blend line (rd_cvc_blend_*).
-    setTimeout(() => { if (tk !== readToken) return; speakKey(blend, "rd_cvc_blend_" + wi, "en-US"); }, 150);
+    // Round 3.2.3 item 9: on first entry the quiz offer follows the blend
+    // in the same sequence (the blend text resolves via BY_TEXT, verified).
+    setTimeout(() => { if (tk !== readToken) return; if (!offerSpoken) { offerSpoken = true; speakSequence([blend, QUIZ_OFFER], "en-US"); } else speakKey(blend, "rd_cvc_blend_" + wi, "en-US"); }, 150);
   }
 
   function renderQuiz() {
