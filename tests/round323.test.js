@@ -361,10 +361,10 @@ test("item 10: palette yellow is a true clear yellow, distinct from orange; the 
 });
 
 // ---------- ITEM 11: the fish is gone from the colors game ----------
-test("item 11: the 🐟 fish is removed from the nature game (8 items → 7)", () => {
+test("item 11: the 🐟 fish is removed from the nature game (8 items → 7, then 11 in 3.2.8 note 7)", () => {
   const cg = read("color-games.js");
   const nature = cg.slice(cg.indexOf("const NATURE = ["), cg.indexOf("const NATURE_PALETTE"));
-  assert.equal((nature.match(/emoji: "/g) || []).length, 7, "NATURE must hold 7 items, got " + (nature.match(/emoji: "/g) || []).length);
+  assert.equal((nature.match(/emoji: "/g) || []).length, 11, "NATURE must hold 11 items, got " + (nature.match(/emoji: "/g) || []).length);
   assert.ok(!nature.includes("🐟"), "no fish emoji may remain in NATURE");
   assert.ok(!nature.includes("سمكة"), "no سمكة item may remain in NATURE");
   assert.ok(!nature.includes("السمكة زرقا"), "the fish fact must be gone with the item");

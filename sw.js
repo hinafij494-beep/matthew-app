@@ -8,7 +8,7 @@ const FILES = [
   "./voice-clips-pack-7.js", "./voice-clips-pack-8.js", "./voice-clips-pack-9.js",
   "./voice-clips-pack-10.js", "./voice-clips-pack-11.js", "./voice-clips-pack-12.js",
   "./voice-clips-pack-13.js", "./voice-clips-pack-14.js", "./voice-clips-pack-15.js",
-  "./voice-clips-pack-16.js", "./voice-clips-text-1.js",
+  "./voice-clips-pack-16.js", "./voice-clips-pack-17.js", "./voice-clips-text-1.js",
   "./manifest.webmanifest", "./icon.svg"
 ];
 

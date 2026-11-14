@@ -241,28 +241,46 @@
   // The bank may be absent (standalone test) — then it is all
   // lesson-built. `bank` is read at call time, so script load order
   // does not matter.
+  // Round 3.2.8 note 8 (live repro 2026-11-14, body quiz): the subject
+  // quiz showed the correct answer on the FIRST option for 5 of 6 cards
+  // — every bank question carries c:0 and the quiz mapped it WITHOUT
+  // shuffling — the bank questions always came in the same fixed order,
+  // and all three lesson-built cards shared one identical visible text
+  // («اسمع الدرس واختار صورته»). The next button itself was fine (the
+  // counter advanced ١→٦ in the repro). Fix: shuffle every question's
+  // options (correct recomputed), shuffle the question order, rotate the
+  // filler prompt, and sample filler distractors at random.
+  const SCIENCE_FILLER_PROMPTS = [
+    "اسمع الدرس واختار صورته",
+    "اسمع كويس… أي صورة للدرس اللي سمعته؟",
+    "ركّز واسمع… واختار صورة الدرس"
+  ];
   function scienceSubjectQuiz(subjectId, lessonIndex){
     const subj=subjects.find(s=>s.id===subjectId);
     if(!subj)return[];
     const bankQs=(typeof bank!=="undefined"&&bank&&bank.science)?bank.science.filter(q=>scienceSubjectFor(q)===subjectId):[];
-    const qs=bankQs.map(q=>({kind:"bank",q:q.q,a:q.a.slice(),correct:q.c,ex:q.ex||""}));
+    const qs=bankQs.map(q=>{
+      const order=q.a.map((t,i)=>({t,ok:i===q.c})).sort(()=>Math.random()-.5);
+      return {kind:"bank",q:q.q,a:order.map(x=>x.t),correct:order.findIndex(x=>x.ok),ex:q.ex||""};
+    });
     let li=(typeof lessonIndex==="number"?lessonIndex:0);
-    let guard=0;
+    let guard=0, fillerNo=0;
     while(qs.length<6&&guard++<subj.lessons.length){
       const lesson=subj.lessons[li%subj.lessons.length];
-      const others=subj.lessons.filter((_,i)=>i!==li%subj.lessons.length);
+      const others=subj.lessons.filter((_,i)=>i!==li%subj.lessons.length).sort(()=>Math.random()-.5);
       const picks=[lesson].concat(others.slice(0,3));
       const shuffled=picks.slice().sort(()=>Math.random()-.5);
-      qs.push({kind:"lesson",q:"اسمع الدرس واختار صورته",lessonText:lesson[0]+". "+lesson[2]+" "+lesson[3],a:shuffled.map(l=>l[0]),pics:shuffled.map(l=>l[1]),correct:shuffled.indexOf(lesson)});
+      qs.push({kind:"lesson",q:SCIENCE_FILLER_PROMPTS[fillerNo++%SCIENCE_FILLER_PROMPTS.length],lessonText:lesson[0]+". "+lesson[2]+" "+lesson[3],a:shuffled.map(l=>l[0]),pics:shuffled.map(l=>l[1]),correct:shuffled.indexOf(lesson)});
       li++;
     }
-    return qs.slice(0,6);
+    return qs.sort(()=>Math.random()-.5).slice(0,6);
   }
   const scienceScenesApi = {
     SCENES, sceneFor,
     chunkScienceSteps, scienceStepsFor, scienceWordCount,
     SCIENCE_LONG_WORDS, SCIENCE_STEP_MAX_WORDS, SCIENCE_MAX_STEPS,
     scienceQuizKeywords: SCIENCE_QUIZ_KEYWORDS, scienceSubjectFor, scienceSubjectQuiz,
+    scienceFillerPrompts: SCIENCE_FILLER_PROMPTS,
     lessonTitles: subjects.flatMap(s => s.lessons.map(l => l[0])),
     subjectLessons: subjects.map(s => ({ id: s.id, lessons: s.lessons.map(l => l[0]) }))
   };

@@ -427,9 +427,13 @@ add("result_tip_retry", "محاولة جميلة يا بطل ماثيو! الع�
     add("cg_num_try_" + n, "رقم " + name + "! حاول تاني يا بطل");
   });
   // nature game: tab-speech + question + fact lines (plain + set-complete)
+  // Round 3.2.8 notes 6–7: mirrors color-games.js natureQuestion() exactly
+  // (gender-aware: «ده …! لونه …» for masc items) — the corpus text must be
+  // byte-identical to the runtime question or the clip will not resolve.
+  const natQ = item => (item.masc ? "ده " : "دي ") + item.name + "! " + (item.masc ? "لونه" : "لونها") + " الحقيقي إيه يا ترى؟ اختار من اللوحة!";
   NATURE.forEach((item, i) => {
-    add("cg_nat_tab_" + i, INSTRUCTIONS.nature + " دي " + item.name + "! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!");
-    add("cg_nat_q_" + i, "دي " + item.name + "! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!");
+    add("cg_nat_tab_" + i, INSTRUCTIONS.nature + " " + natQ(item));
+    add("cg_nat_q_" + i, natQ(item));
     add("cg_nat_ok_" + i, item.fact + " برافو يا بطل!");
     add("cg_nat_all_" + i, item.fact + " برافو يا ملك ماثيو! لوّنت كل حاجات الطبيعة صح! خدت ألماسة جديدة لتاجك!");
   });

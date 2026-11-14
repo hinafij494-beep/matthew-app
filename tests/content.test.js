@@ -41,7 +41,10 @@ test("code modules ship inside the interactive-games bundle; voice packs load as
   // __matthewClipText / __matthewClipExact when it runs, so the packs
   // must already have executed). Each pack only pushes one object into
   // the shared array, so no pack depends on another pack's order.
-  const packFiles = Array.from({ length: 16 }, (_, i) => "voice-clips-pack-" + (i + 1) + ".js");
+  // Round 3.2.8: 17 packs — discover them, do not pin the count (the
+  // re-pack added a 17th chunk and a pinned 16 silently skipped it).
+  const packFiles = fs.readdirSync(root).filter((f) => /^voice-clips-pack-\\d+\\.js$/.test(f))
+    .sort((a, b) => parseInt(a.match(/(\\d+)\\.js$/)[1], 10) - parseInt(b.match(/(\\d+)\\.js$/)[1], 10));
   const textFiles = fs.readdirSync(root).filter(f => /^voice-clips-text-\d+\.js$/.test(f)).sort();
   assert.deepEqual(textFiles, ["voice-clips-text-1.js"], "expected exactly one voice text chunk file");
   const loadOrder = [...packFiles, ...textFiles, "interactive-games.js"];
