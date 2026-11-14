@@ -1917,7 +1917,7 @@
       ".cg-counter{text-align:center;background:#fff7e0;border:2px dashed #f0b429;border-radius:16px;padding:8px 12px;margin:10px 0;font-weight:800;font-size:15px;color:#5b3c00}" +
       ".cg-instruction{text-align:center;color:#6e6880;font-weight:700;line-height:1.8;margin:6px 0}" +
       ".cg-round{text-align:center;font-weight:800;color:#5035b2;margin:8px 0}" +
-      ".cg-legend{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0}" +
+      ".cg-legend{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0;flex-shrink:0}" +
       ".cg-legend-chip{display:flex;align-items:center;gap:6px;background:#f8f6ff;border:2px solid #e8e2f7;border-radius:999px;padding:6px 12px;font-weight:800;font-size:15px}" +
       ".cg-dot{width:18px;height:18px;border-radius:50%;display:inline-block;border:2px solid #0002;flex-shrink:0}" +
       ".cg-palette{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:14px 0}" +
@@ -1927,8 +1927,8 @@
       "@media(min-width:650px){.cg-palette.cg-num-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}" +
       ".cg-color-btn{min-width:88px;border:3px solid #0001;border-radius:16px;padding:13px 10px;font:800 15px inherit;cursor:pointer;box-shadow:0 3px 10px #30205b14}" +
       ".cg-color-btn.selected{border-color:#5b3cc4;transform:scale(1.07);box-shadow:0 0 0 3px #d9ccff}" +
-      ".cg-crown-wrap{text-align:center;margin:8px 0}" +
-      ".cg-crown-wrap svg{max-width:100%;height:auto}" +
+      ".cg-crown-wrap{width:100%;height:100%;display:grid;place-items:center}" +
+      ".cg-crown-wrap svg{width:100%;height:100%}" +
       ".cg-crown-part{cursor:pointer;transform-box:fill-box;transform-origin:center}" +
       ".cg-crown-part text{pointer-events:none;font-family:inherit}" +
       ".cg-crown-part.done{animation:cgPop .45s ease}" +
@@ -1942,7 +1942,7 @@
       ".cg-slot{width:52px;height:52px;border-radius:50%;border:3px solid #d9d2f0;display:grid;place-items:center;font-size:24px;font-weight:900;background:#faf8ff;color:#5b3cc4}" +
       ".cg-slot.empty{border-style:dashed;background:#fff;color:#b9a8e8}" +
       ".cg-slot.cg-pop{animation:cgPop .45s ease}" +
-      ".cg-msg{min-height:24px;font-weight:800;font-size:14px;text-align:center}" +
+      ".cg-msg{min-height:24px;font-weight:800;font-size:14px;text-align:center;flex-shrink:0;margin:4px 0}" +
       ".cg-next{max-width:420px;margin-left:auto;margin-right:auto}" +
       // Round 3.2.1 note 24(a): split color buttons — colour NAME on the
       // right half, NUMBER in a white circle on the left half (mockup:
@@ -1956,45 +1956,64 @@
       ".cg-crown-wrap svg{animation:matthewFloat 2.8s ease-in-out infinite}" +
       ".cg-crown-wrap.cg-celebrate{animation:matthewStarBurst .6s ease both}" +
       ".cg-nature-emoji.cg-grey{animation:matthewFloat 2.6s ease-in-out infinite}" +
-      // Round 3.2.6 notes 8–10: the coloring gallery + canvas (Games tab).
-      ".cg-gallery{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:12px 0}" +
-      ".cg-page-btn{border:3px solid #e8e2f7;background:#faf8ff;border-radius:18px;padding:10px 14px;font:800 15px inherit;color:#392f54;cursor:pointer;min-width:104px;display:flex;flex-direction:column;align-items:center;gap:6px}" +
-      ".cg-page-btn.active{border-color:#6d4bd1;background:#eee8ff}" +
-      // Round 3.2.8 note 2: gallery cards show a REAL thumbnail of the
-      // page — no emoji icons. Raster pages use their own picture;
-      // the crown page uses a small inline-SVG preview.
-      ".cg-thumb{width:72px;height:72px;object-fit:contain;border-radius:12px;background:#fff;flex-shrink:0}" +
-      ".cg-thumb-svg{display:block;line-height:0}" +
-      ".cg-thumb-svg svg{width:72px;height:52px}" +
+      // Round 3.2.9 note 3 fix: fixed-height color view (100dvh) so
+      // the viewport flex share is real screen space, not content
+      // height; fixed rows never shrink, the viewport takes the rest;
+      // a mouse drag on the background cannot select page text.
+      // Round 3.2.9 note 3 fix round 2: while the coloring tab is
+      // open the sticky panel header goes static, so the 100dvh view
+      // fits one screen exactly with no page scroll to reach save;
+      // the home button scrolls off above but the home FAB stays, and
+      // scrolling up brings the header and tabs back.
+      ".cg-color-view{display:flex;flex-direction:column;height:100vh;height:100dvh;user-select:none;-webkit-user-select:none}" +
+      "#colorGamesPanel.cg-coloring-open .quiz-top{position:static}" +
+      ".cg-zoom-viewport{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;touch-action:none;background:#fff;border-radius:18px;margin:4px 0}" +
+      ".cg-zoom-stage{position:absolute;transform-origin:0 0;will-change:transform}" +
+      ".cg-zoom-row{display:flex;gap:10px;justify-content:center;align-items:center;margin:4px 0;flex-shrink:0}" +
+      ".cg-zoom-btn{min-width:52px;min-height:52px;border:3px solid #e8e2f7;background:#fff;border-radius:50%;font-size:26px;font-weight:900;line-height:1;color:#5035b2;cursor:pointer;box-shadow:0 3px 10px #30205b14}" +
+      ".cg-zoom-btn:active{transform:scale(.93);background:#eee8ff}" +
+      ".cg-zoom-btn:disabled{opacity:.45;cursor:default}" +
+      ".cg-zoom-reset{border-radius:999px;min-width:64px;font-size:18px;padding:8px 14px}" +
       // Round 3.2.8 note 3: big arrow buttons in the picture view.
       // RTL: the prev arrow (→) sits right, next (←) sits left.
-      ".cg-page-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin:8px 0}" +
+      ".cg-page-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin:6px 0;flex-shrink:0}" +
       ".cg-page-nav .cg-page-label{margin:0;flex:1}" +
       ".cg-page-nav-btn{min-width:56px;min-height:56px;border:3px solid #e8e2f7;background:#fff;border-radius:50%;font-size:34px;font-weight:900;line-height:1;color:#5035b2;cursor:pointer;flex-shrink:0;box-shadow:0 3px 10px #30205b14}" +
       ".cg-page-nav-btn:active{transform:scale(.93);background:#eee8ff}" +
-      ".cg-mode-row{display:flex;gap:10px;justify-content:center;margin:12px 0;flex-wrap:wrap}" +
+      ".cg-mode-row{display:flex;gap:10px;justify-content:center;margin:12px 0;flex-wrap:wrap;flex-shrink:0}" +
       ".cg-mode-btn{border:3px solid #e8e2f7;background:#fff;border-radius:999px;padding:12px 20px;font:800 17px inherit;color:#392f54;cursor:pointer}" +
       ".cg-mode-btn.active{border-color:#6d4bd1;background:#eee8ff}" +
       ".cg-page-label{text-align:center;font-size:22px;font-weight:900;color:#5035b2;margin:8px 0}" +
       ".cg-color-part{cursor:pointer;transform-box:fill-box;transform-origin:center}" +
       ".cg-color-part text{pointer-events:none;font-family:inherit}" +
       ".cg-color-part.done{animation:cgPop .45s ease}" +
-      ".cg-big-palette{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}" +
-      "@media(min-width:650px){.cg-big-palette{grid-template-columns:repeat(4,minmax(0,1fr))}}" +
-      ".cg-swatch{min-height:64px;border:3px solid #0001;border-radius:18px;padding:10px 6px;font:800 15px inherit;cursor:pointer;box-shadow:0 3px 10px #30205b14}" +
+      // Round 3.2.9 note 3 fix: the palette is ONE horizontally
+      // scrollable row (~56px tall), not a wrapping grid — the 252px
+      // tall grid is what ate the picture on a phone. Round 2: the
+      // scrollbar itself is hidden (it cost ~15px) and the row margins
+      // are trimmed, so the picture gets the space instead.
+      ".cg-big-palette{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:8px;justify-content:flex-start;margin:6px 0;padding:6px 2px;flex-shrink:0;scrollbar-width:none}" +
+      ".cg-big-palette::-webkit-scrollbar{display:none}" +
+      ".cg-swatch{min-width:56px;min-height:44px;border:3px solid #0001;border-radius:14px;padding:6px 10px;font:800 13px inherit;cursor:pointer;box-shadow:0 3px 10px #30205b14;flex-shrink:0}" +
       ".cg-swatch.selected{border-color:#5b3cc4;transform:scale(1.06);box-shadow:0 0 0 3px #d9ccff}" +
-      // Round 3.2.8 note 1: the wrap shrink-to-fits the picture, so the
-      // inset:0 canvas is exactly the image box; overflow:hidden is
-      // belt-and-braces against any paint escaping the frame.
-      ".cg-paint-wrap{position:relative;width:max-content;max-width:100%;text-align:center;margin:8px auto;overflow:hidden}" +
-      ".cg-paint-wrap img{max-width:100%;height:auto;display:block;margin:0 auto;border-radius:18px;background:#fff}" +
+      // Round 3.2.9 note 3: the wrap fills the zoom stage (the stage IS
+      // the contain-fit rect of the picture), so the image box == the
+      // stage box and the canvas + overlay pin to it exactly.
+      ".cg-paint-wrap{position:relative;width:100%;height:100%;overflow:hidden}" +
+      ".cg-paint-wrap img{width:100%;height:100%;display:block;border-radius:18px;background:#fff}" +
       ".cg-paint-wrap canvas{position:absolute;inset:0;margin:auto;touch-action:none}" +
       ".cg-clear-btn{max-width:420px;margin:10px auto 0;display:block}" +
       // Round 3.2.8 note 4: clear + save sit side by side under the
       // picture; note 5: the line-art overlay sits above the paint
       // canvas (pointer-events:none) so outlines stay visible on top.
-      ".cg-actions-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:12px auto 0;max-width:640px}" +
-      ".cg-actions-row .cg-clear-btn,.cg-actions-row .cg-save-btn{flex:1 1 180px;max-width:300px;margin:0}" +
+      // Round 3.2.9 note 3 fix round 2: the buttons must share ONE
+      // line on a 314px phone. A 180px flex basis wrapped them before
+      // the shrink step (flex lines break on the basis, so each grew
+      // to its 300px cap alone on its own row). Basis 0 plus
+      // min-width 0 lets both grow to 152px each on one line; the
+      // short labels stay on one line at that width.
+      ".cg-actions-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:8px auto 0;width:100%;max-width:640px;flex-shrink:0}" +
+      ".cg-actions-row .cg-clear-btn,.cg-actions-row .cg-save-btn{flex:1 1 0;min-width:0;max-width:300px;margin:0;padding:10px 8px;line-height:1.3}" +
       ".cg-save-btn{background:linear-gradient(140deg,#43a047,#2e7d32)!important}" +
       ".cg-paint-wrap .cg-line-overlay{position:absolute;inset:0;width:100%;height:100%;margin:0;background:transparent;pointer-events:none}";
     document.head.appendChild(style);
@@ -2080,11 +2099,11 @@
     numbers: "أهلاً يا ملك ماثيو! اختار لون وبعدين دوس على الجزء اللي رقمه نفس اللون!",
     nature: "لعبة سحب لون الطبيعة يا ملك ماثيو! شوف الصورة الرمادي واختار لونها الحقيقي من اللوحة!",
     patterns: "لعبة أكمل تلوين النمط يا ملك ماثيو! بص على الألوان اللي في الصف وخمّن اللون اللي ناقص في الآخر!",
-    coloring: "يلا نلوّن يا ملك ماثيو! اختار صورة من فوق، واختار تلوين حر ولا بالأرقام، وبعدين اختار لون حلو ولوّن!"
+    coloring: "يلا نلوّن يا ملك ماثيو! قلّب الصور بالأسهم، واختار لون حلو ولوّن معايا!"
   };
 
   // ---------- Coloring pages registry (Round 3.2.6 notes 8–10) ----------
-  // MATTHEW_PAGES is THE drop-in point for the coloring gallery. Each page:
+  // MATTHEW_PAGES is THE drop-in point for the coloring picture view. Each page:
   //   { id, name, icon, label, svg }  — tap-to-fill line-art page. `parts`
   //   are the big colorable regions [{ shape, cx, cy }]; the canvas builds
   //   the SVG from them, white fill + dark outline, one tap fills a region.
@@ -2281,10 +2300,138 @@
   const patternsState = { round: 1, answered: false };
   // Coloring tab state: page index, mode ("free" | "numbers"), selected
   // palette colour index, and fills per page { [pageId]: { [part]: colorId } }.
+  // Round 3.2.9 note 3 fix: the coloring view is parked under the
+  // sticky panel header once per entry, so the whole view fits on
+  // one screen. Flips and mode changes leave the scroll alone.
+  let colorViewPositioned = false;
   const coloringState = { page: 0, mode: "free", selected: null, fills: {} };
   // Round 3.2.8 notes 4–5: the save session for the current raster
   // page (paint canvas + line-art overlay canvas); null on SVG pages.
   let paintSession = null;
+  // Round 3.2.9 notes 3–4: zoom state for the picture stage. The stage
+  // shows the picture at base size (contain-fit in the viewport); zoom
+  // is a transform on the stage, so picture + paint canvas + line-art
+  // overlay zoom TOGETHER as one stack. Pointer coords map back by
+  // dividing by the scale, so per-region containment (built at base
+  // resolution) keeps working, and save composites at base resolution.
+  // vw/vh = viewport size, bw/bh = base stage size (contain-fit rect).
+  const zoomState = { scale: 1, tx: 0, ty: 0, vw: 0, vh: 0, bw: 0, bh: 0 };
+  let zoomGestureActive = false; // two pointers down — painting is paused
+  let suppressNextPartClick = false; // a pinch/pan just ended — ignore one tap
+  let zoomResizeBound = false;
+  function zoomApply() {
+    const stage = $("cgZoomStage");
+    if (stage) stage.style.transform = "translate(" + zoomState.tx + "px," + zoomState.ty + "px) scale(" + zoomState.scale + ")";
+  }
+  function zoomClamp() {
+    const z = zoomState.scale, vw = zoomState.vw, vh = zoomState.vh, bw = zoomState.bw, bh = zoomState.bh;
+    if (bw <= 0 || bh <= 0 || vw <= 0 || vh <= 0) return;
+    const left0 = (vw - bw) / 2, top0 = (vh - bh) / 2;
+    // Keep the stage covering the viewport when zoomed, centred when it fits.
+    if (bw * z > vw) zoomState.tx = Math.min(-left0, Math.max(vw - bw * z - left0, zoomState.tx));
+    else zoomState.tx = (vw - bw * z) / 2 - left0;
+    if (bh * z > vh) zoomState.ty = Math.min(-top0, Math.max(vh - bh * z - top0, zoomState.ty));
+    else zoomState.ty = (vh - bh * z) / 2 - top0;
+  }
+  // Zoom to `scale` keeping the viewport point (focusX, focusY) fixed.
+  function zoomTo(scale, focusX, focusY) {
+    const z0 = zoomState.scale || 1;
+    const z = Math.min(3, Math.max(1, scale));
+    const left0 = (zoomState.vw - zoomState.bw) / 2, top0 = (zoomState.vh - zoomState.bh) / 2;
+    const bx = (focusX - left0 - zoomState.tx) / z0, by = (focusY - top0 - zoomState.ty) / z0;
+    zoomState.scale = z;
+    zoomState.tx = focusX - left0 - bx * z;
+    zoomState.ty = focusY - top0 - by * z;
+    zoomClamp();
+    zoomApply();
+    const resetBtn = $("cgZoomReset");
+    if (resetBtn) resetBtn.disabled = z <= 1;
+  }
+  function zoomReset() { zoomTo(1, zoomState.vw / 2, zoomState.vh / 2); }
+  // Size the stage to the contain-fit rect of the current picture inside
+  // the viewport, centred; resets the zoom (fresh page / new size).
+  // Raster pages need the img natural size; the load handler retries.
+  function layoutPicture() {
+    const viewport = $("cgZoomViewport"), stage = $("cgZoomStage");
+    if (!viewport || !stage) return;
+    const vw = viewport.clientWidth, vh = viewport.clientHeight;
+    if (!vw || !vh) return;
+    const page = coloringPage();
+    let aw = 0, ah = 0;
+    if (page && page.img) {
+      const img = $("cgPaintImg");
+      if (img && img.naturalWidth && img.naturalHeight) { aw = img.naturalWidth; ah = img.naturalHeight; }
+    } else if (page && page.viewBox) {
+      const vb = String(page.viewBox).split(/\s+/).map(Number);
+      aw = vb[2] || 320; ah = vb[3] || 185;
+    }
+    if (!aw || !ah) return;
+    const s = Math.min(vw / aw, vh / ah);
+    // Round 3.2.9 note 3 fix round 4: round, do not floor — flooring
+    // the contain-fit lost a pixel (tablet king picture 709x939
+    // instead of 709x940, one pixel under the bar). The 1px is
+    // invisible and the viewport clips any half-pixel overflow.
+    const bw = Math.max(1, Math.round(aw * s)), bh = Math.max(1, Math.round(ah * s));
+    zoomState.vw = vw; zoomState.vh = vh; zoomState.bw = bw; zoomState.bh = bh;
+    zoomState.scale = 1; zoomState.tx = 0; zoomState.ty = 0;
+    stage.style.width = bw + "px"; stage.style.height = bh + "px";
+    stage.style.left = ((vw - bw) / 2) + "px"; stage.style.top = ((vh - bh) / 2) + "px";
+    zoomApply();
+    const resetBtn = $("cgZoomReset");
+    if (resetBtn) resetBtn.disabled = true;
+  }
+  // Pinch-zoom + two-finger pan on the picture viewport. One finger
+  // always paints; two fingers zoom (spread) and pan (drag). Capture
+  // phase so the gesture is recognised before the canvas own
+  // pointerdown starts a stroke.
+  function setupZoomGestures(viewport) {
+    if (!viewport) return;
+    const pointers = new Map(); // pointerId -> {x, y} in viewport coords
+    let g = null; // active gesture {d0, mid0, scale0, tx0, ty0, moved}
+    const rel = e => { const r = viewport.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+    viewport.addEventListener("pointerdown", e => {
+      pointers.set(e.pointerId, rel(e));
+      if (pointers.size === 2) {
+        const pts = [...pointers.values()];
+        g = { d0: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1, mid0: { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 }, scale0: zoomState.scale, tx0: zoomState.tx, ty0: zoomState.ty, moved: false };
+        zoomGestureActive = true;
+        try { if (paintSession && paintSession.stopPaint) paintSession.stopPaint(); } catch (_) {}
+        e.preventDefault();
+      }
+    }, true);
+    viewport.addEventListener("pointermove", e => {
+      if (!pointers.has(e.pointerId)) return;
+      pointers.set(e.pointerId, rel(e));
+      if (g && pointers.size === 2) {
+        const pts = [...pointers.values()];
+        const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) || 1;
+        const mid = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+        const z = Math.min(3, Math.max(1, g.scale0 * (d / g.d0)));
+        // Keep the base point under the gesture start midpoint fixed
+        // under the CURRENT midpoint: zooms about the pinch and pans by
+        // the midpoint movement in one step.
+        const left0 = (zoomState.vw - zoomState.bw) / 2, top0 = (zoomState.vh - zoomState.bh) / 2;
+        const bx = (g.mid0.x - left0 - g.tx0) / (g.scale0 || 1), by = (g.mid0.y - top0 - g.ty0) / (g.scale0 || 1);
+        zoomState.scale = z;
+        zoomState.tx = mid.x - left0 - bx * z;
+        zoomState.ty = mid.y - top0 - by * z;
+        zoomClamp();
+        zoomApply();
+        const resetBtn = $("cgZoomReset");
+        if (resetBtn) resetBtn.disabled = z <= 1;
+        g.moved = true;
+        e.preventDefault();
+      }
+    }, true);
+    const end = e => {
+      if (pointers.delete(e.pointerId) && g && pointers.size < 2) {
+        if (g.moved) suppressNextPartClick = true;
+        g = null; zoomGestureActive = false;
+      }
+    };
+    viewport.addEventListener("pointerup", end, true);
+    viewport.addEventListener("pointercancel", end, true);
+  }
   // 1x1 transparent pixel: the line-art overlay placeholder src until
   // deriveArt() replaces it with the processed line art.
   const TRANSPARENT_PX = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
@@ -2308,6 +2455,7 @@
   function openAt(tab) { activeTab = tab; open(); }
 
   function open() {
+    if (activeTab === "coloring") colorViewPositioned = false;
     gameList.classList.add("hidden");
     if (learningList) learningList.classList.add("hidden");
     document.getElementById("quiz")?.classList.add("hidden");
@@ -2317,7 +2465,10 @@
     renderPanel();
     refreshCrowns();
     speakSeq([CG_INTRO_COLOR, ...tabSpeechItems()]);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Round 3.2.9 note 3 fix: the coloring view parks itself under
+    // the sticky header on entry, so a smooth scroll to top here
+    // would fight it. Other tabs keep the smooth scroll to top.
+    if (activeTab !== "coloring") window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function close() {
@@ -2338,9 +2489,14 @@
       '<button type="button" class="cg-tab' + (activeTab === "patterns" ? " active" : "") + '" data-tab="patterns">🎨 أكمل تلوين النمط</button>' +
       '<button type="button" class="cg-tab' + (activeTab === "coloring" ? " active" : "") + '" data-tab="coloring">🖍️ تلوين الملك</button></div>' +
       '<div id="cgGame" class="anim-enter"></div>';
+    // Round 3.2.9 note 3 fix round 2: while the coloring tab is open
+    // the sticky header goes static (see the CSS override), so the
+    // 100dvh view fits one screen; every other tab keeps it sticky.
+    panel.classList.toggle("cg-coloring-open", activeTab === "coloring");
     $("cgBack").onclick = close;
     panel.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => {
       activeTab = b.dataset.tab;
+      if (activeTab === "coloring") colorViewPositioned = false;
       renderPanel();
       refreshCrowns();
       speakTabSpeech();
@@ -2645,7 +2801,9 @@
     }
   }
 
-  // ---------- Coloring tab: gallery + free / by-numbers + canvas ----------
+  // ---------- Coloring tab: single-picture view + free / by-numbers + canvas ----------
+  // Round 3.2.9 note 1: the gallery is gone — the tab opens straight
+  // into the picture view and arrows are the only navigation.
   function coloringPage() {
     return MATTHEW_PAGES[Math.min(coloringState.page, MATTHEW_PAGES.length - 1)] || null;
   }
@@ -2727,10 +2885,31 @@
     }
     return { labels, count: nextId };
   }
+  // Round 3.2.9 note 5: the BACKGROUND regions — every region touching
+  // the image border. The outer white margin is background; a figure
+  // enclosed by outlines never touches the border. Paint strokes may
+  // never start in a background region, so the background stays white.
+  function borderRegions(labels, width, height) {
+    const bg = new Set();
+    for (let x = 0; x < width; x++) {
+      const t = labels[x], b = labels[(height - 1) * width + x];
+      if (t >= 0) bg.add(t);
+      if (b >= 0) bg.add(b);
+    }
+    for (let y = 0; y < height; y++) {
+      const l = labels[y * width], r = labels[y * width + width - 1];
+      if (l >= 0) bg.add(l);
+      if (r >= 0) bg.add(r);
+    }
+    return bg;
+  }
   // Nearest paintable pixel to (x, y) within `radius` px (square rings,
   // deterministic scan order); null when there is none (press on a thick
   // outline far from any region). The pixel itself wins at radius 0.
-  function nearestPaintable(labels, width, height, x, y, radius) {
+  // `skip` (optional Set of region ids) excludes regions from the
+  // search — the background gate passes the border regions so a press
+  // in the background never resolves to a paintable region.
+  function nearestPaintable(labels, width, height, x, y, radius, skip) {
     const cx = Math.round(x), cy = Math.round(y);
     const rMax = radius === undefined ? 8 : radius;
     for (let r = 0; r <= rMax; r++) {
@@ -2740,7 +2919,7 @@
           const nx = cx + dx, ny = cy + dy;
           if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
           const id = labels[ny * width + nx];
-          if (id >= 0) return { x: nx, y: ny, region: id };
+          if (id >= 0 && !(skip && skip.has(id))) return { x: nx, y: ny, region: id };
         }
       }
     }
@@ -2776,6 +2955,9 @@
   }
 
   function onColorPart(i) {
+    // Round 3.2.9 note 4: a pinch/pan gesture just ended — this tap is
+    // the tail of the gesture, not a colour choice.
+    if (suppressNextPartClick) { suppressNextPartClick = false; return; }
     const page = coloringPage();
     if (!page || !page.parts) return;
     const msg = $("cgMsg");
@@ -2833,6 +3015,9 @@
   // layer, masked to that region with destination-in, then composited
   // onto the visible canvas. White areas inside the outlines stay
   // paintable — the barrier is only the dark outlines, never white fill.
+  // Round 3.2.9 note 5: the OUTER background region is never a stroke's
+  // region (regionAt skips border-touching regions), so the background
+  // stays fixed white and no paint ever lands there.
   // Round 3.2.8 note 5 (outlines stay visible): the paint canvas sits
   // BETWEEN the picture (bottom) and the line-art overlay (top, an <img>
   // with pointer-events:none), so every black outline stays visible on
@@ -2871,7 +3056,7 @@
         const ovData = ovctx.createImageData(w, h);
         ovData.data.set(derived.overlay);
         ovctx.putImageData(ovData, 0, 0);
-        art = { width: w, height: h, labels: labelled.labels, regionCount: labelled.count, overlayCanvas: ov };
+        art = { width: w, height: h, labels: labelled.labels, regionCount: labelled.count, overlayCanvas: ov, background: borderRegions(labelled.labels, w, h) };
         session.overlayCanvas = ov;
         if (overlayEl && typeof ov.toDataURL === "function") {
           try { overlayEl.src = ov.toDataURL("image/png"); } catch (_) { /* overlay stays transparent */ }
@@ -2889,7 +3074,10 @@
     };
     if (img.complete) { fit(); deriveArt(); } else img.addEventListener("load", () => { fit(); deriveArt(); });
     let drawing = false, last = null, layerCanvas = null, layerCtx = null, maskCanvas = null;
-    const rawPos = e => { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+    // Round 3.2.9 note 4: the canvas rect is the TRANSFORMED (zoomed)
+    // box — divide by the zoom scale to map back into base coordinates,
+    // the space the region map was built in.
+    const rawPos = e => { const r = canvas.getBoundingClientRect(); const z = zoomState.scale || 1; return { x: (e.clientX - r.left) / z, y: (e.clientY - r.top) / z }; };
     const pos = e => {
       const p = rawPos(e);
       return { x: Math.min(Math.max(p.x, 0), canvas.width), y: Math.min(Math.max(p.y, 0), canvas.height) };
@@ -2902,7 +3090,10 @@
     // pixel nearby, the press is ignored.
     const regionAt = p => {
       if (!art || !art.labels) return null;
-      const hit = nearestPaintable(art.labels, art.width, art.height, p.x, p.y, 8);
+      // Round 3.2.9 note 5: the background regions are skipped, so a
+      // press in the background (or on an outline whose only neighbours
+      // are background) resolves to nothing and paints nothing.
+      const hit = nearestPaintable(art.labels, art.width, art.height, p.x, p.y, 8, art.background);
       return hit ? { x: hit.x, y: hit.y, region: hit.region } : null;
     };
     // Temp layer + mask for this stroke. Returns false when offscreen
@@ -2960,6 +3151,7 @@
       }
     };
     canvas.addEventListener("pointerdown", e => {
+      if (zoomGestureActive) return; // two fingers down — pinch/pan, not paint
       fit();
       deriveArt();
       if (!insideFrame(rawPos(e))) return;
@@ -2989,6 +3181,8 @@
       last = p;
     });
     const stop = () => { drawing = false; last = null; layerCanvas = null; layerCtx = null; maskCanvas = null; };
+    // Round 3.2.9 note 4: the zoom gestures stop a stroke in progress.
+    session.stopPaint = stop;
     canvas.addEventListener("pointerup", stop);
     canvas.addEventListener("pointercancel", stop);
     const clearBtn = $("cgClearPage");
@@ -3094,50 +3288,51 @@
     const isImg = !!page.img;
     const numbers = coloringState.mode === "numbers" && !isImg;
     // Note 28: keep the spoken/displayed Arabic in standalone literals —
-    // a ternary inline here would land inside the scanner's quote span.
+    // a ternary inline here would land inside the scanner quote span.
     const msgText = isImg ? "لوّن بإصبعك على الصورة يا بطل! 🎨" : (numbers ? "دوس على اللون الصح لرقم كل جزء!" : "اختار لون ودوس على أي جزء عشان تلوّنه!");
     const legend = numbers ? '<div class="cg-legend">' + PAGE_NUM_COLORS.map((c, i) =>
       '<span class="cg-legend-chip"><span class="cg-dot" style="background:' + c.hex + '"></span>' + arDigits(i + 1) + " = " + c.name + "</span>").join("") + "</div>" : "";
+    // Round 3.2.9 notes 1–3: NO gallery anywhere — the coloring tab
+    // opens straight into the single-picture view; the ONLY way to
+    // change pictures is the ← → arrows (they wrap); the picture
+    // dominates the screen inside the zoom viewport, the palette is a
+    // compact chip row underneath it.
     area.innerHTML =
-      '<div class="cg-gallery" role="tablist">' + MATTHEW_PAGES.map((p, i) =>
-        '<button type="button" class="cg-page-btn' + (i === coloringState.page ? " active" : "") + '" data-page="' + i + '">' +
-        // Round 3.2.8 note 2: a REAL thumbnail of the page, no emoji icon.
-        // The crown thumbnail reuses its SVG preview with the tap-to-fill
-        // hooks stripped (so tapping the card only flips the page) and the
-        // label swapped for the plain name (the label carries an emoji).
-        (p.img
-          ? '<img class="cg-thumb" src="' + p.img + '" alt="' + p.name + '">'
-          : '<span class="cg-thumb-svg">' + buildPageSvg({ ...p, label: p.name }).replace(/ data-part="\d+"/g, "") + "</span>") +
-        p.name + "</button>").join("") + "</div>" +
-      (isImg ? "" :
-      '<div class="cg-mode-row" role="group" aria-label="اختار طريقة التلوين">' +
-      '<button type="button" class="cg-mode-btn' + (coloringState.mode === "free" ? " active" : "") + '" data-mode="free">🖍️ تلوين حر</button>' +
-      '<button type="button" class="cg-mode-btn' + (coloringState.mode === "numbers" ? " active" : "") + '" data-mode="numbers">🔢 تلوين بالأرقام</button></div>') +
+      '<div class="cg-color-view">' +
       // Round 3.2.8 note 3: arrow navigation in the picture view (both
-      // raster and crown views — this row is outside the isImg branch).
-      // RTL: prev (→) on the right, next (←) on the left.
+      // raster and crown views). RTL: prev (→) on the right, next (←)
+      // on the left.
       '<div class="cg-page-nav">' +
       '<button type="button" class="cg-page-nav-btn" id="cgPrevPage" data-page-prev aria-label="الصورة اللي قبلها" title="الصورة اللي قبلها">→</button>' +
       '<h3 class="cg-page-label">' + page.label + "</h3>" +
       '<button type="button" class="cg-page-nav-btn" id="cgNextPage" data-page-next aria-label="الصورة اللي بعدها" title="الصورة اللي بعدها">←</button>' +
       "</div>" +
+      // Round 3.2.9 note 4: zoom controls — pinch works on the picture
+      // itself; these buttons zoom about the centre of the viewport.
+      '<div class="cg-zoom-row" role="group" aria-label="تكبير وتصغير الصورة">' +
+      '<button type="button" class="cg-zoom-btn" id="cgZoomOut" aria-label="تصغير الصورة" title="تصغير">−</button>' +
+      '<button type="button" class="cg-zoom-btn cg-zoom-reset" id="cgZoomReset" aria-label="رجّع الحجم الأصلي" title="الحجم الأصلي" disabled>١×</button>' +
+      '<button type="button" class="cg-zoom-btn" id="cgZoomIn" aria-label="تكبير الصورة" title="تكبير">+</button></div>' +
+      (isImg ? "" :
+      '<div class="cg-mode-row" role="group" aria-label="اختار طريقة التلوين">' +
+      '<button type="button" class="cg-mode-btn' + (coloringState.mode === "free" ? " active" : "") + '" data-mode="free">🖍️ تلوين حر</button>' +
+      '<button type="button" class="cg-mode-btn' + (coloringState.mode === "numbers" ? " active" : "") + '" data-mode="numbers">🔢 تلوين بالأرقام</button></div>') +
       legend +
+      '<div class="cg-zoom-viewport" id="cgZoomViewport"><div class="cg-zoom-stage" id="cgZoomStage">' +
       (isImg
         ? '<div class="cg-paint-wrap"><img id="cgPaintImg" src="' + page.img + '" alt="' + page.label + '"><canvas id="cgPaintCanvas"></canvas><img id="cgLineOverlay" class="cg-line-overlay" src="' + TRANSPARENT_PX + '" alt="" aria-hidden="true"></div>'
         : '<div class="cg-crown-wrap">' + buildPageSvg(page) + "</div>") +
+      "</div></div>" +
       '<div class="cg-big-palette">' + COLORS.map((col, i) =>
         '<button type="button" class="cg-swatch' + (coloringState.selected === i ? " selected" : "") + '" data-color="' + i + '" style="background:' + col.hex + ";color:" + col.text + (col.id === "white" ? ";border-color:#d9d2f0" : "") + '">' + col.name + "</button>").join("") + "</div>" +
       '<p id="cgMsg" class="cg-msg" aria-live="polite">' + msgText + "</p>" +
-      '<div class="cg-actions-row"><button id="cgClearPage" class="primary cg-clear-btn" type="button">🧽 امسح الألوان</button>' +
-      '<button id="cgSavePage" class="primary cg-save-btn" type="button">💾 احفظ الصورة</button></div>';
-    area.querySelectorAll("[data-page]").forEach(b => b.onclick = () => {
-      coloringState.page = Number(b.dataset.page);
-      renderColoring();
-    });
-    // Round 3.2.8 note 3: arrows flip pictures in the picture view (the
-    // grid stays the picker); wrap-around so the child never hits a dead
-    // end — last → first, first → last. renderColoring() rebuilds the
-    // picture, label and a fresh paint surface for the new page.
+      '<div class="cg-actions-row"><button id="cgClearPage" class="primary cg-clear-btn" type="button">🧽 امسح</button>' +
+      '<button id="cgSavePage" class="primary cg-save-btn" type="button">💾 احفظ</button></div></div>';
+    // Round 3.2.8 note 3 + 3.2.9 note 2: arrows are the ONLY way to
+    // change pictures (the gallery is gone); wrap-around so the child
+    // never hits a dead end — last → first, first → last.
+    // renderColoring() rebuilds the picture, label and a fresh paint
+    // surface for the new page (and resets the zoom).
     const prevBtn = $("cgPrevPage"), nextBtn = $("cgNextPage");
     if (prevBtn) prevBtn.onclick = () => {
       coloringState.page = (coloringState.page - 1 + MATTHEW_PAGES.length) % MATTHEW_PAGES.length;
@@ -3147,6 +3342,29 @@
       coloringState.page = (coloringState.page + 1) % MATTHEW_PAGES.length;
       renderColoring();
     };
+    // Round 3.2.9 note 4: zoom buttons (pinch works on the picture
+    // itself — see setupZoomGestures). Buttons zoom about the centre
+    // of the viewport, half a step at a time.
+    const zoomInBtn = $("cgZoomIn"), zoomOutBtn = $("cgZoomOut"), zoomResetBtn = $("cgZoomReset");
+    if (zoomInBtn) zoomInBtn.onclick = () => zoomTo(zoomState.scale + 0.5, zoomState.vw / 2, zoomState.vh / 2);
+    if (zoomOutBtn) zoomOutBtn.onclick = () => zoomTo(zoomState.scale - 0.5, zoomState.vw / 2, zoomState.vh / 2);
+    if (zoomResetBtn) zoomResetBtn.onclick = () => zoomReset();
+    setupZoomGestures($("cgZoomViewport"));
+    zoomApply(); // the stage always carries its transform, even before
+    // the picture finishes loading (1x until layoutPicture runs).
+    // Size the stage to the picture (contain-fit); raster pages wait
+    // for the image to load, the crown's viewBox is known at once.
+    const paintImg = $("cgPaintImg");
+    if (paintImg) {
+      if (paintImg.complete) layoutPicture();
+      else paintImg.addEventListener("load", () => layoutPicture());
+    } else {
+      layoutPicture();
+    }
+    if (!zoomResizeBound) {
+      zoomResizeBound = true;
+      window.addEventListener("resize", () => { try { if ($("cgZoomViewport")) layoutPicture(); } catch (_) {} });
+    }
     area.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => {
       coloringState.mode = b.dataset.mode;
       renderColoring();
@@ -3172,16 +3390,44 @@
     // the crown picture views, next to the clear button.
     const saveBtn = $("cgSavePage");
     if (saveBtn) saveBtn.onclick = () => saveColoredPicture();
+    // Round 3.2.9 note 3 fix: park the coloring view on entry, so
+    // the whole view (picture, palette, save) fits on one screen with
+    // no page scroll. Entry only — flips, mode changes and fills
+    // leave the scroll alone. Round 2: the header is static while
+    // coloring is open, so it costs 0px here and the view parks at
+    // the very top of the screen; on any other tab it is sticky and
+    // its height is subtracted as before. Round 3: the target comes
+    // from the offsetTop chain, not getBoundingClientRect — the game
+    // container plays a 0.45s fade-slide entrance (translateY 10px
+    // to 0) and the rect includes that in-flight transform, so a
+    // rect-based target overshoots by 10px once the animation
+    // settles. offsetTop is the final layout position.
+    if (!colorViewPositioned) {
+      colorViewPositioned = true;
+      try {
+        const view = area.querySelector(".cg-color-view");
+        const header = panel.querySelector(".quiz-top");
+        const sticky = header && getComputedStyle(header).position === "sticky";
+        const h = sticky ? header.getBoundingClientRect().height : 0;
+        if (view) {
+          let top = 0;
+          let el = view;
+          while (el) { top += el.offsetTop || 0; el = el.offsetParent; }
+          top -= h;
+          if (top > 0) window.scrollTo({ top: top, behavior: "auto" });
+        }
+      } catch (_) {}
+    }
   }
 
   card.addEventListener("click", () => openAt("numbers"));
   // Drop-in / live-check hook for the approved-art handover (round 3.2.6
-  // notes 8–10): the gallery renders whatever MATTHEW_PAGES lists.
+  // notes 8–10): the picture view renders whatever MATTHEW_PAGES lists.
   window.MatthewColorPages = MATTHEW_PAGES;
   // Test/live-check hooks for the per-region machinery (note 1 rework)
   // — pure functions, no DOM — and the nature list for the
   // question/picture audit (note 6). The runtime never calls these.
-  window.MatthewColorRegions = { keyOutWhite, dilateBarrier, labelRegions, nearestPaintable, buildRegionMaskData, REGION_BARRIER_LUM, REGION_OVERLAY_MIN, REGION_OVERLAY_MAX };
+  window.MatthewColorRegions = { keyOutWhite, dilateBarrier, labelRegions, borderRegions, nearestPaintable, buildRegionMaskData, REGION_BARRIER_LUM, REGION_OVERLAY_MIN, REGION_OVERLAY_MAX };
   window.MatthewColorNature = NATURE;
 })();
 
