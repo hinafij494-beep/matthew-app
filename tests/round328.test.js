@@ -1,6 +1,7 @@
 // Round 3.2.8 — coloring fixes (user notes 2026-11-14, tested on the 3.2.7 APK):
 // (1) free-paint must stay inside the picture frame — no paint outside the
-//     image rect; (2) gallery cards show REAL thumbnails, no emoji icons;
+//     image rect; (2) [3.2.9: the gallery is GONE — no card list at all,
+//     arrows are the only navigation];
 // (3) arrow navigation between pictures in the picture view (wrap-around).
 // Rework: (1) PER-REGION containment — paint never leaves the region it
 // started in; (4) save button (PNG download to the device gallery);
@@ -252,50 +253,11 @@ test("3.2.8 note 1: a drag sweeping outside the picture paints NOTHING outside t
     firePointer(window, canvas, "pointermove", 50, 50);
     firePointer(window, canvas, "pointerup", 50, 50);
     assert.equal(drawCalls(log).length, 0, "a press starting left of the frame must paint nothing");
-    // The wrap itself shrink-to-fits the picture so canvas == image box.
+    // Round 3.2.9 note 3: the picture fills the zoom viewport (the
+    // stage is the contain-fit rect), the viewport hides overflow.
     const style = window.document.getElementById("colorGamesStyle").textContent;
-    assert.match(style, /\.cg-paint-wrap\{[^}]*width:max-content/, "paint wrap must shrink-to-fit the picture");
-    assert.match(style, /\.cg-paint-wrap\{[^}]*overflow:hidden/, "paint wrap must hide any overflow");
-  } finally {
-    window.close();
-  }
-});
-
-test("3.2.8 note 2: every gallery card shows a REAL thumbnail, no emoji icons (live jsdom)", { skip: skipDom }, () => {
-  const spoken = [];
-  const dom = bootDom(spoken);
-  const { window } = dom;
-  try {
-    const { panel } = openColoring(window);
-    const pages = window.MatthewColorPages;
-    assert.equal(pages.length, 19, "registry must list 19 pages");
-    const cards = [...panel.querySelectorAll("[data-page]")];
-    assert.equal(cards.length, 19, "gallery must list all 19 pages");
-    const emojiRe = /\p{Extended_Pictographic}/u;
-    const knownIcons = pages.map((p) => p.icon);
-    for (let i = 0; i < 19; i++) {
-      const card = cards[i];
-      const page = pages[i];
-      assert.equal(card.textContent.trim(), page.name,
-        "card " + i + " must show the plain page name, got " + JSON.stringify(card.textContent));
-      assert.ok(!emojiRe.test(card.textContent),
-        "card " + i + " text must contain no emoji, got " + JSON.stringify(card.textContent));
-      for (const icon of knownIcons) {
-        assert.ok(!card.innerHTML.includes(icon), "card " + i + " must not contain the icon " + icon);
-      }
-      if (page.img) {
-        const thumb = card.querySelector("img.cg-thumb");
-        assert.ok(thumb, "card " + i + " (" + page.name + ") must contain a real <img> thumbnail");
-        assert.equal(thumb.getAttribute("src"), page.img, "card " + i + " thumbnail must be its own picture");
-        assert.match(thumb.getAttribute("src"), /^data:image\/webp;base64,/, "card " + i + " thumbnail must be the embedded picture");
-      } else {
-        assert.ok(card.querySelector("svg"), "card " + i + " (crown) must contain an inline SVG preview");
-        assert.equal(card.querySelector("img.cg-thumb"), null, "crown card must not have a raster thumbnail");
-      }
-    }
-    const style = window.document.getElementById("colorGamesStyle").textContent;
-    assert.match(style, /\.cg-thumb\{/, "injected styles must size the thumbnails");
-    assert.ok(!/\.cg-page-btn span\{/.test(style), "the old emoji-span gallery style must be gone");
+    assert.match(style, /\.cg-zoom-viewport\{[^}]*overflow:hidden/, "zoom viewport must hide overflow");
+    assert.match(style, /\.cg-paint-wrap\{[^}]*width:100%/, "paint wrap must fill the zoom stage");
   } finally {
     window.close();
   }
@@ -332,9 +294,10 @@ test("3.2.8 note 3: arrows flip pictures in the picture view, with wrap-around (
     arrows().prev.click();
     assert.match(label(), /الملك ماثيو/, "prev must move back to page 0");
     assert.equal(panel.querySelector("#cgPaintImg").getAttribute("src"), pages[0].img, "prev must show page 0's picture");
-    // Wrap-around forward: crown (last) -> next -> first.
-    [...panel.querySelectorAll("[data-page]")][18].click();
-    assert.match(label(), /تاج الملك/, "gallery must still open the crown page");
+    // Wrap-around forward: crown (last) -> next -> first. Arrows are
+    // the only navigation in 3.2.9 (the gallery is gone).
+    for (let i = 0; i < 18; i++) panel.querySelector("#cgNextPage").click();
+    assert.match(label(), /تاج الملك/, "arrows must reach the crown page");
     a = arrows();
     assert.ok(a.prev && a.next, "arrows must also exist in the crown view");
     a.next.click();
@@ -349,8 +312,9 @@ test("3.2.8 note 3: arrows flip pictures in the picture view, with wrap-around (
     arrows().prev.click();
     assert.match(label(), /الرسام ماثيو/, "prev from the crown must move to page 17");
     assert.equal(panel.querySelector("#cgPaintImg").getAttribute("src"), pages[17].img, "page 17 picture must show");
-    // The grid stays the picker alongside the arrows.
-    assert.equal(panel.querySelectorAll("[data-page]").length, 19, "gallery grid must stay as the picker");
+    // Round 3.2.9 note 1: no gallery picker may exist anywhere.
+    assert.equal(panel.querySelectorAll("[data-page]").length, 0, "no gallery picker buttons may exist");
+    assert.equal(panel.querySelector(".cg-gallery"), null, "the gallery grid must be gone");
   } finally {
     window.close();
   }
@@ -449,18 +413,21 @@ test("3.2.8 note 1 (DOM): a stroke crossing the outline paints NOTHING outside i
     assert.equal(overlay.previousElementSibling, canvas, "overlay must sit directly above the paint canvas");
     assert.equal(overlay.getAttribute("src"), "data:image/png;base64,TESTLINEART",
       "overlay src must be the processed line art, got " + overlay.getAttribute("src"));
-    // A press ON the wall paints the margin region, never the inside.
+    // Round 3.2.9 note 5: a press ON the wall snaps INWARD (the margin
+    // is background now, never paintable) — its mask keeps the inside
+    // and stays clear outside the box.
     firePointer(window, canvas, "pointerdown", 10, 5);
     firePointer(window, canvas, "pointerup", 10, 5);
-    assert.ok(putImagePayloads(extra).some((d) => alphaAt(d, 300, 100, 100) === 255 && alphaAt(d, 300, 10, 10) === 0),
-      "wall press mask must be opaque outside and clear inside the box");
+    assert.ok(putImagePayloads(extra).some((d) => alphaAt(d, 300, 10, 10) === 255 && alphaAt(d, 300, 100, 100) === 0),
+      "wall press mask must be opaque inside the box and clear outside it");
     assert.equal(drawCalls(log).length, 0, "wall press must not paint directly either");
-    // A stroke starting OUTSIDE stays outside.
+    // A stroke starting OUTSIDE (in the background) paints NOTHING.
+    const masksAfterWall = putImagePayloads(extra).length;
     firePointer(window, canvas, "pointerdown", 100, 100);
     firePointer(window, canvas, "pointermove", 10, 10);
     firePointer(window, canvas, "pointerup", 10, 10);
-    assert.ok(putImagePayloads(extra).some((d) => alphaAt(d, 300, 100, 100) === 255 && alphaAt(d, 300, 10, 10) === 0),
-      "outside-started stroke mask must be opaque outside and clear inside the box");
+    assert.equal(putImagePayloads(extra).length, masksAfterWall,
+      "an outside-started stroke must build no mask at all (background is not paintable)");
     assert.equal(drawCalls(log).length, 0, "outside press must not paint directly either");
   } finally {
     window.close();
@@ -518,7 +485,7 @@ test("3.2.8 notes 4+5 (crown): every part keeps a dark stroke, and save rasteris
   try {
     const { downloads } = installSaveStubs(window);
     const { panel, extra } = openColoring(window);
-    [...panel.querySelectorAll("[data-page]")][18].click();
+    for (let i = 0; i < 18; i++) panel.querySelector("#cgNextPage").click();
     assert.match(panel.querySelector(".cg-page-label").textContent, /تاج الملك/, "crown page opens");
     const saveBtn = panel.querySelector("#cgSavePage");
     assert.ok(saveBtn, "save button must exist on the crown page too");

@@ -321,9 +321,10 @@ test("3.2.6 items 8+10: Games coloring card opens the coloring canvas; free + by
     const tabs = [...panel.querySelectorAll(".cg-tab")].map(b => b.dataset.tab);
     assert.deepEqual(tabs, ["numbers", "nature", "patterns", "coloring"], "workshop must have 4 tabs incl. coloring");
     assert.ok(panel.querySelector('[data-tab="coloring"]').classList.contains("active"), "coloring tab must be active after the Games coloring card");
-    // Gallery: 18 approved raster pages + the crown tap-to-fill page.
-    const pages = [...panel.querySelectorAll("[data-page]")];
-    assert.equal(pages.length, 19, "gallery must list the registry pages");
+    // Round 3.2.9 note 1: NO gallery — the tab opens straight into the
+    // picture view (page 0, the king). The registry still lists 19 pages.
+    assert.equal(panel.querySelector(".cg-gallery"), null, "the gallery grid must be gone");
+    assert.equal(panel.querySelectorAll("[data-page]").length, 0, "no gallery picker buttons may exist");
     assert.equal(window.MatthewColorPages.length, 19, "registry hook must expose the pages");
     // Page 0: the king raster page — picture + free-paint canvas, no by-numbers.
     assert.ok(panel.querySelector("#cgPaintImg"), "king page must render the picture");
@@ -343,13 +344,13 @@ test("3.2.6 items 8+10: Games coloring card opens the coloring canvas; free + by
       "الطباخ ماثيو", "الصياد ماثيو", "الرسام ماثيو",
     ];
     for (let i = 0; i < expected.length; i++) {
-      [...panel.querySelectorAll("[data-page]")][i].click();
+      if (i > 0) panel.querySelector("#cgNextPage").click();
       assert.ok(panel.querySelector("#cgPaintImg"), "page " + i + " must render its picture");
       assert.match(panel.querySelector("#cgPaintImg").getAttribute("src"), /^data:image\/webp;base64,/, "page " + i + " must embed its picture");
       assert.match(panel.querySelector(".cg-page-label").textContent, new RegExp(expected[i]), "page " + i + " label must be " + expected[i]);
     }
     // Crown page (last): the tap-to-fill page with the mode choice.
-    [...panel.querySelectorAll("[data-page]")][18].click();
+    panel.querySelector("#cgNextPage").click();
     assert.match(panel.querySelector(".cg-page-label").textContent, /تاج الملك/, "crown page label must be written on the page");
     // Mode choice: free is the default.
     const freeBtn = panel.querySelector('[data-mode="free"]');
@@ -407,9 +408,8 @@ test("3.2.6 item 10: raster pages render an image + free-paint canvas (registry 
     window.MatthewColorPages.push({ id: "tmp-raster", name: "صفحة تجريبية", icon: "🖼️", label: "صفحة تجريبية", img: "./icon.svg" });
     doc.querySelector('[data-coloring="1"]').click();
     const panel = doc.querySelector("#colorGamesPanel");
-    const pageBtns = [...panel.querySelectorAll("[data-page]")];
-    assert.equal(pageBtns.length, 20, "gallery must list the pushed raster page too");
-    pageBtns[19].click();
+    assert.equal(window.MatthewColorPages.length, 20, "registry must list the pushed raster page too");
+    for (let i = 0; i < 19; i++) panel.querySelector("#cgNextPage").click();
     assert.ok(panel.querySelector("#cgPaintImg"), "raster page must render the picture");
     assert.equal(panel.querySelector("#cgPaintImg").getAttribute("src"), "./icon.svg");
     assert.ok(panel.querySelector("#cgPaintCanvas"), "raster page must render a free-paint canvas over the picture");
