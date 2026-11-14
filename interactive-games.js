@@ -1575,6 +1575,12 @@
   const focusMode = on => {
     try {
       [...main.children].forEach(el => { if (el !== panel) el.style.display = on ? "none" : ""; });
+      // Round 3.2.7 (blank brave stories, symmetric side): the panel
+      // itself must never stay inline-hidden. Brave's focusMode(true)
+      // hides it — it is just another <main> child there — and removing
+      // the `hidden` class alone cannot beat an inline display:none.
+      // The `hidden` class alone governs this panel's hiding.
+      panel.style.display = "";
       document.body.classList.toggle("story-focus", on);
     } catch (_) {}
   };
@@ -1592,6 +1598,7 @@
     focusMode(true);
     hideOthers();
     panel.classList.remove("hidden");
+    panel.style.display = ""; // Round 3.2.7: belt-and-braces with focusMode — the picker must be COMPUTED-visible, not just class-visible.
     $("rescueMap").innerHTML = "";
     $("rescueStageIcon").textContent = "📖";
     $("rescueGoal").textContent = "🏰";
@@ -1634,6 +1641,7 @@
     stage = 0; inStage = 0; score = 0; total = 0;
     hideOthers();
     panel.classList.remove("hidden");
+    panel.style.display = ""; // Round 3.2.7: belt-and-braces with focusMode — a story must be COMPUTED-visible, not just class-visible.
     $("rescueGoal").textContent = story.goal;
     startStage(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -3146,6 +3154,13 @@
       const focusMode = on => {
         try {
           [...main.children].forEach(el => { if (el !== panel) el.style.display = on ? "none" : ""; });
+          // Round 3.2.7 (blank brave stories): the panel itself must never
+          // stay inline-hidden. Rescue's focusMode(true) hides it — it is
+          // just another <main> child there — and removing the `hidden`
+          // class alone cannot beat an inline display:none, so the story
+          // opened into a blank screen with no way back. The `hidden`
+          // class alone governs this panel's hiding.
+          panel.style.display = "";
           document.body.classList.toggle("brave-focus", on);
         } catch (_) {}
       };
@@ -3162,6 +3177,7 @@
         focusMode(true);
         hideOthers();
         panel.classList.remove("hidden");
+        panel.style.display = ""; // Round 3.2.7: belt-and-braces with focusMode — the picker must be COMPUTED-visible, not just class-visible.
         panel.classList.remove("brave-celebrate");
         $("braveMap").innerHTML = "";
         $("braveScene").className = "brave-scene scene-forest";
@@ -3199,6 +3215,7 @@
         stage = 0; inStage = 0; score = 0; total = 0;
         hideOthers();
         panel.classList.remove("hidden");
+        panel.style.display = ""; // Round 3.2.7: belt-and-braces with focusMode — a story must be COMPUTED-visible, not just class-visible.
         panel.classList.remove("brave-celebrate");
         $("braveScene").className = "brave-scene scene-" + sceneFor(story, 0);
         $("braveScene").innerHTML = sceneHTML(story, 0);
