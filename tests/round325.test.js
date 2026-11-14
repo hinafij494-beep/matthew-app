@@ -113,13 +113,18 @@ test("tr_ar_15 re-recorded with the طاء drill input (round 3.2.5 FAIL 3)", ()
   const oggMd5 = crypto.createHash("md5").update(ogg).digest("hex");
   assert.notStrictEqual(oggMd5, "bb18504574d35e67e1a196dbcd3e7da0", "tr_ar_15 ogg must not be the old defective render");
   // The shipped pack must carry the new clip, not the old one.
+  // Round 3.2.8: the re-pack added a 17th chunk and chunk boundaries
+  // shifted (tr_ar_15 moved to pack-17) — the requirement is that the
+  // SHIPPED packs carry the new clip, not which file number holds it.
   const sandbox = { window: {} };
   sandbox.window = sandbox;
   const ctx = vm.createContext(sandbox);
-  vm.runInContext(read("voice-clips-pack-16.js"), ctx, { filename: "voice-clips-pack-16.js" });
+  const packFiles = fs.readdirSync(root).filter((f) => /^voice-clips-pack-\d+\.js$/.test(f))
+    .sort((a, b) => parseInt(a.match(/(\d+)\.js$/)[1], 10) - parseInt(b.match(/(\d+)\.js$/)[1], 10));
+  for (const f of packFiles) vm.runInContext(read(f), ctx, { filename: f });
   const chunks = sandbox.__matthewClipData || [];
   const byKey = Object.assign({}, ...chunks);
-  assert.ok(byKey.tr_ar_15, "pack-16 must contain tr_ar_15");
+  assert.ok(byKey.tr_ar_15, "the voice packs must contain tr_ar_15 (checked " + packFiles.join(", ") + ")");
   const packMd5 = crypto.createHash("md5").update(Buffer.from(byKey.tr_ar_15, "base64")).digest("hex");
-  assert.strictEqual(packMd5, oggMd5, "pack-16 tr_ar_15 must decode to the new ogg (pack md5 " + packMd5 + " vs ogg " + oggMd5 + ")");
+  assert.strictEqual(packMd5, oggMd5, "packed tr_ar_15 must decode to the new ogg (pack md5 " + packMd5 + " vs ogg " + oggMd5 + ")");
 });

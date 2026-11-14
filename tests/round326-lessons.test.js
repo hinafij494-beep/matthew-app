@@ -663,7 +663,10 @@ test("science: bank maps 26/26 to exactly one subject; every subject quiz is 6",
   assert.equal(api2.scienceSubjectQuiz("coding", 0).length, 5, "no-bank coding quiz is 5 (only 5 lessons)");
 });
 
-async function driveScienceQuiz(panel) {
+// Round 3.2.8 note 8: the filler prompt rotates over
+// MatthewScienceScenes.scienceFillerPrompts, so the driver takes the set
+// instead of matching one literal text.
+async function driveScienceQuiz(panel, fillerPrompts) {
   const seen = [];
   const fillerChoices = [];
   for (let i = 0; i < 6; i++) {
@@ -672,7 +675,7 @@ async function driveScienceQuiz(panel) {
     seen.push(qText);
     const choices = qp.querySelectorAll("[data-value]");
     assert.equal(choices.length, 4, "4 choices for science q" + (i + 1));
-    if (qText === "اسمع الدرس واختار صورته") fillerChoices.push([...choices].map((b) => b.textContent));
+    if (fillerPrompts.includes(qText)) fillerChoices.push([...choices].map((b) => b.textContent));
     click(choices[0]);
     click(panel.querySelector("#scienceNextQ"));
     await sleep(60);
@@ -698,14 +701,14 @@ test("science animals: tabs, spoken explanation, subject-scoped 6-question quiz"
   tabs = tabButtons(panel);
   click(tabs[2]);
   await sleep(100);
-  const { seen, fillerChoices } = await driveScienceQuiz(panel);
-  assert.ok(panel.innerHTML.includes("من ٦"), "science result shows X من ٦");
   const api = w.sandbox.MatthewScienceScenes;
+  const { seen, fillerChoices } = await driveScienceQuiz(panel, api.scienceFillerPrompts);
+  assert.ok(panel.innerHTML.includes("من ٦"), "science result shows X من ٦");
   const animalsQs = w.sandbox.bank.science.filter((q) => api.scienceSubjectFor(q) === "animals").map((q) => q.q);
   const animalsLessons = api.subjectLessons.find((s) => s.id === "animals").lessons;
-  for (const q of seen) assert.ok(animalsQs.includes(q) || q === "اسمع الدرس واختار صورته", "science q is animals-scoped: " + q);
+  for (const q of seen) assert.ok(animalsQs.includes(q) || api.scienceFillerPrompts.includes(q), "science q is animals-scoped: " + q);
   assert.ok(seen.some((q) => animalsQs.includes(q)), "animals quiz includes bank questions");
-  assert.ok(seen.some((q) => q === "اسمع الدرس واختار صورته"), "animals quiz includes lesson-built fillers");
+  assert.ok(seen.some((q) => api.scienceFillerPrompts.includes(q)), "animals quiz includes lesson-built fillers");
   for (const fc of fillerChoices) for (const c of fc) assert.ok(animalsLessons.some((l) => c.includes(l)), "filler choice is an animals lesson: " + c);
   assert.deepEqual(w.startCalls, [], "start() never called — no general science bank");
 });
@@ -720,34 +723,73 @@ test("science quiz: answering a bank question correctly scores, feedback never s
   await sleep(60);
   click(panel.querySelector('[data-lesson="0"]'));
   const api = w.sandbox.MatthewScienceScenes;
-  const expected = api.scienceSubjectQuiz("animals", 0);
-  const bankCount = expected.filter((x) => x.kind === "bank").length;
-  assert.ok(bankCount >= 1, "animals quiz has bank questions");
+  const bank = w.sandbox.bank.science;
   const tabs = tabButtons(panel);
   click(tabs[2]);
   await sleep(100);
-  let bankRight = 0;
+  let bankSeen = 0, bankRight = 0;
+  const stages = [];
+  // Round 3.2.8 note 8: the quiz is shuffled now (bank order + options),
+  // so the correct answer is resolved from the BANK DATA by question
+  // text — never from a second scienceSubjectQuiz() build, which would
+  // shuffle differently. Fillers just take the first choice; only the
+  // feedback text is checked for them.
   for (let i = 0; i < 6; i++) {
     const qp = tabPanel(panel, "quiz");
+    stages.push(qp.querySelector(".math-stage").textContent);
     const qText = qp.querySelector("h2").textContent;
-    const q = expected[i];
-    assert.equal(qText, q.q, "quiz question " + (i + 1) + " is the expected one");
-    const choices = qp.querySelectorAll("[data-value]");
-    // Bank questions are deterministic (bank order, choices unshuffled),
-    // so answer the known-correct one; fillers are reshuffled per build,
-    // so just answer the first and only check the feedback text.
-    click(choices[q.kind === "bank" ? q.correct : 0]);
+    const entry = bank.find((b) => b.q === qText);
+    const choices = [...qp.querySelectorAll("[data-value]")];
+    if (entry) {
+      bankSeen++;
+      const correctText = entry.a[entry.c];
+      const target = choices.find((c) => c.textContent.includes(correctText));
+      assert.ok(target, "correct choice is on screen for: " + qText);
+      click(target);
+    } else {
+      assert.ok(api.scienceFillerPrompts.includes(qText), "non-bank card is a filler prompt: " + qText);
+      click(choices[0]);
+    }
     const fb = panel.querySelector("#scienceFeedback").textContent;
     assert.ok(!fb.includes("undefined"), "feedback never says undefined: " + fb);
-    if (q.kind === "bank") {
+    if (entry) {
       assert.ok(fb.includes("برافو"), "correct bank answer is praised: " + fb);
       bankRight++;
     }
     click(panel.querySelector("#scienceNextQ"));
     await sleep(60);
   }
-  assert.equal(bankRight, bankCount, "every bank question can be answered correctly");
+  assert.ok(bankSeen >= 1, "animals quiz has bank questions");
+  assert.equal(bankRight, bankSeen, "every bank question can be answered correctly");
+  assert.equal(new Set(stages).size, 6, "the counter advances through 6 distinct stages: " + JSON.stringify(stages));
   assert.ok(panel.innerHTML.includes("من ٦"), "science result shows X من ٦");
+});
+
+// Round 3.2.8 note 8: the shuffle itself — across builds the correct
+// answer must NOT sit on the first option every time, and the question
+// order must vary. (Asserted over 20 API builds, never one DOM run, so
+// the test cannot flake on a single unlucky shuffle.)
+test("science quiz shuffle: correct answers and question order vary across builds", () => {
+  const w = makeWorld();
+  w.loadBank();
+  const api = scienceApi(w);
+  let nonFirst = 0, orders = new Set();
+  for (let i = 0; i < 20; i++) {
+    const quiz = api.scienceSubjectQuiz("body", 1);
+    assert.equal(quiz.length, 6, "body quiz is 6");
+    assert.ok(quiz.every((x) => x.a.length === 4 && Number.isInteger(x.correct) && x.correct >= 0 && x.correct < 4),
+      "every question has 4 choices and a valid correct index");
+    if (quiz.some((x) => x.correct !== 0)) nonFirst++;
+    orders.add(quiz.map((x) => x.q).join(" | "));
+  }
+  assert.ok(nonFirst >= 15, "most builds put a correct answer off the first option: " + nonFirst + "/20");
+  assert.ok(orders.size >= 10, "question order varies across builds: " + orders.size + " distinct orders in 20 builds");
+  // The filler prompts rotate too — all three wordings appear.
+  const prompts = new Set();
+  for (let i = 0; i < 20; i++) {
+    for (const x of api.scienceSubjectQuiz("body", 1)) if (x.kind === "lesson") prompts.add(x.q);
+  }
+  assert.deepEqual([...prompts].sort(), [...api.scienceFillerPrompts].sort(), "all filler prompts rotate through");
 });
 
 test("science plants: 2 bank questions topped up to 6 with own-lesson fillers", async () => {
@@ -762,12 +804,12 @@ test("science plants: 2 bank questions topped up to 6 with own-lesson fillers", 
   const tabs = tabButtons(panel);
   click(tabs[2]);
   await sleep(100);
-  const { seen, fillerChoices } = await driveScienceQuiz(panel);
-  const bankCount = seen.filter((q) => q !== "اسمع الدرس واختار صورته").length;
-  const fillerCount = seen.filter((q) => q === "اسمع الدرس واختار صورته").length;
+  const api = w.sandbox.MatthewScienceScenes;
+  const { seen, fillerChoices } = await driveScienceQuiz(panel, api.scienceFillerPrompts);
+  const bankCount = seen.filter((q) => !api.scienceFillerPrompts.includes(q)).length;
+  const fillerCount = seen.filter((q) => api.scienceFillerPrompts.includes(q)).length;
   assert.equal(bankCount, 2, "plants has 2 bank questions: " + JSON.stringify(seen));
   assert.equal(fillerCount, 4, "plants has 4 lesson-built fillers");
-  const api = w.sandbox.MatthewScienceScenes;
   const plantsLessons = api.subjectLessons.find((s) => s.id === "plants").lessons;
   for (const fc of fillerChoices) for (const c of fc) assert.ok(plantsLessons.some((l) => c.includes(l)), "filler choice is a plants lesson: " + c);
 });

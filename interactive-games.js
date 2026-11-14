@@ -1958,9 +1958,20 @@
       ".cg-nature-emoji.cg-grey{animation:matthewFloat 2.6s ease-in-out infinite}" +
       // Round 3.2.6 notes 8–10: the coloring gallery + canvas (Games tab).
       ".cg-gallery{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:12px 0}" +
-      ".cg-page-btn{border:3px solid #e8e2f7;background:#faf8ff;border-radius:18px;padding:10px 14px;font:800 15px inherit;color:#392f54;cursor:pointer;min-width:104px}" +
+      ".cg-page-btn{border:3px solid #e8e2f7;background:#faf8ff;border-radius:18px;padding:10px 14px;font:800 15px inherit;color:#392f54;cursor:pointer;min-width:104px;display:flex;flex-direction:column;align-items:center;gap:6px}" +
       ".cg-page-btn.active{border-color:#6d4bd1;background:#eee8ff}" +
-      ".cg-page-btn span{display:block;font-size:2rem}" +
+      // Round 3.2.8 note 2: gallery cards show a REAL thumbnail of the
+      // page — no emoji icons. Raster pages use their own picture;
+      // the crown page uses a small inline-SVG preview.
+      ".cg-thumb{width:72px;height:72px;object-fit:contain;border-radius:12px;background:#fff;flex-shrink:0}" +
+      ".cg-thumb-svg{display:block;line-height:0}" +
+      ".cg-thumb-svg svg{width:72px;height:52px}" +
+      // Round 3.2.8 note 3: big arrow buttons in the picture view.
+      // RTL: the prev arrow (→) sits right, next (←) sits left.
+      ".cg-page-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin:8px 0}" +
+      ".cg-page-nav .cg-page-label{margin:0;flex:1}" +
+      ".cg-page-nav-btn{min-width:56px;min-height:56px;border:3px solid #e8e2f7;background:#fff;border-radius:50%;font-size:34px;font-weight:900;line-height:1;color:#5035b2;cursor:pointer;flex-shrink:0;box-shadow:0 3px 10px #30205b14}" +
+      ".cg-page-nav-btn:active{transform:scale(.93);background:#eee8ff}" +
       ".cg-mode-row{display:flex;gap:10px;justify-content:center;margin:12px 0;flex-wrap:wrap}" +
       ".cg-mode-btn{border:3px solid #e8e2f7;background:#fff;border-radius:999px;padding:12px 20px;font:800 17px inherit;color:#392f54;cursor:pointer}" +
       ".cg-mode-btn.active{border-color:#6d4bd1;background:#eee8ff}" +
@@ -1972,10 +1983,20 @@
       "@media(min-width:650px){.cg-big-palette{grid-template-columns:repeat(4,minmax(0,1fr))}}" +
       ".cg-swatch{min-height:64px;border:3px solid #0001;border-radius:18px;padding:10px 6px;font:800 15px inherit;cursor:pointer;box-shadow:0 3px 10px #30205b14}" +
       ".cg-swatch.selected{border-color:#5b3cc4;transform:scale(1.06);box-shadow:0 0 0 3px #d9ccff}" +
-      ".cg-paint-wrap{position:relative;text-align:center;margin:8px 0}" +
+      // Round 3.2.8 note 1: the wrap shrink-to-fits the picture, so the
+      // inset:0 canvas is exactly the image box; overflow:hidden is
+      // belt-and-braces against any paint escaping the frame.
+      ".cg-paint-wrap{position:relative;width:max-content;max-width:100%;text-align:center;margin:8px auto;overflow:hidden}" +
       ".cg-paint-wrap img{max-width:100%;height:auto;display:block;margin:0 auto;border-radius:18px;background:#fff}" +
       ".cg-paint-wrap canvas{position:absolute;inset:0;margin:auto;touch-action:none}" +
-      ".cg-clear-btn{max-width:420px;margin:10px auto 0;display:block}";
+      ".cg-clear-btn{max-width:420px;margin:10px auto 0;display:block}" +
+      // Round 3.2.8 note 4: clear + save sit side by side under the
+      // picture; note 5: the line-art overlay sits above the paint
+      // canvas (pointer-events:none) so outlines stay visible on top.
+      ".cg-actions-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:12px auto 0;max-width:640px}" +
+      ".cg-actions-row .cg-clear-btn,.cg-actions-row .cg-save-btn{flex:1 1 180px;max-width:300px;margin:0}" +
+      ".cg-save-btn{background:linear-gradient(140deg,#43a047,#2e7d32)!important}" +
+      ".cg-paint-wrap .cg-line-overlay{position:absolute;inset:0;width:100%;height:100%;margin:0;background:transparent;pointer-events:none}";
     document.head.appendChild(style);
   }
 
@@ -2024,9 +2045,18 @@
     { emoji: "☁️", name: "سحابة", color: "white", fact: "السحابة بيضا وبتطير في السما! السحاب الأبيض بيجيب المطر!" },
     { emoji: "🌸", name: "وردة", color: "pink", fact: "الوردة وردي وريحتها حلوة! الورد بيجمّل الدنيا!" },
     { emoji: "🍓", name: "فراولة", color: "red", fact: "الفراولة حمرا وحلوة! الفراولة فاكهة لذيذة ومفيدة!" },
-    { emoji: "🥕", name: "جزرة", color: "orange", fact: "الجزرة برتقالي وصحية! الجزر بيقوّي عينينا يا بطل!" }
+    { emoji: "🥕", name: "جزرة", color: "orange", fact: "الجزرة برتقالي وصحية! الجزر بيقوّي عينينا يا بطل!" },
+    // Round 3.2.8 note 7: FOUR more pictures (7 → 11) — each big and
+    // unambiguous, each with a colour new to the game (blue was
+    // orphaned when the fish left; purple/grey/brown are new).
+    // `masc` marks masculine nouns: the question says «ده …! لونه …»
+    // for them, «دي …! لونها …» otherwise (see natureQuestion).
+    { emoji: "🌊", name: "بحر", masc: true, color: "blue", fact: "البحر أزرق وكبير! البحر فيه مية كتير بنلعب فيها!" },
+    { emoji: "🍇", name: "عنب", masc: true, color: "purple", fact: "العنب بنفسجي وحلو! العنب فاكهة لذيذة ومفيدة!" },
+    { emoji: "🐘", name: "فيل", masc: true, color: "grey", fact: "الفيل رمادي وكبير! الفيل عنده خرطوم طويل!" },
+    { emoji: "🍫", name: "شوكولاتة", color: "brown", fact: "الشوكولاتة بني وحلوة! بناكل منها حتة صغيرة بس يا بطل!" }
   ];
-  const NATURE_PALETTE = ["red", "yellow", "blue", "green", "white", "pink", "orange"];
+  const NATURE_PALETTE = ["red", "yellow", "blue", "green", "white", "pink", "orange", "purple", "grey", "brown"];
 
   const PATTERN_TYPES = [
     { id: "ABAB", label: "واحد ورا واحد", slots: [0, 1, 0, 1, 0, 1] },
@@ -2252,6 +2282,12 @@
   // Coloring tab state: page index, mode ("free" | "numbers"), selected
   // palette colour index, and fills per page { [pageId]: { [part]: colorId } }.
   const coloringState = { page: 0, mode: "free", selected: null, fills: {} };
+  // Round 3.2.8 notes 4–5: the save session for the current raster
+  // page (paint canvas + line-art overlay canvas); null on SVG pages.
+  let paintSession = null;
+  // 1x1 transparent pixel: the line-art overlay placeholder src until
+  // deriveArt() replaces it with the processed line art.
+  const TRANSPARENT_PX = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
   // The colour a crown part expects: the colour whose button shows that
   // number this round. Falls back to the old (n-1)%6 mapping until the
@@ -2315,11 +2351,20 @@
   // One combined spoken sentence per tab opening, so the instruction and
   // the first question/sequence are heard as a single clip (two back-to-back
   // speak() calls would cancel each other — MatthewVoice serialises).
+  // Round 3.2.8 notes 6–7: the spoken question is composed from the
+  // item ITSELF (never a stored index), with the right Arabic gender
+  // — «ده …! لونه …» for masculine nouns (بحر، عنب، فيل), «دي …!
+  // لونها …» otherwise. The recorded clips (cg_nat_q_*/cg_nat_tab_*)
+  // are keyed by this exact text, so a wrong clip can only come from
+  // a stale pack, never from this composition.
+  const natureQuestion = item =>
+    (item.masc ? "ده " : "دي ") + item.name + "! " +
+    (item.masc ? "لونه" : "لونها") + " الحقيقي إيه يا ترى؟ اختار من اللوحة!";
   function tabSpeech() {
     if (activeTab === "nature") {
       if (!natureState.items.length) startNatureRound(true);
       const item = natureItem();
-      return INSTRUCTIONS.nature + (item ? " دي " + item.name + "! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!" : "");
+      return INSTRUCTIONS.nature + (item ? " " + natureQuestion(item) : "");
     }
     if (activeTab === "patterns") {
       const p = currentPattern();
@@ -2444,7 +2489,9 @@
 
   // ---------- Game 2: سحب لون الطبيعة ----------
   function startNatureRound(quiet) {
-    natureState.items = shuffle(NATURE).slice(0, 4);
+    // Round 3.2.8 note 7: a round now shows 8 of the 11 pictures
+    // (was 4 of 7), so the counter reads ١/٨ and the child sees more.
+    natureState.items = shuffle(NATURE).slice(0, 8);
     natureState.index = 0;
     natureState.answered = false;
     natureState.roundDone = false;
@@ -2457,7 +2504,7 @@
 
   function speakNatureQuestion() {
     const item = natureItem();
-    if (item) speak("دي " + item.name + "! لونها الحقيقي إيه يا ترى؟ اختار من اللوحة!");
+    if (item) speak(natureQuestion(item));
   }
 
   function renderNature() {
@@ -2606,6 +2653,110 @@
     if (!coloringState.fills[page.id]) coloringState.fills[page.id] = {};
     return coloringState.fills[page.id];
   }
+  // ---------- Per-region paint containment (Round 3.2.8 rework 1) ----------
+  // Pure functions (no DOM) so tests can drive them directly; exposed on
+  // window.MatthewColorRegions next to window.MatthewColorPages.
+  const REGION_BARRIER_LUM = 120; // outline pixel: darker than this
+  const REGION_OVERLAY_MIN = 150; // overlay: fully opaque below this
+  const REGION_OVERLAY_MAX = 245; // overlay: fully transparent above this
+  const pixelLum = (r, g, b) => 0.299 * r + 0.587 * g + 0.114 * b;
+  // One pass over the page pixels: the barrier map (1 = dark outline)
+  // and the line-art overlay RGBA (dark lines kept, white keyed out
+  // with a soft edge so anti-aliased outlines stay smooth).
+  function keyOutWhite(data, width, height) {
+    const n = width * height;
+    const barrier = new Uint8Array(n);
+    const overlay = new Uint8ClampedArray(n * 4);
+    for (let i = 0; i < n; i++) {
+      const o = i * 4;
+      const lum = pixelLum(data[o], data[o + 1], data[o + 2]);
+      if (lum < REGION_BARRIER_LUM) barrier[i] = 1;
+      let a;
+      if (lum <= REGION_OVERLAY_MIN) a = 255;
+      else if (lum >= REGION_OVERLAY_MAX) a = 0;
+      else a = Math.round(255 * (REGION_OVERLAY_MAX - lum) / (REGION_OVERLAY_MAX - REGION_OVERLAY_MIN));
+      overlay[o] = data[o]; overlay[o + 1] = data[o + 1]; overlay[o + 2] = data[o + 2]; overlay[o + 3] = a;
+    }
+    return { barrier, overlay };
+  }
+  // Dilate the barrier by `radius` px (8-neighbourhood, repeated) to
+  // close hairline gaps in the AI line art that paint could leak through.
+  function dilateBarrier(barrier, width, height, radius) {
+    let cur = barrier;
+    for (let r = 0; r < (radius || 1); r++) {
+      const next = new Uint8Array(cur);
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          if (cur[y * width + x]) continue;
+          let near = false;
+          for (let dy = -1; dy <= 1 && !near; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+              const nx = x + dx, ny = y + dy;
+              if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+              if (cur[ny * width + nx]) { near = true; break; }
+            }
+          }
+          if (near) next[y * width + x] = 1;
+        }
+      }
+      cur = next;
+    }
+    return cur;
+  }
+  // Label the connected components of non-barrier pixels (4-connectivity,
+  // iterative stack — no recursion). Returns { labels: Int32Array (-1 =
+  // barrier), count }. The outer white margin is its own region, so paint
+  // started outside the drawing stays outside it.
+  function labelRegions(barrier, width, height) {
+    const labels = new Int32Array(width * height).fill(-1);
+    let nextId = 0;
+    const stack = [];
+    for (let i = 0; i < labels.length; i++) {
+      if (barrier[i] || labels[i] !== -1) continue;
+      labels[i] = nextId;
+      stack.push(i);
+      while (stack.length) {
+        const cur = stack.pop();
+        const x = cur % width, y = (cur / width) | 0;
+        if (x > 0) { const nb = cur - 1; if (!barrier[nb] && labels[nb] === -1) { labels[nb] = nextId; stack.push(nb); } }
+        if (x < width - 1) { const nb = cur + 1; if (!barrier[nb] && labels[nb] === -1) { labels[nb] = nextId; stack.push(nb); } }
+        if (y > 0) { const nb = cur - width; if (!barrier[nb] && labels[nb] === -1) { labels[nb] = nextId; stack.push(nb); } }
+        if (y < height - 1) { const nb = cur + width; if (!barrier[nb] && labels[nb] === -1) { labels[nb] = nextId; stack.push(nb); } }
+      }
+      nextId++;
+    }
+    return { labels, count: nextId };
+  }
+  // Nearest paintable pixel to (x, y) within `radius` px (square rings,
+  // deterministic scan order); null when there is none (press on a thick
+  // outline far from any region). The pixel itself wins at radius 0.
+  function nearestPaintable(labels, width, height, x, y, radius) {
+    const cx = Math.round(x), cy = Math.round(y);
+    const rMax = radius === undefined ? 8 : radius;
+    for (let r = 0; r <= rMax; r++) {
+      for (let dy = -r; dy <= r; dy++) {
+        for (let dx = -r; dx <= r; dx++) {
+          if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
+          const nx = cx + dx, ny = cy + dy;
+          if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+          const id = labels[ny * width + nx];
+          if (id >= 0) return { x: nx, y: ny, region: id };
+        }
+      }
+    }
+    return null;
+  }
+  // White-inside-region RGBA mask data for destination-in: alpha 255
+  // inside this region, 0 everywhere else.
+  function buildRegionMaskData(labels, regionId, width, height) {
+    const out = new Uint8ClampedArray(width * height * 4);
+    for (let i = 0; i < width * height; i++) {
+      if (labels[i] === regionId) {
+        out[i * 4] = 255; out[i * 4 + 1] = 255; out[i * 4 + 2] = 255; out[i * 4 + 3] = 255;
+      }
+    }
+    return out;
+  }
   // Build a tap-to-fill SVG from a page's parts: white fill + dark outline,
   // one <text> number per region in by-numbers mode (the legend maps the
   // number to its colour — same six colours as the crown game).
@@ -2663,42 +2814,181 @@
   // Free-paint overlay for raster pages: the picture shows underneath and
   // the child paints on a transparent canvas over it. Guarded for
   // no-canvas contexts (jsdom tests): the structure still renders.
+  // Round 3.2.8 note 1 (frame): NO paint may land outside the image's
+  // bounding box — three layers: (a) the wrap shrink-to-fits the image
+  // so the canvas box == the image box, and fit() pins the canvas to the
+  // image's offset; (b) pointer coords are clamped to the canvas bounds,
+  // and a press that STARTS outside the frame is ignored entirely; (c)
+  // every stroke is drawn inside a canvas clip rect of the frame.
+  // Round 3.2.8 rework 1 (PER-REGION): the frame is NOT enough — paint
+  // must never leave the region it started in (crown stays in the crown,
+  // shirt stays in the shirt), bounded by the outlines of the picture itself.
+  // deriveArt() draws the page once into an offscreen canvas at paint
+  // resolution and derives, in ONE pass, (i) the barrier map (dark
+  // outline pixels, dilated 1px to close gaps in the AI line art) and
+  // (ii) the line-art overlay (white keyed out, dark lines kept). The
+  // non-barrier pixels are labelled into connected regions once per page
+  // (4-connectivity, so a diagonal touch through a corner never leaks).
+  // Each stroke starts in one region: the segment is drawn on a temp
+  // layer, masked to that region with destination-in, then composited
+  // onto the visible canvas. White areas inside the outlines stay
+  // paintable — the barrier is only the dark outlines, never white fill.
+  // Round 3.2.8 note 5 (outlines stay visible): the paint canvas sits
+  // BETWEEN the picture (bottom) and the line-art overlay (top, an <img>
+  // with pointer-events:none), so every black outline stays visible on
+  // top of the paint — colouring can never bury the features of the drawing.
+  // If the image/offscreen canvas is unavailable (image not loaded yet,
+  // no getImageData), region + overlay work is skipped and the frame
+  // clip above still applies (the old behaviour), never a blank page.
   function setupPaint(area) {
     const img = $("cgPaintImg"), canvas = $("cgPaintCanvas");
     if (!img || !canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    const overlayEl = $("cgLineOverlay");
+    const session = { canvas, img, overlayCanvas: null, ensureArt: null };
+    paintSession = session;
+    let art = null; // { width, height, labels, regionCount, overlayCanvas }
+    function deriveArt() {
+      try {
+        const w = canvas.width, h = canvas.height;
+        if (!w || !h || !img.complete || !img.naturalWidth) return false;
+        if (art && art.width === w && art.height === h) return true;
+        const off = document.createElement("canvas");
+        off.width = w; off.height = h;
+        const octx = off.getContext("2d");
+        if (!octx || typeof octx.getImageData !== "function") return false;
+        octx.drawImage(img, 0, 0, w, h);
+        const data = octx.getImageData(0, 0, w, h);
+        if (!data || !data.data) return false;
+        const derived = keyOutWhite(data.data, w, h);
+        const dilated = dilateBarrier(derived.barrier, w, h, 1);
+        const labelled = labelRegions(dilated, w, h);
+        const ov = document.createElement("canvas");
+        ov.width = w; ov.height = h;
+        const ovctx = ov.getContext("2d");
+        if (!ovctx || typeof ovctx.createImageData !== "function") return false;
+        const ovData = ovctx.createImageData(w, h);
+        ovData.data.set(derived.overlay);
+        ovctx.putImageData(ovData, 0, 0);
+        art = { width: w, height: h, labels: labelled.labels, regionCount: labelled.count, overlayCanvas: ov };
+        session.overlayCanvas = ov;
+        if (overlayEl && typeof ov.toDataURL === "function") {
+          try { overlayEl.src = ov.toDataURL("image/png"); } catch (_) { /* overlay stays transparent */ }
+        }
+        return true;
+      } catch (_) { return false; }
+    }
+    session.ensureArt = () => { fit(); deriveArt(); return session; };
     const fit = () => {
       const w = img.clientWidth, h = img.clientHeight;
       if (!w || !h) return;
       if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
       canvas.style.width = w + "px"; canvas.style.height = h + "px";
+      canvas.style.left = img.offsetLeft + "px"; canvas.style.top = img.offsetTop + "px";
     };
-    if (img.complete) fit(); else img.addEventListener("load", fit);
-    let drawing = false, last = null;
-    const pos = e => { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+    if (img.complete) { fit(); deriveArt(); } else img.addEventListener("load", () => { fit(); deriveArt(); });
+    let drawing = false, last = null, layerCanvas = null, layerCtx = null, maskCanvas = null;
+    const rawPos = e => { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+    const pos = e => {
+      const p = rawPos(e);
+      return { x: Math.min(Math.max(p.x, 0), canvas.width), y: Math.min(Math.max(p.y, 0), canvas.height) };
+    };
+    const insideFrame = p => p.x >= 0 && p.y >= 0 && p.x <= canvas.width && p.y <= canvas.height;
+    const clipFrame = () => { ctx.save(); ctx.beginPath(); ctx.rect(0, 0, canvas.width, canvas.height); ctx.clip(); };
     const brush = () => (coloringState.selected !== null ? COLORS[coloringState.selected] : COLORS[0]).hex;
+    // Region the press belongs to (nearest paintable pixel within 8px
+    // when the press lands exactly on an outline); null = no paintable
+    // pixel nearby, the press is ignored.
+    const regionAt = p => {
+      if (!art || !art.labels) return null;
+      const hit = nearestPaintable(art.labels, art.width, art.height, p.x, p.y, 8);
+      return hit ? { x: hit.x, y: hit.y, region: hit.region } : null;
+    };
+    // Temp layer + mask for this stroke. Returns false when offscreen
+    // canvases are unavailable — the caller then paints directly with
+    // the frame clip (the old behaviour).
+    const startStroke = regionId => {
+      layerCanvas = document.createElement("canvas");
+      layerCanvas.width = canvas.width; layerCanvas.height = canvas.height;
+      layerCtx = layerCanvas.getContext("2d");
+      maskCanvas = document.createElement("canvas");
+      maskCanvas.width = canvas.width; maskCanvas.height = canvas.height;
+      const mctx = maskCanvas.getContext("2d");
+      if (!layerCtx || !mctx || typeof mctx.createImageData !== "function") {
+        layerCanvas = null; layerCtx = null; maskCanvas = null;
+        return false;
+      }
+      const maskData = mctx.createImageData(canvas.width, canvas.height);
+      maskData.data.set(buildRegionMaskData(art.labels, regionId, canvas.width, canvas.height));
+      mctx.putImageData(maskData, 0, 0);
+      return true;
+    };
+    // Draw on the temp layer, keep only this region, composite onto the
+    // visible canvas. `draw` receives the layer context.
+    const paintOnLayer = draw => {
+      layerCtx.save();
+      layerCtx.beginPath(); layerCtx.rect(0, 0, canvas.width, canvas.height); layerCtx.clip();
+      draw(layerCtx);
+      layerCtx.restore();
+      layerCtx.globalCompositeOperation = "destination-in";
+      layerCtx.drawImage(maskCanvas, 0, 0);
+      layerCtx.globalCompositeOperation = "source-over";
+      ctx.drawImage(layerCanvas, 0, 0);
+    };
+    const paintDot = p => {
+      if (layerCtx) {
+        paintOnLayer(c => { c.beginPath(); c.arc(p.x, p.y, 7, 0, Math.PI * 2); c.fillStyle = brush(); c.fill(); });
+      } else {
+        clipFrame();
+        ctx.beginPath(); ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+        ctx.fillStyle = brush(); ctx.fill();
+        ctx.restore();
+      }
+    };
+    const paintSegment = (from, to) => {
+      if (layerCtx) {
+        paintOnLayer(c => {
+          c.strokeStyle = brush(); c.lineWidth = 14; c.lineCap = "round"; c.lineJoin = "round";
+          c.beginPath(); c.moveTo(from.x, from.y); c.lineTo(to.x, to.y); c.stroke();
+        });
+      } else {
+        clipFrame();
+        ctx.strokeStyle = brush(); ctx.lineWidth = 14; ctx.lineCap = "round"; ctx.lineJoin = "round";
+        ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(to.x, to.y); ctx.stroke();
+        ctx.restore();
+      }
+    };
     canvas.addEventListener("pointerdown", e => {
       fit();
+      deriveArt();
+      if (!insideFrame(rawPos(e))) return;
       if (coloringState.selected === null) {
         coloringState.selected = 0;
         const sw = area.querySelector('[data-color="0"]');
         if (sw) sw.classList.add("selected");
       }
-      drawing = true; last = pos(e);
-      ctx.beginPath(); ctx.arc(last.x, last.y, 7, 0, Math.PI * 2);
-      ctx.fillStyle = brush(); ctx.fill();
+      const p = pos(e);
+      if (art && art.labels) {
+        const hit = regionAt(p);
+        if (!hit) return; // pressed on an outline with no region nearby
+        startStroke(hit.region);
+        drawing = true; last = p;
+        paintDot(p);
+      } else {
+        drawing = true; last = p;
+        paintDot(p);
+      }
       try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
       e.preventDefault();
     });
     canvas.addEventListener("pointermove", e => {
       if (!drawing || !last) return;
       const p = pos(e);
-      ctx.strokeStyle = brush(); ctx.lineWidth = 14; ctx.lineCap = "round"; ctx.lineJoin = "round";
-      ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+      paintSegment(last, p);
       last = p;
     });
-    const stop = () => { drawing = false; last = null; };
+    const stop = () => { drawing = false; last = null; layerCanvas = null; layerCtx = null; maskCanvas = null; };
     canvas.addEventListener("pointerup", stop);
     canvas.addEventListener("pointercancel", stop);
     const clearBtn = $("cgClearPage");
@@ -2709,9 +2999,93 @@
     };
   }
 
+  // Round 3.2.8 note 4: save the finished picture to the device gallery.
+  // No Capacitor Filesystem/share plugin is installed (package.json has
+  // only core/android/cli/text-to-speech) and the APK workflow installs
+  // an explicit package list (no `npm install` from package.json), so a
+  // native plugin would NOT be picked up by the build — adding one would
+  // ship dead code. The honest path is a PNG download: an <a download>
+  // click hands the file to the Android DownloadManager, which lands in
+  // Downloads and the media scanner indexes it, so it appears in gallery
+  // apps. The composite is built AS THE CHILD SEES IT: raster pages =
+  // picture + paint + line-art overlay (outlines on top, note 5); the
+  // crown page = the filled SVG rasterised on white.
+  function downloadPng(blobOrDataUrl, filename) {
+    const url = typeof blobOrDataUrl === "string" ? blobOrDataUrl : URL.createObjectURL(blobOrDataUrl);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    if (typeof blobOrDataUrl !== "string") { try { setTimeout(() => URL.revokeObjectURL(url), 5000); } catch (_) {} }
+  }
+  function saveColoredPicture() {
+    const page = coloringPage();
+    if (!page) return;
+    const filename = "matthew-coloring-" + page.id + ".png";
+    const done = () => {
+      speak("حفظنا الصورة يا بطل! 🎉");
+      const m = $("cgMsg");
+      if (m) m.textContent = "حفظنا الصورة يا بطل! 🎉 بتلاقيها في معرض صور جهازك!";
+    };
+    const fail = () => {
+      speak("ما قدرناش نحفظ الصورة — حاول تاني يا بطل");
+      const m = $("cgMsg");
+      if (m) m.textContent = "ما قدرناش نحفظ الصورة — حاول تاني يا بطل 💜";
+    };
+    if (page.img) {
+      try {
+        const session = paintSession && paintSession.ensureArt ? paintSession.ensureArt() : null;
+        const paintCanvas = session ? session.canvas : $("cgPaintCanvas");
+        const img = session ? session.img : $("cgPaintImg");
+        const w = paintCanvas && paintCanvas.width, h = paintCanvas && paintCanvas.height;
+        if (!paintCanvas || !img || !w || !h) { fail(); return; }
+        const comp = document.createElement("canvas");
+        comp.width = w; comp.height = h;
+        const cctx = comp.getContext("2d");
+        if (!cctx) { fail(); return; }
+        cctx.drawImage(img, 0, 0, w, h);
+        cctx.drawImage(paintCanvas, 0, 0);
+        if (session && session.overlayCanvas) cctx.drawImage(session.overlayCanvas, 0, 0);
+        if (typeof comp.toBlob === "function") comp.toBlob(b => { if (b) { downloadPng(b, filename); done(); } else fail(); }, "image/png");
+        else if (typeof comp.toDataURL === "function") { downloadPng(comp.toDataURL("image/png"), filename); done(); }
+        else fail();
+      } catch (_) { fail(); }
+      return;
+    }
+    // Crown / SVG page: serialise the filled SVG (fills + dark strokes
+    // are inline attributes, so the saved PNG keeps the outlines too).
+    try {
+      const svgEl = panel.querySelector(".cg-crown-wrap svg");
+      if (!svgEl) { fail(); return; }
+      const vb = String(page.viewBox || "0 0 320 185").split(/\s+/).map(Number);
+      const w = (vb[2] || 320) * 2, h = (vb[3] || 185) * 2;
+      const text = new XMLSerializer().serializeToString(svgEl)
+        .replace("<svg", '<svg width="' + w + '" height="' + h + '"');
+      const blob = new Blob([text], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const im = new Image();
+      im.onload = () => {
+        try {
+          const comp = document.createElement("canvas");
+          comp.width = w; comp.height = h;
+          const cctx = comp.getContext("2d");
+          if (!cctx) { fail(); return; }
+          cctx.fillStyle = "#ffffff"; cctx.fillRect(0, 0, w, h);
+          cctx.drawImage(im, 0, 0, w, h);
+          try { URL.revokeObjectURL(url); } catch (_) {}
+          if (typeof comp.toBlob === "function") comp.toBlob(b => { if (b) { downloadPng(b, filename); done(); } else fail(); }, "image/png");
+          else if (typeof comp.toDataURL === "function") { downloadPng(comp.toDataURL("image/png"), filename); done(); }
+          else fail();
+        } catch (_) { fail(); }
+      };
+      im.onerror = () => { try { URL.revokeObjectURL(url); } catch (_) {} fail(); };
+      im.src = url;
+    } catch (_) { fail(); }
+  }
+
   function renderColoring() {
     const area = gameArea();
     if (!area) return;
+    paintSession = null; // fresh page — setupPaint re-registers it for raster pages
     const page = coloringPage();
     if (!page) {
       area.innerHTML = '<p class="cg-instruction">لسه مفيش صور تلوين — الصور المعتمدة جاية قريب يا بطل! 🎨</p>';
@@ -2726,24 +3100,53 @@
       '<span class="cg-legend-chip"><span class="cg-dot" style="background:' + c.hex + '"></span>' + arDigits(i + 1) + " = " + c.name + "</span>").join("") + "</div>" : "";
     area.innerHTML =
       '<div class="cg-gallery" role="tablist">' + MATTHEW_PAGES.map((p, i) =>
-        '<button type="button" class="cg-page-btn' + (i === coloringState.page ? " active" : "") + '" data-page="' + i + '"><span>' + p.icon + "</span>" + p.name + "</button>").join("") + "</div>" +
+        '<button type="button" class="cg-page-btn' + (i === coloringState.page ? " active" : "") + '" data-page="' + i + '">' +
+        // Round 3.2.8 note 2: a REAL thumbnail of the page, no emoji icon.
+        // The crown thumbnail reuses its SVG preview with the tap-to-fill
+        // hooks stripped (so tapping the card only flips the page) and the
+        // label swapped for the plain name (the label carries an emoji).
+        (p.img
+          ? '<img class="cg-thumb" src="' + p.img + '" alt="' + p.name + '">'
+          : '<span class="cg-thumb-svg">' + buildPageSvg({ ...p, label: p.name }).replace(/ data-part="\d+"/g, "") + "</span>") +
+        p.name + "</button>").join("") + "</div>" +
       (isImg ? "" :
       '<div class="cg-mode-row" role="group" aria-label="اختار طريقة التلوين">' +
       '<button type="button" class="cg-mode-btn' + (coloringState.mode === "free" ? " active" : "") + '" data-mode="free">🖍️ تلوين حر</button>' +
       '<button type="button" class="cg-mode-btn' + (coloringState.mode === "numbers" ? " active" : "") + '" data-mode="numbers">🔢 تلوين بالأرقام</button></div>') +
+      // Round 3.2.8 note 3: arrow navigation in the picture view (both
+      // raster and crown views — this row is outside the isImg branch).
+      // RTL: prev (→) on the right, next (←) on the left.
+      '<div class="cg-page-nav">' +
+      '<button type="button" class="cg-page-nav-btn" id="cgPrevPage" data-page-prev aria-label="الصورة اللي قبلها" title="الصورة اللي قبلها">→</button>' +
       '<h3 class="cg-page-label">' + page.label + "</h3>" +
+      '<button type="button" class="cg-page-nav-btn" id="cgNextPage" data-page-next aria-label="الصورة اللي بعدها" title="الصورة اللي بعدها">←</button>' +
+      "</div>" +
       legend +
       (isImg
-        ? '<div class="cg-paint-wrap"><img id="cgPaintImg" src="' + page.img + '" alt="' + page.label + '"><canvas id="cgPaintCanvas"></canvas></div>'
+        ? '<div class="cg-paint-wrap"><img id="cgPaintImg" src="' + page.img + '" alt="' + page.label + '"><canvas id="cgPaintCanvas"></canvas><img id="cgLineOverlay" class="cg-line-overlay" src="' + TRANSPARENT_PX + '" alt="" aria-hidden="true"></div>'
         : '<div class="cg-crown-wrap">' + buildPageSvg(page) + "</div>") +
       '<div class="cg-big-palette">' + COLORS.map((col, i) =>
         '<button type="button" class="cg-swatch' + (coloringState.selected === i ? " selected" : "") + '" data-color="' + i + '" style="background:' + col.hex + ";color:" + col.text + (col.id === "white" ? ";border-color:#d9d2f0" : "") + '">' + col.name + "</button>").join("") + "</div>" +
       '<p id="cgMsg" class="cg-msg" aria-live="polite">' + msgText + "</p>" +
-      '<button id="cgClearPage" class="primary cg-clear-btn" type="button">🧽 امسح الألوان</button>';
+      '<div class="cg-actions-row"><button id="cgClearPage" class="primary cg-clear-btn" type="button">🧽 امسح الألوان</button>' +
+      '<button id="cgSavePage" class="primary cg-save-btn" type="button">💾 احفظ الصورة</button></div>';
     area.querySelectorAll("[data-page]").forEach(b => b.onclick = () => {
       coloringState.page = Number(b.dataset.page);
       renderColoring();
     });
+    // Round 3.2.8 note 3: arrows flip pictures in the picture view (the
+    // grid stays the picker); wrap-around so the child never hits a dead
+    // end — last → first, first → last. renderColoring() rebuilds the
+    // picture, label and a fresh paint surface for the new page.
+    const prevBtn = $("cgPrevPage"), nextBtn = $("cgNextPage");
+    if (prevBtn) prevBtn.onclick = () => {
+      coloringState.page = (coloringState.page - 1 + MATTHEW_PAGES.length) % MATTHEW_PAGES.length;
+      renderColoring();
+    };
+    if (nextBtn) nextBtn.onclick = () => {
+      coloringState.page = (coloringState.page + 1) % MATTHEW_PAGES.length;
+      renderColoring();
+    };
     area.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => {
       coloringState.mode = b.dataset.mode;
       renderColoring();
@@ -2765,12 +3168,21 @@
         if (m) m.textContent = "مسحنا الألوان — لوّنها تاني يا بطل! 🎨";
       };
     }
+    // Round 3.2.8 note 4: the save button lives on BOTH the raster and
+    // the crown picture views, next to the clear button.
+    const saveBtn = $("cgSavePage");
+    if (saveBtn) saveBtn.onclick = () => saveColoredPicture();
   }
 
   card.addEventListener("click", () => openAt("numbers"));
   // Drop-in / live-check hook for the approved-art handover (round 3.2.6
   // notes 8–10): the gallery renders whatever MATTHEW_PAGES lists.
   window.MatthewColorPages = MATTHEW_PAGES;
+  // Test/live-check hooks for the per-region machinery (note 1 rework)
+  // — pure functions, no DOM — and the nature list for the
+  // question/picture audit (note 6). The runtime never calls these.
+  window.MatthewColorRegions = { keyOutWhite, dilateBarrier, labelRegions, nearestPaintable, buildRegionMaskData, REGION_BARRIER_LUM, REGION_OVERLAY_MIN, REGION_OVERLAY_MAX };
+  window.MatthewColorNature = NATURE;
 })();
 
 // ==== bundled module: stories.js ====

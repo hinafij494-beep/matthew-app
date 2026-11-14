@@ -120,7 +120,18 @@ test("game files parse as valid JavaScript", () => {
 });
 
 test("bundle stays in sync with color-games.js (canonical source)", () => {
-  assert.ok(BUNDLE.includes(COLOR_GAMES.trim()), "bundle is out of sync with color-games.js — mirror the edits");
+  // Compare the embedded section exactly instead of one ~5 MB includes():
+  // a single giant-needle search is unreliable on some runners — it failed
+  // in CI on PR #18 while the same files passed locally on Node 22 and 24
+  // (branch head and PR merge commit both verified byte-identical).
+  // build_bundle.py embeds each module as MARK + source.strip() + "\n".
+  const startMarker = "// ==== bundled module: color-games.js ====\n";
+  const endMarker = "// ==== bundled module: stories.js ====";
+  const start = BUNDLE.indexOf(startMarker);
+  assert.ok(start >= 0, "bundle is missing the color-games.js section");
+  const end = BUNDLE.indexOf(endMarker, start + startMarker.length);
+  assert.ok(end > start, "bundle is missing the stories.js section after color-games.js");
+  assert.equal(BUNDLE.slice(start + startMarker.length, end).trim(), COLOR_GAMES.trim(), "bundle is out of sync with color-games.js — mirror the edits");
 });
 
 test("new clip manifest is well-formed (unique keys, ar_EG, non-empty text)", () => {
