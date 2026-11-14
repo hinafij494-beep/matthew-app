@@ -1958,9 +1958,20 @@
       ".cg-nature-emoji.cg-grey{animation:matthewFloat 2.6s ease-in-out infinite}" +
       // Round 3.2.6 notes 8–10: the coloring gallery + canvas (Games tab).
       ".cg-gallery{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:12px 0}" +
-      ".cg-page-btn{border:3px solid #e8e2f7;background:#faf8ff;border-radius:18px;padding:10px 14px;font:800 15px inherit;color:#392f54;cursor:pointer;min-width:104px}" +
+      ".cg-page-btn{border:3px solid #e8e2f7;background:#faf8ff;border-radius:18px;padding:10px 14px;font:800 15px inherit;color:#392f54;cursor:pointer;min-width:104px;display:flex;flex-direction:column;align-items:center;gap:6px}" +
       ".cg-page-btn.active{border-color:#6d4bd1;background:#eee8ff}" +
-      ".cg-page-btn span{display:block;font-size:2rem}" +
+      // Round 3.2.8 note 2: gallery cards show a REAL thumbnail of the
+      // page — no emoji icons. Raster pages use their own picture;
+      // the crown page uses a small inline-SVG preview.
+      ".cg-thumb{width:72px;height:72px;object-fit:contain;border-radius:12px;background:#fff;flex-shrink:0}" +
+      ".cg-thumb-svg{display:block;line-height:0}" +
+      ".cg-thumb-svg svg{width:72px;height:52px}" +
+      // Round 3.2.8 note 3: big arrow buttons in the picture view.
+      // RTL: the prev arrow (→) sits right, next (←) sits left.
+      ".cg-page-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin:8px 0}" +
+      ".cg-page-nav .cg-page-label{margin:0;flex:1}" +
+      ".cg-page-nav-btn{min-width:56px;min-height:56px;border:3px solid #e8e2f7;background:#fff;border-radius:50%;font-size:34px;font-weight:900;line-height:1;color:#5035b2;cursor:pointer;flex-shrink:0;box-shadow:0 3px 10px #30205b14}" +
+      ".cg-page-nav-btn:active{transform:scale(.93);background:#eee8ff}" +
       ".cg-mode-row{display:flex;gap:10px;justify-content:center;margin:12px 0;flex-wrap:wrap}" +
       ".cg-mode-btn{border:3px solid #e8e2f7;background:#fff;border-radius:999px;padding:12px 20px;font:800 17px inherit;color:#392f54;cursor:pointer}" +
       ".cg-mode-btn.active{border-color:#6d4bd1;background:#eee8ff}" +
@@ -1972,7 +1983,10 @@
       "@media(min-width:650px){.cg-big-palette{grid-template-columns:repeat(4,minmax(0,1fr))}}" +
       ".cg-swatch{min-height:64px;border:3px solid #0001;border-radius:18px;padding:10px 6px;font:800 15px inherit;cursor:pointer;box-shadow:0 3px 10px #30205b14}" +
       ".cg-swatch.selected{border-color:#5b3cc4;transform:scale(1.06);box-shadow:0 0 0 3px #d9ccff}" +
-      ".cg-paint-wrap{position:relative;text-align:center;margin:8px 0}" +
+      // Round 3.2.8 note 1: the wrap shrink-to-fits the picture, so the
+      // inset:0 canvas is exactly the image box; overflow:hidden is
+      // belt-and-braces against any paint escaping the frame.
+      ".cg-paint-wrap{position:relative;width:max-content;max-width:100%;text-align:center;margin:8px auto;overflow:hidden}" +
       ".cg-paint-wrap img{max-width:100%;height:auto;display:block;margin:0 auto;border-radius:18px;background:#fff}" +
       ".cg-paint-wrap canvas{position:absolute;inset:0;margin:auto;touch-action:none}" +
       ".cg-clear-btn{max-width:420px;margin:10px auto 0;display:block}";
@@ -2663,6 +2677,14 @@
   // Free-paint overlay for raster pages: the picture shows underneath and
   // the child paints on a transparent canvas over it. Guarded for
   // no-canvas contexts (jsdom tests): the structure still renders.
+  // Round 3.2.8 note 1 («ميطلعش عن إطار الصورة»): NO paint may land
+  // outside the image's bounding box — three layers: (a) the wrap
+  // shrink-to-fits the image so the canvas box == the image box, and
+  // fit() pins the canvas to the image's offset; (b) pointer coords are
+  // clamped to the canvas bounds, and a press that STARTS outside the
+  // frame is ignored entirely; (c) every stroke is drawn inside a
+  // canvas clip rect of the frame. The white areas INSIDE the outlines
+  // stay paintable — only the frame is the limit, never the dark pixels.
   function setupPaint(area) {
     const img = $("cgPaintImg"), canvas = $("cgPaintCanvas");
     if (!img || !canvas) return;
@@ -2673,29 +2695,41 @@
       if (!w || !h) return;
       if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
       canvas.style.width = w + "px"; canvas.style.height = h + "px";
+      canvas.style.left = img.offsetLeft + "px"; canvas.style.top = img.offsetTop + "px";
     };
     if (img.complete) fit(); else img.addEventListener("load", fit);
     let drawing = false, last = null;
-    const pos = e => { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+    const rawPos = e => { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+    const pos = e => {
+      const p = rawPos(e);
+      return { x: Math.min(Math.max(p.x, 0), canvas.width), y: Math.min(Math.max(p.y, 0), canvas.height) };
+    };
+    const insideFrame = p => p.x >= 0 && p.y >= 0 && p.x <= canvas.width && p.y <= canvas.height;
+    const clipFrame = () => { ctx.save(); ctx.beginPath(); ctx.rect(0, 0, canvas.width, canvas.height); ctx.clip(); };
     const brush = () => (coloringState.selected !== null ? COLORS[coloringState.selected] : COLORS[0]).hex;
     canvas.addEventListener("pointerdown", e => {
       fit();
+      if (!insideFrame(rawPos(e))) return;
       if (coloringState.selected === null) {
         coloringState.selected = 0;
         const sw = area.querySelector('[data-color="0"]');
         if (sw) sw.classList.add("selected");
       }
       drawing = true; last = pos(e);
+      clipFrame();
       ctx.beginPath(); ctx.arc(last.x, last.y, 7, 0, Math.PI * 2);
       ctx.fillStyle = brush(); ctx.fill();
+      ctx.restore();
       try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
       e.preventDefault();
     });
     canvas.addEventListener("pointermove", e => {
       if (!drawing || !last) return;
       const p = pos(e);
+      clipFrame();
       ctx.strokeStyle = brush(); ctx.lineWidth = 14; ctx.lineCap = "round"; ctx.lineJoin = "round";
       ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+      ctx.restore();
       last = p;
     });
     const stop = () => { drawing = false; last = null; };
@@ -2726,12 +2760,27 @@
       '<span class="cg-legend-chip"><span class="cg-dot" style="background:' + c.hex + '"></span>' + arDigits(i + 1) + " = " + c.name + "</span>").join("") + "</div>" : "";
     area.innerHTML =
       '<div class="cg-gallery" role="tablist">' + MATTHEW_PAGES.map((p, i) =>
-        '<button type="button" class="cg-page-btn' + (i === coloringState.page ? " active" : "") + '" data-page="' + i + '"><span>' + p.icon + "</span>" + p.name + "</button>").join("") + "</div>" +
+        '<button type="button" class="cg-page-btn' + (i === coloringState.page ? " active" : "") + '" data-page="' + i + '">' +
+        // Round 3.2.8 note 2: a REAL thumbnail of the page, no emoji icon.
+        // The crown thumbnail reuses its SVG preview with the tap-to-fill
+        // hooks stripped (so tapping the card only flips the page) and the
+        // label swapped for the plain name (the label carries an emoji).
+        (p.img
+          ? '<img class="cg-thumb" src="' + p.img + '" alt="' + p.name + '">'
+          : '<span class="cg-thumb-svg">' + buildPageSvg({ ...p, label: p.name }).replace(/ data-part="\d+"/g, "") + "</span>") +
+        p.name + "</button>").join("") + "</div>" +
       (isImg ? "" :
       '<div class="cg-mode-row" role="group" aria-label="اختار طريقة التلوين">' +
       '<button type="button" class="cg-mode-btn' + (coloringState.mode === "free" ? " active" : "") + '" data-mode="free">🖍️ تلوين حر</button>' +
       '<button type="button" class="cg-mode-btn' + (coloringState.mode === "numbers" ? " active" : "") + '" data-mode="numbers">🔢 تلوين بالأرقام</button></div>') +
+      // Round 3.2.8 note 3: arrow navigation in the picture view (both
+      // raster and crown views — this row is outside the isImg branch).
+      // RTL: prev (→) on the right, next (←) on the left.
+      '<div class="cg-page-nav">' +
+      '<button type="button" class="cg-page-nav-btn" id="cgPrevPage" data-page-prev aria-label="الصورة اللي قبلها" title="الصورة اللي قبلها">→</button>' +
       '<h3 class="cg-page-label">' + page.label + "</h3>" +
+      '<button type="button" class="cg-page-nav-btn" id="cgNextPage" data-page-next aria-label="الصورة اللي بعدها" title="الصورة اللي بعدها">←</button>' +
+      "</div>" +
       legend +
       (isImg
         ? '<div class="cg-paint-wrap"><img id="cgPaintImg" src="' + page.img + '" alt="' + page.label + '"><canvas id="cgPaintCanvas"></canvas></div>'
@@ -2744,6 +2793,19 @@
       coloringState.page = Number(b.dataset.page);
       renderColoring();
     });
+    // Round 3.2.8 note 3: arrows flip pictures in the picture view (the
+    // grid stays the picker); wrap-around so the child never hits a dead
+    // end — last → first, first → last. renderColoring() rebuilds the
+    // picture, label and a fresh paint surface for the new page.
+    const prevBtn = $("cgPrevPage"), nextBtn = $("cgNextPage");
+    if (prevBtn) prevBtn.onclick = () => {
+      coloringState.page = (coloringState.page - 1 + MATTHEW_PAGES.length) % MATTHEW_PAGES.length;
+      renderColoring();
+    };
+    if (nextBtn) nextBtn.onclick = () => {
+      coloringState.page = (coloringState.page + 1) % MATTHEW_PAGES.length;
+      renderColoring();
+    };
     area.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => {
       coloringState.mode = b.dataset.mode;
       renderColoring();
