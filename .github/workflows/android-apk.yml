@@ -39,6 +39,7 @@ on:
       - "voice-clips-pack-14.js"
       - "voice-clips-pack-15.js"
       - "voice-clips-pack-16.js"
+      - "voice-clips-pack-17.js"
       - "voice-clips-text-1.js"
       - "capacitor.config.json"
       - "package.json"
@@ -63,7 +64,7 @@ jobs:
       - name: Prepare web assets
         run: |
           mkdir -p www
-          cp index.html styles.css app.js voice.js voice-web-fallback.js lessons.js learning.js math-journey.js math-english.js science.js interactive-games.js sw.js icon.svg manifest.webmanifest voice-clips-pack-1.js voice-clips-pack-2.js voice-clips-pack-3.js voice-clips-pack-4.js voice-clips-pack-5.js voice-clips-pack-6.js voice-clips-pack-7.js voice-clips-pack-8.js voice-clips-pack-9.js voice-clips-pack-10.js voice-clips-pack-11.js voice-clips-pack-12.js voice-clips-pack-13.js voice-clips-pack-14.js voice-clips-pack-15.js voice-clips-pack-16.js voice-clips-text-1.js www/
+          cp index.html styles.css app.js voice.js voice-web-fallback.js lessons.js learning.js math-journey.js math-english.js science.js interactive-games.js sw.js icon.svg manifest.webmanifest voice-clips-pack-1.js voice-clips-pack-2.js voice-clips-pack-3.js voice-clips-pack-4.js voice-clips-pack-5.js voice-clips-pack-6.js voice-clips-pack-7.js voice-clips-pack-8.js voice-clips-pack-9.js voice-clips-pack-10.js voice-clips-pack-11.js voice-clips-pack-12.js voice-clips-pack-13.js voice-clips-pack-14.js voice-clips-pack-15.js voice-clips-pack-16.js voice-clips-pack-17.js voice-clips-text-1.js www/
       - name: Install compatible Capacitor toolchain
         run: |
           # Keep Capacitor 7 paired with Android SDK 35 and the TTS 6.x plugin.
@@ -76,7 +77,7 @@ jobs:
             @capacitor-community/text-to-speech@^6.1.0 \
             esbuild sharp
       - name: Validate JavaScript sources
-        run: npx esbuild app.js lessons.js learning.js math-journey.js math-english.js science.js interactive-games.js voice-clips-pack-1.js voice-clips-pack-2.js voice-clips-pack-3.js voice-clips-pack-4.js voice-clips-pack-5.js voice-clips-pack-6.js voice-clips-pack-7.js voice-clips-pack-8.js voice-clips-pack-9.js voice-clips-pack-10.js voice-clips-pack-11.js voice-clips-pack-12.js voice-clips-pack-13.js voice-clips-pack-14.js voice-clips-pack-15.js voice-clips-pack-16.js voice-clips-text-1.js --outdir=/tmp/matthew-js-check --format=iife
+        run: npx esbuild app.js lessons.js learning.js math-journey.js math-english.js science.js interactive-games.js voice-clips-pack-1.js voice-clips-pack-2.js voice-clips-pack-3.js voice-clips-pack-4.js voice-clips-pack-5.js voice-clips-pack-6.js voice-clips-pack-7.js voice-clips-pack-8.js voice-clips-pack-9.js voice-clips-pack-10.js voice-clips-pack-11.js voice-clips-pack-12.js voice-clips-pack-13.js voice-clips-pack-14.js voice-clips-pack-15.js voice-clips-pack-16.js voice-clips-pack-17.js voice-clips-text-1.js --outdir=/tmp/matthew-js-check --format=iife
       - name: Bundle native text-to-speech support
         run: npx esbuild voice.js --bundle --platform=browser --format=iife --outfile=www/voice.bundle.js
       - name: Generate Android project
